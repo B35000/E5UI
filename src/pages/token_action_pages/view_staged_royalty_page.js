@@ -253,7 +253,6 @@ class ViewStagedRoyaltyPage extends Component {
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2861']/* 'The aggregate of the total number of tokens being issued out as payouts.' */, 'title':this.props.app_state.loc['2860']/* 'Total Payout Amount.' */})}
                     <div style={{height:10}}/>
                     {this.render_payout_tokens()}
-                    <div style={{height:10}}/>
 
                     {this.render_detail_item('0')}
 

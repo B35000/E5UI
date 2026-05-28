@@ -1029,6 +1029,12 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['3103']/* 'add-stake' */){
                 return this.render_add_stake_data()
             }
+            else if(tx.type == this.props.app_state.loc['3104']/* 'stage-coupon-payments' */){
+                return this.render_stage_coupon_payments()
+            }
+            else if(tx.type == this.props.app_state.loc['3105']/* 'coupon-payments' */){
+                return this.render_coupon_payments()
+            }
         }
     }
 
@@ -2549,12 +2555,12 @@ return data['data']
     }
 
     render_model_items(model_data){
-        const items = Object.keys(model_data)
+        const items = this.sortByAttributeDescending(Object.values(model_data), 'time')
         return(
             <div>
                 {items.map((item, index) => (
                     <div style={{'margin': '1px 2px 1px 2px'}}>
-                        {this.render_model_item(item, model_data[item])}
+                        {this.render_model_item(item['id'], item)}
                     </div>
                 ))}
             </div>
@@ -2562,10 +2568,10 @@ return data['data']
     }
 
     render_model_item(item, data){
-        const title = item
+        const title = data['class_name']
         const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']*1000).toLocaleString()))
         return(
-            <div onClick={() => this.edit_model_item(item)}>
+            <div>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
@@ -9469,14 +9475,14 @@ return data['data']
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         const item = transaction_item.selected_class
         const object = transaction_item.token_item
-        const data = object['ipfs'].certificate_models[item]
-        const name = item
+        const data = item
+        const name = item['class_name']
         const maximum_supply = data['maximum_supply']
         const purchase_start_time = data['purchase_start_time']
         const purchase_end_time = data['purchase_end_time']
         // const split_period = data['split_period']
         const price_data = object['ipfs'].price_data
-        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+        const base_fee_price_multiplier = data['base_fee_price_multiplier'] == 0 ? transaction_item.base_fee_price_multiplier : data['base_fee_price_multiplier']
         const e5 = object['e5']
 
         return(
@@ -9890,6 +9896,204 @@ return data['data']
         )
     }
 
+
+
+
+
+
+
+
+    render_stage_coupon_payments(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const all_transfers = transaction_item.all_transfers
+        const mature_depths = transaction_item.mature_depths
+        const price_data = transaction_item.token_item['ipfs'].price_data
+        const alias = this.get_account_alias2(transaction_item.coupon_payout_account) 
+        const recipient_title = transaction_item.coupon_payout_account + (alias == '' ? '' : ' • '+ alias)
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3104j']/* 'Stage Coupon Payments Action.' */, 'details':this.props.app_state.loc['3104k']/* 'The final amount set to be staged for your bond holders as coupons, and the set principal repayments if any.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':number_with_commas(Object.keys(all_transfers).length), 'details':this.props.app_state.loc['3104g']/* 'Transfers Counted.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':number_with_commas(mature_depths.length), 'details':this.props.app_state.loc['3104h']/* 'Mature Bonds Counted.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':recipient_title, 'details':this.props.app_state.loc['3104m']/* 'Payout Account.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_multiplied_prices2(all_transfers, price_data, transaction_item.e5)}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('4', {'text':transaction_item.payout_title, 'textsize':'13px', 'font':this.props.app_state.font})}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.payout_start_timestamp - Date.now()/1000), 'details':this.props.app_state.loc['2853']/* Starting time. */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2874']/* 'transactions per batch' */, 'number':transaction_item.batch_size, 'relativepower':this.props.app_state.loc['2867']/* 'transactions' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2874']/* 'transactions per batch' */, 'subtitle':this.format_power_figure(transaction_item.batch_size), 'barwidth':this.calculate_bar_width(transaction_item.batch_size), 'number':this.format_account_balance_figure(transaction_item.batch_size), 'barcolor':'', 'relativepower':this.props.app_state.loc['2867']/* 'transactions' */, })}
+                </div>
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.payout_schedule_timestamp - Date.now()/1000), 'details':this.props.app_state.loc['2883f']/* Scheduled time. */, 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_multiplied_prices2(all_transfers, price_data, e5){
+        var base_fee_price_multiplier = bigInt(0)
+        Object.values(all_transfers).forEach(transfer_item => {
+            base_fee_price_multiplier = bigInt(base_fee_price_multiplier).plus(transfer_item)
+        });
+        
+        return(
+            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                {price_data.map((item, index) => (
+                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+    render_coupon_payments(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const staging_data = transaction_item.staging_data
+        const payout_title = staging_data['payout_title']
+        const total_number_of_transactions = this.get_total_number_of_payout_transactions2(transaction_item)
+        const batches = staging_data['batches']
+        const selected_batches = this.get_selected_batch_data2(batches, transaction_item)
+        const price_data = staging_data['price_data']
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3105d']/* 'Coupon Payment Action.' */, 'details':this.props.app_state.loc['3105e']/* 'The final amount set from your select batches, to be transferred to your bond holders as coupons, and the set principal repayments if any.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('4', {'text':payout_title, 'textsize':'13px', 'font':this.props.app_state.font})}
+
+                <div style={{height: 10}}/>
+                {this.render_staged_batches2()}
+
+                <div style={{height:20}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2881']/* 'Total Batches.' */, 'number':this.get_number_of_royalty_payout_batches2(), 'relativepower':this.props.app_state.loc['2882']/* 'batches' */})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2881']/* 'Total Batches.' */, 'subtitle':this.format_power_figure(this.get_number_of_royalty_payout_batches2()), 'barwidth':this.calculate_bar_width(this.get_number_of_royalty_payout_batches2()), 'number':this.format_account_balance_figure(this.get_number_of_royalty_payout_batches2()), 'barcolor':'', 'relativepower':this.props.app_state.loc['2882']/* 'batches' */, })}
+                        </div>
+
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2868']/* 'Total Payout Transactions.' */, 'number':total_number_of_transactions, 'relativepower':this.props.app_state.loc['2867']/* 'transactions.' */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2868']/* 'Total Payout Transactions.' */, 'subtitle':this.format_power_figure(total_number_of_transactions), 'barwidth':this.calculate_bar_width(total_number_of_transactions), 'number':this.format_account_balance_figure(total_number_of_transactions), 'barcolor':'', 'relativepower':this.props.app_state.loc['2867']/* 'transactions.' */, })}
+                    </div>
+
+                </div>
+
+                <div style={{height: 10}}/>
+                {this.render_multiplied_batch_transfers(selected_batches, price_data, transaction_item.e5)}
+            </div>
+        )
+    }
+
+    render_staged_batches2(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var background_color = this.props.theme['card_background_color']
+        var staging_data = transaction_item.staging_data
+        var batches = staging_data['batches']
+        var items = this.get_selected_batch_data2(batches, transaction_item)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'details':item['data'].length+this.props.app_state.loc['2872']/* ' transactions.' */, 'title':this.props.app_state.loc['2873']/* 'Batch: ' */+ item['id'], 'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_selected_batch_data2(batches, transaction_item){
+        var selected = []
+        batches.forEach(batch => {
+            if(transaction_item.selected_batches.includes(batch)){
+                selected.push(batch)
+            }
+        });
+        return selected;
+    }
+
+    get_total_number_of_payout_transactions2(transaction_item){
+        var number = 0
+        var batches = transaction_item.selected_batches
+        batches.forEach(batch => {
+            number = number + batch['data'].length
+        });
+        return number
+    }
+
+    get_number_of_royalty_payout_batches2(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return transaction_item.selected_batches.length
+    }
+
+    render_multiplied_batch_transfers(selected_batches, price_data, e5){
+        const amount_data = {}
+        selected_batches.forEach(batch_item => {
+            batch_item['data'].forEach(transfer => {
+                if(amount_data[transfer['id']] == null){
+                    amount_data[transfer['id']] = bigInt(0)
+                }
+                amount_data[transfer['id']] = bigInt(amount_data[transfer['id']]).plus(transfer['amount'])
+            });
+        });
+        
+        return(
+            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                {Object.keys(amount_data).map((item, index) => (
+                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':amount_data[item], 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(amount_data[item]), 'barwidth':this.calculate_bar_width(amount_data[item]), 'number':this.format_account_balance_figure(amount_data[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                    </div>
+                ))}
+            </div>
+        )
+    }
 
 
 

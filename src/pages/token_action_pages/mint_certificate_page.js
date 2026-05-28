@@ -95,7 +95,7 @@ class MintCertificatePage extends Component {
         my_city: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city,
 
         edit_text_item_pos:-1,
-        entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
+        entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], base_fee_price_multiplier:0
     };
 
 
@@ -299,8 +299,8 @@ class MintCertificatePage extends Component {
     render_mint_certificate_pickers(){
         const item = this.state.selected_class
         const object = this.state.token_item
-        const data = object['ipfs'].certificate_models[item]
-        const name = item
+        const data = item
+        const name = data['class_name']
         const maximum_supply = data['maximum_supply']
         const purchase_start_time = data['purchase_start_time']
         const purchase_end_time = data['purchase_end_time']
@@ -326,11 +326,27 @@ class MintCertificatePage extends Component {
                 {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb'] 'Every $'.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']'Split Period', 'size':'l'})}
                 <div style={{height: 10}}/> */}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                
                 {this.render_multiplied_prices(price_data, base_fee_price_multiplier, e5)}
+
+                {base_fee_price_multiplier == 0 && (
+                    <div>
+                        <div style={{height: 10}}/>
+                        <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['d311bc']/* 'Price Multiplier' */, 'subtitle':this.format_power_figure(this.state.base_fee_price_multiplier), 'barwidth':this.calculate_bar_width(this.state.base_fee_price_multiplier), 'number':this.format_account_balance_figure(this.state.base_fee_price_multiplier), 'barcolor':'', 'relativepower':this.props.app_state.loc['d311bd']/* 'tokens' */, })}
+                        </div>
+                        <div style={{height:10}}/>
+                        {this.render_my_multiplied_prices(price_data)}
+        
+                        <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_base_fee_price_multiplier.bind(this)} theme={this.props.theme} power_limit={9}/>
+                    </div>
+                )}
             </div>
         )
+    }
+
+    when_base_fee_price_multiplier(number){
+        this.setState({base_fee_price_multiplier: number})
     }
 
     get_current_split_time(split_period, purchase_start_time, purchase_end_time){
@@ -342,16 +358,42 @@ class MintCertificatePage extends Component {
     }
 
     render_multiplied_prices(price_data, base_fee_price_multiplier, e5){
+        if(base_fee_price_multiplier == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pw']/* 'Variable Price Set.' */, 'details':this.props.app_state.loc['3055px']/* 'You are free to acquire this certificate with whichever price you wish.' */, 'size':'l'})}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_data.map((item, index) => (
+                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    render_my_multiplied_prices(price_data){
+        const e5 = this.state.e5
         return(
             <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                 {price_data.map((item, index) => (
-                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
                     </div>
                 ))}
             </div>
         )
     }
+
+
 
 
     load_my_balances(){
@@ -1527,8 +1569,8 @@ class MintCertificatePage extends Component {
         const object = this.state.token_item
         const price_data = object['ipfs'].price_data
         const e5 = object['e5']
-        const data = object['ipfs'].certificate_models[item]
-        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+        const data = item
+        const base_fee_price_multiplier = data['base_fee_price_multiplier'] == 0 ? this.state.base_fee_price_multiplier : data['base_fee_price_multiplier']
 
         if(this.check_if_sender_has_enough_tokens_for_buy(price_data, base_fee_price_multiplier) == false){
             this.props.notify(this.props.app_state.loc['3099g']/* 'Your balance is insufficient to fulfil this mint.' */, 4500)

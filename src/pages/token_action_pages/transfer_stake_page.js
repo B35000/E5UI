@@ -106,7 +106,6 @@ class TransferStakePage extends Component {
                 <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
-                
             </div>
         )
     }

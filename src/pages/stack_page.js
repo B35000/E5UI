@@ -5178,6 +5178,26 @@ class StackPage extends Component {
                         ints.push(transfer_object.transfers_obj)
                     }
                 }
+                else if(txs[i].type == this.props.app_state.loc['3104']/* 'stage-coupon-payments' */){
+                    var stage_coupon_obj = await this.format_stage_coupon_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(stage_coupon_obj.str)
+                    adds.push([])
+                    ints.push(stage_coupon_obj.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['3105']/* 'coupon-payments' */){
+                    var coupon_payout_obj = await this.format_make_coupon_payout_object(txs[i], calculate_gas, ipfs_index)
+
+                    //the transfers
+                    strs.push([])
+                    adds.push([])
+                    ints.push(coupon_payout_obj.transfers_obj)
+
+                    //the record of the transafers
+                    strs.push(coupon_payout_obj.str)
+                    adds.push([])
+                    ints.push(coupon_payout_obj.transfers_record)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -6744,6 +6764,39 @@ class StackPage extends Component {
                     }
                     ipfs_index_object[txs[i].id] = certificate_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3104']/* 'stage-coupon-payments' */){
+                    var t = txs[i]
+                    var payout_data = {
+                        'mature_depths':t.mature_depths, 
+                        'all_transfers':t.all_transfers,
+                        'batches':t.final_transfers,
+                        'batch_size':t.batch_size,
+                        'payout_title':t.payout_title,
+                        'payout_start_timestamp':t.payout_start_timestamp,
+                        'payout_schedule_timestamp':t.payout_schedule_timestamp,
+                        'coupon_payout_account':t.coupon_payout_account,
+                        'price_data':t.token_item['ipfs'].price_data,
+                        'payout_id': t.payout_id,
+                        'id':Date.now(), 
+                    }
+                    ipfs_index_object[t.id] = payout_data
+                    ipfs_index_array.push({'id':t.id, 'data':payout_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3105']/* 'coupon-payments' */){
+                    var t = txs[i]
+                    var batches = t.selected_batches
+                    var transacted_batches = []
+                    batches.forEach(batch => {
+                        transacted_batches.push(batch['id'])
+                    });
+                    var payout_record_info = {
+                        'payout_id':t.staging_data['payout_id'], 
+                        'transacted_batches':transacted_batches,
+                        'id':Date.now()
+                    }
+                    ipfs_index_object[t.id] = payout_record_info
+                    ipfs_index_array.push({'id':t.id, 'data':payout_record_info})
                 }
             }
         }
@@ -10858,7 +10911,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_make_royalty_payout_object= async (t, calculate_gas, ipfs_index) => {
+    format_make_royalty_payout_object = async (t, calculate_gas, ipfs_index) => {
         var transfers_obj = [/* send tokens to another account */
             [30000, 1, 0],
             [], [],/* exchanges */
@@ -12749,12 +12802,12 @@ class StackPage extends Component {
     format_purchase_certificate_object = async (t, calculate_gas, ipfs_index) => {
         const item = t.selected_class
         const object = t.token_item
-        const data = object['ipfs'].certificate_models[item]
+        const data = item
         const purchase_start_time = data['purchase_start_time']
         const purchase_end_time = data['purchase_end_time']
         // const split_period = data['split_period']
         const maximum_supply = data['maximum_supply']
-        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+        const base_fee_price_multiplier = data['base_fee_price_multiplier'] == 0 ? t.base_fee_price_multiplier : data['base_fee_price_multiplier']
         const class_id = data['id']
         // const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
         // const previous_split_time = this.get_previous_split_time(split_period, purchase_start_time, purchase_end_time)
@@ -13009,6 +13062,86 @@ class StackPage extends Component {
 
 
         return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj}
+    }
+
+    format_stage_coupon_object = async(t, calculate_gas, ipfs_index) => {
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [34], [23],/* 34(stage_coupon_payment_records) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+        var string_obj = [[]]
+
+        var context = t.token_item['id']
+        var int_data = Date.now()
+
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_make_coupon_payout_object = async (t, calculate_gas, ipfs_index) => {
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+
+        var transfers_record = [ /* add data */
+            [20000, 13, 0],
+            [13], [23],/* 13(record_royalty_payout_id) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var batches = t.selected_batches
+        const amount_data = {}
+        batches.forEach(batch_item => {
+            batch_item['data'].forEach(transfer => {
+                if(amount_data[transfer['receiver']] == null){
+                    amount_data[transfer['receiver']] = {}
+                }
+                if(amount_data[transfer['receiver']][transfer['id']] == null){
+                    amount_data[transfer['receiver']][transfer['id']] = bigInt(0)
+                }
+                amount_data[transfer['receiver']][transfer['id']] = bigInt(amount_data[transfer['receiver']][transfer['id']]).plus(transfer['amount'])
+            });
+        });
+
+        Object.keys(amount_data).forEach(receiver => {
+            const their_transfers = amount_data[receiver]
+            Object.keys(their_transfers).forEach(exchange => {
+                transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[2].push(23)
+                transfers_obj[3].push(receiver)
+                transfers_obj[4].push(23)
+                transfers_obj[5].push(their_transfers[exchange].toString().toLocaleString('fullwide', {useGrouping:false}))
+                transfers_obj[6].push('0')
+            });
+        });
+
+
+        var context = t.token_item['id']
+        var int_data = t.staging_data['payout_id']
+
+        var string_obj = [[]]
+        var payout_record_info = {'payout_id':t.staging_data['payout_id'], 'id':Date.now()}
+
+        var string_data = await this.get_object_ipfs_index(payout_record_info, calculate_gas, ipfs_index, t.id);
+        string_obj[0].push(string_data)
+
+        transfers_record[3].push(context)
+        transfers_record[4].push(int_data)
+
+        return {transfers_obj: transfers_obj, str: string_obj, transfers_record: transfers_record}
     }
 
     

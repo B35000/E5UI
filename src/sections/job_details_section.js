@@ -1147,6 +1147,9 @@ class JobDetailsSection extends Component {
         if(object['author'] == this.props.app_state.user_account_id[object['e5']]){
             return true
         }
+        if(object['ipfs'].get_public_pins_object != null && this.get_selected_item2(object['ipfs'].get_public_pins_object, 'e') == 1){
+            return true
+        }
         var responses = this.get_job_details_responses(object)
         var allowed = false
         responses.forEach(item => {

@@ -103,7 +103,9 @@ class EditCertificatePage extends Component {
         exchange_id:'', price_amount:0, price_data:[{'id':'5', 'amount':'1'}],
 
         class_name:'', maximum_supply:0, purchase_start_time: (Date.now()+(1000*60*60*5))/1000, purchase_end_time: (Date.now()+(1000*60*60*24))/1000, split_period:0, base_fee_price_multiplier:1, 
-        certificate_models:{}, class_markdown:'', posession_rights:0,
+        certificate_models:{}, class_markdown:'', posession_rights:0, certificate_model_history:{},
+        get_new_active_archived_model_settings_tags_object: this.get_new_active_archived_model_settings_tags_object(),
+        get_new_certificate_bond_enabled_tags_object: this.get_new_certificate_bond_enabled_tags_object(), bond_interest_rate:0, coupon_frequency:0, bond_maturity: (Date.now()+(1000*60*60*24*365))/1000,
     };
 
 
@@ -195,9 +197,38 @@ class EditCertificatePage extends Component {
         };
     }
 
+    get_new_active_archived_model_settings_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['d311cg']/* 'active' */, this.props.app_state.loc['d311ch']/* 'archived' */], [1]
+            ],
+        };
+    }
+
+    get_new_certificate_bond_enabled_tags_object(enabled=false){
+        const val = enabled == false ? 0 : 1
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['616']/* 'enabled' */], [val]
+            ],
+        };
+    }
+
+
+
+
+
+
+
 
     set(){
-        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1})
+        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1, get_new_active_archived_model_settings_tags_object: this.get_new_active_archived_model_settings_tags_object()})
     }
 
     render(){
@@ -1980,7 +2011,7 @@ class EditCertificatePage extends Component {
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311w']/* 'Purchase End Time.' */, 'details':this.props.app_state.loc['d311x']/* 'Specify a time after which the class\'s certificates cannot be purchased.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311w']/* 'Purchase End Time.' */, 'details':this.props.app_state.loc['d311x']/* 'Specify a time after which the class\'s certificates cannot be purchased, fractionalized or transferred.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'title':(new Date(this.state.purchase_end_time*1000).toLocaleString()), 'details':this.get_time_diff(this.state.purchase_end_time - (Date.now()/1000)), 'size':'l'})}
@@ -1991,12 +2022,29 @@ class EditCertificatePage extends Component {
                         <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_purchase_end_date_time_value_set(newValue)}/>
                     </LocalizationProvider>
                 </ThemeProvider>
+                <div style={{height:10}}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.set_maximum_end_time_button()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['d311cc']/* 'Set Maximum Time' */, 'action':''})}
+                </div>
+
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['d311bz']/* 'The threshold after which an owner has rights to posess the item this certificate represents if fractionalization is enabled and carried out.' */, 'title':this.props.app_state.loc['d311bx']/* 'Posession Rights Threshold' */})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['d311ca']/* 'If unset, the default used will be 100%' */})}
+                
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.posession_rights), 'details':this.props.app_state.loc['d311by']/* 'Posession Rights Proportion.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_posession_rights_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'50.1%'}/>
 
             </div>
         )
     }
 
     render_set_certificate_model_part2(){
+        const selected_item = this.get_selected_item(this.state.get_new_certificate_bond_enabled_tags_object, 'e') == this.props.app_state.loc['616']/* 'enabled' */
+        const opac = selected_item == true ? 1.0 : 0.5
         return(
             <div>
                 {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['d311y'] 'Split Periods.', 'details':this.props.app_state.loc['d311z']'You may optionally specify a periodic split, meaning the certificates will be purchased in a specified frequency within the time bounds set.', 'size':'l'})}
@@ -2008,17 +2056,7 @@ class EditCertificatePage extends Component {
 
                 {this.render_detail_item('0')} */}
 
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['d311bz']/* 'The threshold after which an owner has rights to posess the item this certificate represents if fractionalization is enabled and carried out.' */, 'title':this.props.app_state.loc['d311bx']/* 'Posession Rights Threshold' */})}
-                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['d311ca']/* 'If unset, the default used will be 100%' */})}
-                
-                <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':this.format_proportion(this.state.posession_rights), 'details':this.props.app_state.loc['d311by']/* 'Posession Rights Proportion.' */, 'size':'l'})}
-
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_posession_rights_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'50.1%'}/>
-
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ba']/* 'Base-fee Price Multiplier' */, 'details':this.props.app_state.loc['d311bb']/* 'The base fee that will be applied when acquiring certificates in this class.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ba']/* 'Base-fee Price Multiplier' */, 'details':this.props.app_state.loc['d311bb']/* 'The base fee that will be applied when acquiring certificates in this class. If set to 0, all price multipliers excluding 0 used will be valid.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -2027,9 +2065,58 @@ class EditCertificatePage extends Component {
                 <div style={{height:10}}/>
                 {this.render_multiplied_prices()}
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_base_fee_price_multiplier.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_base_fee_price_multiplier.bind(this)} theme={this.props.theme} power_limit={9}/>
+
+
 
                 {this.render_detail_item('0')}
+
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ci']/* 'Bond Enabled.' */, 'details':this.props.app_state.loc['d311cj']/* 'If set to enabled, you will be required to repay the value of the certificate upon maturity.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_bond_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_bond_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:20}}/>
+                
+                <div style={{opacity: opac}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ck']/* 'Interest Rate.' */, 'details':this.props.app_state.loc['d311cl']/* 'The interest rate that you will pay for the bond upon being purchased.' */, 'size':'l'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['d311cu']/* 'For simplicity, the timeframe used with this metric is a year.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.bond_interest_rate), 'details':this.props.app_state.loc['d311cm']/* 'Interest Rate Proportion.' */, 'size':'l'})}
+
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_bond_interest_rate.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'2.3%'}/>
+                    <div style={{height:20}}/>
+
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311cn']/* 'Coupon Payment Frequency' */, 'details':this.props.app_state.loc['d311co']/* 'The period of time between each coupon payment.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.coupon_frequency), 'details':this.props.app_state.loc['1439'] /* 'Estimated Time.' */, 'size':'l'})}
+                
+                    <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_coupon_frequency_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
+                    <div style={{height:20}}/>
+
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311cp']/* 'Maturity Date.' */, 'details':this.props.app_state.loc['d311cq']/* 'The time when the bond will mature and you will pay back its value.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':(new Date(this.state.bond_maturity*1000).toLocaleString()), 'details':this.get_time_diff(this.state.bond_maturity - (Date.now()/1000)), 'size':'l'})}
+
+                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                        <CssBaseline />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_bond_maturity_date_time_value_set(newValue)}/>
+                        </LocalizationProvider>
+                    </ThemeProvider>
+                </div>
+
+
+
+                {this.render_detail_item('0')}
+
+
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['d311bq']/* Class Details */, 'details':this.props.app_state.loc['d311br']/* You can optionally specify some details about the class. */, 'size':'l'})}
                 <div style={{height:10}}/>
@@ -2039,7 +2126,13 @@ class EditCertificatePage extends Component {
                 {this.render_preview_or_editor_option_ui2()}
                 <div style={{height:10}}/>
 
+
+
+
                 {this.render_detail_item('0')}
+
+
+
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['d311be']/* 'Create New Class.' */, 'details':this.props.app_state.loc['d311bf']/* 'Create the new class with the specified details.' */, 'size':'l'})}
                 <div style={{height:10}}/>
@@ -2049,6 +2142,30 @@ class EditCertificatePage extends Component {
                 </div>
             </div>
         )
+    }
+
+    when_new_bond_maturity_date_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        this.setState({bond_maturity: timeInSeconds})
+    }
+
+    when_coupon_frequency_set(number){
+        this.setState({coupon_frequency: number})
+    }
+
+    when_bond_interest_rate(number){
+        this.setState({bond_interest_rate: number})
+    }
+
+    when_get_new_certificate_bond_enabled_tags_object_updated(tag_obj){
+        this.setState({get_new_certificate_bond_enabled_tags_object: tag_obj})
+    }
+
+    set_maximum_end_time_button(){
+        /* now + max_time_in_seconds */
+        const t = (Date.now() / 1000) + (999_999_990 * 60)
+        this.setState({purchase_end_time: t})
     }
 
     when_posession_rights_proportion(number){
@@ -2105,6 +2222,11 @@ class EditCertificatePage extends Component {
         const class_markdown = this.state.class_markdown
         const posession_rights = this.state.posession_rights
 
+        const bond_enabled = this.get_selected_item(this.state.get_new_certificate_bond_enabled_tags_object, 'e') == this.props.app_state.loc['616']/* 'enabled' */;
+        const bond_interest_rate = this.state.bond_interest_rate;
+        const coupon_frequency = this.state.coupon_frequency;
+        const bond_maturity = this.state.bond_maturity
+
         if(class_name == ''){
             this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
         }
@@ -2117,13 +2239,24 @@ class EditCertificatePage extends Component {
         else if(purchase_start_time > purchase_end_time){
             this.props.notify(this.props.app_state.loc['d311bj']/* 'The start time cannot be after the end time' */, 6400)
         }
-        else if(base_fee_price_multiplier == 0){
-            this.props.notify(this.props.app_state.loc['d311bk']/* 'base fee multiplier cannot be 0' */, 4400)
+        // else if(base_fee_price_multiplier == 0){
+        //     this.props.notify(this.props.app_state.loc['d311bk']/* 'base fee multiplier cannot be 0' */, 4400)
+        // }
+        else if(bond_enabled == true && bond_interest_rate == 0){
+            this.props.notify(this.props.app_state.loc['d311cr']/* 'The interest rate cannot be 0.' */, 6400)
+        }
+        else if(bond_enabled == true && coupon_frequency == 0){
+            this.props.notify(this.props.app_state.loc['d311cs']/* 'The coupon frequency cannot be 0.' */, 6400)
+        }
+        else if(bond_enabled == true && bond_maturity < purchase_end_time){
+            this.props.notify(this.props.app_state.loc['d311ct']/* 'The bond maturity cannot be less than the purchase end time.' */, 8400)
         }
         else{
             const clone = structuredClone(this.state.certificate_models)
-            clone[class_name] = {
-                'id':this.state.edit_id || make_number_id(9),
+            const id = this.state.edit_id || make_number_id(9)
+            const now = Date.now()
+            clone[id] = {
+                'id':id,
                 'class_name':class_name,
                 'maximum_supply':maximum_supply,
                 'purchase_start_time':purchase_start_time,
@@ -2131,9 +2264,34 @@ class EditCertificatePage extends Component {
                 // 'split_period':split_period,
                 'base_fee_price_multiplier':base_fee_price_multiplier,
                 'class_markdown':class_markdown,
-                'posession_rights': posession_rights == 0 ? bgN(1,18) : posession_rights
+                'posession_rights': posession_rights == 0 ? bgN(1,18) : posession_rights,
+                'time':now,
+                'bond_enabled':bond_enabled,
+                'bond_interest_rate':bond_interest_rate,
+                'coupon_frequency':coupon_frequency,
+                'bond_maturity':bond_maturity
             }
-            this.setState({certificate_models: clone, class_name: '', class_markdown:'', edit_id: null})
+
+            if(this.original_certificate_model_state == null){
+                this.original_certificate_model_state = structuredClone(this.state.certificate_models)
+            }
+
+            const history_clone = structuredClone(this.state.certificate_model_history)
+            if(this.state.edit_id != null){
+                //were editing an existing model, so archive it entirely
+                const previous_model = structuredClone(this.original_certificate_model_state[id]);
+                previous_model['archived'] = true
+                history_clone[previous_model['id']+previous_model['time']] = previous_model
+            }
+
+            this.setState({
+                certificate_models: clone, 
+                class_name: '', 
+                class_markdown:'', 
+                edit_id: null, 
+                certificate_model_history: history_clone, 
+                get_new_certificate_bond_enabled_tags_object: this.get_new_certificate_bond_enabled_tags_object()
+            })
             this.props.notify(this.props.app_state.loc['d311bl']/* 'class data set.' */, 900)
         }
     }
@@ -2144,12 +2302,18 @@ class EditCertificatePage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = [].concat(Object.keys(this.state.certificate_models))
+        var items = [].concat(this.sortByAttributeDescending(Object.values(this.state.certificate_models), 'time'))
 
         if(items.length == 0){
             items = [0,3,0]
             return(
                 <div style={{}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311cd']/* 'Set Models.' */, 'details':this.props.app_state.loc['d311ce']/* 'When you create a new class with specified details, it will show here.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_active_archived_model_settings_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_active_archived_model_settings_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height:10}}/>
+
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -2166,8 +2330,14 @@ class EditCertificatePage extends Component {
         }else{
             return(
                 <div style={{}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311cd']/* 'Set Models.' */, 'details':this.props.app_state.loc['d311cf']/* 'The classes youve created and their main details.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_active_archived_model_settings_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_active_archived_model_settings_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height:10}}/>
+
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
-                        {items.reverse().map((item, index) => (
+                        {items.map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
                                     swipeLeft={{
@@ -2188,13 +2358,16 @@ class EditCertificatePage extends Component {
         
     }
 
-    render_model_item(item){
-        const data = this.state.certificate_models[item]
-        const title = item
+    when_get_new_active_archived_model_settings_tags_object_updated(tag_obj){
+        this.setState({get_new_active_archived_model_settings_tags_object: tag_obj})
+    }
+
+    render_model_item(data){
+        const title = data['class_name']
         const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']).toLocaleString()))
         const opacity = this.state.edit_id == data['id'] ? 0.5 : 1.0
         return(
-            <div style={{opacity: opacity}} onClick={() => this.edit_model_item(item)}>
+            <div style={{opacity: opacity}} onClick={() => this.edit_model_item(data)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
@@ -2202,23 +2375,55 @@ class EditCertificatePage extends Component {
 
     edit_model_item(item){
         const clone = structuredClone(this.state.certificate_models)
-        const clone2 = structuredClone(this.state.certificate_models)
         // delete clone[item]
 
-        if(this.state.edit_id == clone2['id']){
+        const selected_item = this.get_selected_item2(this.state.get_new_active_archived_model_settings_tags_object, 'e');
+
+        if(selected_item == 2){
+            return;
+        }
+
+        if(this.state.edit_id == item['id']){
             this.setState({edit_id: null, class_name: ''})
         }else{
-            this.setState({class_name: clone2['class_name'], maximum_supply: clone2['maximum_supply'], purchase_start_time: clone2['purchase_start_time'], purchase_end_time: clone2['purchase_end_time'], /* split_period: clone2['split_period'], */ base_fee_price_multiplier: clone2['base_fee_price_multiplier'], 
-            certificate_models: clone, class_markdown: clone2['class_markdown'], posession_rights: clone2['posession_rights'], edit_id: clone2['id']})
+            this.setState({
+                class_name: item['class_name'], 
+                maximum_supply: item['maximum_supply'], 
+                purchase_start_time: item['purchase_start_time'], 
+                purchase_end_time: item['purchase_end_time'], 
+                /* split_period: clone2['split_period'], */ 
+                base_fee_price_multiplier: item['base_fee_price_multiplier'], 
+                // certificate_models: clone, 
+                class_markdown: item['class_markdown'], 
+                posession_rights: item['posession_rights'], 
+                edit_id: item['id'],
+                get_new_certificate_bond_enabled_tags_object: this.get_new_certificate_bond_enabled_tags_object(item['bond_enabled']),
+                bond_interest_rate: item['bond_interest_rate'],
+                coupon_frequency: item['coupon_frequency'],
+                bond_maturity: item['bond_maturity']
+            })
 
             this.props.notify(this.props.app_state.loc['d311bn']/* 'editing selected class.' */, 1900)
         }
     }
 
     when_model_clicked(item){
-        const clone = structuredClone(this.state.certificate_models)
-        delete clone[item]
-        this.setState({certificate_models: clone})
+        const selected_item = this.get_selected_item2(this.state.get_new_active_archived_model_settings_tags_object, 'e');
+
+        if(selected_item == 2/* archived */){
+            const clone = structuredClone(this.state.certificate_model_history)
+            delete clone[item['id']+item['time']]
+            this.setState({certificate_model_history: clone})
+        }else{
+            const clone = structuredClone(this.state.certificate_models)
+            delete clone[item['id']]
+
+            const history_clone = structuredClone(this.state.certificate_model_history)
+            const previous_model = structuredClone(item);
+            previous_model['archived'] = true
+            history_clone[previous_model['id']+previous_model['time']] = previous_model
+            this.setState({certificate_models: clone, certificate_model_history: history_clone})
+        }
     }
 
     render_preview_or_editor_option_ui2(){
@@ -2569,6 +2774,9 @@ class EditCertificatePage extends Component {
 
 
 
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
 
     truncate(source, size) {
         return source.length > size ? source.slice(0, size - 1) + "…" : source;

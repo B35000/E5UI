@@ -14316,8 +14316,8 @@ return data['data']
     render_certificate_class_details_data(){
         const item = this.state.data['item']
         const object = this.state.data['object']
-        const data = object['ipfs'].certificate_models[item]
-        const name = item
+        const data = item
+        const name = data['class_name']
         const maximum_supply = data['maximum_supply']
         const purchase_start_time = data['purchase_start_time']
         const purchase_end_time = data['purchase_end_time']
@@ -14327,8 +14327,12 @@ return data['data']
         const e5 = object['e5']
         // const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
         const now = Date.now() / 1000
-
         const class_mint_count = this.get_class_mint_count(object, this.construct_depth_item(data))
+        const bond_enabled = data['bond_enabled']
+        const bond_interest_rate = data['bond_interest_rate']
+        const coupon_frequency = data['coupon_frequency']
+        const bond_maturity = data['bond_maturity']
+
         return(
             <div>
                 {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
@@ -14349,9 +14353,21 @@ return data['data']
                 {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb']'Every $'.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']'Split Period', 'size':'l'})}
                 <div style={{height: 10}}/> */}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
                 {this.render_multiplied_prices(price_data, base_fee_price_multiplier, e5)}
+
+
+                {bond_enabled == true && (
+                    <div>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.format_proportion(bond_interest_rate), 'details':this.props.app_state.loc['3055py']/* 'Bond Interest Rate Set.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        {this.render_detail_item('3', {'title':this.get_time_diff(coupon_frequency), 'details':this.props.app_state.loc['3055pz'] /* 'Coupon Payment Frequency' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        {this.render_detail_item('3', {'title':(new Date(bond_maturity*1000).toLocaleString()), 'details':this.props.app_state.loc['3055qa'] /* 'Bond Maturity Date.' */, 'size':'l'})}
+                    </div>
+                )}
 
                 {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && class_mint_count < maximum_supply && (
                     <div>
@@ -14370,7 +14386,7 @@ return data['data']
     render_certificate_class_details_data2(){
         const item = this.state.data['item']
         const object = this.state.data['object']
-        const data = object['ipfs'].certificate_models[item]
+        const data = item
         const class_markdown = data['class_markdown']
 
         if(class_markdown == ''){
@@ -14390,13 +14406,24 @@ return data['data']
     }
 
     render_multiplied_prices(price_data, base_fee_price_multiplier, e5){
+        if(base_fee_price_multiplier == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pw']/* 'Variable Price Set.' */, 'details':this.props.app_state.loc['3055px']/* 'You are free to acquire this certificate with whichever price you wish.' */, 'size':'l'})}
+                </div>
+            )
+        }
         return(
-            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                {price_data.map((item, index) => (
-                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
-                    </div>
-                ))}
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_data.map((item, index) => (
+                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                        </div>
+                    ))}
+                </div>
             </div>
         )
     }
@@ -14553,7 +14580,7 @@ return data['data']
         const ipfs = item['ipfs']
         const event = item['event']
         const time = item['time']
-        const data = this.get_model_config(depth_data, object)
+        const data = this.get_model_config(depth_data, object, time)
 
         const name = data['class_name']
         const maximum_supply = data['maximum_supply']
@@ -14573,8 +14600,15 @@ return data['data']
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                 <div style={{height: 10}}/>
+
+                {data['archived'] == true && (
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pu']/* 'Class Archived' */, 'details':this.props.app_state.loc['3055pv']/* 'The moderators of the certificate archived this class, and is no longer valid or for use.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
                 
-                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && (
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && data['archived'] != true && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pj']/* ⇄ Transfer Ownership' */, 'details':this.props.app_state.loc['3055pk']/* 'Transfer Ownership of your certificate to another account.' */, 'size':'l'})}
@@ -14584,7 +14618,7 @@ return data['data']
                         </div>
                     </div>
                 )}
-                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && fractionalizable == true && (
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && fractionalizable == true && data['archived'] != true &&(
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pm']/* ❖ Fractionalize Certificate' */, 'details':this.props.app_state.loc['3055pn']/* 'Fragment your certificate into shares that you can redistribute to other accounts.' */, 'size':'l'})}
@@ -14612,15 +14646,49 @@ return data['data']
         )
     }
 
-    get_model_config(depth_data, object){
+    get_model_config(depth_data, object, time){
         const certificate_models = object['ipfs'].certificate_models
-        var valid_model = ''
+        var valid_models = []
         Object.keys(certificate_models).forEach(model => {
-          if(certificate_models[model]['id'] == depth_data['class']){
-            valid_model = model
+          if(
+            certificate_models[model]['id'] == depth_data['class'] && 
+            (certificate_models[model]['base_fee_price_multiplier'] == depth_data['price'] || certificate_models[model]['base_fee_price_multiplier'] == 0) &&
+            parseInt(depth_data['start_time']) == Math.floor(parseInt(certificate_models[model]['purchase_start_time']) / 60) &&
+            parseInt(depth_data['end_time']) == Math.floor(parseInt(certificate_models[model]['purchase_end_time']) / 60)
+        ){
+            valid_models.push(certificate_models[model])
           }
         });
-        return certificate_models[valid_model]
+
+        valid_models = valid_models.concat(this.get_model_config_from_archives(depth_data, object))
+        return this.filter_valid_models_by_acquired_time(valid_models, time)
+    }
+
+    get_model_config_from_archives(depth_data, object){
+        const certificate_model_history = object['ipfs'].certificate_model_history
+        if(certificate_model_history == null) return []
+        const valid_models = []
+        Object.values(certificate_model_history).forEach(model_config => {
+            if(
+                (model_config['base_fee_price_multiplier'] == depth_data['price'] || model_config['base_fee_price_multiplier'] == 0) && 
+                model_config['maximum_supply'] == depth_data['supply'] &&
+                parseInt(depth_data['start_time']) == Math.floor(parseInt(model_config['purchase_start_time']) / 60) &&
+                parseInt(depth_data['end_time']) == Math.floor(parseInt(model_config['purchase_end_time']) / 60)
+            ){
+                valid_models.push(certificate_model_history[model_config]);
+            }
+        });
+        return valid_models
+    }
+
+    filter_valid_models_by_acquired_time(valid_models, time){
+        if(valid_models.length == 1) return valid_models[0]
+        const sorted_models = this.sortByAttributeDescending(valid_models, 'time');
+        const filtered_models = sorted_models.filter((model) => {
+        return (model['time']/1000 < time)
+        })
+        if(filtered_models.length == 0) return null
+        return filtered_models[0]
     }
 
     render_item_data(items){

@@ -642,6 +642,8 @@ import MintCertificatePage from './pages/token_action_pages/mint_certificate_pag
 import TransferCertificatePage from './pages/token_action_pages/transfer_certificate_page';
 import FractionalizeCertificatePage from './pages/token_action_pages/fractionalize_certificate_page'
 import TransferStakePage from './pages/token_action_pages/transfer_stake_page';
+import CouponPaymentPage from './pages/token_action_pages/coupon_payment_page';
+import StagedCouponPage from './pages/token_action_pages/view_staged_coupon_page'
 
 import VoteProposalPage from './pages/proposal_action_pages/vote_proposal_page';
 import SubmitProposalPage from './pages/proposal_action_pages/submit_proposal_page';
@@ -1273,13 +1275,13 @@ class App extends Component {
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false,
+    fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* 'sluggish' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: this.getLocale()['1428']/* 'enabled' */, homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e', locked_wallet:'e', preserve_state: this.getLocale()['1593mk']/* 'only-necessary' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* 'sluggish' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e'/* this.getLocale()['1428'] *//* 'enabled' */, homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e', locked_wallet:'e', preserve_state: this.getLocale()['1593mk']/* 'only-necessary' */,
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -1384,7 +1386,7 @@ class App extends Component {
 
     focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{},
 
-    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}
+    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{},
   };
 
   get_app_version(){
@@ -3698,6 +3700,8 @@ class App extends Component {
     this.edit_certificate_page = React.createRef();
     this.fractionalize_certificate_page = React.createRef();
     this.add_stake_page = React.createRef();
+    this.coupon_payment_page = React.createRef();
+    this.staged_coupon_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -4897,7 +4901,7 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
       })
 
       return cached_state_obj
@@ -6746,6 +6750,8 @@ class App extends Component {
           {this.render_fractionalize_certificate_bottomsheet()}
           {this.render_transfer_stake_bottomsheet()}
           {this.render_add_stake_bottomsheet()}
+          {this.render_coupon_payment_bottomsheet()}
+          {this.render_staged_coupon_bottomsheet()}
 
 
           {this.render_set_map_location_bottomsheet()}
@@ -6883,6 +6889,8 @@ class App extends Component {
           get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)} open_send_purchase_request_ui={this.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.get_storefront_bag_payment_update_messages.bind(this)}
 
           reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.reload_all_messages.bind(this)} reload_all_my_direct_messages={this.reload_all_my_direct_messages.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} show_add_stake_bottomsheet={this.show_add_stake_bottomsheet.bind(this)}
+
+          show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -15984,6 +15992,24 @@ class App extends Component {
       setTimeout(function() {
         if(me.add_stake_page.current){
           me.add_stake_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
+    else if(tx.type == this.getLocale()['3104']/* 'stage-coupon-payments' */){
+      this.open_coupon_payment_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.coupon_payment_page.current){
+          me.coupon_payment_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
+    else if(tx.type == this.getLocale()['3105']/* 'coupon-payments' */){
+      this.open_staged_coupon_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.staged_coupon_page.current){
+          me.staged_coupon_page.current?.setState(tx)
         }
       }, (1 * 1100));
     }
@@ -26351,6 +26377,168 @@ class App extends Component {
 
 
 
+  render_coupon_payment_bottomsheet(){
+    if(this.state.coupon_payment_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <CouponPaymentPage ref={this.coupon_payment_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_coupon_payment_to_stack={this.add_coupon_payment_to_stack.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
+      />,
+      this.state.coupon_payment_bottomsheet,
+      this.open_coupon_payment_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_coupon_payment_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_coupon_payment_bottomsheet')
+    if(this.state.coupon_payment_bottomsheet == true){
+      //closing
+      this.coupon_payment_bottomsheet = this.coupon_payment_page.current?.state;
+
+      this.setState({coupon_payment_bottomsheet: !this.state.coupon_payment_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({coupon_payment_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({coupon_payment_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({coupon_payment_bottomsheet: !me.state.coupon_payment_bottomsheet});
+
+          if(me.coupon_payment_bottomsheet != null){
+            me.coupon_payment_page.current?.setState(me.coupon_payment_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_coupon_payment_bottomsheet(object){
+    this.open_coupon_payment_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.coupon_payment_page.current != null){
+        me.coupon_payment_page.current.set_certificate(object)
+      }
+    }, (1 * 1100));
+  }
+
+  add_coupon_payment_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+  render_staged_coupon_bottomsheet(){
+    if(this.state.staged_coupon_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <StagedCouponPage ref={this.staged_coupon_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_staged_coupon_to_stack={this.add_staged_coupon_to_stack.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
+      />,
+      this.state.staged_coupon_bottomsheet,
+      this.open_staged_coupon_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_staged_coupon_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_staged_coupon_bottomsheet')
+    if(this.state.staged_coupon_bottomsheet == true){
+      //closing
+      this.staged_coupon_bottomsheet = this.staged_coupon_page.current?.state;
+
+      this.setState({staged_coupon_bottomsheet: !this.state.staged_coupon_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({staged_coupon_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({staged_coupon_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({staged_coupon_bottomsheet: !me.state.staged_coupon_bottomsheet});
+
+          if(me.staged_coupon_bottomsheet != null){
+            me.staged_coupon_page.current?.setState(me.staged_coupon_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_staged_coupon_bottomsheet(object, item){
+    this.open_staged_coupon_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.staged_coupon_page.current != null){
+        me.staged_coupon_page.current.set_certificate(item, object)
+      }
+    }, (1 * 1100));
+  }
+
+  add_staged_coupon_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -36039,10 +36227,14 @@ class App extends Component {
       console.log('load_extra', 'all_depth_mint_events', all_depth_mint_events)
       const depths_used = []
       const all_depths_used = []
+      const depth_use_times = []
       all_depth_mint_events.forEach(event => {
-        if(!depths_used.includes(event.returnValues.p6/* depth */)){
-          all_depths_used.push(event.returnValues.p6/* depth */);
-          if(event.returnValues.p2 == account) depths_used.push(event.returnValues.p6/* depth */);
+        const depth = event.returnValues.p6/* depth */;
+        const time = event.returnValues.p4/* timestamp */;
+        if(!depths_used.includes(depth)){
+          all_depths_used.push(depth);
+          depth_use_times.push(time);
+          if(event.returnValues.p2 == account) depths_used.push(depth);
         }
       });
       
@@ -36053,8 +36245,12 @@ class App extends Component {
       this.setState({created_certificates: created_certificates_clone})
 
       
-      if(depths_used.length > 0) await this.load_my_non_fungible_token_data(object, depths_used, account)
-    }else{
+      if(depths_used.length > 0){
+        await this.load_my_non_fungible_token_data(object, depths_used, account, depth_use_times)
+      } 
+      if(account == object['author']) await this.fetch_certificate_state_balances(object);
+
+      }else{
       var created_tokens_clone = structuredClone(this.state.created_tokens)
       const index = created_tokens_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
       created_tokens_clone[e5][index] = object
@@ -36152,7 +36348,7 @@ class App extends Component {
     this.setState({my_token_event_notifications: my_token_event_notifications_clone});
   }
 
-  async load_my_non_fungible_token_data(object, depths_used, account){
+  async load_my_non_fungible_token_data(object, depths_used, account, depth_use_times){
     const e5 = object['e5']
     const id = object['id']
     const e5_id = object['e5_id']
@@ -36173,20 +36369,38 @@ class App extends Component {
     if(depths_used.length > 0){
       for(var i=0; i<depths_used.length; depths_used++){
         const depth = depths_used[i]
+        const time = depth_use_times[i]
         const depth_data = this.deconstruct_depth_data(depth)
         console.log('load_my_non_fungible_token_data', 'depth_data', depth_data)
         const certificate_models = object['ipfs'].certificate_models
-        var valid_model = ''
+        var valid_models = []
         Object.keys(certificate_models).forEach(model => {
-          if(certificate_models[model]['id'] == depth_data['class']){
-            valid_model = model
+          if(
+            certificate_models[model]['id'] == depth_data['class'] && 
+            (certificate_models[model]['base_fee_price_multiplier'] == depth_data['price'] || certificate_models[model]['base_fee_price_multiplier'] == 0) &&
+            parseInt(depth_data['start_time']) == Math.floor(parseInt(certificate_models[model]['purchase_start_time']) / 60) &&
+            parseInt(depth_data['end_time']) == Math.floor(parseInt(certificate_models[model]['purchase_end_time']) / 60)
+          ){
+            valid_models.push(certificate_models[model])
           }
         });
-        console.log('load_my_non_fungible_token_data', 'valid_model', valid_model)
-        if(valid_model != ''){
-          const model_config = certificate_models[valid_model]
+        const certificate_model_history = object['ipfs'].certificate_model_history
+        Object.keys(certificate_model_history).forEach(model => {
           if(
-            model_config['base_fee_price_multiplier'] == depth_data['price'] && 
+            certificate_model_history[model]['id'] == depth_data['class'] && 
+            (certificate_model_history[model]['base_fee_price_multiplier'] == depth_data['price'] || certificate_model_history[model]['base_fee_price_multiplier']) &&
+            parseInt(depth_data['start_time']) == Math.floor(parseInt(certificate_model_history[model]['purchase_start_time']) / 60) &&
+            parseInt(depth_data['end_time']) == Math.floor(parseInt(certificate_model_history[model]['purchase_end_time']) / 60)
+          ){
+            valid_models.push(certificate_model_history[model])
+          }
+        });
+        const valid_model = this.filter_valid_models_by_acquired_time(valid_models, time)
+        console.log('load_my_non_fungible_token_data', 'valid_model', valid_model)
+        if(valid_model != null){
+          const model_config = valid_model
+          if(
+            (model_config['base_fee_price_multiplier'] == depth_data['price'] || model_config['base_fee_price_multiplier'] == 0) && 
             model_config['maximum_supply'] == depth_data['supply'] &&
             parseInt(depth_data['start_time']) == Math.floor(parseInt(model_config['purchase_start_time']) / 60) &&
             parseInt(depth_data['end_time']) == Math.floor(parseInt(model_config['purchase_end_time']) / 60)
@@ -36290,6 +36504,175 @@ class App extends Component {
     const value = (bigInt(arg).divide(bgN(1, power))).toString().toLocaleString('fullwide', {useGrouping:false})
     const remainder = (bigInt(arg).mod(bgN(1, power))).toString().toLocaleString('fullwide', {useGrouping:false})
     return { value, remainder }
+  }
+
+  filter_valid_models_by_acquired_time(valid_models, time){
+    if(valid_models.length == 1) return valid_models[0]
+    const sorted_models = this.sortByAttributeDescending(valid_models, 'time');
+    const filtered_models = sorted_models.filter((model) => {
+      return (model['time']/1000 < time)
+    })
+    if(filtered_models.length == 0) return null
+    return filtered_models[0]
+  }
+
+  async fetch_certificate_state_balances(object){
+    const e5 = object['e5']
+    const id = object['id']
+    const e5_id = object['e5_id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    var account = this.state.user_account_id[e5]
+    var contract_addresses = this.state.addresses[e5]
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = contract_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const event_params = [
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */: id}],
+      [web3, H52contractInstance, 'e2', e5, {p1/* exchange */: id}]
+    ]
+    const { all_events } = await this.load_multiple_events_from_nitro(event_params)
+
+    console.log('fetch_certificate_state_balances', 'all_events', all_events)
+
+    const registered_accounts = []
+    const account_depth_mapping = []
+    const depth_time_mapping = {}
+    all_events[0/* e1 Transfer */].forEach(event_item => {
+      const recipient = event_item.returnValues.p3/* receiver */
+      const depth = event_item.returnValues.p7/* depth */
+      if(bigInt(depth).greater(0)){
+        registered_accounts.push(recipient)
+        account_depth_mapping.push(depth)
+      }
+    });
+    all_events[1/* e2 UpdatedBalance */].forEach(event_item => {
+      const recipient = event_item.returnValues.p2/* receiver */
+      const depth = event_item.returnValues.p6/* depth */
+      registered_accounts.push(recipient)
+      account_depth_mapping.push(depth)
+      depth_time_mapping[depth] = event_item.returnValues.p4/* timestamp */
+    });
+
+    const account_type_data = await E52contractInstance.methods.f134(registered_accounts).call((error, result) => {});
+
+    console.log('fetch_certificate_state_balances', 'registered_accounts, account_type_data',registered_accounts, account_type_data)
+
+    const exchanges = []
+    const non_exchanges_accounts = []
+    const non_exchange_depths = []
+    const non_exchange_exchange_targets = []
+    registered_accounts.forEach((account_id, index) => {
+      if(account_type_data[index] == 31/* 31(token_exchange) */){
+        exchanges.push(account_id)
+      }else{
+        non_exchanges_accounts.push(account_id)
+        non_exchange_depths.push(account_depth_mapping[index])
+        non_exchange_exchange_targets.push(id)
+      }
+    });
+
+
+    const event_params2 = [
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */: this.process_array_for_indexer_query(exchanges)}],
+      [web3, H52contractInstance, 'e2', e5, {p1/* exchange */: this.process_array_for_indexer_query(exchanges)}]
+    ]
+    const all_events_object = exchanges.length > 0 ? await this.load_multiple_events_from_nitro(event_params2) : { all_events: [[], []] }
+    const all_events2 = all_events_object.all_events
+    const registered_accounts2 = {}
+    const query_depths = []
+    all_events2[0/* e1 Transfer */].forEach(event_item => {
+      const recipient = event_item.returnValues.p3/* receiver */
+      const depth = event_item.returnValues.p7/* depth */
+      const exchange = event_item.returnValues.p1/* exchange */
+      if(registered_accounts2[exchange] == null){
+        registered_accounts2[exchange] = []
+      }
+      if(!registered_accounts2[exchange].includes(recipient)){
+        registered_accounts2[exchange].push(recipient)
+        query_depths.push(0)
+      }
+    });
+    all_events2[1/* e2 UpdatedBalance */].forEach(event_item => {
+      const recipient = event_item.returnValues.p2/* receiver */
+      const depth = event_item.returnValues.p6/* depth */
+      const exchange = event_item.returnValues.p1/* exchange */
+      if(registered_accounts2[exchange] == null){
+        registered_accounts2[exchange] = []
+      }
+      if(!registered_accounts2[exchange].includes(recipient)){
+        registered_accounts2[exchange].push(recipient)
+        query_depths.push(0)
+      }
+    });
+
+
+    console.log('fetch_certificate_state_balances', 'registered_accounts2, query_depths', registered_accounts2, query_depths)
+
+
+    const query_exchanges = Object.keys(registered_accounts2)
+    const query_accounts_2d = Object.values(registered_accounts2)
+    const balance_data = query_exchanges.length > 0 ? await this.get_balance_in_exchange_for_multiple_accounts(query_exchanges, query_accounts_2d, e5, contract_addresses, query_depths, 0) : [];
+
+    console.log('fetch_certificate_state_balances', 'non_exchange_exchange_targets, non_exchanges_accounts, non_exchange_depths', non_exchange_exchange_targets, non_exchanges_accounts, non_exchange_depths)
+
+    const certificate_balances = await H52contractInstance.methods.f140(non_exchange_exchange_targets, non_exchanges_accounts, non_exchange_depths, 1).call((error, result) => {});
+
+
+    console.log('fetch_certificate_state_balances', 'certificate_balances', certificate_balances)
+    console.log('fetch_certificate_state_balances')
+    const return_data = {}
+    certificate_balances.forEach((balance, index) => {
+      const depth = non_exchange_depths[index]
+      const account = non_exchanges_accounts[index]
+      if(balance == 1){
+        const balances = {}
+        balances[account] = bgN(1, 18)
+        const depth_data = this.deconstruct_depth_data(depth)
+        return_data[depth] = {
+          'depth':depth,
+          'depth_data':depth_data,
+          'general_holder':account,
+          'balances':balances,
+          'mint_timestamp': depth_time_mapping[depth],
+        }
+      }
+    });
+
+    
+
+    balance_data.forEach((balance_array, index) => {
+      const exchange = query_exchanges[index]
+      const exchange_pos = registered_accounts.indexOf(exchange)
+      const exchange_depth = account_depth_mapping[exchange_pos]
+      const balances = {}
+      const query_accounts = query_accounts_2d[index]
+      balance_array.forEach((balance_item, balance_index) => {
+        const query_account = query_accounts[balance_index];
+        if(balance_item > 0){
+          balances[query_account] = balance_item.toString().toLocaleString('fullwide', {useGrouping:false})
+        }
+      });
+      const depth_data = this.deconstruct_depth_data(exchange_depth)
+      return_data[exchange_depth] = {
+        'depth':exchange_depth,
+        'depth_data':depth_data,
+        'general_holder':exchange,
+        'balances':balances,
+        'mint_timestamp': depth_time_mapping[exchange_depth],
+      }
+    });
+
+    console.log('fetch_certificate_state_balances', 'return_data', return_data)
+
+    const clone = structuredClone(this.state.non_fungible_token_balance_distribution)
+    clone[e5_id] = return_data
+    this.setState({non_fungible_token_balance_distribution: clone})
   }
 
 
@@ -50239,6 +50622,53 @@ class App extends Component {
     });
 
     return { obj, all_transfers_present }
+  }
+
+  get_certificate_bond_coupon_stagings = async (object) => {
+    const author = object['author']
+    const e5_id = object['e5_id']
+    const e5 = object['e5']
+    const id = object['id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const created_results_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 34, p2/* sender_acc_id */:author, p3/* context */:id})).reverse()
+
+    var loaded_target = 0
+    if(this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_results_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = created_results_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
+    }
+
+    const result_objects = []
+    var is_first_time = this.state.coupon_payout_stagings[e5_id] == null ? true : false
+    for(var i=0; i<created_results_data.length; i++){
+      const event = created_results_data[i]
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      const obj = {'ipfs':ipfs, 'event':event, 'time':parseInt(event.returnValues.p6/* timestamp */)}
+      result_objects.push(obj)
+
+      if(is_first_time == true){
+        const coupon_payout_stagings_clone = structuredClone(this.state.coupon_payout_stagings)
+        coupon_payout_stagings_clone[e5_id] = result_objects
+        this.setState({coupon_payout_stagings: coupon_payout_stagings_clone})
+      }
+
+      if(i == loaded_target && i+1 >= created_results_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_results_data.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
+      }
+    }
+
+    const coupon_payout_stagings_clone = structuredClone(this.state.coupon_payout_stagings)
+    coupon_payout_stagings_clone[e5_id] = result_objects
+    this.setState({coupon_payout_stagings: coupon_payout_stagings_clone})
+
+    this.get_current_channel_creator_payout_info_if_possible(object)
   }
 
 

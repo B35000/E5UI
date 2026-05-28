@@ -7719,12 +7719,23 @@ return data['data']
             // includes_subtitle_text = false;
         }
 
+        var price_message = this.get_object_views_text(item['e5_id'])
+        var selected_option_name = this.get_selected_item(this.props.wallet_page_tags_object, this.props.wallet_page_tags_object['i'].active)
+        if(selected_option_name == this.props.app_state.loc['1264bf']/* 'E-Tokens 📈' */){
+            var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, object_array[0][3])
+            if(price_message == null){
+                price_message = ''+this.format_price(this.calculate_price_from_sell_action(buy_amounts[0], price)) + ' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[buy_tokens[0]]
+            }else{
+                price_message = ''+this.format_price(this.calculate_price_from_sell_action(buy_amounts[0], price)) + ' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[buy_tokens[0]] + ' • ' + price_message
+            }
+        }
+
         return{
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
-            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':'', 'footer':this.get_object_views_text(item['e5_id']), 'image_width':'auto'},
+            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'subdetails':'', 'footer':price_message, 'image_width':'auto'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
-            'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'image_width':'auto', 'subdetails':'', 'footer':this.get_object_views_text(item['e5_id'])}
+            'min':{'details':symbol, 'title':name, 'size':'l','image':image, 'border_radius':'15%', 'includes_subtitle_text':includes_subtitle_text, 'subtitle':'', 'image_width':'auto', 'subdetails':'', 'footer':price_message}
         }
     }
 

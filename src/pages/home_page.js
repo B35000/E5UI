@@ -6089,6 +6089,8 @@ class home_page extends Component {
         // this.props.get_exchange_event_data(id, e5)
         // this.props.get_moderator_event_data(id, e5)
         await this.props.fetch_uploaded_files_for_object(object)
+        await this.props.get_certificate_bond_coupon_stagings(object)
+        await this.props.load_exchanges_royalty_payout_event_data(object['id'], object['e5'])
         this.props.emit_view_object_event(id+e5)
         this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -6299,7 +6301,7 @@ class home_page extends Component {
 
                 open_view_storefront_request_ui={this.props.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.props.get_storefront_bag_payment_update_messages.bind(this)} get_bag_sender_transfers_events={this.props.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.props.reload_all_messages.bind(this)} when_selected_e5_changed={this.props.when_selected_e5_changed.bind(this)}
 
-                show_add_stake_bottomsheet={this.props.show_add_stake_bottomsheet.bind(this)}
+                show_add_stake_bottomsheet={this.props.show_add_stake_bottomsheet.bind(this)} show_coupon_payment_bottomsheet={this.props.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.props.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.props.show_staged_coupon_bottomsheet.bind(this)}
                 />
             </div>
         )

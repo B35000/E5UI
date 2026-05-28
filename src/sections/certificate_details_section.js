@@ -77,6 +77,8 @@ class CertificateDetailsSection extends Component {
             if(object == null) return;
             this.props.get_exchange_event_data(object['id'], object['e5'])
             this.props.get_moderator_event_data(object['id'], object['e5'])
+            this.props.load_exchanges_royalty_payout_event_data(object['id'], object['e5'])
+            this.props.get_certificate_bond_coupon_stagings(object)
         }
     }
 
@@ -86,7 +88,7 @@ class CertificateDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['3098t']/* 'classes ✧' */, 'e.'+this.props.app_state.loc['3098w']/* 'acquired' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['3098t']/* 'classes ✧' */, 'e.'+this.props.app_state.loc['3098w']/* 'acquired' */, this.props.app_state.loc['3098bk']/* 'coupon-stagings 📣' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
           ],
         }
 
@@ -265,6 +267,13 @@ class CertificateDetailsSection extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['3098bk']/* 'coupon-stagings 📣' */){
+            return(
+                <div key={selected_item}>
+                    {this.render_coupon_payment_staging_information(object)}
+                </div>
+            )
+        }
         
     }
 
@@ -355,6 +364,8 @@ class CertificateDetailsSection extends Component {
                     {this.render_exchange_transfer_button(object)}
 
                     {this.render_moderator_button(object)}
+
+                    {this.render_coupon_payment_button(object)}
 
                     {this.render_pin_post_button(object)}
 
@@ -1074,6 +1085,122 @@ class CertificateDetailsSection extends Component {
         }
     }
 
+    render_coupon_payment_button(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        const coupon_data = this.props.app_state.non_fungible_token_balance_distribution[object['e5_id']]
+        if(object['author'] == my_account && coupon_data != null){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3098bi']/*💰 Issue Coupon Payments' */, 'details':this.props.app_state.loc['3098bj']/* 'Stage coupon payments to certificate holders who acquired them as bonds.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.props.show_coupon_payment_bottomsheet(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+    render_coupon_payment_staging_information(object){
+        var he = this.props.height - 45
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange '  */+ object['id'], 'details': this.props.app_state.loc['3098bl']/* 'Certificate Coupon Payment Stagings.' */, 'size': 'l' })}
+                    </div>
+                    
+                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_coupon_staging_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_coupon_staging_item_logs(object){
+        var middle = this.props.height - 120;
+        var unfiltered_items = [].concat(this.sortByAttributeDescending(this.get_coupon_payout_logs(object), 'time'))
+        var items = unfiltered_items.filter(function (log) {
+            return ((log['ipfs']['payout_start_timestamp'] * 1000) <= Date.now())
+        })
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{  }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index}>
+                                    {this.render_coupon_staging_event_item(item, object)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_coupon_payout_logs(object) {
+        if (this.props.app_state.coupon_payout_stagings[object['e5_id']] == null) {
+            return []
+        }
+        return this.props.app_state.coupon_payout_stagings[object['e5_id']]
+    }
+
+    render_coupon_staging_event_item(item, object){
+        var title = item['ipfs']['payout_title']
+        var date_time = (this.props.app_state.loc['2447f']/* Scheduled for:  */+(new Date(item['ipfs']['payout_start_timestamp']*1000).toLocaleString()))
+        if(Date.now()/1000 < item['ipfs']['payout_schedule_timestamp']){
+            return(
+                <div>
+                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div onClick={() => this.view_coupon_staging(item, object)}>
+                {this.render_detail_item('3', {'size':'l', 'details':date_time, 'title':title})}
+            </div>
+        )
+    }
+
+    view_coupon_staging(item, object){
+        this.props.show_staged_coupon_bottomsheet(object, item['ipfs'])
+    }
 
 
 
@@ -1120,12 +1247,12 @@ class CertificateDetailsSection extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        const unfiltered_items = [].concat(Object.keys(object['ipfs'].certificate_models))
+        const unfiltered_items = [].concat(this.sortByAttributeDescending(Object.values(object['ipfs'].certificate_models), 'time'))
         const items = unfiltered_items.filter((item) => {
             return (
                 this.state.typed_search_id.trim() == '' || 
                 (item.toLowerCase().startsWith(this.state.typed_search_id.trim().toLowerCase())) ||
-                (object['ipfs'].certificate_models[item]['class_markdown'].toLowerCase().includes(this.state.typed_search_id.trim().toLowerCase()))
+                (object['ipfs'].certificate_models[item['id']]['class_markdown'].toLowerCase().includes(this.state.typed_search_id.trim().toLowerCase()))
             )
         })
 
@@ -1144,14 +1271,13 @@ class CertificateDetailsSection extends Component {
         )
     }
 
-    render_certificate_class_item(item, object){
-        const data = object['ipfs'].certificate_models[item]
-        const title = item
+    render_certificate_class_item(data, object){
+        const title = data['class_name']
         const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']*1000).toLocaleString()))
         const class_mint_count = this.get_class_mint_count(object, this.construct_depth_item(data))
         const footer_text = class_mint_count == 0 ? null : this.props.app_state.loc['3098bg']/* '$ Certificates Minted.' */.replace('$', number_with_commas(class_mint_count))
         return(
-            <div onClick={() => this.view_class_details(item, object)}>
+            <div onClick={() => this.view_class_details(data, object)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'footer':footer_text})}
             </div>
         )
@@ -1293,7 +1419,7 @@ class CertificateDetailsSection extends Component {
         const items = unfiltered_items.filter((item) => {
             const t = this.state.typed_search_acquired_tokens.trim().toLowerCase()
             const depth_data = item['depth_data']
-            const model_config = this.get_model_config(depth_data, object)
+            const model_config = this.get_model_config(depth_data, object, item['time'])
             const class_name = model_config['class_name']
             const ipfs = item['ipfs']
             const markdown = ipfs['markdown']
@@ -1340,28 +1466,64 @@ class CertificateDetailsSection extends Component {
         const ipfs = item['ipfs']
         const event = item['event']
         const time = item['time']
-        const model_config = this.get_model_config(depth_data, object)
+        const model_config = this.get_model_config(depth_data, object, time)
+        // console.log('render_acquired_class_item', 'model_config', model_config)
         const class_name = model_config['class_name']
         const maximum_supply = model_config['maximum_supply']
         const identifier_text = this.props.app_state.loc['3098be']/* '$ out of &' */.replace('$', depth_data['identifier']).replace('&', maximum_supply)
         const title = identifier_text + ' • '+ class_name
         const details = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+        const op = model_config['archived'] == true ? 0.6 : 1.0
         return(
-            <div onClick={() => this.view_acquired_class_item_details(item, object)}>
+            <div style={{opacity: op}} onClick={() => this.view_acquired_class_item_details(item, object)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
     }
 
-    get_model_config(depth_data, object){
+    get_model_config(depth_data, object, time){
         const certificate_models = object['ipfs'].certificate_models
-        var valid_model = ''
+        var valid_models = []
         Object.keys(certificate_models).forEach(model => {
-          if(certificate_models[model]['id'] == depth_data['class']){
-            valid_model = model
+          if(
+            certificate_models[model]['id'] == depth_data['class'] && 
+            (certificate_models[model]['base_fee_price_multiplier'] == depth_data['price'] || certificate_models[model]['base_fee_price_multiplier'] == 0) &&
+            parseInt(depth_data['start_time']) == Math.floor(parseInt(certificate_models[model]['purchase_start_time']) / 60) &&
+            parseInt(depth_data['end_time']) == Math.floor(parseInt(certificate_models[model]['purchase_end_time']) / 60)
+        ){
+            valid_models.push(certificate_models[model])
           }
         });
-        return certificate_models[valid_model]
+
+        const my_valid_models = valid_models.concat(this.get_model_config_from_archives(depth_data, object))
+        return this.filter_valid_models_by_acquired_time(my_valid_models, time)
+    }
+
+    get_model_config_from_archives(depth_data, object){
+        const certificate_model_history = object['ipfs'].certificate_model_history
+        if(certificate_model_history == null) return []
+        const valid_models = []
+        Object.values(certificate_model_history).forEach(model_config => {
+            if(
+                (model_config['base_fee_price_multiplier'] == depth_data['price'] || model_config['base_fee_price_multiplier'] == 0) && 
+                model_config['maximum_supply'] == depth_data['supply'] &&
+                parseInt(depth_data['start_time']) == Math.floor(parseInt(model_config['purchase_start_time']) / 60) &&
+                parseInt(depth_data['end_time']) == Math.floor(parseInt(model_config['purchase_end_time']) / 60)
+            ){
+                valid_models.push(certificate_model_history[model_config]);
+            }
+        });
+        return valid_models
+    }
+
+    filter_valid_models_by_acquired_time(valid_models, time){
+        if(valid_models.length == 1) return valid_models[0]
+        const sorted_models = this.sortByAttributeDescending(valid_models, 'time');
+        const filtered_models = sorted_models.filter((model) => {
+            return (model['time']/1000 < time)
+        })
+        if(filtered_models.length == 0) return null
+        return filtered_models[0]
     }
 
     view_acquired_class_item_details(item, object){

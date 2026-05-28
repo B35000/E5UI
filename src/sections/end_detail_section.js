@@ -2706,6 +2706,17 @@ return data['data']
     render_royalty_staging_event_item(item, object){
         var title = item['payout_title']
         var date_time = (this.props.app_state.loc['2447f']/* Scheduled for:  */+(new Date(item['payout_start_timestamp']*1000)))
+        if(Date.now()/1000 < item['payout_schedule_timestamp']){
+            return(
+                <div>
+                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                            <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
+                        </div>
+                    </div>
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.props.view_royalty_staging(item, object)}>
                 {this.render_detail_item('3', {'size':'l', 'details':date_time, 'title':title})}
