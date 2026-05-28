@@ -55,7 +55,8 @@ class QuickTransferPage extends Component {
     
     state = {
         selected: 0, new_transfers_title_tags_object:this.new_transfers_title_tags_object(), 
-        price_data:[], recipient_id:'', amount:0, exchange_id:'', e5: this.props.app_state.selected_e5
+        price_data:[], recipient_id:'', amount:0, exchange_id:'', e5: this.props.app_state.selected_e5,
+        cypher_passcode:'',
     };
 
     new_transfers_title_tags_object(){
@@ -182,6 +183,17 @@ class QuickTransferPage extends Component {
                 
                 
 
+                {this.props.app_state.locked_wallet_hashed_password != '' && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'If you locked your wallet, set the password used here.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
+
             </div>
         )
     }
@@ -204,6 +216,10 @@ class QuickTransferPage extends Component {
                 </div>
             </div>
         )
+    }
+
+    when_passcode_input_field_changed(text){
+        if(this.props.app_state.locked_wallet_hashed_password != '') this.setState({cypher_passcode: text})
     }
 
     when_recipient_input_field_changed(text){
@@ -629,6 +645,12 @@ class QuickTransferPage extends Component {
         else if(!this.check_if_sender_has_enough_balance_for_awards()){
             this.props.notify(this.props.app_state.loc['3106h']/* 'You havent set any transfers.' */, 5600)
         }
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && this.state.cypher_passcode.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
+        }
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && !this.does_password_match_hash(this.state.cypher_passcode.trim())){
+            this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
         else{
 
             this.props.show_dialog_bottomsheet({'price_data':price_data}, 'confirm_quick_transfer_data')
@@ -649,6 +671,14 @@ class QuickTransferPage extends Component {
             }
         }
         return has_enough
+    }
+
+    does_password_match_hash(passcode){
+        if(this.props.app_state.locked_wallet_hashed_password != ''){
+            const provided_hash = this.props.hash_data_with_randomizer(passcode);
+            return provided_hash == this.props.app_state.locked_wallet_hashed_password
+        }
+        else return true
     }
 
 

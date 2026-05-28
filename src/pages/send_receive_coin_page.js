@@ -695,10 +695,10 @@ class SendReceiveCoinPage extends Component {
         else if(memo_text.length > 53){
             this.props.notify(this.props.app_state.loc['2954j']/* 'That memo is too long.' */, 4000)
         }
-        if(this.state.cypher_passcode.trim() == ''){
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && this.state.cypher_passcode.trim() == ''){
             this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
         }
-        else if(!this.does_password_match_hash(this.state.cypher_passcode.trim())){
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && !this.does_password_match_hash(this.state.cypher_passcode.trim())){
             this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
         }
         else{

@@ -107,7 +107,10 @@ class HomepageSideBar extends Component {
 
                     {this.render_quick_send_end_spend()}
 
+                    {this.render_detail_item('0')}
+
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2817']/* 'Available E5s.' */, 'details':this.props.app_state.loc['2818']/* 'The E5s that are currently in use.' */, 'size':'l'})}
+                    <div style={{height:6}}/>
                     {this.load_preferred_e5_ui()}
                     {this.render_detail_item('0')} 
 
@@ -179,7 +182,6 @@ class HomepageSideBar extends Component {
         return(
                 <div onClick={() => open_quick_send_if_possible()}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1593mo']/* 'Quick Transfer ➤ */, 'details':this.props.app_state.loc['1593mp']/* 'Quickly transfer some end or spend in your selected E5 in an isolated run.' */, 'size':'l'})}
-                    <div style={{height:10}}/>
                 </div>
             )
     }
