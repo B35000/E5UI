@@ -197,13 +197,11 @@ class StagedCouponPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.get_time_diff(payout_start_timestamp - Date.now()/1000), 'details':this.props.app_state.loc['2880']/* Starting On:  */+(new Date(payout_start_timestamp*1000)), 'size':'l'})}
+                {this.render_detail_item('3', {'title':new Date(payout_start_timestamp*1000).toLocaleString(), 'details':this.props.app_state.loc['3105f']/* Start Time.  */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'title':recipient_title, 'details':this.props.app_state.loc['3104m']/* 'Payout Account.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-
-                {this.render_detail_item('0')}
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2868']/* 'Total Payout Transactions.' */, 'number':total_number_of_transactions, 'relativepower':this.props.app_state.loc['2867']/* 'transactions.' */})}>

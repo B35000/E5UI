@@ -2425,6 +2425,8 @@ class StackPage extends Component {
 
                 {this.render_now_playing_media_if_any()}
 
+                {this.render_quick_send_end_spend()}
+
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'number':this.props.app_state.account_balance[this.props.app_state.selected_e5], 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'relativepower':'wei'})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
@@ -2487,6 +2489,22 @@ class StackPage extends Component {
                 {this.show_e5_locked_message_if_locked()}
             </div>
         )
+    }
+
+    render_quick_send_end_spend(){
+        const open_quick_send_if_possible = () => {
+            if(this.props.app_state.has_wallet_been_set == false){
+                this.props.notify(this.props.app_state.loc['1593mq']/* You need to set your wallet first. */, 4400)
+            }else{
+                this.props.show_quick_send_bottomsheet()
+            }
+        }
+        return(
+                <div onClick={() => open_quick_send_if_possible()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593mo']/* 'Quick Transfer ➤ */, 'details':this.props.app_state.loc['1593mp']/* 'Quickly transfer some end or spend in your selected E5 in an isolated run.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                </div>
+            )
     }
 
     render_now_calling_message_if_any(){

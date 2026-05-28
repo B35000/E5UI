@@ -736,6 +736,9 @@ class DialogPage extends Component {
         else if(option == 'view_fractionalized_certificate_item_details'){
             return this.view_fractionalized_certificate_item_details_ui()
         }
+        else if(option == 'confirm_quick_transfer_data'){
+            return this.view_confirm_quick_transfer_data_ui()
+        }
     }
 
 
@@ -14953,6 +14956,188 @@ return data['data']
 
 
 
+
+
+
+
+
+
+
+    view_confirm_quick_transfer_data_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_quick_transfer_data_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_quick_transfer_data_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_quick_transfer_data_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_confirm_quick_transfer_data_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qc']/* 'Confirm the details for your transfer befor initiating the run.' */, 'title':this.props.app_state.loc['3055qb']/* 'Confirm Transfers.' */})}
+                <div style={{height:10}}/>
+                {this.render_my_balances()}
+                {this.render_detail_item('0')}
+                {this.render_set_amounts_list_part()}
+                <div style={{height:10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.begin_transfers()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055qd']/* Confirm Transfers' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    render_my_balances(){
+        const e5 = this.props.app_state.selected_e5
+        const price_data = this.state.data['price_data']
+        const end_balance = this.props.app_state.created_token_object_mapping[e5][3]['balance']
+        const spend_balance = this.props.app_state.created_token_object_mapping[e5][5]['balance']
+        var entry_tokens = [3, 5]
+        var buy_amount_balances = [end_balance, spend_balance]
+        var entry_amount_depths = [0, 0]
+
+        for(var i=0; i<price_data.length; i++){
+            var token_id = price_data[i]['id']
+            if(token_id != 3 && token_id != 5){
+                var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]
+                token_balance = token_balance == null ? 0 : token_balance['balance']
+                entry_tokens.push(token_balance)
+                buy_amount_balances.push(token_balance)
+                entry_amount_depths.push(0)
+            }
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106g']/* How much you have avalable for your transfers. */, 'title':this.props.app_state.loc['3106f']/* 'Your balances.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_buy_token_uis(entry_tokens, buy_amount_balances, entry_amount_depths)}
+            </div>
+        )
+    }
+
+    render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+        const e5 = this.props.app_state.selected_e5
+        var bt = [].concat(buy_tokens)
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px', 'list-style':'none'}}>
+                    {bt.map((item, index) => (
+                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':buy_amounts[index], 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                        </li>
+                    ))}
+                </ul>
+            </div>  
+        )
+    }
+
+    render_set_amounts_list_part(){
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        const price_data = this.state.data['price_data']
+        var items = [].concat(price_data)
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                        {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106k']/* 'The actions youve set for your quick transfer run.' */, 'title':this.props.app_state.loc['3106j']/* 'Set Transfers.' */})}
+                        <div style={{height:10}}/>
+
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106k']/* 'The actions youve set for your quick transfer run.' */, 'title':this.props.app_state.loc['3106j']/* 'Set Transfers.' */})}
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.reverse().map((item, index) => (
+                            <div style={{}}>
+                                <li style={{'padding': '5px'}}>
+                                    {this.render_transfer_item(item)}
+                                </li>
+                            </div>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    render_transfer_item(item){
+        const title = item['amount'] + ' '+ this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]
+        const alias = this.get_account_alias2(item['recipient']) 
+        const details = this.props.app_state.loc['3106n']/* 'To $' */.replace('$', (item['recipient'] + (alias == '' ? '' : ' • '+ alias))) 
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':details, 'title':title})}
+            </div>
+        )
+    }
+
+    get_account_alias2(account_id){
+        const alias = this.props.app_state.alias_bucket[this.props.app_state.selected_e5][account_id]
+        if(alias == null) return '';
+        else return alias;
+    }
+
+    begin_transfers(){
+        this.props.open_dialog_bottomsheet()
+        const price_data = this.state.data['price_data']
+        this.props.start_quick_transfer_action(price_data)
+    }
 
 
 

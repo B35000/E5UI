@@ -643,7 +643,8 @@ import TransferCertificatePage from './pages/token_action_pages/transfer_certifi
 import FractionalizeCertificatePage from './pages/token_action_pages/fractionalize_certificate_page'
 import TransferStakePage from './pages/token_action_pages/transfer_stake_page';
 import CouponPaymentPage from './pages/token_action_pages/coupon_payment_page';
-import StagedCouponPage from './pages/token_action_pages/view_staged_coupon_page'
+import StagedCouponPage from './pages/token_action_pages/view_staged_coupon_page';
+import QuickTransferPage from './pages/token_action_pages/quick_transfer_page';
 
 import VoteProposalPage from './pages/proposal_action_pages/vote_proposal_page';
 import SubmitProposalPage from './pages/proposal_action_pages/submit_proposal_page';
@@ -1276,6 +1277,7 @@ class App extends Component {
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
     fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
+    quick_send_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -3702,6 +3704,7 @@ class App extends Component {
     this.add_stake_page = React.createRef();
     this.coupon_payment_page = React.createRef();
     this.staged_coupon_page = React.createRef();
+    this.quick_send_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -4901,7 +4904,7 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false,
       })
 
       return cached_state_obj
@@ -6752,6 +6755,7 @@ class App extends Component {
           {this.render_add_stake_bottomsheet()}
           {this.render_coupon_payment_bottomsheet()}
           {this.render_staged_coupon_bottomsheet()}
+          {this.render_quick_send_bottomsheet()}
 
 
           {this.render_set_map_location_bottomsheet()}
@@ -6890,7 +6894,7 @@ class App extends Component {
 
           reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.reload_all_messages.bind(this)} reload_all_my_direct_messages={this.reload_all_my_direct_messages.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} show_add_stake_bottomsheet={this.show_add_stake_bottomsheet.bind(this)}
 
-          show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)}
+          show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -9133,7 +9137,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)}
       />
     )
   }
@@ -10363,20 +10367,20 @@ class App extends Component {
     }
   }
 
-  // get_latest_block_data(e5){
-  //   if(this.props.app_state.last_blocks[e5] == null || this.props.app_state.last_blocks[e5].length  ==  0){
-  //     return {}
-  //   }
-  //   return this.props.app_state.last_blocks[e5][0];
-  // }
+  get_latest_block_data(e5){
+    if(this.props.app_state.last_blocks[e5] == null || this.props.app_state.last_blocks[e5].length  ==  0){
+      return {}
+    }
+    return this.props.app_state.last_blocks[e5][0];
+  }
 
-  // get_gas_limit(e5){
-  //   try{
-  //     return this.get_latest_block_data(e5).gasLimit
-  //   }catch(e){
-  //     return 0
-  //   }
-  // }
+  get_gas_limit(e5){
+    try{
+      return this.get_latest_block_data(e5).gasLimit
+    }catch(e){
+      return 0
+    }
+  }
 
   calculate_gas_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price) => {
     const web3 = new Web3(this.get_selected_web3_url());
@@ -18684,7 +18688,7 @@ class App extends Component {
 
         open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)} emit_storefront_stock_availability_notification={this.emit_storefront_stock_availability_notification.bind(this)} set_remember_account_stack_object={this.set_remember_account_stack_object.bind(this)} set_seed_passcode_and_expiry_time={this.set_seed_passcode_and_expiry_time.bind(this)}
 
-        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)}
+        decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
         />
       </div>
     )
@@ -18798,6 +18802,7 @@ class App extends Component {
       'view_certificate_class_details':550,
       'view_acquired_certificate_item_details':600,
       'view_fractionalized_certificate_item_details':600,
+      'confirm_quick_transfer_data':550,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -20246,6 +20251,11 @@ class App extends Component {
       this.view_storefront_request_page.current?.add_message_to_stack()
       this.view_call_interface_page.current?.add_message_to_stack()
     }
+  }
+
+  async start_quick_transfer_action(price_data){
+    this.quick_send_page.current?.add_recipients_to_memory(price_data)
+    await this.start_quick_transfers(price_data)
   }
 
 
@@ -26525,6 +26535,178 @@ class App extends Component {
     }
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_quick_send_bottomsheet(){
+    if(this.state.quick_send_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <QuickTransferPage ref={this.quick_send_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} start_quick_transfers={this.start_quick_transfers.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+      />,
+      this.state.quick_send_bottomsheet,
+      this.open_quick_send_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_quick_send_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_quick_send_bottomsheet')
+    if(this.state.quick_send_bottomsheet == true){
+      //closing
+      this.quick_send_bottomsheet = this.quick_send_page.current?.state;
+
+      this.setState({quick_send_bottomsheet: !this.state.quick_send_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({quick_send_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({quick_send_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({quick_send_bottomsheet: !me.state.quick_send_bottomsheet});
+
+          if(me.quick_send_bottomsheet != null){
+            me.quick_send_page.current?.setState(me.quick_send_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  async show_quick_send_bottomsheet(){
+    this.open_quick_send_bottomsheet()
+    await this.reload_my_balances()
+  }
+
+  async reload_my_balances(){
+    const e5 = this.state.selected_e5
+    const account = this.state.user_account_id[e5]
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+    
+    if(account != null && account > 1000 && this.state.created_tokens[e5] != null){
+      await this.update_balances_for_each_loaded_token(H52contractInstance, e5, account)
+    }
+  }
+
+  async start_quick_transfers(price_data){
+    this.prompt_top_notification(this.getLocale()['3106i']/* 'Running your Transfers...' */, 4600)
+    this.lock_run_in_stack(true)
+    const e5 = this.state.selected_e5
+    const web3_url = this.get_selected_web3_url()
+    const web3 = new Web3(web3_url);
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.get_selected_E5_contract()
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
+    const me = this
+
+    const now = await contractInstance.methods.f147(2).call((error, result) => {})
+    const run_expiry_time = parseInt(now) + parseInt(60*60*5)
+
+    const v5/* t_limits */ = [100000000000000, run_expiry_time];
+    var run_gas_price = await web3.eth.getGasPrice()
+    console.log("gasPrice: "+run_gas_price);
+    const gasLimit = this.get_gas_limit(e5) || 3_500_000;
+
+
+    const adds = []
+    const ints = []
+    const strs = []
+
+    const transfers_obj = [/* send tokens to another account */
+      [30000, 1, 0],
+      [], [],/* exchanges */
+      [], [],/* receivers */
+      [],/* amounts */
+      []/* depths */
+    ]
+
+    price_data.forEach(transfer => {
+      transfers_obj[1].push(transfer['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+      transfers_obj[2].push(23)
+      transfers_obj[3].push(transfer['recipient'].toString().toLocaleString('fullwide', {useGrouping:false}))
+      transfers_obj[4].push(23)
+      transfers_obj[5].push(transfer['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+      transfers_obj[6].push(0)
+    });
+
+    strs.push([])
+    adds.push([])
+    ints.push(transfers_obj)
+
+    const encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
+
+    var tx = {
+      gas: gasLimit,
+      value: '0',
+      to: contractAddress,
+      data: encoded,
+      gasPrice: run_gas_price.toString(),
+    }
+
+    if(this.state.e5s[this.state.selected_e5].type == '1559'){
+      const block = await web3.eth.getBlock('pending');
+      run_gas_price = Number(block.baseFeePerGas);
+      const maxPriorityFeePerGas = ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price);
+      const maxFeePerGas = (maxPriorityFeePerGas * 2)
+
+      tx = {
+        gas: gasLimit,
+        value: '0',
+        to: contractAddress,
+        data: encoded,
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        type: '0x2', // explicitly mark as EIP-1559
+      }
+    }
+    
+    web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
+      web3.eth.sendSignedTransaction(signed.rawTransaction)
+      .on('transactionHash', (hash) => {
+        console.log('TX broadcasted to mempool:', hash);
+      })
+      .on('receipt', (receipt) => {
+        me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
+        me.lock_run_in_stack(false)
+        me.reload_my_balances()
+        me.get_wallet_data_for_specific_e5(e5, true)
+      })
+      .on('error', (error) => {
+        console.error('Transaction error:', error);
+        me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
+        me.lock_run_in_stack(false)
+        me.get_wallet_data_for_specific_e5(e5, true)
+      });
+    })
+  }
+
+  lock_run_in_stack(value){
+    var e5 = this.state.selected_e5
+    var clone = structuredClone(this.state.is_running)
+    clone[e5] = value
+    this.setState({is_running: clone})
   }
 
 

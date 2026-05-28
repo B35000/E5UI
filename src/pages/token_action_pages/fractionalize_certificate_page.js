@@ -354,7 +354,7 @@ class FractionalizeCertificatePage extends Component {
     }
 
     get_account_alias2(account_id){
-        const alias = this.props.app_state.alias_bucket[this.props.app_state.stack_items[this.state.transaction_index].e5][account_id]
+        const alias = this.props.app_state.alias_bucket[this.state.e5][account_id]
         if(alias == null) return '';
         else return alias;
     }

@@ -105,6 +105,8 @@ class HomepageSideBar extends Component {
                     
                     {this.render_now_playing_media_if_any()}
 
+                    {this.render_quick_send_end_spend()}
+
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2817']/* 'Available E5s.' */, 'details':this.props.app_state.loc['2818']/* 'The E5s that are currently in use.' */, 'size':'l'})}
                     {this.load_preferred_e5_ui()}
                     {this.render_detail_item('0')} 
@@ -164,6 +166,22 @@ class HomepageSideBar extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_quick_send_end_spend(){
+        const open_quick_send_if_possible = () => {
+            if(this.props.app_state.has_wallet_been_set == false){
+                this.props.notify(this.props.app_state.loc['1593mq']/* You need to set your wallet first. */, 4400)
+            }else{
+                this.props.show_quick_send_bottomsheet()
+            }
+        }
+        return(
+                <div onClick={() => open_quick_send_if_possible()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593mo']/* 'Quick Transfer ➤ */, 'details':this.props.app_state.loc['1593mp']/* 'Quickly transfer some end or spend in your selected E5 in an isolated run.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                </div>
+            )
     }
 
     render_now_calling_message_if_any(){
