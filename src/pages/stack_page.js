@@ -5216,6 +5216,13 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(coupon_payout_obj.transfers_record)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3055qi']/* 'verify-certificate' */){
+                    var verify_obj = await this.format_verify_certificate_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(verify_obj.str)
+                    adds.push([])
+                    ints.push(verify_obj.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -6780,6 +6787,33 @@ class StackPage extends Component {
                         'my_city':data.my_city,
                         'fractionalization_data':data.fractionalization_data
                     }
+                    var all_elements = [data.token_item['e5_id']]
+                    const depth_item_ipfs = data.depth_item['ipfs']
+                    const depth_item_entered_objects = depth_item_ipfs['entered_objects']
+                    const depth_item_markdown = depth_item_ipfs['markdown']
+
+                    depth_item_entered_objects.forEach(item_object => {
+                        const type = item_object['type']
+                        const text = type == '11' ? item_object['data']['caption']['text'] : item_object['data']['text']
+                        text.slice().replace(/[^\p{L}\p{N}\s@]/gu, '').split(' ').forEach(word => {
+                            if(!all_elements.includes(word)) all_elements.push(word);
+                        });
+                    });
+                    depth_item_markdown.slice().replace(/[^\p{L}\p{N}\s@]/gu, '').split(' ').forEach(word => {
+                        if(!all_elements.includes(word)) all_elements.push(word);
+                    });
+
+                    const all_final_elements = []
+                    for(var te=0; te<all_elements.length; te++){
+                        const word = all_elements[te]
+                        // all_final_elements.push(await this.props.encrypt_data_string(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY, final_key))
+                        all_final_elements.push(await this.props.encryptTag(word.toLowerCase(), process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+                    }
+
+                    all_final_elements.push(await this.props.encryptTag(this.props.app_state.device_country, process.env.REACT_APP_TAG_ENCRYPTION_KEY))
+
+                    obj['tags'][t.id] = { 'elements':all_final_elements, 'type':31, 'lan':t.device_language_setting, 'state': this.props.hash_data_with_randomizer(this.props.app_state.device_country) }
+
                     ipfs_index_object[txs[i].id] = certificate_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
                 }
@@ -6815,6 +6849,15 @@ class StackPage extends Component {
                     }
                     ipfs_index_object[t.id] = payout_record_info
                     ipfs_index_array.push({'id':t.id, 'data':payout_record_info})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3055qi']/* 'verify-certificate' */){
+                    const data = txs[i]
+                    const certificate_data = {
+                        'token_e5_id': data.token_item['e5_id'],
+                        'depth':data.depth_item['depth_data']['full'],
+                    }
+                    ipfs_index_object[txs[i].id] = certificate_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
                 }
             }
         }
@@ -13160,6 +13203,28 @@ class StackPage extends Component {
         transfers_record[4].push(int_data)
 
         return {transfers_obj: transfers_obj, str: string_obj, transfers_record: transfers_record}
+    }
+
+    format_verify_certificate_object = async(t, calculate_gas, ipfs_index) => {
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [t.token_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],
+            [], /* contexts */
+            [] /* int_data */
+        ]
+        var string_obj = [[]]
+
+        var context = 35/* 35(verify_certificate_records) */
+        var int_data = Date.now()
+
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
     }
 
     

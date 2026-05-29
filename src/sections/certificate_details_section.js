@@ -56,7 +56,7 @@ function start_and_end(str) {
 class CertificateDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), typed_search_id:'', typed_search_acquired_tokens:'', typed_search_fractionalized_tokens:'',
+        selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), typed_search_id:'', typed_search_acquired_tokens:'', typed_search_fractionalized_tokens:'', get_my_account_or_another_accounts_certificate_data: this.get_my_account_or_another_accounts_certificate_data(), searched_account:'', searched_account_id:''
     };
 
     reset_tags(){
@@ -79,6 +79,7 @@ class CertificateDetailsSection extends Component {
             this.props.get_moderator_event_data(object['id'], object['e5'])
             this.props.load_exchanges_royalty_payout_event_data(object['id'], object['e5'])
             this.props.get_certificate_bond_coupon_stagings(object)
+            this.props.get_verified_certificate_data(object)
         }
     }
 
@@ -103,6 +104,17 @@ class CertificateDetailsSection extends Component {
         ]
 
         return obj
+    }
+
+    get_my_account_or_another_accounts_certificate_data(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */, this.props.app_state.loc['3098bn']/* 'other-account 👤' */], [1]
+            ],
+        };
     }
 
 
@@ -348,6 +360,9 @@ class CertificateDetailsSection extends Component {
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', item['fractionalizable'])}
+                    <div style={{height:10}}/>
+                    
+                    {this.render_detail_item('3', item['verification'])}
                     <div style={{height:10}}/>
 
                     {this.render_revoke_author_privelages_event(object)}
@@ -960,12 +975,17 @@ class CertificateDetailsSection extends Component {
         var selected_obj_config = object['data'][1];
         var selected_obj_ratio_config = object['data'][2];
         var is_auth_main_contract = selected_obj_config[9] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: (selected_obj_config[9])
+
+        const verification = object['ipfs'].get_new_certificate_verification_tags_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_new_certificate_verification_tags_object, 'e') 
+
+        const verification_message = 1 ? this.props.app_state.loc['3055qe']/* 'automatic' */ : this.props.app_state.loc['3055qf']/* 'manual' */
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'id':{'title':title_space+objectid, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, },
             'exchange_authority': {'title':is_auth_main_contract, 'details':this.props.app_state.loc['3098i']/* 'Certificate Authority' */, 'size':'l'},
             'fractionalizable': {'title':this.get_access_rights_status(fractionalizable), 'details':this.props.app_state.loc['d311bw']/* 'Fractionalization' */, 'size':'l'},
+            'verification':{'title':verification_message, 'details':this.props.app_state.loc['d311cx']/* Verification */, 'size':'l'},
         }
     }
 
@@ -1385,15 +1405,89 @@ class CertificateDetailsSection extends Component {
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_my_account_or_another_accounts_certificate_data} tag_size={'l'} when_tags_updated={this.when_get_my_account_or_another_accounts_certificate_data_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height:5}}/>
+
                     {this.render_acquired_classes_top_title(object)}
-                    <div style={{margin:'5px 10px 0px 10px'}}>
-                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a class...' */} when_text_input_field_changed={this.when_typed_search_acquired_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_acquired_tokens} theme={this.props.theme}/>
-                    </div>
+
+                    {this.render_search_by_page(object)}
+
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     {this.render_acquired_classes(object)}
                 </div>
             </div>
         )
+    }
+
+    when_get_my_account_or_another_accounts_certificate_data_updated(tag_obj){
+        this.setState({get_my_account_or_another_accounts_certificate_data: tag_obj})
+    }
+
+    render_search_by_page(object){
+        const selected_item = this.get_selected_item(this.state.get_my_account_or_another_accounts_certificate_data, 'e')
+
+        if(selected_item == this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */){
+            return(
+                <div>
+                    <div style={{margin:'5px 10px 0px 10px'}}>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a class...' */} when_text_input_field_changed={this.when_typed_search_acquired_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_acquired_tokens} theme={this.props.theme}/>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
+                        <div className="row" style={{width:'100%'}}>
+                            <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                                <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_account_input_field_changed.bind(this)} text={this.state.searched_account_id} theme={this.props.theme}/>
+                            </div>
+                            <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                                <div onClick={()=>this.perform_search(object)}>
+                                    <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                        <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    when_account_input_field_changed(text){
+        this.setState({searched_account_id: text})
+    }
+
+    async perform_search(object){
+        var typed_account = await this.get_typed_alias_id(this.state.searched_account_id.trim())
+
+        if(typed_account == ''){
+            this.props.notify(this.props.app_state.loc['128']/* 'Type something.' */, 3800)
+        }
+        else if(isNaN(typed_account)){
+            this.props.notify(this.props.app_state.loc['1576']/* 'That ID is not valid.' */, 3800)
+        }
+        else if(parseInt(typed_account) < 1001){
+            this.props.notify(this.props.app_state.loc['1576']/* 'That ID is not valid.' */, 3800)
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['2509']/* 'Searching...' */, 800)
+            this.setState({searched_account: typed_account})
+            this.props.load_accounts_non_fungible_token_data(object, typed_account)
+        }
+        
+    }
+
+    async get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        await this.props.get_account_id_from_alias(alias)
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+
+        return id
     }
 
     when_typed_search_acquired_tokens_text_input_field_changed(text){
@@ -1454,7 +1548,8 @@ class CertificateDetailsSection extends Component {
 
     get_acquired_tokens(object){
         const non_fungible_token_data = this.props.app_state.non_fungible_token_data[object['e5_id']] || {}
-        const my_account = this.props.app_state.user_account_id[object['e5']]
+        const selected_item = this.get_selected_item(this.state.get_my_account_or_another_accounts_certificate_data, 'e')
+        const my_account = selected_item == this.props.app_state.loc['3098bn']/* 'other-account 👤' */ ? this.state.typed_account : this.props.app_state.user_account_id[object['e5']]
         const account_data = non_fungible_token_data[object['e5']+':'+my_account] || {}
         // console.log('get_acquired_tokens', this.props.app_state.non_fungible_token_data)
         return this.sortByAttributeDescending(Object.values(account_data), 'time')
@@ -1551,9 +1646,21 @@ class CertificateDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                     {this.render_fractionalized_classes_top_title(object)}
-                    <div style={{margin:'5px 10px 0px 10px'}}>
-                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
+                    <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
+                        <div className="row" style={{width:'100%'}}>
+                            <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                                <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
+                            </div>
+                            <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                                <div onClick={()=>this.perform_search2(object)}>
+                                    <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                        <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
                     {this.render_fractionalized_classes(object)}
                 </div>
@@ -1563,6 +1670,18 @@ class CertificateDetailsSection extends Component {
 
     when_typed_search_fractionalized_tokens_text_input_field_changed(text){
         this.setState({typed_search_fractionalized_tokens: text})
+    }
+
+    async perform_search2(object){
+        const typed_search_fractionalized_tokens = await this.get_typed_alias_id(this.state.typed_search_fractionalized_tokens.trim())
+
+        if(typed_search_fractionalized_tokens == ''){
+            this.props.notify(this.props.app_state.loc['128']/* 'Type something.' */, 3800)
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['3098bo']/* 'Indexing Certificate...' */, 1400)
+            this.props.perform_fractionalized_certificate_search(typed_search_fractionalized_tokens, object)
+        }
     }
 
     render_fractionalized_classes_top_title(object){
@@ -1589,7 +1708,7 @@ class CertificateDetailsSection extends Component {
             const markdown = ipfs['markdown']
             const class_markdown = model_config['class_markdown']
             return (
-                t == '' ||
+                (t == '' && item['balance'] > 0) ||
                 class_name.toLowerCase().startsWith(t) ||
                 markdown.toLowerCase().includes(t) ||
                 class_markdown.toLowerCase().includes(t)

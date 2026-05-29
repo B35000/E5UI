@@ -1388,7 +1388,7 @@ class App extends Component {
 
     focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{},
 
-    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{},
+    locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
   };
 
   get_app_version(){
@@ -6894,7 +6894,9 @@ class App extends Component {
 
           reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.reload_all_messages.bind(this)} reload_all_my_direct_messages={this.reload_all_my_direct_messages.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} show_add_stake_bottomsheet={this.show_add_stake_bottomsheet.bind(this)}
 
-          show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)}
+          show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} 
+
+          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -18689,6 +18691,8 @@ class App extends Component {
         open_send_ether_section={this.open_send_ether_section.bind(this)} open_send_coin_section={this.open_send_coin_section.bind(this)} emit_pre_purchase_request_transaction={this.emit_pre_purchase_request_transaction.bind(this)} start_new_direct_message_chat={this.start_new_direct_message_chat.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_searched_user_obligation_data={this.get_searched_user_obligation_data.bind(this)} emit_storefront_stock_availability_notification={this.emit_storefront_stock_availability_notification.bind(this)} set_remember_account_stack_object={this.set_remember_account_stack_object.bind(this)} set_seed_passcode_and_expiry_time={this.set_seed_passcode_and_expiry_time.bind(this)}
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
+
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)}
         />
       </div>
     )
@@ -20256,6 +20260,23 @@ class App extends Component {
   async start_quick_transfer_action(price_data){
     this.quick_send_page.current?.add_recipients_to_memory(price_data)
     await this.start_quick_transfers(price_data)
+  }
+
+  add_recognise_certificate_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -26536,6 +26557,7 @@ class App extends Component {
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
   }
+
 
 
 
@@ -36451,6 +36473,38 @@ class App extends Component {
     const search_accounts = moderators.slice()
     this.get_alias_data_for_accounts(E52contractInstance, e5, search_accounts, web3)
 
+  }
+
+  async load_accounts_non_fungible_token_data(object, account){
+    const e5 = object['e5']
+    const id = object['id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    var contract_addresses = this.state.addresses[e5]
+
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = contract_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+    var event_params = [
+      [web3, H52contractInstance, 'e2', e5, {p1/* exchange_id */:id.toString()}]
+    ]
+    const { all_events } = await this.load_multiple_events_from_nitro(event_params)
+
+    const all_depth_mint_events = all_events[0]
+    const depths_used = []
+    const all_depths_used = []
+    const depth_use_times = []
+    all_depth_mint_events.forEach(event => {
+      const depth = event.returnValues.p6/* depth */;
+      const time = event.returnValues.p4/* timestamp */;
+      if(!depths_used.includes(depth)){
+        all_depths_used.push(depth);
+        depth_use_times.push(time);
+        if(event.returnValues.p2 == account) depths_used.push(depth);
+      }
+    });
+    if(depths_used.length > 0){
+      await this.load_my_non_fungible_token_data(object, depths_used, account, depth_use_times)
+    } 
   }
 
   load_accounts_exchange_interactions_data = async (account_id, e5, pre_launch_data) => {
@@ -50849,8 +50903,50 @@ class App extends Component {
     const coupon_payout_stagings_clone = structuredClone(this.state.coupon_payout_stagings)
     coupon_payout_stagings_clone[e5_id] = result_objects
     this.setState({coupon_payout_stagings: coupon_payout_stagings_clone})
+  }
 
-    this.get_current_channel_creator_payout_info_if_possible(object)
+  get_verified_certificate_data = async (object) => {
+    const author = object['author']
+    const e5_id = object['e5_id']
+    const e5 = object['e5']
+    const id = object['id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const created_results_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p2/* sender_acc_id */:author, p3/* context */:35})).reverse()
+
+    var loaded_target = 0
+    if(this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(created_results_data.slice(0, 100_000), 0, 'p4')
+      loaded_target = created_results_data.slice(0, 100_000).length - 1;
+    }
+
+    const result_objects = []
+    var is_first_time = this.state.verified_certificates[e5_id] == null ? true : false
+    for(var i=0; i<created_results_data.length; i++){
+      const event = created_results_data[i]
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      result_objects.push({'depth':ipfs['depth'], 'event':event, 'time':parseInt(event.returnValues.p6/* timestamp */)})
+
+      if(is_first_time == true){
+        const verified_certificates_clone = structuredClone(this.state.verified_certificates)
+        verified_certificates_clone[e5_id] = result_objects
+        this.setState({verified_certificates: verified_certificates_clone})
+      }
+
+      if(i == loaded_target && i+1 >= created_results_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(created_results_data.slice(i+1, i+100_000), 0, 'p4')
+        loaded_target = i+100_000
+      }
+    }
+
+    const verified_certificates_clone = structuredClone(this.state.verified_certificates)
+    verified_certificates_clone[e5_id] = result_objects
+    this.setState({verified_certificates: verified_certificates_clone})
   }
 
 

@@ -2781,6 +2781,45 @@ class home_page extends Component {
         }
     }
 
+    perform_fractionalized_certificate_search(searched_data, object){
+        const posts_to_load = [object['e5_id']]   
+        const targeted_accounts = []     
+        const contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
+        contained_words_in_string.forEach(async word => {
+            const trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
+            if(!trimmed_word.includes(' ') && trimmed_word.length > 3){
+                const e5_id = await this.get_alias_account_if_any(trimmed_word)
+                if(e5_id != null){
+                    if(!targeted_accounts.includes(e5_id)){
+                        targeted_accounts.push(e5_id)
+                    }
+                }else{
+                    if(!posts_to_load.includes(trimmed_word)){
+                        posts_to_load.push(trimmed_word);
+                    }
+                }
+            }
+        });
+        const the_other_words = searched_data.replace(/[^a-zA-Z0-9 ]/g, ' ').split(' ')
+        the_other_words.forEach(async word => {
+            const trimmed_word = word.trim().toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
+            if(trimmed_word.length > 3){
+                const e5_id = await this.get_alias_account_if_any(trimmed_word)
+                if(e5_id != null){
+                    if(!targeted_accounts.includes(e5_id)){
+                        targeted_accounts.push(e5_id)
+                    }
+                }else{
+                    if(!posts_to_load.includes(trimmed_word)){
+                        posts_to_load.push(trimmed_word);
+                    }
+                }
+            }
+        });
+
+        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, 'w', searched_data, targeted_accounts)
+    }
+
 
 
 
@@ -6091,6 +6130,7 @@ class home_page extends Component {
         await this.props.fetch_uploaded_files_for_object(object)
         await this.props.get_certificate_bond_coupon_stagings(object)
         await this.props.load_exchanges_royalty_payout_event_data(object['id'], object['e5'])
+        this.props.get_verified_certificate_data(object)
         this.props.emit_view_object_event(id+e5)
         this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -6302,6 +6342,8 @@ class home_page extends Component {
                 open_view_storefront_request_ui={this.props.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.props.get_storefront_bag_payment_update_messages.bind(this)} get_bag_sender_transfers_events={this.props.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.props.reload_all_messages.bind(this)} when_selected_e5_changed={this.props.when_selected_e5_changed.bind(this)}
 
                 show_add_stake_bottomsheet={this.props.show_add_stake_bottomsheet.bind(this)} show_coupon_payment_bottomsheet={this.props.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.props.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.props.show_staged_coupon_bottomsheet.bind(this)}
+
+                load_accounts_non_fungible_token_data={this.props.load_accounts_non_fungible_token_data.bind(this)} perform_fractionalized_certificate_search={this.perform_fractionalized_certificate_search.bind(this)} get_verified_certificate_data={this.props.get_verified_certificate_data.bind(this)}
                 />
             </div>
         )

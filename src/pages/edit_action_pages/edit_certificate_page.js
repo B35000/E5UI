@@ -95,7 +95,7 @@ class EditCertificatePage extends Component {
 
         edit_text_item_pos:-1,
 
-        get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
+        get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],get_new_certificate_verification_tags_object:this.get_new_certificate_verification_tags_object(),
 
         new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         exchange_authority:'',moderator_id:'', moderators:[], interactible_id:'',  interactibles:[], interactible_timestamp:0,
@@ -220,6 +220,17 @@ class EditCertificatePage extends Component {
         };
     }
 
+    get_new_certificate_verification_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['3055qe']/* 'automatic' */, this.props.app_state.loc['3055qf']/* 'manual' */], [1]
+            ],
+        };
+    }
+
 
 
 
@@ -229,6 +240,10 @@ class EditCertificatePage extends Component {
 
     set(){
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1, get_new_active_archived_model_settings_tags_object: this.get_new_active_archived_model_settings_tags_object()})
+
+        if(this.state.get_new_certificate_verification_tags_object == null){
+            this.setState({get_new_certificate_verification_tags_object: this.get_new_certificate_verification_tags_object()})
+        }
     }
 
     render(){
@@ -415,6 +430,12 @@ class EditCertificatePage extends Component {
 
 
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311cv']/* 'Certificate Recognition.' */, 'details':this.props.app_state.loc['d311cw']/* 'If set to manual, you will be required to verify and recognise every certificate that\'s minted in this new exchange.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_verification_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_verification_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bn']/* 'Channeling City (Optional)' */, 'details':this.props.app_state.loc['a311bo']/* 'If you\'ve set local channeling, you can restrict your post to a specific city.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
@@ -441,6 +462,10 @@ class EditCertificatePage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_new_certificate_verification_tags_object_updated(tag_obj){
+        this.setState({get_new_certificate_verification_tags_object: tag_obj})
     }
     
     when_title_text_input_field_changed(text){

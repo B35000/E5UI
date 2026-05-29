@@ -14593,6 +14593,10 @@ return data['data']
 
         const fractionalizable = this.get_selected_item2(object['ipfs'].get_new_certificate_fractionalizable_tags_object, 'e') == 1
         
+        const my_account = this.props.app_state.user_account_id[object['e5']]
+        const verification = object['ipfs'].get_new_certificate_verification_tags_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_new_certificate_verification_tags_object, 'e') 
+
+        const verification_data = this.get_verification_data(object, depth)
         return(
             <div>
                 {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
@@ -14603,6 +14607,13 @@ return data['data']
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                 <div style={{height: 10}}/>
+
+                {(verification_data['verified'] == true || verification == 1) && (
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055qn']/* 'The certificate has been verified by the exchange owner.' */, 'title':this.props.app_state.loc['3055qm']/* 'Certificate Verified.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
 
                 {data['archived'] == true && (
                     <div>
@@ -14621,12 +14632,22 @@ return data['data']
                         </div>
                     </div>
                 )}
-                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && fractionalizable == true && data['archived'] != true &&(
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && fractionalizable == true && data['archived'] != true && (verification_data['verified'] == true || verification == 1) && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pm']/* ❖ Fractionalize Certificate' */, 'details':this.props.app_state.loc['3055pn']/* 'Fragment your certificate into shares that you can redistribute to other accounts.' */, 'size':'l'})}
                         <div style={{height:10}}/>
                         <div onClick={()=>this.fractionalize_certificate(data)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055po']/* 'Fractionalize' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+                {object['author'] == my_account && verification == 2 && verification_data['verified'] == false && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055qg']/* ✅ Verify Certificate.' */, 'details':this.props.app_state.loc['3055qh']/* 'Recognise this certificate by its author as authentic and representative of its real world counterpart.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <div onClick={()=>this.recognise_certificate(data)}>
                             {this.render_detail_item('5', {'text':this.props.app_state.loc['3055po']/* 'Fractionalize' */, 'action':''})}
                         </div>
                     </div>
@@ -14832,6 +14853,32 @@ return data['data']
         const item = this.state.data['item']
         const object = this.state.data['object']
         this.props.show_fractionalize_certificate_bottomsheet(item, object, model_data)
+    }
+
+    recognise_certificate(model_data){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        var obj = {
+            id:makeid(8), type:this.props.app_state.loc['3055qi']/* 'verify-certificate' */,
+            entered_indexing_tags:[this.props.app_state.loc['3055qj']/* 'verify' */, this.props.app_state.loc['3055qk']/* 'certificate' */, this.props.app_state.loc['3055ql']/* 'recognise' */],
+            e5:object['e5'], depth_item: item, token_item: object, model_data: model_data
+        }
+        this.props.add_recognise_certificate_transaction_to_stack(obj)
+        this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+    }
+
+    get_verification_data(object, depth){
+        const verification_data = this.props.app_state.verified_certificates[object['e5_id']] || []
+        const verification = verification_data.filter((item) => {
+            return (item['depth'] == depth)
+        })
+
+        if(verification.length == 0){
+            return { 'verified':false, 'time':0 }
+        }
+        else{
+            return { 'verified':true, 'time':verification['time'] }
+        }
     }
 
 
