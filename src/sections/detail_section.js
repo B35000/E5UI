@@ -196,7 +196,7 @@ class PostDetailSection extends Component {
             if(selected_tag == this.props.app_state.loc['1212']/* 'E5s' */ || selected_tag == 'e' || selected_tag == null){
                 return(
                     <E5DetailsSection ref={this.curent_post_section} app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} notify={this.props.notify.bind(this)} selected_e5_item={this.props.selected_e5_item} explore_page_tags_object={this.props.explore_page_tags_object} show_withdraw_ether_bottomsheet={this.props.show_withdraw_ether_bottomsheet.bind(this)} get_e5_data={this.props.get_e5_data.bind(this)} view_number={this.props.view_number.bind(this)} hash_data_with_specific_e5={this.props.hash_data_with_specific_e5.bind(this)}
-                    render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} show_account_details={this.props.show_account_details.bind(this)}
+                    render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} show_account_details={this.props.show_account_details.bind(this)} get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)}
                     />
                 )
             }
