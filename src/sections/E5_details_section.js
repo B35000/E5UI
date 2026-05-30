@@ -51,6 +51,7 @@ class E5DetailsSection extends Component {
         tag_search_history:[],
         selected_time_filter_chart_tags_object:this.selected_time_filter_chart_tags_object(),
         selected_time_filter_chart_tags_object2:this.selected_time_filter_chart_tags_object(),
+        selected_price_distribution_change_tags_object:this.selected_price_distribution_change_tags_object()
     };
 
     get_navigate_view_e5_list_detail_tags(){
@@ -71,6 +72,17 @@ class E5DetailsSection extends Component {
             },
             'e':[
                 ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+            ],
+        };
+    }
+
+    selected_price_distribution_change_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['2336ca']/* 'average' */, this.props.app_state.loc['2336bz']/* 'top-20%' */,this.props.app_state.loc['2336by']/* 'bottom-20%' */], [1]
             ],
         };
     }
@@ -2731,6 +2743,10 @@ class E5DetailsSection extends Component {
             const smallest = used_tokens_min[selected_token]
             const average = bigInt(largest).plus(smallest).divide(2)
 
+
+            const used_token_price_items = this.get_tags_price_distribution_data(sorted_price_data, object['id'])
+            const new_dps2 = this.get_transaction_average_change_data_points(used_token_price_items[selected_token])
+
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2507e']/* 'Price Distribution.' */, 'details':this.props.app_state.loc['2507f']/* `A chart containing hits at certain price points for your selected tag.` */, 'size':'l'})}
@@ -2765,10 +2781,27 @@ class E5DetailsSection extends Component {
                     </div>
 
                     {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336bw']/* 'Change In Averages.' */, 'details':this.props.app_state.loc['2336bx']/* `A chart containing the changes in the average prices used over time.` */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_price_distribution_change_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_price_distribution_change_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':new_dps2.dps, 'start_time':new_dps2.start_time})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2642cg']/* 'Y-Axis: ' */+this.props.app_state.loc['2336cb']/* Y-Axis: Average Prices */, 'details':this.props.app_state.loc['2336cc']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             )
         }
+    }
+
+    when_selected_price_distribution_change_tags_object_updated(tag_obj){
+        this.setState({selected_price_distribution_change_tags_object: tag_obj})
     }
 
     when_selected_time_filter_chart_tags_object_updated(tag_obj){
@@ -2836,8 +2869,145 @@ class E5DetailsSection extends Component {
         return { used_token_ids, used_token_price_data, used_tokens_max, used_tokens_min }
     }
 
+    get_tags_price_distribution_data(sorted_price_data, filter_e5){
+        const sorted_price_data_to_use = sorted_price_data.filter(function (data_point) {
+            return (data_point['e5'] == filter_e5)
+        });
+
+        const used_token_price_items = {}
+        sorted_price_data_to_use.forEach(data_point => {
+            const tag_data = data_point['tag_data']
+            const amounts = tag_data['amounts']
+            const time = tag_data['time']
+            const time_group = Math.floor(parseInt(time) / (1000*60*60*24))
+            amounts.forEach(item => {
+                const exchange_id = item['id']
+                const amount = item['amount']
+                if(used_token_price_items[exchange_id] == null){
+                    used_token_price_items[exchange_id] = {}
+                }
+                if(used_token_price_items[exchange_id][time_group] == null){
+                    used_token_price_items[exchange_id][time_group] = []
+                }
+                used_token_price_items[exchange_id][time_group].push(amount)
+                
+            });
+        });
+
+        Object.keys(used_token_price_items).forEach(exchange_id => {
+            Object.keys(used_token_price_items[exchange_id]).forEach(time_group => {
+                used_token_price_items[exchange_id][time_group] = this.sort_big_int_array_by_descending_order(used_token_price_items[exchange_id][time_group])
+            });
+        });
+
+        return used_token_price_items
+    }
+
+    sort_big_int_array_by_descending_order(array){
+        return array.sort((a, b) => {
+            if (bigInt(a).greater(b)) return -1;
+            if (bigInt(a).lesser(b)) return 1;
+            return 0;
+        })
+    }
+
     get_selected_token(){
         return this.state.selected_token_tag || 0
+    }
+
+    get_average_of_array(arr){
+        var total = bigInt(0)
+        if(arr.length == 0){
+            return total
+        }
+        arr.forEach(number => {
+            total = bigInt(total).plus(number)
+        });
+        return bigInt(total).divide(arr.length)
+    }
+
+    get_transaction_average_change_data_points(token_price_distribution_data){
+        const data = []
+        const time_groups = Object.keys(token_price_distribution_data)
+        var largest = bigInt(0)
+        const selected_item = this.get_selected_item(this.state.selected_price_distribution_change_tags_object, 'e')
+        const start_time = time_groups.length > 0 ? (time_groups[0]*(1000*60*60*24)) : Date.now()-(1000*60*60*24)
+        try{
+            for(var i=0; i<time_groups.length; i++){
+                const focused_time_group = time_groups[i]
+                const time_group_prices_data = token_price_distribution_data[focused_time_group]
+                const c = time_group_prices_data.length
+                const top_20_items = time_group_prices_data.slice((0.8*c), c-1)
+                const bottom_20_items = time_group_prices_data.slice(0, (0.2*c))
+                
+                const top_20_items_average = this.get_average_of_array(top_20_items)
+                const bottom_20_items_average = this.get_average_of_array(bottom_20_items)
+                const all_average = this.get_average_of_array(time_group_prices_data)
+
+                if(selected_item == this.props.app_state.loc['2336ca']/* 'average' */){
+                    data.push(all_average)
+                    if(bigInt(largest).lesser(all_average)){
+                        largest = all_average
+                    }
+                }
+                else if(selected_item == this.props.app_state.loc['2336bz']/* 'top-20%' */){
+                    data.push(top_20_items)
+                    if(bigInt(largest).lesser(top_20_items)){
+                        largest = top_20_items
+                    }
+                }
+                else if(selected_item == this.props.app_state.loc['2336by']/* 'bottom-20%' */){
+                    data.push(bottom_20_items_average)
+                    if(bigInt(largest).lesser(bottom_20_items_average)){
+                        largest = bottom_20_items_average
+                    }
+                }
+
+                if(i==time_groups.length-1){
+                    const date_to_use = Date.now() / (1000*60*60*24)
+                    var diff = date_to_use - focused_time_group
+                    for(var t=0; t<diff; t+=(1000*60*60*24)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = time_groups[i+1] - time_groups[i]
+                    for(var t=0; t<diff; t+=(1000*60*60*24)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+            console.log('average_change_data','error', e)
+        }
+
+
+        // console.log('average_change_data', 'data', data)
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        var largest_number = largest
+        var recorded = false;
+        for(var i = 0; i < noOfDps; i++) {
+            if(largest_number == 0) yVal = 0
+            else yVal = data[factor * xVal]
+            
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/4)) == 0 && i != 0 && !recorded){
+                    // recorded = true
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        
+        return { dps, start_time }
     }
 
     get_transaction_tag_data_points(used_token_price_data, selected_token, used_tokens_max){
@@ -2845,7 +3015,6 @@ class E5DetailsSection extends Component {
         const price_datapoints = used_token_price_data[selected_token]
         const used_token_max = used_tokens_max[selected_token]
         const price_datapoint_object = {}
-        console.log('get_transaction_tag_data_points', 'used_token_price_data', used_token_price_data, used_tokens_max)
         price_datapoints.forEach(data_item => {
             const step = bigInt(used_token_max).divide(1000).plus(1)
             const final_item = bigInt(data_item).divide(step).multiply(step)
