@@ -425,7 +425,6 @@ class HomepageSideBar extends Component {
                             </div>
                         </SwipeableListItem>
                     </SwipeableList>
-                    {this.render_detail_item('0')} 
                 </div>
             )
         }

@@ -2766,17 +2766,17 @@ class E5DetailsSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2642cg']/* 'Y-Axis: ' */+this.props.app_state.loc['2507h']/* Transaction Hits */, 'details':this.props.app_state.loc['2507g']/* 'X-Axis: Price' */, 'size':'s'})}
                     <div style={{height: 10}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2509bl']/* 'Largest amount in $ recorded.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'number':largest, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]})}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2509bl']/* 'Largest amount in $ recorded.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'number':largest, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]})}>
                         {this.render_detail_item('2', {'style':'l','title': this.props.app_state.loc['2509bl']/* 'Largest amount in $ recorded.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'subtitle':this.format_power_figure(largest), 'barwidth':this.calculate_bar_width(largest), 'number':this.format_account_balance_figure(largest), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token] })}
                     </div>
                     <div style={{height: 10}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2509bm']/* 'Smallest amount in $ recorded.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'number':smallest, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]})}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2509bm']/* 'Smallest amount in $ recorded.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'number':smallest, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]})}>
                         {this.render_detail_item('2', {'style':'l','title': this.props.app_state.loc['2509bm']/* 'Smallest amount in $ recorded.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'subtitle':this.format_power_figure(smallest), 'barwidth':this.calculate_bar_width(smallest), 'number':this.format_account_balance_figure(smallest), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token] })}
                     </div>
                     <div style={{height: 10}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2509bn']/* 'Average $ Amount Used.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'number':average, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]})}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2509bn']/* 'Average $ Amount Used.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'number':average, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token]})}>
                         {this.render_detail_item('2', {'style':'l','title': this.props.app_state.loc['2509bn']/* 'Average $ Amount Used.' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_e5+selected_token]), 'subtitle':this.format_power_figure(average), 'barwidth':this.calculate_bar_width(average), 'number':this.format_account_balance_figure(average), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_token] })}
                     </div>
 
@@ -2786,9 +2786,8 @@ class E5DetailsSection extends Component {
                     <div style={{height: 10}}/>
 
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_price_distribution_change_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_price_distribution_change_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                    <div style={{height: 10}}/>
 
-                    {this.render_detail_item('6', {'dataPoints':new_dps2.dps, 'start_time':new_dps2.start_time})}
+                    {this.render_detail_item('6', {'dataPoints':new_dps2.dps, 'start_time':new_dps2.start_time, 'scale':new_dps2.scale})}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2642cg']/* 'Y-Axis: ' */+this.props.app_state.loc['2336cb']/* Y-Axis: Average Prices */, 'details':this.props.app_state.loc['2336cc']/* 'X-Axis: Time' */, 'size':'s'})}
@@ -2878,7 +2877,7 @@ class E5DetailsSection extends Component {
         sorted_price_data_to_use.forEach(data_point => {
             const tag_data = data_point['tag_data']
             const amounts = tag_data['amounts']
-            const time = tag_data['time']
+            const time = data_point['time']
             const time_group = Math.floor(parseInt(time) / (1000*60*60*24))
             amounts.forEach(item => {
                 const exchange_id = item['id']
@@ -2899,6 +2898,8 @@ class E5DetailsSection extends Component {
                 used_token_price_items[exchange_id][time_group] = this.sort_big_int_array_by_descending_order(used_token_price_items[exchange_id][time_group])
             });
         });
+
+        // console.log('get_tags_price_distribution_data', 'used_token_price_items', used_token_price_items)
 
         return used_token_price_items
     }
@@ -2937,8 +2938,8 @@ class E5DetailsSection extends Component {
                 const focused_time_group = time_groups[i]
                 const time_group_prices_data = token_price_distribution_data[focused_time_group]
                 const c = time_group_prices_data.length
-                const top_20_items = time_group_prices_data.slice((0.8*c), c-1)
-                const bottom_20_items = time_group_prices_data.slice(0, (0.2*c))
+                const top_20_items = time_group_prices_data.slice(Math.floor(0.8*c), c-1)
+                const bottom_20_items = time_group_prices_data.slice(0, Math.floor(0.2*c))
                 
                 const top_20_items_average = this.get_average_of_array(top_20_items)
                 const bottom_20_items_average = this.get_average_of_array(bottom_20_items)
@@ -2964,15 +2965,17 @@ class E5DetailsSection extends Component {
                 }
 
                 if(i==time_groups.length-1){
-                    const date_to_use = Date.now() / (1000*60*60*24)
+                    const date_to_use = Math.floor(Date.now() / (1000*60*60*24))
                     var diff = date_to_use - focused_time_group
-                    for(var t=0; t<diff; t+=(1000*60*60*24)){
+                    console.log('average_change_data', 'diff', date_to_use, focused_time_group, diff)
+                    for(var t=0; t<diff; t+=5){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = time_groups[i+1] - time_groups[i]
-                    for(var t=0; t<diff; t+=(1000*60*60*24)){
+                    console.log('average_change_data', 'diff2', time_groups[i+1], time_groups[i], diff)
+                    for(var t=0; t<diff; t+=5){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -2983,7 +2986,7 @@ class E5DetailsSection extends Component {
         }
 
 
-        // console.log('average_change_data', 'data', data)
+        console.log('average_change_data', 'data', data)
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -2993,7 +2996,7 @@ class E5DetailsSection extends Component {
         var recorded = false;
         for(var i = 0; i < noOfDps; i++) {
             if(largest_number == 0) yVal = 0
-            else yVal = data[factor * xVal]
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
             
             if(yVal != null && data[factor * xVal] != null){
                 if(i%(Math.round(noOfDps/4)) == 0 && i != 0 && !recorded){
@@ -3006,8 +3009,10 @@ class E5DetailsSection extends Component {
             }
         }
 
+        console.log('average_change_data', 'dps', dps)
+        const scale = largest_number/100
         
-        return { dps, start_time }
+        return { dps, start_time, scale }
     }
 
     get_transaction_tag_data_points(used_token_price_data, selected_token, used_tokens_max){

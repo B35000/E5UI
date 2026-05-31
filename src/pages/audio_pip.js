@@ -395,40 +395,59 @@ class AudioPip extends Component {
                     const focused_timestamp_info = track_data['encrypted_file_data_info'][timestamp_keys[current_timestamp_key_pos]]
                     const start = focused_timestamp_info.encryptedStartByte
                     const end = start + focused_timestamp_info.encryptedSize - 1;
-                    if(this.update_start_time_pos == null){
-                        const link = await this.props.construct_encrypted_link_from_ecid_object(track_data, 'data')
-                        const response = await fetch(encodeURI(link), {
-                            headers: { Range: `bytes=${start}-${end}` },
-                        });
-                        if (response.status === 206 || response.status === 200) {
-                            const value = await response.arrayBuffer()
-                            const chunk = new Uint8Array(value);
-                            try{
-                                const decrypted_chunk_array = await this.decrypt_chunk(chunk, key)
-                                if(this.current_file == track_data['data']){
-                                    await this.appendBufferAsync(sourceBuffer, decrypted_chunk_array);
-                                    if(this.state.play_pause_state == 1){
-                                        this.audio.current?.play()
-                                    }
-                                    if(this.loaded_timestamp_key_pos == null){
-                                        this.loaded_timestamp_key_pos = []
-                                    }
-                                    this.loaded_timestamp_key_pos.push(current_timestamp_key_pos)
-                                    current_timestamp_key_pos++;
-                                }else{
-                                    mediaSource.endOfStream();
-                                    return;
+                    const handle_chunk = async (chunk) => {
+                        try{
+                            const decrypted_chunk_array = await this.decrypt_chunk(chunk, key)
+                            if(this.current_file == track_data['data']){
+                                await this.appendBufferAsync(sourceBuffer, decrypted_chunk_array);
+                                if(this.state.play_pause_state == 1){
+                                    this.audio.current?.play()
                                 }
-                            }
-                            catch(e){
-                                console.log('audio_pip', 'something went wrong with the decryption or appending to buffer', e)
-                                // mediaSource.endOfStream('decode');
-                                // return;
+                                if(this.loaded_timestamp_key_pos == null){
+                                    this.loaded_timestamp_key_pos = []
+                                }
+                                this.loaded_timestamp_key_pos.push(current_timestamp_key_pos)
+                                current_timestamp_key_pos++;
+                            }else{
+                                mediaSource.endOfStream();
+                                return;
                             }
                         }
-                        else{
-                            console.log('failed to fetch file chunk from node', response.status, response.statusText)
+                        catch(e){
+                            console.log('audio_pip', 'something went wrong with the decryption or appending to buffer', e)
+                            // mediaSource.endOfStream('decode');
+                            // return;
                         }
+                    }
+                    if(this.update_start_time_pos == null){
+                        const load_from_fetch = async () => {
+                            const link = await this.props.construct_encrypted_link_from_ecid_object(track_data, 'data')
+                            const response = await fetch(encodeURI(link), {
+                                headers: { Range: `bytes=${start}-${end}` },
+                            });
+                            if (response.status === 206 || response.status === 200) {
+                                const value = await response.arrayBuffer()
+                                const chunk = new Uint8Array(value);
+                                await handle_chunk(chunk)
+                            }
+                            else{
+                                console.log('failed to fetch file chunk from node', response.status, response.statusText)
+                            }
+                        }
+                        if(current_timestamp_key_pos == 0){
+                            const ecid = this.state.songs[this.state.pos]['track']
+                            const pre_loaded_data = await this.props.get_data_in_local_forage(ecid)
+                            if(pre_loaded_data != null){
+                                await handle_chunk(pre_loaded_data)
+                            }else{
+                                await load_from_fetch()
+                            }
+                        }else{
+                            await load_from_fetch()
+                        }
+                        
+
+                        
                     }
                 }
                 else if(this.has_already_loaded_current_timestamp_key_pos(current_timestamp_key_pos)){

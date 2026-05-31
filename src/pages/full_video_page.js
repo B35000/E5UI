@@ -1031,7 +1031,40 @@ class FullVideoPage extends Component {
     }
 
     loadAndAppendChunk = async (track_data, sourceBuffer, mediaSource, start, end, chunkIndex, key) => {
-        try {
+        const handle_chunk = async (chunk) => {
+            if (chunk.length < 12) {
+                throw new Error('Chunk too small for IV extraction');
+            }
+            
+            const decryptedArray = await this.decrypt_chunk(chunk, key)
+            console.log(`Decrypted chunk size: ${decryptedArray.length} bytes`);
+            
+            // Double-check we're still using the same MediaSource
+            if(this.current_file == track_data['data'] && this.mediaSourceRef === mediaSource && this.isStreamingActive){
+                if (mediaSource.readyState !== 'open') {
+                    console.error('MediaSource not in open state:', mediaSource.readyState);
+                    return false;
+                }
+
+                if (decryptedArray.length < 100) { // Minimum reasonable chunk size
+                    console.warn(`Skipping tiny chunk ${chunkIndex}: only ${decryptedArray.length} bytes`);
+                    return true; // Skip this chunk but continue processing
+                }
+                
+                await this.appendBufferAsync(sourceBuffer, decryptedArray);
+                console.log(`Successfully appended chunk ${chunkIndex}`);
+                
+                if(this.loaded_timestamp_key_pos == null){
+                    this.loaded_timestamp_key_pos = [];
+                }
+                this.loaded_timestamp_key_pos.push(chunkIndex);
+                return true;
+            } else {
+                console.log('MediaSource changed during operation, aborting chunk');
+                return false;
+            }
+        }
+        const load_from_fetch = async () => {
             const link = await this.props.construct_encrypted_link_from_ecid_object(track_data, 'data');
             const response = await fetch(encodeURI(link), {
                 headers: { Range: `bytes=${start}-${end}` },
@@ -1042,42 +1075,27 @@ class FullVideoPage extends Component {
                 const chunk = new Uint8Array(value);
                 
                 console.log(`Received chunk size: ${chunk.length} bytes`);
+                return await handle_chunk(chunk)
                 
-                if (chunk.length < 12) {
-                    throw new Error('Chunk too small for IV extraction');
-                }
-                
-                const decryptedArray = await this.decrypt_chunk(chunk, key)
-                console.log(`Decrypted chunk size: ${decryptedArray.length} bytes`);
-                
-                // Double-check we're still using the same MediaSource
-                if(this.current_file == track_data['data'] && this.mediaSourceRef === mediaSource && this.isStreamingActive){
-                    if (mediaSource.readyState !== 'open') {
-                        console.error('MediaSource not in open state:', mediaSource.readyState);
-                        return false;
-                    }
-
-                    if (decryptedArray.length < 100) { // Minimum reasonable chunk size
-                        console.warn(`Skipping tiny chunk ${chunkIndex}: only ${decryptedArray.length} bytes`);
-                        return true; // Skip this chunk but continue processing
-                    }
-                    
-                    await this.appendBufferAsync(sourceBuffer, decryptedArray);
-                    console.log(`Successfully appended chunk ${chunkIndex}`);
-                    
-                    if(this.loaded_timestamp_key_pos == null){
-                        this.loaded_timestamp_key_pos = [];
-                    }
-                    this.loaded_timestamp_key_pos.push(chunkIndex);
-                    return true;
-                } else {
-                    console.log('MediaSource changed during operation, aborting chunk');
-                    return false;
-                }
             } else {
                 console.error('Failed to fetch file chunk:', response.status, response.statusText);
                 return false;
             }
+        }
+        try {
+            if(chunkIndex == 0){
+                const ecid = this.state.videos[this.state.pos]['video']
+                const pre_loaded_data = await this.props.get_data_in_local_forage(ecid)
+                if(pre_loaded_data != null){
+                    return await handle_chunk(pre_loaded_data)
+                }else{
+                    return await load_from_fetch()
+                }
+            }
+            else{
+                return await load_from_fetch()
+            }
+            
         } catch (error) {
             console.error('Error loading chunk:', error);
             return false;

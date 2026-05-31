@@ -21588,6 +21588,94 @@ class App extends Component {
 
 
 
+  async pre_load_file(ecid, data, file_type){
+    if(data['encrypted'] != true) return;
+    const local_forage_keys = await localforage.keys()
+    if(local_forage_keys.includes(ecid)) return;
+
+    if(file_type == 'image'){
+      const url = await this.construct_encrypted_link_from_ecid(ecid, 'image', 'full_image')
+      try{
+        const response = await fetch(url);
+        const buffer = await response.arrayBuffer()
+        const password_mimetype_data = this.fetch_encrypted_files_password(ecid)
+        const password = password_mimetype_data.password
+        const mime_type = password_mimetype_data.mime_type
+        const data_as_uint_array = new Uint8Array(buffer)
+        const is_file_valid = await this.is_supplied_file_valid(data_as_uint_array, this.get_file_hash(ecid))
+        if(is_file_valid == false){
+          return;
+        }
+        await this.set_data_in_local_forage(data_as_uint_array, ecid)
+      }
+      catch(e){
+        console.log('pre_load_file', e)
+      }
+    }
+    else if(file_type == 'pdf'){
+      const url = await this.construct_encrypted_link_from_ecid(ecid,  'pdf', 'data')
+      try{
+        const response = await fetch(encodeURI(url));
+        const buffer = await response.arrayBuffer()
+        const password_mimetype_data = this.fetch_encrypted_files_password(ecid)
+        const password = password_mimetype_data.password
+        const mime_type = password_mimetype_data.mime_type
+        const data_as_uint_array = new Uint8Array(buffer)
+        const is_file_valid = await this.is_supplied_file_valid(data_as_uint_array, this.get_file_hash(ecid))
+        if(is_file_valid == false){
+          return;
+        }
+        await this.set_data_in_local_forage(data_as_uint_array, ecid)
+      }
+      catch(e){
+        console.log('pre_load_file', e)
+      }
+    }
+    else if(file_type == 'audio' || file_type == 'video'){
+      const key = await this.get_key_from_password(data['password'], 'e');
+      const timestamp_keys = Object.keys(data['encrypted_file_data_info'])
+      const focused_timestamp_info = data['encrypted_file_data_info'][timestamp_keys[0]]
+      const start = focused_timestamp_info.encryptedStartByte
+      const end = start + focused_timestamp_info.encryptedSize - 1;
+      const link = await this.construct_encrypted_link_from_ecid_object(data, 'data')
+      try{
+        const response = await fetch(encodeURI(link), {
+          headers: { Range: `bytes=${start}-${end}` },
+        });
+        const value = await response.arrayBuffer()
+        const chunk = new Uint8Array(value);
+        await this.set_data_in_local_forage(chunk, ecid)
+      }
+      catch(e){
+        console.log('pre_load_file', e)
+      }
+    }
+  }
+
+  async set_data_in_local_forage(data, ecid){
+    if(this.state.storage_permissions == 'e') return;
+    try{
+      await localforage.setItem(ecid, data)
+    }catch(e){
+      console.log('apppage', 'localforage', e)
+    }
+  }
+
+  async get_data_in_local_forage(ecid){
+    try{
+      return await localforage.getItem(ecid);
+    }catch(e){
+      console.log('apppage', 'localforage', e)
+    }
+  }
+
+
+
+
+
+
+
+
 
 
   render_view_image_bottomsheet(){
@@ -21736,6 +21824,13 @@ class App extends Component {
   }
 
   load_decrypted_image_file = async (image) => {
+    const pre_loaded_data = await this.get_data_in_local_forage(image)
+    if(pre_loaded_data != null){
+      const password_mimetype_data = this.fetch_encrypted_files_password(image)
+      const password = password_mimetype_data.password
+      const mime_type = password_mimetype_data.mime_type
+      return await this.decryptFile(pre_loaded_data, password, mime_type, 'e')
+    }
     const url = await this.construct_encrypted_link_from_ecid(image, 'image', 'full_image')
     try {
       // Fetch the image as a blob
@@ -22130,6 +22225,13 @@ class App extends Component {
   }
 
   load_decrypted_pdf_file = async (pdf) => {
+    const pre_loaded_data = await this.get_data_in_local_forage(pdf)
+    if(pre_loaded_data != null){
+      const password_mimetype_data = this.fetch_encrypted_files_password(pdf)
+      const password = password_mimetype_data.password
+      const mime_type = password_mimetype_data.mime_type
+      return await this.decryptFile(pre_loaded_data, password, mime_type, 'e')
+    }
     const url = await this.construct_encrypted_link_from_ecid(pdf, 'pdf', 'data')
     try {
       // Fetch the image as a blob
@@ -22421,7 +22523,7 @@ class App extends Component {
     return(
       <div style={{width:player_size, height:player_size}}>
         <AudioPip ref={this.audio_pip_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} player_size={player_size} theme={this.state.theme} load_queue={this.load_queue.bind(this)} close_audio_pip={this.close_audio_pip.bind(this)} open_full_player={this.open_full_player.bind(this)} when_next_track_reached={this.when_next_track_reached.bind(this)} when_time_updated={this.when_time_updated.bind(this)} 
-        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)} when_buffer_updated={this.when_buffer_updated.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} schedule_audio_pip_visibility_because_of_inactivity={this.schedule_audio_pip_visibility_because_of_inactivity.bind(this)} restore_audio_pip_visibility_because_of_touch={this.restore_audio_pip_visibility_because_of_touch.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)}
+        update_song_plays={this.update_song_plays.bind(this)} notify_account_to_make_purchase={this.notify_account_to_make_purchase.bind(this)} when_audio_play_paused_from_pip={this.when_audio_play_paused_from_pip.bind(this)} when_buffer_updated={this.when_buffer_updated.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} schedule_audio_pip_visibility_because_of_inactivity={this.schedule_audio_pip_visibility_because_of_inactivity.bind(this)} restore_audio_pip_visibility_because_of_touch={this.restore_audio_pip_visibility_because_of_touch.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)} get_data_in_local_forage={this.get_data_in_local_forage.bind(this)}
         />
       </div>
     )
@@ -23123,7 +23225,7 @@ class App extends Component {
       <div /* style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <FullVideoPage ref={this.full_video_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} load_video_queue={this.load_video_queue.bind(this)} when_picture_in_picture_exited={this.when_picture_in_picture_exited.bind(this)} show_images={this.show_images.bind(this)}
         update_video_time_for_future_reference={this.update_video_time_for_future_reference.bind(this)} add_video_message_to_stack_object={this.add_video_message_to_stack_object.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} delete_message_from_stack={this.delete_message_from_stack.bind(this)} load_video_messages={this.load_video_messages.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} 
-        construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)} add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_full_video_bottomsheet={this.open_full_video_bottomsheet.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+        construct_encrypted_link_from_ecid_object={this.construct_encrypted_link_from_ecid_object.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} get_key_from_password={this.get_key_from_password.bind(this)} decrypt_chunk={this.decrypt_chunk.bind(this)} add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_full_video_bottomsheet={this.open_full_video_bottomsheet.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} get_data_in_local_forage={this.get_data_in_local_forage.bind(this)}
         />
       </div>
     )
@@ -27080,6 +27182,8 @@ class App extends Component {
       const parsed_data = JSON.parse(data)
       const fees_object = parsed_data['fees_object']
       const exchange_rates = parsed_data['exchange_rates']
+      console.log('load_coin_and_externals_data', 'exchange_rates', exchange_rates)
+      console.log('load_coin_and_externals_data', 'fees_object', fees_object)
       this.setState({fees_object: fees_object, exchange_rates: exchange_rates})
     }
     catch(e){
@@ -29298,7 +29402,7 @@ class App extends Component {
       //     price_data[asset_id] = data
       //   }
       // }
-      // console.log('apppage', 'load_coin_and_ether_coin_prices', 'final', price_data)
+      console.log('apppage', 'load_coin_and_ether_coin_prices', 'final', price_data)
       this.setState({asset_price_data: price_data})
     }
     catch(e){
@@ -32138,12 +32242,16 @@ class App extends Component {
           clone[filetype][cids[i]] = data
           delete clone[cids[e]]
           this.setState({uploaded_data: clone})
+          this.pre_load_file(cids[i], data, filetype)
           // console.log('apppage', 'set one cid object in memory.')
         }catch(e){
           console.log('datas', e)
         }
       }
     }
+
+    await this.wait(200)
+
   }
 
   load_and_store_video_thumbnail(cid, data){
