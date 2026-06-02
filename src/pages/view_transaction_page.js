@@ -1039,6 +1039,15 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['3055qi']/* 'verify-certificate' */){
                 return this.render_verify_certificate()
             }
+            else if(tx.type == this.props.app_state.loc['e311a']/* 'cross-exchange' */){
+                return this.render_crossexchange_details()
+            }
+            else if(tx.type == this.props.app_state.loc['e311bb']/* 'edit-cross-exchange' */){
+                return this.render_edit_crossexchange()
+            }
+            else if(tx.type == this.props.app_state.loc['3108']/* 'crossexchange-swap' */){
+                return this.render_cross_exchange_buy_sell_data()
+            }
         }
     }
 
@@ -2592,6 +2601,132 @@ return data['data']
 
 
 
+    render_crossexchange_details(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+        const item = this.render_crossexchange_details_data(object)
+        var e5 = this.props.app_state.stack_items[this.state.transaction_index].e5
+
+        const target_type = this.get_selected_item2(object['ipfs'].new_exchange_or_certificate_target_title_tags_object, 'e')
+
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':object['ipfs'].exchange_authority, 'details':this.props.app_state.loc['d311bp']/* 'Certificate Authority' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['target_type'])}
+                    <div style={{height: 10}}/>
+
+                    {target_type == 1/* exchange */ && (
+                        <div>
+                            {this.render_detail_item('2', item['token_starting_liquidity'])}
+                        </div>
+                    )}
+
+                    {target_type == 2/* certificate */ && (
+                        <div>
+                            {this.render_detail_item('3', item['certificate_starting_liquidity'])}
+                        </div>
+                    )}
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('2', item['buy_limit'])}
+                    <div style={{height: 10}}/>
+                    
+                    {target_type == 1/* exchange */ && (
+                        <div>
+                            {this.render_detail_item('2', item['sell_limit'])}
+                        </div>
+                    )}
+
+                    {target_type == 2/* certificate */ && (
+                        <div>
+                            {this.render_detail_item('3', item['sell_limit_proportion'])}
+                        </div>
+                    )}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['minimum_transactions_between_swap'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['minimum_time_between_swap'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['minimum_transactions_for_first_buy'])}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+                    {this.render_pdf_files_if_any()}
+                    {this.render_zip_files_if_any()}
+                    {this.render_markdown_if_any()}
+
+                    {this.render_price_data(object['ipfs'].price_data, e5)}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_crossexchange_details_data(object){
+        var tags = object['ipfs'] == null ? ['Certificate'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
+
+        const target_type = this.get_selected_item(object['ipfs'].new_exchange_or_certificate_target_title_tags_object, 'e')
+
+        const token_target = object['ipfs'].token_target
+        const exchange_transfer_amount = object['ipfs'].exchange_transfer_amount
+
+        const selected_certificate = object['ipfs'].selected_certificate
+        const proportion_amount = object['ipfs'].proportion_amount
+        const starting_liquidity_stake_text = this.props.app_state.loc['e311ba']/* 'Starting Liquidity Stake: $' */.replace('$', this.format_proportion(proportion_amount))
+        const model_data = selected_certificate['ipfs']['model_data']
+        const class_name = model_data['class_name']
+        const time = selected_certificate['ipfs']['depth_item']['time']
+        const footer = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+
+        const default_exchange_amount_buy_limit = object['ipfs'].default_exchange_amount_buy_limit//
+        const default_exchange_amount_sell_limit = object['ipfs'].default_exchange_amount_sell_limit//
+        const minimum_time_between_swap = object['ipfs'].minimum_time_between_swap//
+        const minimum_transactions_between_swap = object['ipfs'].minimum_transactions_between_swap//
+        const minimum_transactions_for_first_buy = object['ipfs'].minimum_transactions_for_first_buy//
+
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'target_type':{'title':target_type, 'details':this.props.app_state.loc['e311z']/* Target Type */, 'size':'l'},
+
+            'token_starting_liquidity':{ 'style':'l', 'title':this.props.app_state.loc['e311n']/* 'Starting Liquidity' */, 'subtitle':this.format_power_figure(exchange_transfer_amount), 'barwidth':this.calculate_bar_width(exchange_transfer_amount), 'number':this.format_account_balance_figure(exchange_transfer_amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[token_target], 'n':subscription_config[1] },
+
+            'certificate_starting_liquidity':{'title':start_and_end(class_name), 'details':starting_liquidity_stake_text, 'footer':footer, 'size':'l'},
+
+            'buy_limit':{'style':'l','title':this.props.app_state.loc['1817']/* 'Mint Limit' */, 'subtitle':this.format_power_figure(default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(default_exchange_amount_buy_limit), 'relativepower':this.props.app_state.loc['918']/* 'units' */, 'n':default_exchange_amount_buy_limit},
+            
+            'minimum_transactions_between_swap': {'title':minimum_transactions_between_swap, 'details':this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, 'size':'l'},
+            'minimum_time_between_swap': {'title':this.get_time_diff(minimum_time_between_swap), 'details':this.props.app_state.loc['658']/* 'Minimum Time Between Swap' */, 'size':'l'},
+
+            'sell_limit':{'style':'l','title':this.props.app_state.loc['328']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(default_exchange_amount_sell_limit), 'relativepower':this.props.app_state.loc['918']/* 'units' */, 'n':default_exchange_amount_sell_limit},
+
+            'sell_limit_proportion':{'title':this.format_proportion(default_exchange_amount_sell_limit), 'details':this.props.app_state.loc['653']/* 'Sell Limit' */, 'size':'l'},
+
+            'minimum_transactions_for_first_buy': {'title':minimum_transactions_for_first_buy, 'details':this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, 'size':'l'},
+        }
+    }
+
+
+
+
+
+
+
 
 
 
@@ -3161,6 +3296,7 @@ return data['data']
             </div>
         )
     }
+
 
 
 
@@ -4519,15 +4655,27 @@ return data['data']
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['token']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']]})}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['token']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
-                                </div>
-                                <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':this.props.app_state.loc['1910']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
-                                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
+                                {this.render_transfer_item(item)}
                             </li>
                         ))}
                     </ul>
+                </div>
+            )
+        }
+    }
+
+    render_transfer_item(item){
+        if(item['label'] != null){
+            return(
+                <div>
+                    {this.render_detail_item('3', item['label'])}
+                </div>
+            )
+        }else{
+            const title = this.format_account_balance_figure(item['amount'])+' '+ this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['924']/* 'Receiver ID: ' */+item['receiver'], 'size':'l'})}
                 </div>
             )
         }
@@ -6746,6 +6894,41 @@ return data['data']
                     {this.render_price_data(object['ipfs'].price_data, e5)}
                     <div style={{height: 10}}/>
                     {this.render_model_items(object['ipfs'].certificate_models)}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_edit_crossexchange(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+        const item = this.render_crossexchange_details_data(object)
+        var e5 = this.props.app_state.stack_items[this.state.transaction_index].e5
+
+        const target_type = this.get_selected_item2(object['ipfs'].new_exchange_or_certificate_target_title_tags_object, 'e')
+
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['target_type'])}
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+                    {this.render_pdf_files_if_any()}
+                    {this.render_zip_files_if_any()}
+                    {this.render_markdown_if_any()}
+
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -9057,12 +9240,29 @@ return data['data']
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['token']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']]})}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['token']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
-                                </div>
+                                {this.render_transfer_item(item)}
                             </li>
                         ))}
                     </ul>
+                </div>
+            )
+        }
+    }
+
+    render_transfer_item(item){
+        var transfer_item = this.props.app_state.stack_items[this.state.transaction_index];
+        if(item['label'] != null){
+            return(
+                <div>
+                    {this.render_detail_item('3', item['label'])}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['token']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']]})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['token']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
+                    </div>
                 </div>
             )
         }
@@ -10140,6 +10340,141 @@ return data['data']
                 <div style={{height: 10}}/>
             </div>
         )
+    }
+
+
+
+
+
+
+
+
+
+
+    render_cross_exchange_buy_sell_data(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var action = this.get_selected_item(item.new_mint_dump_action_page_tags_object, 'e')
+        var recipient = item.recipient_id == '53' ? this.props.app_state.loc['1847']/* 'Your account ID: ' */+this.props.app_state.user_account_id[this.props.app_state.selected_e5] : item.recipient_id
+
+        const object = item.token_item
+        const target_type = this.get_selected_item2(object['ipfs'].new_exchange_or_certificate_target_title_tags_object, 'e')
+        const token_target = object['ipfs'].token_target
+        const target_symbol = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[token_target]
+        const my_balance = this.get_my_target_balance(object)
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+                
+                {action == this.props.app_state.loc['949']/* 'mint-buy' */ && (
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['956']/* 'Set the amount of tokens your submitting for the mint/buy action.' */, 'title':this.props.app_state.loc['957']/* 'Amount for action' */})}
+                        <div style={{height:10}}/>
+                        
+                        {this.render_buy_token_uis(object, item.amount)}
+                    </div>
+                )}
+                {action == this.props.app_state.loc['950']/* 'dump-sell' */ && (
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3108h']/* 'Set the amount of tokens your submitting for the dump/sell action.' */, 'title':this.props.app_state.loc['957']/* 'Amount for action' */})}
+                        <div style={{height:10}}/>
+                        
+                        {target_type == 1/* exchange */ && (
+                            <div>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'number':item.amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[token_target]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'subtitle':this.format_power_figure(item.amount), 'barwidth':this.calculate_bar_width(item.amount), 'number':this.format_account_balance_figure(item.amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[token_target], })}
+                                </div>
+
+                            </div>
+                        )}
+
+                        {target_type == 2/* certificate */ && (
+                            <div>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3108i']/* 'Fractionalized Stake Proportion.' */, 'subtitle':this.format_power_figure((item.amount / 10**18) * 100), 'barwidth':this.calculate_bar_width((item.amount / 10**18) * 100), 'number':((item.amount / 10**18) * 100)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */})}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {this.render_detail_item('0')}
+
+                {target_type == 1/* exchange */ && (
+                    <div>
+                        <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'number':my_balance, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[token_target]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'subtitle':this.format_power_figure(my_balance), 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[token_target], })}
+                        </div>
+
+                    </div>
+                )}
+
+                {target_type == 2/* certificate */ && (
+                    <div>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['3055pp']/* 'Your Fractionalized Stake.' */, 'subtitle':this.format_power_figure((my_balance / 10**18) * 100), 'barwidth':this.calculate_bar_width((my_balance / 10**18) * 100), 'number':((my_balance / 10**18) * 100)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */})}
+                        </div>
+                    </div>
+                )}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1850']/* 'Selected Action' */, 'title':action})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1851']/* 'Target Recipient Account' */, 'title':''+recipient})}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_buy_token_uis(object, amount){
+        var buy_tokens = [].concat(object['data'][3])
+        var buy_amounts = [].concat(object['exchanges_balances'])
+        var buy_depths = [].concat(object['data'][5])
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                    {buy_tokens.map((item, index) => (
+                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'number':this.calculate_submit_price(buy_amounts[index], amount), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle':this.format_power_figure(this.calculate_submit_price(buy_amounts[index], amount)), 'barwidth':this.calculate_bar_width(this.calculate_submit_price(buy_amounts[index], amount)), 'number':this.format_account_balance_figure(this.calculate_submit_price(buy_amounts[index], amount)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                        </div>
+                    ))}
+                </div>
+            </div>
+            
+        )
+    }
+
+    get_my_target_balance(object){
+        const token_target = object['ipfs'].token_target
+
+        const target_type = this.get_selected_item2(object['ipfs'].new_exchange_or_certificate_target_title_tags_object, 'e')
+
+        if(target_type == 1/* exchange */){
+            return this.props.calculate_actual_balance(object['e5'], token_target)
+        }
+        else if(target_type == 2/* certificate */){
+            const certificate = this.get_fractionalized_certificate_object_by_id(token_target, object['e5'])
+            if(certificate == null) return 0;
+            return certificate['balance']
+        }
+    }
+
+    get_fractionalized_certificate_object_by_id(id, e5){
+        const certificate_ids = Object.keys(this.props.app_state.fractionalized_assets)
+        const exchanges_from_sync = []
+        certificate_ids.forEach(certificate_id => {
+            const exchange_ids = Object.keys(this.props.app_state.fractionalized_assets[certificate_id])
+            exchange_ids.forEach(exchange_id => {
+                exchanges_from_sync.push(this.props.app_state.fractionalized_assets[certificate_id][exchange_id])
+            });
+        });
+
+        const filtered_objects = exchanges_from_sync.filter((cert_object) => {
+            return (cert_object['id'] == id && cert_object['e5'] == e5)
+        });
+
+        if(filtered_objects.length == 0) return;
+        return filtered_objects[0]
     }
 
 

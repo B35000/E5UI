@@ -81,6 +81,11 @@ class NewMintActionPage extends Component {
         };
     }
 
+
+
+
+
+
     render(){
         if(this.state.token_item == null) return;
         return(
@@ -376,8 +381,7 @@ class NewMintActionPage extends Component {
                 var max = this.get_token_sell_limit()
                 this.setState({amount: max})
             }
-        }
-        
+        }  
     }
 
     set_price_data(){
@@ -660,6 +664,8 @@ class NewMintActionPage extends Component {
     }
 
 
+
+
     load_account_suggestions(){
         var items = [].concat(this.get_suggested_accounts())
         var background_color = this.props.theme['card_background_color']
@@ -740,6 +746,10 @@ class NewMintActionPage extends Component {
     when_suggestion_clicked(item, pos){
         this.setState({recipient_id: item['id']})
     }
+
+
+
+
 
     get_all_sorted_objects(object){
         var all_objects = []

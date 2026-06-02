@@ -607,6 +607,7 @@ import NewVideoPage from './pages/create_action_pages/new_video_page';
 import NewNitroPage from './pages/create_action_pages/new_nitro_page';
 import NewPollPage from './pages/create_action_pages/new_poll_page';
 import NewCertificatePage from './pages/create_action_pages/new_certificate_page';
+import NewCrossexchangePage from './pages/create_action_pages/new_crossexchange_page';
 
 import EditJobPage from './pages/edit_action_pages/edit_job_page'
 import EditTokenPage from './pages/edit_action_pages/edit_token_page'
@@ -620,6 +621,7 @@ import EditVideoPage from './pages/edit_action_pages/edit_videopost_page';
 import EditNitroPage from './pages/edit_action_pages/edit_nitropost_page';
 import EditPollPage from './pages/edit_action_pages/edit_poll_page';
 import EditCertificatePage from './pages/edit_action_pages/edit_certificate_page';
+import EditCrossexchangePage from './pages/edit_action_pages/edit_crossexchange_page'
 
 import EnterContractPage from './pages/contract_action_pages/enter_contract_page';
 import ExtendContractPage from './pages/contract_action_pages/extend_contract_page';
@@ -645,6 +647,7 @@ import TransferStakePage from './pages/token_action_pages/transfer_stake_page';
 import CouponPaymentPage from './pages/token_action_pages/coupon_payment_page';
 import StagedCouponPage from './pages/token_action_pages/view_staged_coupon_page';
 import QuickTransferPage from './pages/token_action_pages/quick_transfer_page';
+import CrossexchangeSwapPage from './pages/token_action_pages/crossexchange_swap_page';
 
 import VoteProposalPage from './pages/proposal_action_pages/vote_proposal_page';
 import SubmitProposalPage from './pages/proposal_action_pages/submit_proposal_page';
@@ -1277,7 +1280,7 @@ class App extends Component {
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
     fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
-    quick_send_bottomsheet:false,
+    quick_send_bottomsheet:false, edit_crossexchange_bottomsheet: false, crossexchange_swap_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -1389,6 +1392,8 @@ class App extends Component {
     focused_items:[], detail_focused_items:[], should_continue_loading:{}, is_safe_to_load_focused_items_into_memory:false, storefront_purchase_requests:{}, socket_storefront_purchase_requests:{}, storefront_payment_update_data:{}, storefront_payment_event_data:{},
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
+
+    created_crossexchanges:{}
   };
 
   get_app_version(){
@@ -3596,6 +3601,7 @@ class App extends Component {
     this.new_storefront_page = React.createRef();
     this.new_storefront_item_page = React.createRef();
     this.new_certificate_page = React.createRef();
+    this.new_crossexchange_page = React.createRef();
 
     this.new_mint_dump_token_page = React.createRef();
     this.new_transfer_token_page = React.createRef();
@@ -3644,6 +3650,7 @@ class App extends Component {
     this.edit_storefront_page = React.createRef()
     this.edit_contractor_page = React.createRef();
     this.edit_poll_page = React.createRef();
+    this.edit_crossexchange_page = React.createRef();
 
     this.give_award_page = React.createRef();
     this.add_comment_page = React.createRef();
@@ -3705,6 +3712,7 @@ class App extends Component {
     this.coupon_payment_page = React.createRef();
     this.staged_coupon_page = React.createRef();
     this.quick_send_page = React.createRef();
+    this.crossexchange_swap_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -4904,7 +4912,7 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false,
       })
 
       return cached_state_obj
@@ -5238,7 +5246,7 @@ class App extends Component {
       {name: 'Northern Mariana Islands', code: 'MP', color:['g']}, 
       {name: 'Norway', code: 'NO', color:['g']}, 
       {name: 'Oman', code: 'OM', color:['y']}, 
-      {name: 'Pakistan', code: 'PK', color:['p']}, 
+      {name: 'Pakistan', code: 'PK', color:['y']}, 
       {name: 'Palau', code: 'PW', color:['g']}, 
       {name: 'Palestinian Territory, Occupied', code: 'PS', color:['y']}, 
       {name: 'Panama', code: 'PA', color:['o']},
@@ -6756,6 +6764,8 @@ class App extends Component {
           {this.render_coupon_payment_bottomsheet()}
           {this.render_staged_coupon_bottomsheet()}
           {this.render_quick_send_bottomsheet()}
+          {this.render_edit_crossexchange_element()}
+          {this.render_crossexchange_swap_bottomsheet()}
 
 
           {this.render_set_map_location_bottomsheet()}
@@ -6896,7 +6906,7 @@ class App extends Component {
 
           show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} 
 
-          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)}
+          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -10674,7 +10684,7 @@ class App extends Component {
             payment_update_transactions.push(t)
           }
         }
-        else if(stack[i].type == this.getLocale()['946']/* 'buy-sell' */){
+        else if(stack[i].type == this.getLocale()['946']/* 'buy-sell' */ || stack[i].type == this.getLocale()['3108']/* 'crossexchange-swap' */){
           const t = stack[i];
           swap_transactions.push(t.token_item['e5_id'])
         }
@@ -11525,6 +11535,15 @@ class App extends Component {
       return(
         <NewCertificatePage
           ref={this.new_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
+          set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
+          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_images={this.show_images.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+        />
+      )
+    }
+    else if(target == '15'/* cross-exchanges */){
+      return(
+        <NewCrossexchangePage
+          ref={this.new_crossexchange_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
           set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
           get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_images={this.show_images.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
         />
@@ -12932,6 +12951,77 @@ class App extends Component {
 
 
 
+  render_edit_crossexchange_object_bottomsheet(){
+    if(this.state.edit_crossexchange_bottomsheet2 != true) return;
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      this.render_edit_crossexchange_element(),
+      this.state.edit_crossexchange_bottomsheet,
+      this.open_edit_crossexchange_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  render_edit_crossexchange_element(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <div>
+          <EditCrossexchangePage ref={this.edit_crossexchange_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_images={this.show_images.bind(this)}
+          />
+      </div>
+    )
+  }
+
+  open_edit_crossexchange_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_edit_crossexchange_bottomsheet')
+    if(this.state.edit_crossexchange_bottomsheet == true){
+      //closing
+      this.edit_crossexchange_bottomsheet = this.edit_crossexchange_page.current?.state;
+
+      this.setState({edit_crossexchange_bottomsheet: !this.state.edit_crossexchange_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_crossexchange_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_crossexchange_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_crossexchange_bottomsheet: !me.state.edit_crossexchange_bottomsheet});
+          if(me.edit_crossexchange_bottomsheet != null){
+            me.edit_crossexchange_page.current?.setState(me.edit_crossexchange_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  open_edit_crossexchange_object(target, object){
+    this.open_edit_crossexchange_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_crossexchange_page.current){
+      me.edit_crossexchange_page.current?.setState(object['ipfs'])
+      me.edit_crossexchange_page.current?.setState({type:me.getLocale()['e311bb']/* 'edit-cross-exchange' */})
+      me.edit_crossexchange_page.current?.setState({object_id: object['id']})
+      me.edit_crossexchange_page.current?.set()
+    }
+    }, (1 * 1100));
+  }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -12976,6 +13066,9 @@ class App extends Component {
     }
     else if(target == '14'){
       this.open_edit_certificate_object(target, object)
+    }
+    else if(target == '15'){
+      this.open_edit_crossexchange_object(target, object)
     }
   }
 
@@ -15951,7 +16044,7 @@ class App extends Component {
       this.open_edit_certificate_bottomsheet()
       var me = this;
       setTimeout(function() {
-        if(me.edit_certificatae_page.current){
+        if(me.edit_certificate_page.current){
         me.edit_certificate_page.current?.setState(tx)
       }
       }, (1 * 1100)); 
@@ -16016,6 +16109,33 @@ class App extends Component {
       setTimeout(function() {
         if(me.staged_coupon_page.current){
           me.staged_coupon_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
+    else if(tx.type == this.getLocale()['e311a']/* 'cross-exchange' */){
+      this.open_new_object('15')
+      var me = this;
+      setTimeout(function() {
+        if(me.new_crossexchange_page.current){
+          me.new_crossexchange_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
+    else if(tx.type == this.getLocale()['e311bb']/* 'edit-cross-exchange' */){
+      this.open_edit_crossexchange_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.edit_crossexchange_page.current){
+        me.edit_crossexchange_page.current?.setState(tx)
+      }
+      }, (1 * 1100)); 
+    }
+    else if(tx.type == this.getLocale()['3108']/* 'crossexchange-swap' */){
+      this.open_crossexchange_swap_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.crossexchange_swap_page.current){
+          me.crossexchange_swap_page.current?.setState(tx)
         }
       }, (1 * 1100));
     }
@@ -19266,11 +19386,18 @@ class App extends Component {
     }
     else if(object_type == 31/* token */){
       const id = object['data'][0][3/* <3>token_type */]
+      const classic_swap_exchange_parent_token = object['data'][2][18/* <18>classic_swap_exchange_parent_token */] || 0
       if(object['data'][0][4/* <4>non-fungible */] == 1){
         this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1264bw']/* 'certificates' */})
         this.homepage.current?.when_certificate_object_clicked(index, object['id'], object['e5'], object, 'ignore')
         this.homepage.current?.reset_post_detail_object()
-      }else{
+      }
+      else if(classic_swap_exchange_parent_token != 0){
+        this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1264bx']/* 'cross-exchanges' */})
+        this.homepage.current?.when_crossexchange_object_clicked(index, object['id'], object['e5'], object, 'ignore')
+        this.homepage.current?.reset_post_detail_object()
+      }
+      else{
         if(id == 3/* capped(or type end) */){
           this.homepage.current?.setState({detail_page: 'w', detail_selected_tag: this.getLocale()['1218']/* 'ends ☝️' */})
           this.homepage.current?.when_ends_object_clicked(index, object['id'], object['e5'], object, 'ignore')
@@ -26833,6 +26960,86 @@ class App extends Component {
     this.setState({is_running: clone})
   }
 
+
+
+
+
+
+
+
+
+
+
+
+  render_crossexchange_swap_bottomsheet(){
+    if(this.state.crossexchange_swap_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <CrossexchangeSwapPage ref={this.crossexchange_swap_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_crossexchange_swap_to_stack={this.add_crossexchange_swap_to_stack.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)}
+      />,
+      this.state.crossexchange_swap_bottomsheet,
+      this.open_crossexchange_swap_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_crossexchange_swap_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_crossexchange_swap_bottomsheet')
+    if(this.state.crossexchange_swap_bottomsheet == true){
+      //closing
+      this.crossexchange_swap_bottomsheet = this.crossexchange_swap_page.current?.state;
+
+      this.setState({crossexchange_swap_bottomsheet: !this.state.crossexchange_swap_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({crossexchange_swap_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({crossexchange_swap_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({crossexchange_swap_bottomsheet: !me.state.crossexchange_swap_bottomsheet});
+
+          if(me.crossexchange_swap_bottomsheet != null){
+            me.crossexchange_swap_page.current?.setState(me.crossexchange_swap_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_crossexchange_swap_bottomsheet(object){
+    this.open_crossexchange_swap_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.crossexchange_swap_page.current != null){
+        me.crossexchange_swap_page.current.set_token(object)
+      }
+    }, (1 * 1100));
+  }
+
+  add_crossexchange_swap_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
 
 
 
@@ -35973,6 +36180,7 @@ class App extends Component {
     
     var created_token_object_data = this.state.created_tokens[e5] || []
     var created_certificate_object_data = this.state.created_certificates[e5] || []
+    var created_crossexchange_object_data = this.state.created_crossexchanges[e5] || []
     var created_token_object_mapping = this.state.created_token_object_mapping[e5] || {}
     var is_first_time = this.state.created_tokens[e5] == null
 
@@ -36063,15 +36271,17 @@ class App extends Component {
       
       const is_certificate = created_token_data[i][0][4/* <4>non-fungible */] == 1
       console.log('get_token_data', e5, token_id, 'is certificate: ',is_certificate)
+      
+      const is_crossexchange = created_token_data[i][2][18/* <18>classic_swap_exchange_parent_token */] != null && created_token_data[i][2][18/* <18>classic_swap_exchange_parent_token */] > 0
         
       var token_obj = {
-        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':is_certificate == true ? created_certificate_object_data.length : created_token_object_data.length, 'spend_balance':spend_balance, 'object_type':'token'
+        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':is_certificate == true ? created_certificate_object_data.length : (is_crossexchange == true ? created_crossexchange_object_data.length: created_token_object_data.length), 'spend_balance':spend_balance, 'object_type':'token'
       }
 
 
       if(this.homepage.current?.state.selected_end_item == token_id+e5 || this.homepage.current?.state.selected_spend_item == token_id+e5){
         // the token is being viewed
-        const previous_obj = is_certificate == true ? this.state.created_certificates[e5].find(e => e['e5_id'] == (token_id+e5)) : this.state.created_tokens[e5].find(e => e['e5_id'] == (token_id+e5))
+        const previous_obj = is_certificate == true ? this.state.created_certificates[e5].find(e => e['e5_id'] == (token_id+e5)) : (is_crossexchange == true ? this.state.created_crossexchanges[e5].find(e => e['e5_id'] == (token_id+e5)): this.state.created_tokens[e5].find(e => e['e5_id'] == (token_id+e5)))
         if(previous_obj != null){
           token_obj['exchanges_balances'] = previous_obj['exchanges_balances']
           token_obj['moderators'] = previous_obj['moderators']
@@ -36089,7 +36299,7 @@ class App extends Component {
       }
 
       if(tokens_data != null || (token_id == 3 || token_id == 5)){
-        const index = is_certificate == true ? created_certificate_object_data.findIndex(item => item['e5_id'] === token_obj['e5_id']) : created_token_object_data.findIndex(item => item['e5_id'] === token_obj['e5_id']);
+        const index = is_certificate == true ? created_certificate_object_data.findIndex(item => item['e5_id'] === token_obj['e5_id']) : (is_crossexchange == true ? created_crossexchange_object_data.findIndex(item => item['e5_id'] === token_obj['e5_id']) :created_token_object_data.findIndex(item => item['e5_id'] === token_obj['e5_id']) )
 
         if(is_certificate == true){
           if(index != -1){
@@ -36105,6 +36315,13 @@ class App extends Component {
           }
           fractionalized_assets_clone[tokens_data['token_e5_id']/* certificate_object */][token_obj['e5_id']] = token_obj
           this.setState({fractionalized_assets: fractionalized_assets_clone})
+        }
+        else if(is_crossexchange == true){
+          if(index != -1){
+            created_crossexchange_object_data[index] = token_obj
+          }else{
+            created_crossexchange_object_data.push(token_obj)
+          }
         }
         else{
           if(index != -1){
@@ -36173,6 +36390,9 @@ class App extends Component {
         var created_certificates_clone = structuredClone(this.state.created_certificates)
         created_certificates_clone[e5] = created_certificate_object_data
 
+        var created_crossexchanges_clone = structuredClone(this.state.created_crossexchanges)
+        created_crossexchanges_clone[e5] = created_crossexchange_object_data
+
         var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
         created_token_object_mapping_clone[e5] = created_token_object_mapping
 
@@ -36188,7 +36408,7 @@ class App extends Component {
         var end_tokens_clone = structuredClone(this.state.end_tokens)
         end_tokens_clone[e5] = end_tokens
 
-        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone, created_certificates: created_certificates_clone})
+        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone, created_certificates: created_certificates_clone, created_crossexchanges: created_crossexchanges_clone})
         
         if((i%4 == 0 || i == created_tokens.length-1)){
           await this.wait(350)
@@ -36234,6 +36454,9 @@ class App extends Component {
     var created_certificates_clone = structuredClone(this.state.created_certificates)
     created_certificates_clone[e5] = created_certificate_object_data
 
+    var created_crossexchanges_clone = structuredClone(this.state.created_crossexchanges)
+    created_crossexchanges_clone[e5] = created_crossexchange_object_data
+
     var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
     created_token_object_mapping_clone[e5] = created_token_object_mapping
 
@@ -36249,7 +36472,7 @@ class App extends Component {
     var end_tokens_clone = structuredClone(this.state.end_tokens)
     end_tokens_clone[e5] = end_tokens
 
-    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone, created_certificates: created_certificates_clone})
+    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone, created_certificates: created_certificates_clone, created_crossexchanges: created_crossexchanges_clone})
 
     await this.wait(350)
     this.resolve_token_name_details()

@@ -110,11 +110,11 @@ class home_page extends Component {
         
         view_post_bottomsheet: false, filter_section_bottomsheet:false, post_preview_bottomsheet:false, post_nsfw_bottomsheet: false,
 
-        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], viewed_audios:[], viewed_videos:[], viewed_nitros:[], viewed_polls:[], viewed_tokens:[], viewed_objects:[], viewed_certificates:[],
+        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], viewed_audios:[], viewed_videos:[], viewed_nitros:[], viewed_polls:[], viewed_tokens:[], viewed_objects:[], viewed_certificates:[], viewed_crossexchanges:[],
         
         confirmation_dialog_box: false, contact_to_add:0, 
         
-        pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[], pinned_audios:[], pinned_videos:[], pinned_nitros:[], pinned_bills:[], pinned_polls:[], all_pinns:[], pinned_tokens:[],pinned_certificates:[],
+        pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[], pinned_audios:[], pinned_videos:[], pinned_nitros:[], pinned_bills:[], pinned_polls:[], all_pinns:[], pinned_tokens:[],pinned_certificates:[], pinned_crossexchanges:[],
         
         page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'e', tabs:[],
 
@@ -443,7 +443,7 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */, 'e.'+this.props.app_state.loc['1264bw']/* 'certificates' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */, /* this.props.app_state.loc['1264i'] */ /* 'wallet-notifications' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */, 'e.'+this.props.app_state.loc['1264bw']/* 'certificates' */, 'e.'+this.props.app_state.loc['1264bx']/* 'cross-exchanges' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */, /* this.props.app_state.loc['1264i'] */ /* 'wallet-notifications' */],[1]
           ],
         }
 
@@ -461,6 +461,10 @@ class home_page extends Component {
 
         obj[this.props.app_state.loc['1264bw']/* 'certificates' */] = [
             ['xor','',0], [this.props.app_state.loc['1264bw']/* 'certificates' */, this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
+        ]
+
+        obj[this.props.app_state.loc['1264bx']/* 'cross-exchanges' */] = [
+            ['xor','',0], [this.props.app_state.loc['1264bx']/* 'cross-exchanges' */, this.props.app_state.loc['1202']/* 'all ♾️' *//* , this.props.app_state.loc['1264by'] *//* 'interacted 👩‍💻' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [1],[1]
         ]
 
         return obj
@@ -1512,6 +1516,10 @@ class home_page extends Component {
             ['xor','',0], [this.props.app_state.loc['1264bw']/* 'certificates' */, this.props.app_state.loc['1202']/* 'all ♾️' */, this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
         ]
 
+        obj[this.props.app_state.loc['1264bx']/* 'cross-exchanges' */] = [
+            ['xor','',0], [this.props.app_state.loc['1264bx']/* 'cross-exchanges' */, this.props.app_state.loc['1202']/* 'all ♾️' *//* , this.props.app_state.loc['1264by'] *//* 'interacted 👩‍💻' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, ], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
+        ]
+
 
 
 
@@ -1527,7 +1535,7 @@ class home_page extends Component {
         }
         else if(this.state.page == 'w'){
             obj['e'] = [
-                ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */, /* this.props.app_state.loc['1264i'] */ /* 'wallet-notifications' */], [0,0,0,0,0,0,this.get_all_wallet_notification_items(['bill_request']).length,0,0,0,0,0,0,0,0,0,0,]
+                ['xor','',0], ['e',this.props.app_state.loc['1264j']/* 'coins 🪙' */,this.props.app_state.loc['1217']/* 'ethers ⚗️' */, 'e.'+this.props.app_state.loc['1218']/* 'ends ☝️' */, 'e.'+this.props.app_state.loc['1219']/* 'spends 🫰' */,'e.'+this.props.app_state.loc['1264ai']/* 'bills' */, this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */, /* this.props.app_state.loc['1264i'] */ /* 'wallet-notifications' */], [0,0,0,0,0,0,0,this.get_all_wallet_notification_items(['bill_request']).length,0,0,0,0,0,0,0,0,0,0,]
             ]
         }
 
@@ -1587,6 +1595,10 @@ class home_page extends Component {
         else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264bw']/* 'certificates' */){
             if(this.props.app_state.selected_e5 == 'E25') return ''
             else return '14'
+        }
+        else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+            if(this.props.app_state.selected_e5 == 'E25') return ''
+            else return '15'
         }
         else if(selected_item == this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */){
             return 'iTransfer'
@@ -1909,6 +1921,9 @@ class home_page extends Component {
             else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264bw']/* 'certificates' */){
                 selected_page = this.props.app_state.loc['1264bw']/* 'certificates' */
             }
+            else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+                selected_page = this.props.app_state.loc['1264bx']/* 'cross-exchanges' */
+            }
         }
         return selected_page;
     }
@@ -2142,6 +2157,10 @@ class home_page extends Component {
             else if(tag_group['i'].active == this.props.app_state.loc['1264bw']/* 'certificates' */){
                 selected_page = this.props.app_state.loc['1264bw']/* 'certificates' */
             }
+            else if(tag_group['i'].active == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+                selected_page = this.props.app_state.loc['1264bx']/* 'cross-exchanges' */
+            }
+            
         }
 
         var id = this.get_page_id()
@@ -2556,6 +2575,12 @@ class home_page extends Component {
                     this.wallet_list_section.current?.set_certificate_list(scroll_pos)
                 }
             }
+            else if(selected_item == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_crossexchange_list(scroll_pos)
+                }
+            }
+            
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
     }
@@ -2721,6 +2746,12 @@ class home_page extends Component {
                     this.wallet_list_section.current?.set_certificate_list(scroll_pos, true)
                 }
             }
+            else if(selected_item == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_crossexchange_list(scroll_pos, true)
+                }
+            }
+            
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
@@ -4314,6 +4345,47 @@ class home_page extends Component {
         }
     }
 
+    get_crossexchange_items(all){
+        var selected_option_name = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+
+        var page_id = this.state.wallet_page_tags_object['i'].active+selected_option_name
+        var selected_page = this.props.app_state.loc['1264bx']/* 'cross-exchanges' */
+
+        if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1264bx']/* 'cross-exchanges' */ || all != null){
+            return this.get_all_sorted_objects(this.props.app_state.created_crossexchanges)
+        }
+        
+        if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
+            var items = this.get_items_for_page2(page_id, selected_page)
+            
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(items)))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
+            var all_tokens = this.get_items_for_page2(page_id, selected_page)
+            const viewed = this.state.viewed_crossexchanges
+            var main_tokens = all_tokens.filter(function (object) {
+                return (viewed.includes(object['id']))
+            })
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
+        }
+        else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
+            var all_tokens = this.get_items_for_page2(page_id, selected_page)
+            const pinned = this.state.pinned_crossexchanges
+            var main_tokens = all_tokens.filter(function (object) {
+                return (pinned.includes(object['id']))
+            })
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
+        }
+        else {
+            var all_tokens = this.get_items_for_page2(page_id, selected_page)
+            const me = this.props.app_state.user_account_id
+            var main_tokens = all_tokens.filter(function (object) {
+                return (me[object['e5']] == object['author'])
+            })
+            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
+        }
+    }
+
 
 
 
@@ -5142,7 +5214,8 @@ class home_page extends Component {
             if(
                 selected_item == this.props.app_state.loc['1218']/* 'ends ☝️' */ || 
                 selected_item == this.props.app_state.loc['1219']/* 'spends 🫰' */ || 
-                selected_item == this.props.app_state.loc['1264bw']/* 'certificates' */
+                selected_item == this.props.app_state.loc['1264bw']/* 'certificates' */ ||
+                selected_item == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */
             ){
                 return true
             }
@@ -5322,6 +5395,10 @@ class home_page extends Component {
         else if(selected_page == this.props.app_state.loc['1264bw']/* 'certificates' */){
             return this.get_all_sorted_objects(this.props.app_state.created_certificates)
         }
+        else if(selected_page == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+            return this.get_all_sorted_objects(this.props.app_state.created_crossexchanges)
+        }
+        
     }
 
 
@@ -5336,13 +5413,13 @@ class home_page extends Component {
         return(
             <PostListSection ref={list_section} size={size} height={h} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.render_top_notification.bind(this)}
             
-            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)} when_audio_item_clicked={this.when_audio_item_clicked.bind(this)} when_video_item_clicked={this.when_video_item_clicked.bind(this)} when_nitro_item_clicked={this.when_nitro_item_clicked.bind(this)} when_bill_item_clicked={this.when_bill_item_clicked.bind(this)} when_poll_item_clicked={this.when_poll_item_clicked.bind(this)} when_direct_message_object_item_clicked={this.when_direct_message_object_item_clicked.bind(this)} when_certificate_object_clicked={this.when_certificate_object_clicked.bind(this)}
+            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)} when_audio_item_clicked={this.when_audio_item_clicked.bind(this)} when_video_item_clicked={this.when_video_item_clicked.bind(this)} when_nitro_item_clicked={this.when_nitro_item_clicked.bind(this)} when_bill_item_clicked={this.when_bill_item_clicked.bind(this)} when_poll_item_clicked={this.when_poll_item_clicked.bind(this)} when_direct_message_object_item_clicked={this.when_direct_message_object_item_clicked.bind(this)} when_certificate_object_clicked={this.when_certificate_object_clicked.bind(this)} when_crossexchange_object_clicked={this.when_crossexchange_object_clicked.bind(this)}
 
             theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} when_view_image_clicked={this.when_view_image_clicked.bind(this)}
             
-            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals} viewed_stores={this.state.viewed_stores} viewed_bags={this.state.viewed_bags} viewed_contractors={this.state.viewed_contractors} viewed_audios={this.state.viewed_audios} viewed_videos={this.state.viewed_videos} viewed_nitros={this.state.viewed_nitros} viewed_polls={this.state.viewed_polls} viewed_certificates={this.state.viewed_certificates}
+            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals} viewed_stores={this.state.viewed_stores} viewed_bags={this.state.viewed_bags} viewed_contractors={this.state.viewed_contractors} viewed_audios={this.state.viewed_audios} viewed_videos={this.state.viewed_videos} viewed_nitros={this.state.viewed_nitros} viewed_polls={this.state.viewed_polls} viewed_certificates={this.state.viewed_certificates} viewed_crossexchanges={this.state.viewed_crossexchanges}
 
-            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_e5_data={this.get_e5_data.bind(this)} set_page_scroll={this.set_page_scroll.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} get_searched_account_data={this.props.get_searched_account_data.bind(this)} when_searched_account_clicked={this.props.when_searched_account_clicked.bind(this)} get_audio_items={this.get_audio_items.bind(this)} get_video_items={this.get_video_items.bind(this)} get_nitro_items={this.get_nitro_items.bind(this)} get_bill_items={this.get_bill_items.bind(this)} get_poll_items={this.get_poll_items.bind(this)} get_certificate_items={this.get_certificate_items.bind(this)}
+            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_e5_data={this.get_e5_data.bind(this)} set_page_scroll={this.set_page_scroll.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} get_searched_account_data={this.props.get_searched_account_data.bind(this)} when_searched_account_clicked={this.props.when_searched_account_clicked.bind(this)} get_audio_items={this.get_audio_items.bind(this)} get_video_items={this.get_video_items.bind(this)} get_nitro_items={this.get_nitro_items.bind(this)} get_bill_items={this.get_bill_items.bind(this)} get_poll_items={this.get_poll_items.bind(this)} get_certificate_items={this.get_certificate_items.bind(this)} get_crossexchange_items={this.get_crossexchange_items.bind(this)}
 
             show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
             get_all_sorted_notifications={this.get_all_sorted_notifications.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} view_number={this.props.view_number.bind(this)}
@@ -6103,6 +6180,29 @@ class home_page extends Component {
         this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
+    async when_crossexchange_object_clicked(index, id, e5, object, ignore_set_details_data){
+        this.setState({selected_crossexchange_item: id+e5})
+        this.record_viewed_item(id+e5)
+        if(ignore_set_details_data == null) this.set_detail_data();
+        var viewed_crossexchanges_clone = this.state.viewed_crossexchanges.slice()
+        var pos = viewed_crossexchanges_clone.indexOf(id)
+        if(pos == -1){
+            viewed_crossexchanges_clone.push(id)
+            this.setState({viewed_crossexchanges: viewed_crossexchanges_clone})
+            this.update_cookies()
+        }
+        this.props.load_extra_token_data(object)
+        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1264bx']/* 'cross-exchanges' */)
+        this.reset_post_detail_object()
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+        this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.fetch_uploaded_files_for_object(object)
+        this.props.emit_view_object_event(id+e5)
+        this.props.fetch_and_set_loaded_object_views([id], e5)
+    }
+
 
 
 
@@ -6153,6 +6253,10 @@ class home_page extends Component {
             else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264bw']/* 'certificates' */){
                 selected_tag = this.state.wallet_page_tags_object['i'].active
             }
+            else if(this.state.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+                selected_tag = this.state.wallet_page_tags_object['i'].active
+            }
+            
         }
         this.setState({detail_page: selected_page, detail_selected_tag: selected_tag})
     }
@@ -6242,13 +6346,13 @@ class home_page extends Component {
                 {this.render_page_tabs()}
                 <PostDetailSection ref={this.detail_section} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} detail_page={this.state.detail_page} detail_selected_tag={this.state.detail_selected_tag}
 
-                selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item} selected_coin_item={this.state.selected_coin_item} selected_audio_item={this.state.selected_audio_item} selected_video_item={this.state.selected_video_item} selected_nitro_item={this.state.selected_nitro_item} selected_bill_item={this.state.selected_bill_item} selected_poll_item={this.state.selected_poll_item} selected_direct_message_item={this.state.selected_direct_message_item} selected_certificate_item={this.state.selected_certificate_item}
+                selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item} selected_coin_item={this.state.selected_coin_item} selected_audio_item={this.state.selected_audio_item} selected_video_item={this.state.selected_video_item} selected_nitro_item={this.state.selected_nitro_item} selected_bill_item={this.state.selected_bill_item} selected_poll_item={this.state.selected_poll_item} selected_direct_message_item={this.state.selected_direct_message_item} selected_certificate_item={this.state.selected_certificate_item} selected_crossexchange_item={this.state.selected_crossexchange_item}
 
                 height={h} screensize={this.props.screensize} width={width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)} notify={this.render_top_notification.bind(this)}
                 
                 when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_job_tapped.bind(this)} fetch_objects_data={this.props.fetch_objects_data.bind(this)}
                 
-                viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals} viewed_stores={this.state.viewed_stores} viewed_bags={this.state.viewed_bags} viewed_contractors={this.state.viewed_contractors} viewed_audios={this.state.viewed_audios} viewed_videos={this.state.viewed_videos} viewed_nitros={this.state.viewed_nitros} viewed_polls={this.state.viewed_polls} viewed_certificates={this.state.viewed_certificates}
+                viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals} viewed_stores={this.state.viewed_stores} viewed_bags={this.state.viewed_bags} viewed_contractors={this.state.viewed_contractors} viewed_audios={this.state.viewed_audios} viewed_videos={this.state.viewed_videos} viewed_nitros={this.state.viewed_nitros} viewed_polls={this.state.viewed_polls} viewed_certificates={this.state.viewed_certificates} viewed_crossexchanges={this.state.viewed_crossexchanges}
 
                 open_mint_burn_token_ui={this.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.open_transfer_ui.bind(this)} open_enter_contract_ui={this.open_enter_contract_ui.bind(this)} open_extend_contract_ui={this.open_extend_contract_ui.bind(this)} open_exit_contract_ui={this.open_exit_contract_ui.bind(this)} open_new_proposal_ui={this.open_new_proposal_ui.bind(this)}
                 open_vote_proposal_ui={this.open_vote_proposal_ui.bind(this)} open_sumbit_proposal_ui={this.open_sumbit_proposal_ui.bind(this)} open_pay_subscription_ui={this.open_pay_subscription_ui.bind(this)} open_cancel_subscription_ui={this.open_cancel_subscription_ui.bind(this)} open_collect_subscription_ui={this.open_collect_subscription_ui.bind(this)} open_modify_subscription_ui={this.open_modify_subscription_ui.bind(this)} open_modify_contract_ui={this.open_modify_contract_ui.bind(this)} open_modify_token_ui={this.open_modify_token_ui.bind(this)} open_exchange_transfers_ui={this.open_exchange_transfers_ui.bind(this)} open_force_exit_ui={this.open_force_exit_ui.bind(this)} open_archive_proposal_ui={this.open_archive_proposal_ui.bind(this)} open_freeze_unfreeze_ui={this.open_freeze_unfreeze_ui.bind(this)} open_authmint_ui={this.open_authmint_ui.bind(this)} open_moderator_ui={this.open_moderator_ui.bind(this)} show_images={this.props.show_images.bind(this)}
@@ -6261,7 +6365,7 @@ class home_page extends Component {
                 open_clear_purchase={this.props.open_clear_purchase.bind(this)} add_bag_message_to_stack_object={this.props.add_bag_message_to_stack_object.bind(this)} add_storefront_message_to_stack_object={this.props.add_storefront_message_to_stack_object.bind(this)} open_view_job_request_ui={this.props.open_view_job_request_ui} open_view_contract_ui={this.props.open_view_contract_ui.bind(this)}
 
                 get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)}
-                get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_audio_items={this.get_audio_items.bind(this)} get_video_items={this.get_video_items.bind(this)} get_nitro_items={this.get_nitro_items.bind(this)} get_bill_items={this.get_bill_items.bind(this)} get_poll_items={this.get_poll_items.bind(this)} get_certificate_items={this.get_certificate_items.bind(this)}
+                get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_audio_items={this.get_audio_items.bind(this)} get_video_items={this.get_video_items.bind(this)} get_nitro_items={this.get_nitro_items.bind(this)} get_bill_items={this.get_bill_items.bind(this)} get_poll_items={this.get_poll_items.bind(this)} get_certificate_items={this.get_certificate_items.bind(this)} get_crossexchange_items={this.get_crossexchange_items.bind(this)}
 
                 add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} open_award_ui={this.open_give_awards.bind(this)}
 
@@ -6269,7 +6373,7 @@ class home_page extends Component {
 
                 get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.props.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.props.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)}
                 
-                pin_bag={this.pin_bag.bind(this)} pin_channel={this.pin_channel.bind(this)} pin_item={this.pin_item.bind(this)} pin_post={this.pin_post.bind(this)} pin_subscription={this.pin_subscription.bind(this)} pin_proposal={this.pin_proposal.bind(this)} pin_contractor={this.pin_contractor.bind(this)} pin_contract={this.pin_contract.bind(this)} pin_job={this.pin_job.bind(this)} pin_audio={this.pin_audio.bind(this)} pin_video={this.pin_video.bind(this)} pin_nitro={this.pin_nitro.bind(this)} pin_bill={this.pin_bill.bind(this)} pin_poll={this.pin_poll.bind(this)} pin_token={this.pin_token.bind(this)} pin_certificate={this.pin_certificate.bind(this)}
+                pin_bag={this.pin_bag.bind(this)} pin_channel={this.pin_channel.bind(this)} pin_item={this.pin_item.bind(this)} pin_post={this.pin_post.bind(this)} pin_subscription={this.pin_subscription.bind(this)} pin_proposal={this.pin_proposal.bind(this)} pin_contractor={this.pin_contractor.bind(this)} pin_contract={this.pin_contract.bind(this)} pin_job={this.pin_job.bind(this)} pin_audio={this.pin_audio.bind(this)} pin_video={this.pin_video.bind(this)} pin_nitro={this.pin_nitro.bind(this)} pin_bill={this.pin_bill.bind(this)} pin_poll={this.pin_poll.bind(this)} pin_token={this.pin_token.bind(this)} pin_certificate={this.pin_certificate.bind(this)} pin_crossexchange={this.pin_crossexchange.bind(this)}
                 
                 get_channel_event_data={this.props.get_channel_event_data.bind(this)} open_e5_link={this.open_e5_link.bind(this)} open_rpc_settings={this.open_rpc_settings.bind(this)} get_wallet_data_for_specific_e5={this.props.get_wallet_data_for_specific_e5.bind(this)}
                 view_number={this.props.view_number.bind(this)}
@@ -6313,7 +6417,7 @@ class home_page extends Component {
 
                 load_accounts_non_fungible_token_data={this.props.load_accounts_non_fungible_token_data.bind(this)} perform_fractionalized_certificate_search={this.perform_fractionalized_certificate_search.bind(this)} get_verified_certificate_data={this.props.get_verified_certificate_data.bind(this)}
 
-                get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)}
+                get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)}
                 />
             </div>
         )
@@ -7050,6 +7154,34 @@ class home_page extends Component {
         }
     }
 
+    pin_crossexchange(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
+        this.add_item_to_all_pinns(item)
+        var id = item['id']
+        var pinned_data_clone = this.state.pinned_crossexchanges.slice()
+        var pos = pinned_data_clone.indexOf(id)
+        if(pos == -1){
+            pinned_data_clone.push(id)
+            this.setState({pinned_crossexchanges: pinned_data_clone})
+            this.update_cookies()
+            this.props.notify(this.props.app_state.loc['1264bz']/* 'Cross-Exchange Pinned.' */,900)
+        }else{
+            pinned_data_clone.splice(pos, 1)
+            this.setState({pinned_crossexchanges: pinned_data_clone})
+            this.update_cookies()
+            this.props.notify(this.props.app_state.loc['1264ca']/* 'Cross-Exchange Unpinned' */,900)
+
+            if(this.is_in_pinned_section()){
+                if(this.props.screensize == 's'){
+                    this.open_view_object_bottomsheet()
+                }
+            }
+        }
+    }
+
     add_item_to_all_pinns(item){
         var id = item['e5_id']
         var pinned_item_clone = this.state.all_pinns.slice()
@@ -7310,6 +7442,15 @@ class home_page extends Component {
                 return tem['e5_id']
             }
         }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_crossexchanges))
+            if(object != null && object['ipfs'] != null){
+                return object['ipfs'].entered_title_text
+            }else{
+                return tem['e5_id']
+            }
+        }
+        
         return ''
     }
 
@@ -7352,6 +7493,7 @@ class home_page extends Component {
         obj[this.props.app_state.loc['1264ai']/* bills */] = '🧾'
         obj[this.props.app_state.loc['1264ao']/* 'polls' */] = '📊'
         obj[this.props.app_state.loc['1264bw']/* 'certificates' */] = '📜'
+        obj[this.props.app_state.loc['1264bx']/* 'cross-exchanges' */] = '✚'
         return `${obj[item['selected_tag']]} ${item['selected_tag']}`
     }
 
@@ -7502,6 +7644,15 @@ class home_page extends Component {
                 }
             }
         }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+            var selected_item = this.state.selected_crossexchange_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        
         
 
         return is_tab_active;
@@ -7621,6 +7772,13 @@ class home_page extends Component {
 
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_certificate_item: tem['e5_id']})
         }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_crossexchanges))
+            if(object != null) this.props.load_extra_token_data(object);
+
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_crossexchange_item: tem['e5_id']})
+        }
+        
     }
 
 

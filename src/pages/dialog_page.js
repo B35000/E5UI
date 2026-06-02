@@ -3715,7 +3715,7 @@ return data['data']
                     36/* channel */: this.props.app_state.created_channels[e5],
                     27/* storefront */: this.props.app_state.created_stores[e5],
                     25/* bag */: this.props.app_state.created_bags[e5],
-                    31/* token */: this.props.app_state.created_tokens[e5].concat(this.props.app_state.created_certificates[e5]),
+                    31/* token */: this.props.app_state.created_tokens[e5].concat(this.props.app_state.created_certificates[e5], this.props.app_state.created_crossexchanges[e5]),
                     19/* audioport */: this.props.app_state.created_audios[e5],
                     20/* videoport */: this.props.app_state.created_videos[e5],
                     21/* nitro */: this.props.app_state.created_nitros[e5],
@@ -4307,8 +4307,12 @@ return data['data']
         var object_array = object['data']
         var token_id = object['id']
         var item = object
+        const classic_swap_exchange_parent_token = object_array[2][18/* <18>classic_swap_exchange_parent_token */] || 0
         if(object_array[0][4/* <4>non-fungible */] == 1){
             return this.format_certificate_item(object)
+        }
+        else if(classic_swap_exchange_parent_token != 0){
+            return this.format_crossexchange_item(object)
         }
         var type = object_array[0][3/* <3>token_type */] == 3 ? this.props.app_state.loc['3078']/* END */: this.props.app_state.loc['3079']/* SPEND */
         var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
@@ -4356,6 +4360,20 @@ return data['data']
     format_certificate_item(object){
         var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
+        var age = object['event'].returnValues.p5
+        var time = object['event'].returnValues.p4
+        var sender = this.get_senders_name(object['author'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
+        }
+    }
+
+    format_crossexchange_item(){
+        var tags = object['ipfs'] == null ? ['Crossexchange'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Crossexchange ID' : object['ipfs'].entered_title_text
         var age = object['event'].returnValues.p5
         var time = object['event'].returnValues.p4
         var sender = this.get_senders_name(object['author'], object);

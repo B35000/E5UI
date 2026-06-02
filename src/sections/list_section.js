@@ -376,6 +376,13 @@ class PostListSection extends Component {
                     </div>
                 )
             }
+            else if(this.props.wallet_page_tags_object['i'].active == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+                return(
+                    <div>
+                        {this.render_crossexchanges_list_group()}
+                    </div>
+                )
+            }
         }
 
     }
@@ -8252,6 +8259,143 @@ return data['data']
 
     when_certificate_item_clicked(index, item){
         setTimeout(() => this.props.when_certificate_object_clicked(index, item['id'], item['e5'], item), animate_time);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_crossexchanges_list_group(){
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var all_items = this.get_crossexchange_exchanges()
+        var items = this.filter_objects_and_remove_very_new_entries(all_items)
+
+        // console.log('render_certificate_list_gorup', this.props.app_state.created_certificates)
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_line_loader_if_reloading()}
+                        {this.show_load_metrics(items, 'crossexchanges')}
+                        {this.show_new_objects_message_if_any(all_items)}
+                        {items.map((item, index) => (
+                            <div>
+                                {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
+                                <div style={{height: 2}}/>
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
+        return ( 
+            <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                {this.render_line_loader_if_reloading()}
+                {this.show_load_metrics(items, 'crossexchanges')}
+                {this.show_new_objects_message_if_any(all_items)}
+                <Virtuoso
+                    ref={this.crossexchange_list}
+                    style={{ height: middle }}
+                    totalCount={items.length}
+                    itemContent={(index) => {
+                        const item = items[index];
+                        return (
+                            <div>
+                                <AnimatePresence initial={true}>
+                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    style={{'padding': padding}}>
+                                        {this.render_crossexchange_object(item, index)}
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                        );
+                    }}
+                    rangeChanged={(range) => {
+                        this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'crossexchange'))
+                    }}
+                />
+            </div>
+        );
+    }
+
+    get_crossexchange_exchanges(){
+        return this.order_elements(this.remove_duplicates(this.props.get_crossexchange_items()), 'e5_id');
+    }
+
+    render_crossexchange_object(object, index){
+        if(object == null || object['ipfs'] == null){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_crossexchange_item(object)
+        if(object == null) return;
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div onClick={() => this.when_crossexchange_item_clicked(index, object)}>
+                    {this.render_detail_item('3', item['min'])}
+                </div>
+            )
+        }
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_crossexchange_item_clicked(index, object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_proposal_item_clicked(index, object)} */>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    format_crossexchange_item(object){
+        var tags = object['ipfs'] == null ? ['Cross-Exchange'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Cross-Exchange ID' : object['ipfs'].entered_title_text
+        var age = object['event'].returnValues.p5
+        var time = object['event'].returnValues.p4
+        var sender = this.get_senders_name(object['author'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
+        }
+    }
+
+    when_crossexchange_item_clicked(index, item){
+        setTimeout(() => this.props.when_crossexchange_object_clicked(index, item['id'], item['e5'], item), animate_time);
     }
 
 

@@ -80,6 +80,7 @@ class tags extends Component {
         items[this.props.app_state.loc['3093g']/* 'wallet-obligations' */] = '👛'
         items[this.props.app_state.loc['1264bw']/* 'certificates' */] = '📜'
         items[this.props.app_state.loc['3098w']/* 'acquired' */] = '🧳'
+        items[this.props.app_state.loc['1264bx']/* 'cross-exchnages' */] = '✚'
       }
       
       if(items[item] != null) return items[item];

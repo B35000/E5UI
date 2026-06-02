@@ -58,6 +58,8 @@ class ExchangeTransferPage extends Component {
         new_transfer_title_tags_object:this.get_new_transfer_title_tags_object(),
 
         exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
+
+        new_exchange_or_certificate_target_title_tags_object:this.new_exchange_or_certificate_target_title_tags_object(), typed_search_fractionalized_tokens:'', proportion_amount:0,
     };
 
 
@@ -72,6 +74,16 @@ class ExchangeTransferPage extends Component {
         };
     }
 
+    new_exchange_or_certificate_target_title_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['e311h']/* 'exchange' */, this.props.app_state.loc['3103d']/* 'certificate' */], [1]
+            ],
+        };
+    }
 
 
 
@@ -141,12 +153,43 @@ class ExchangeTransferPage extends Component {
         }
     }
 
+
+
     render_transfer_data_pickers(){
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['910']/* 'Run an exchange transfer for : ' */+this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+this.state.token_item['id']]})}
-                <div style={{height:10}}/>
+                <div style={{height:20}}/>
 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['929b']/* 'Withdraw Target.' */, 'details':this.props.app_state.loc['929c']/* 'You may specify which transfer type you are dealing with, a normal token or a certificate.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.new_exchange_or_certificate_target_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_exchange_or_certificate_target_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                
+                {this.render_transfer_token_or_certificate_pickers()} 
+            </div>
+        )
+    }
+
+    when_new_exchange_or_certificate_target_title_tags_object_updated(tag_obj){
+        this.setState({new_exchange_or_certificate_target_title_tags_object: tag_obj})
+    }
+
+    render_transfer_token_or_certificate_pickers(){
+        const selected_item = this.get_selected_item(this.state.new_exchange_or_certificate_target_title_tags_object, 'e')
+
+        if(selected_item == this.props.app_state.loc['e311h']/* 'exchange' */){
+            return this.render_exchange_target_picker()
+        }
+        else if(selected_item == this.props.app_state.loc['3103d']/* 'certificate' */){
+            return this.render_certificate_target_picker()
+        }
+    }
+
+
+
+    render_exchange_target_picker(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['911']/* 'Target Receiver' */, 'details':this.props.app_state.loc['912']/* 'Set the account set to receive the token amounts' */, 'size':'l'})}
                 <div style={{height:20}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['913']/* 'Target Receiver...' */} when_text_input_field_changed={this.when_exchange_transfer_receiver_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_receiver} theme={this.props.theme}/>
@@ -177,6 +220,55 @@ class ExchangeTransferPage extends Component {
             </div>
         )
     }
+
+    render_certificate_target_picker(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['911']/* 'Target Receiver' */, 'details':this.props.app_state.loc['912']/* 'Set the account set to receive the token amounts' */, 'size':'l'})}
+                <div style={{height:20}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['913']/* 'Target Receiver...' */} when_text_input_field_changed={this.when_exchange_transfer_receiver_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_receiver} theme={this.props.theme}/>
+
+                {this.load_account_suggestions('exchange_transfer_receiver')}
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['e311k']/* 'Certificate Target' */, 'details':this.props.app_state.loc['3094l']/* 'Select the certificate you wish to be the target for the exchange deposit.' */, 'size':'l'})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['3103h']/* 'Only fractionalized certificates will show here.' */})}
+
+                <div style={{margin:'5px 10px 0px 10px'}}>
+                    <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
+                </div>
+                <div style={{height:10}}/>
+                {this.load_certificates()}
+
+
+                {this.render_detail_item('0')}
+                                
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['929d']/* 'Set the amount of stake you wish to transfer out of the exchange.' */, 'title':this.props.app_state.loc['929e']/* 'Transfer Amount' */})}
+                                
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.proportion_amount), 'details':this.props.app_state.loc['929f']/* 'Fractionalized Proportion to be Transferred.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_proportion_amount_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'5.3%'}/>
+
+
+                <div style={{height:20}}/>
+                <div style={{'padding': '5px'}} onClick={()=>this.add_exchange_certificate_transfer_item()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['919']/* 'Add Transfer Action' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_typed_search_fractionalized_tokens_text_input_field_changed(text){
+        this.setState({typed_search_fractionalized_tokens: text})
+    }
+
+    when_proportion_amount_proportion(number){
+        this.setState({proportion_amount: number})
+    }
+
+
 
     when_exchange_transfer_target_text_input_field_changed(text){
         this.setState({exchange_transfer_target: text})
@@ -224,9 +316,67 @@ class ExchangeTransferPage extends Component {
         }
         else{
             var exchange_transfer_values_clone = this.state.exchange_transfer_values.slice()
-            var tx = {'exchange':target_exchange, 'amount':target_amount, 'receiver':target_receiver, 'token':targeted_token}
+            var tx = {
+                'exchange':target_exchange, 
+                'amount':target_amount, 
+                'receiver':target_receiver, 
+                'token':targeted_token
+            }
             exchange_transfer_values_clone.push(tx)
-            this.setState({exchange_transfer_values: exchange_transfer_values_clone, exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_receiver:'', token_target:''})
+            this.setState({
+                exchange_transfer_values: exchange_transfer_values_clone, 
+                exchange_transfer_target:'', 
+                exchange_transfer_amount:0, 
+                exchange_transfer_receiver:'', 
+                token_target:'',
+                targeted_token: null,
+                proportion_amount:0
+            })
+
+            this.props.notify(this.props.app_state.loc['923']/* 'transfer action added' */, 1600)
+        }
+    }
+
+    async add_exchange_certificate_transfer_item(){
+        var target_exchange = this.get_token_id_from_symbol(this.state.token_item['id'])
+        var target_amount = this.state.proportion_amount
+        var target_receiver = await this.get_typed_alias_id(this.state.exchange_transfer_receiver.trim())
+        var targeted_token = this.state.selected_certificate
+
+        if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver == ''){
+            this.props.notify(this.props.app_state.loc['920']/* 'Please put a valid receiver ID.' */, 2600)
+        }
+        else if(targeted_token == null){
+            this.props.notify(this.props.app_state.loc['929g']/* 'Please select a valid certificate.' */, 4600)
+        }
+        else if(target_amount == 0){
+            this.props.notify(this.props.app_state.loc['922']/* 'Please put a valid amount.' */, 5600)
+        }
+        else{
+            var exchange_transfer_values_clone = this.state.exchange_transfer_values.slice()
+            var tx = {
+                'exchange':target_exchange, 
+                'amount':target_amount, 
+                'receiver':target_receiver, 
+                'token':targeted_token['id']
+            }
+            const model_data = targeted_token['ipfs']['model_data']
+            const class_name = model_data['class_name']
+            const time = targeted_token['ipfs']['depth_item']['time']
+            const footer = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+            tx['label'] = {'title':start_and_end(class_name), 'details':this.format_proportion(target_amount)+', '+this.props.app_state.loc['924']/* 'Receiver ID: ' */+target_receiver, 'footer':footer, 'size':'l'}
+
+            exchange_transfer_values_clone.push(tx)
+
+            this.setState({
+                exchange_transfer_values: exchange_transfer_values_clone, 
+                exchange_transfer_target:'', 
+                exchange_transfer_amount:0, 
+                exchange_transfer_receiver:'', 
+                token_target:'',
+                targeted_token: null,
+                proportion_amount:0
+            })
 
             this.props.notify(this.props.app_state.loc['923']/* 'transfer action added' */, 1600)
         }
@@ -249,6 +399,11 @@ class ExchangeTransferPage extends Component {
 
         return id
     }
+
+
+
+
+
 
     load_transfer_actions(){
         var items = [].concat(this.state.exchange_transfer_values)
@@ -283,12 +438,7 @@ class ExchangeTransferPage extends Component {
                                     }}>
                                     <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
                                         <li style={{'padding': '5px'}}>
-                                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['token']]+':'+item['token'], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']]})}>
-                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['token']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
-                                            </div>
-                                            <div style={{height:5}}/>
-                                            {this.render_detail_item('3', {'title':this.props.app_state.loc['924']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
-                                            <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px'}}/>
+                                            {this.render_transfer_item(item)}
                                         </li>
                                     </div>
                                 </SwipeableListItem>
@@ -296,6 +446,23 @@ class ExchangeTransferPage extends Component {
                             
                         ))}
                     </ul>
+                </div>
+            )
+        }
+    }
+
+    render_transfer_item(item){
+        if(item['label'] != null){
+            return(
+                <div>
+                    {this.render_detail_item('3', item['label'])}
+                </div>
+            )
+        }else{
+            const title = this.format_account_balance_figure(item['amount'])+' '+ this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['924']/* 'Receiver ID: ' */+item['receiver'], 'size':'l'})}
                 </div>
             )
         }
@@ -348,6 +515,12 @@ class ExchangeTransferPage extends Component {
     }
 
 
+
+
+
+
+
+
     load_account_suggestions(type){
         var items = [].concat(this.get_suggested_accounts(type))
         var background_color = this.props.theme['card_background_color']
@@ -381,10 +554,14 @@ class ExchangeTransferPage extends Component {
         }
         else if(type == 'token_target'){
             var exchange_object = this.state.token_item
-            var buy_exchanges = exchange_object['data'][3]
+            var buy_exchanges = exchange_object['data'][3].slice()
             var targets = []
             var name_directory = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)
             var symbol_directory = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)
+            
+            if(exchange_object['data'][2][18/* <18>classic_swap_exchange_parent_token */] != null && exchange_object['data'][2][18/* <18>classic_swap_exchange_parent_token */] != 0 && symbol_directory[exchange_object['data'][2][18/* <18>classic_swap_exchange_parent_token */]] != null){
+                buy_exchanges.push(exchange_object['data'][2][18/* <18>classic_swap_exchange_parent_token */])
+            }
             buy_exchanges.forEach(exchange_id => {
                 var title = name_directory[this.state.e5+exchange_id]
                 var details = symbol_directory[exchange_id]
@@ -465,6 +642,98 @@ class ExchangeTransferPage extends Component {
             this.setState({token_target: item['id']})
         }
     }
+
+
+
+
+
+
+    load_certificates(){
+        const unfiltered_items = [].concat(this.get_suggested_certificates())
+        const items = unfiltered_items.filter((render_item) => {
+            const t = this.state.typed_search_fractionalized_tokens.trim().toLowerCase()
+            const item = render_item['object']
+            const depth_data = item['ipfs']['depth_item']['depth_data']
+            const model_config = item['ipfs']['model_data']
+            const class_name = model_config['class_name']
+            const ipfs = item['ipfs']['depth_item']['ipfs']
+            const markdown = ipfs['markdown']
+            const class_markdown = model_config['class_markdown']
+            return (
+                t == '' ||
+                class_name.toLowerCase().startsWith(t) ||
+                markdown.toLowerCase().includes(t) ||
+                class_markdown.toLowerCase().includes(t)
+            )
+        })
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                            {this.render_detail_item('3', item['label'])}
+                            {this.show_line_if_selected(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    show_line_if_selected(item){
+        if(item['object']['e5_id'] == this.state.selected_certificate_target){
+            return(
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+            )
+        }
+    }
+
+    get_suggested_certificates(){
+        const certificate_ids = Object.keys(this.props.app_state.fractionalized_assets)
+        const exchanges_from_sync = []
+        certificate_ids.forEach(certificate_id => {
+            const exchange_ids = Object.keys(this.props.app_state.fractionalized_assets[certificate_id])
+            exchange_ids.forEach(exchange_id => {
+                exchanges_from_sync.push(this.props.app_state.fractionalized_assets[certificate_id][exchange_id])
+            });
+        });
+        var sorted_token_exchange_data = []
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
+
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        const items = []
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            const object = sorted_token_exchange_data[i]
+            const model_data = object['ipfs']['model_data']
+            const class_name = model_data['class_name']
+            const time = object['ipfs']['depth_item']['time']
+            const footer = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+            items.push({'object':object, 'label':{'title':start_and_end(class_name), 'details':this.format_proportion(object['balance']), 'footer':footer, 'size':'l'}})
+        }
+        return items;
+    }
+
+    when_suggestion_clicked(item, index){
+        this.setState({selected_certificate_target: item['object']['e5_id'], selected_certificate: item['object']})
+    }
+
+
+
+
 
 
 

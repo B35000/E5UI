@@ -475,7 +475,7 @@ class FractionalizeCertificatePage extends Component {
                 stack_transactions[i].type == this.props.app_state.loc['3101']/* 'fractionalize-certificate' */ &&
                 stack_transactions[i].token_item['id'] == this.state.token_item['id'] && 
                 stack_transactions[i].id != this.state.id && 
-                stack_transactions[i].e5 == this.props.app_state.selected_e5 &&
+                stack_transactions[i].e5 == this.state.e5 &&
                 stack_transactions[i].depth_item['full'] == this.state.depth_item['full']
             ){
                 return false

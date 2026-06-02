@@ -73,10 +73,10 @@ function make_number_id(length) {
     return parseInt(result);
 }
 
-class NewCertificatePage extends Component {
+class NewCrossexchangePage extends Component {
     
     state = {
-        selected: 0, id: makeid(8), object_type:31, type:this.props.app_state.loc['d311a']/* 'certificate' */, e5:this.props.app_state.selected_e5,
+        selected: 0, id: makeid(8), object_type:31, type:this.props.app_state.loc['e311a']/* 'cross-exchange' */, e5:this.props.app_state.selected_e5,
 
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
@@ -89,24 +89,27 @@ class NewCertificatePage extends Component {
         device_region: this.props.app_state.device_region,
         device_city: '', selected_device_city:'',
 
+
         my_country: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country,
 
         my_city: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city,
 
         edit_text_item_pos:-1,
 
-        get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], get_new_certificate_fractionalizable_tags_object:this.get_new_certificate_fractionalizable_tags_object(), get_new_certificate_verification_tags_object:this.get_new_certificate_verification_tags_object(),
+        get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
 
         new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         exchange_authority:'',moderator_id:'', moderators:[], interactible_id:'',  interactibles:[], interactible_timestamp:0, 
 
-        exchange_id:'', price_amount:0, price_data:[{'id':'5', 'amount':'1'}],
+        exchange_id:'', price_amount:0, price_data:[],
 
-        class_name:'', maximum_supply:0, purchase_start_time: (Date.now()+(1000*60*60*5))/1000, purchase_end_time: (Date.now()+(1000*60*60*24))/1000, split_period:0, base_fee_price_multiplier:1, 
-        certificate_models:{}, class_markdown:'', posession_rights:0, certificate_model_history:{},
-        get_new_active_archived_model_settings_tags_object: this.get_new_active_archived_model_settings_tags_object(), 
-        get_new_certificate_bond_enabled_tags_object: this.get_new_certificate_bond_enabled_tags_object(), bond_interest_rate:0, coupon_frequency:0, bond_maturity: (Date.now()+(1000*60*60*24*365))/1000,
+        new_exchange_or_certificate_target_title_tags_object:this.new_exchange_or_certificate_target_title_tags_object(), 
+        token_target:'', exchange_transfer_amount:0, proportion_amount:0, typed_search_fractionalized_tokens:'', 
+
+        custom_page:0,
+        default_exchange_amount_buy_limit:0, default_exchange_amount_sell_limit:0, minimum_time_between_swap:0, minimum_transactions_between_swap:0, minimum_transactions_for_first_buy:0,
     };
+
 
 
     get_new_job_page_tags_object(){
@@ -115,7 +118,7 @@ class NewCertificatePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['d311j']/* 'certificate-model 🏗️' */, this.props.app_state.loc['d311d']/* 'certificate-authorities 👮' */, this.props.app_state.loc['d311f']/* 'base-fee 💵' */, 'e.'+this.props.app_state.loc['110']/* text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */ ], [0]
+                ['or','',0], ['e', this.props.app_state.loc['e311d']/* 'exchange-targets 🎯' */, this.props.app_state.loc['e311o']/* 'configuration ⚙️' */, this.props.app_state.loc['e311c']/* 'authorities 👮' */, this.props.app_state.loc['e311b']/* 'swap-prices 💵' */, 'e.'+this.props.app_state.loc['110']/* text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */ ], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
@@ -197,50 +200,19 @@ class NewCertificatePage extends Component {
         };
     }
 
-    get_new_certificate_fractionalizable_tags_object(){
+    new_exchange_or_certificate_target_title_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['616']/* 'enabled' */], [0]
+                ['xor','',0], ['e',this.props.app_state.loc['e311h']/* 'exchange' */, this.props.app_state.loc['3103d']/* 'certificate' */], [1]
             ],
         };
     }
 
-    get_new_active_archived_model_settings_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['d311cg']/* 'active' */, this.props.app_state.loc['d311ch']/* 'archived' */], [1]
-            ],
-        };
-    }
+    
 
-    get_new_certificate_bond_enabled_tags_object(enabled=false){
-        const val = enabled == false ? 0 : 1
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['or','',0], ['e',this.props.app_state.loc['616']/* 'enabled' */], [val]
-            ],
-        };
-    }
-
-    get_new_certificate_verification_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['3055qe']/* 'automatic' */, this.props.app_state.loc['3055qf']/* 'manual' */], [1]
-            ],
-        };
-    }
 
 
 
@@ -270,8 +242,6 @@ class NewCertificatePage extends Component {
     when_new_job_page_tags_updated(tag_group){
         this.setState({get_new_job_page_tags_object: tag_group})
     }
-
-
 
 
 
@@ -321,18 +291,21 @@ class NewCertificatePage extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['d311d']/* 'certificate-authorities 👮' */){
+        else if(selected_item == this.props.app_state.loc['e311c']/* 'authorities 👮' */){
             return(
                 <div>
                     {this.render_token_authorities_part()}
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['d311f']/* 'base-fee 💵' */){
+        else if(selected_item == this.props.app_state.loc['e311b']/* 'swap-prices 💵' */){
             return this.render_set_token_prices_list()
         }
-        else if(selected_item == this.props.app_state.loc['d311j']/* 'certificate-model 🏗️' */){
-            return this.render_set_certificate_model_data()
+        else if(selected_item == this.props.app_state.loc['e311d']/* 'exchange-targets 🎯' */){
+            return this.render_set_crossexchange_target_setting_data()
+        }
+        else if(selected_item == this.props.app_state.loc['e311o']/* 'configuration ⚙️' */){
+            return this.render_set_basic_configurations_data()
         }
     }
 
@@ -343,6 +316,10 @@ class NewCertificatePage extends Component {
         }
         return false
     }
+
+
+
+
 
 
 
@@ -364,6 +341,10 @@ class NewCertificatePage extends Component {
         super(props);
         this.screen = React.createRef()
     }
+
+
+
+
 
 
 
@@ -474,18 +455,6 @@ class NewCertificatePage extends Component {
     render_title_tags_part2(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311bu']/* 'Fractionalizable Certificate.' */, 'details':this.props.app_state.loc['d311bv']/* 'If set to enabled, users will be able to fractionalize certificates aquired from this exchange.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_fractionalizable_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_fractionalizable_tags_object_updated.bind(this)} theme={this.props.theme}/>
-
-
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311cv']/* 'Certificate Recognition.' */, 'details':this.props.app_state.loc['d311cw']/* 'If set to manual, you will be required to verify and recognise every certificate that\'s minted in this new exchange.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_verification_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_verification_tags_object_updated.bind(this)} theme={this.props.theme}/>
-
-
                 {this.render_previous_edits_if_existing()}
 
 
@@ -767,8 +736,10 @@ class NewCertificatePage extends Component {
 
 
 
+
+
     render_previous_edits_if_existing(){
-        const previous_edits = this.props.fetch_objects_from_db(this.state.object_type+0.1)
+        const previous_edits = this.props.fetch_objects_from_db(this.state.object_type+0.2)
         const unfiltered_items = Object.keys(previous_edits)
         if(unfiltered_items.length == 0){
             return;
@@ -779,7 +750,6 @@ class NewCertificatePage extends Component {
         }
         return(
             <div>
-                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ds']/* 'Set to previous changes.' */, 'details':this.props.app_state.loc['a311dt']/* 'You can continue where you left off in a pevious edit.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -822,9 +792,13 @@ class NewCertificatePage extends Component {
 
     update_object_in_background(){
         if(this.state.entered_title_text != ''){
-            this.props.update_object_change_in_db(this.state, this.state.object_type+0.1)
+            this.props.update_object_change_in_db(this.state, this.state.object_type+0.2)
         }
     }
+
+
+
+
 
 
 
@@ -1204,7 +1178,7 @@ class NewCertificatePage extends Component {
 
     /* renders the buttons for pick images, set images and clear images */
     render_create_image_ui_buttons_part(){
-      return(
+        return(
         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
             {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -1225,7 +1199,7 @@ class NewCertificatePage extends Component {
             </div> */}
 
         </div>
-      )
+        )
     }
 
     add_images_to_object(){
@@ -1874,7 +1848,7 @@ class NewCertificatePage extends Component {
         return(
             <div style={{}}>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['715']/* 'Access Rights' */, 'details':this.props.app_state.loc['d311e']/* 'If enabled, access to the certificate\'s exchange will be restricted to moderators and specified accounts' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['715']/* 'Access Rights' */, 'details':this.props.app_state.loc['e311e']/* 'If enabled, access to the cross-exchange will be restricted to moderators and specified accounts' */, 'size':'l'})}
 
                 <div style={{height:20}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
@@ -2376,17 +2350,16 @@ class NewCertificatePage extends Component {
 
 
 
-    render_set_certificate_model_data(){
+
+
+    render_set_crossexchange_target_setting_data(){
         var size = this.props.size
+        var height = this.props.height-150
 
         if(size == 's'){
             return(
                 <div style={{ 'overflow-x':'hidden'}}>
-                    {this.render_set_certificate_model_part()}
-                    {this.render_detail_item('0')}
-                    {this.render_set_certificate_model_part2()}
-                    {this.render_detail_item('0')}
-                    {this.render_set_models_list_part()}
+                    {this.render_set_crossexchange_target_setting_part()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -2396,14 +2369,12 @@ class NewCertificatePage extends Component {
             return(
                 <div className="row">
                     <div className="col-6" >
-                        {this.render_set_certificate_model_part()}
+                        {this.render_set_crossexchange_target_setting_part()}
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
-                        {this.render_set_certificate_model_part2()}
-                        {this.render_detail_item('0')}
-                        {this.render_set_models_list_part()}
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -2413,14 +2384,12 @@ class NewCertificatePage extends Component {
             return(
                 <div className="row">
                     <div className="col-5" >
-                        {this.render_set_certificate_model_part()}
+                        {this.render_set_crossexchange_target_setting_part()}
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
-                        {this.render_set_certificate_model_part2()}
-                        {this.render_detail_item('0')}
-                        {this.render_set_models_list_part()}
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -2428,491 +2397,99 @@ class NewCertificatePage extends Component {
         }
     }
 
-    render_set_certificate_model_part(){
+    render_set_crossexchange_target_setting_part(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311k']/* 'Certificate Model Details.' */, 'details':this.props.app_state.loc['d311l']/* 'Specify the structure of your certificate and the type of valid tokens that may be minted.' */, 'size':'l'})}
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311m']/* 'New Class.' */, 'details':this.props.app_state.loc['d311n']/* 'Specify a Class Name or Identifier. One word, no spaces.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['e311f']/* 'Cross Exchange Target' */, 'details':this.props.app_state.loc['e311g']/* 'By Default, you can only specify one target for your cross-exchange; either an exchange or a fractionalized certificate.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['d311o']/* 'Class Name...' */} when_text_input_field_changed={this.when_class_id_input_field_changed.bind(this)} text={this.state.class_name} theme={this.props.theme}/>
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(35 - this.state.class_name.length)})}
-
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311p']/* 'Class Maximum Supply.' */, 'details':this.props.app_state.loc['d311q']/* 'The total number of non-fungible tokens that can be minted as certificates for this new class.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['d311r']/* 'Number of Certificates.' */, 'subtitle':this.format_power_figure(this.state.maximum_supply), 'barwidth':this.calculate_bar_width(this.state.maximum_supply), 'number':this.format_account_balance_figure(this.state.maximum_supply), 'barcolor':'', 'relativepower':this.props.app_state.loc['d311s']/* 'certificates' */, })}
-                </div>
-
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt(999_999_999)} when_number_picker_value_changed={this.when_maximum_supply.bind(this)} theme={this.props.theme} power_limit={9}/>
-
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311t']/* 'Purchase Start Time.' */, 'details':this.props.app_state.loc['d311u']/* 'Specify a time after which the class\'s certificates can be purcahsed.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                {this.render_detail_item('3', {'title':(new Date(this.state.purchase_start_time*1000).toLocaleString()), 'details':this.get_time_diff(this.state.purchase_start_time - (Date.now()/1000)), 'size':'l'})}
-
-                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
-                    <CssBaseline />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_purchase_start_date_time_value_set(newValue)}/>
-                    </LocalizationProvider>
-                </ThemeProvider>
-
-
-                {this.render_detail_item('0')}
-
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311w']/* 'Purchase End Time.' */, 'details':this.props.app_state.loc['d311x']/* 'Specify a time after which the class\'s certificates cannot be purchased, fractionalized or transferred.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                {this.render_detail_item('3', {'title':(new Date(this.state.purchase_end_time*1000).toLocaleString()), 'details':this.get_time_diff(this.state.purchase_end_time - (Date.now()/1000)), 'size':'l'})}
-
-                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
-                    <CssBaseline />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_purchase_end_date_time_value_set(newValue)}/>
-                    </LocalizationProvider>
-                </ThemeProvider>
-                <div style={{height:10}}/>
-
-                <div style={{'padding': '5px'}} onClick={() => this.set_maximum_end_time_button()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['d311cc']/* 'Set Maximum Time' */, 'action':''})}
-                </div>
-
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['d311bz']/* 'The threshold after which an owner has rights to posess the item this certificate represents if fractionalization is enabled and carried out.' */, 'title':this.props.app_state.loc['d311bx']/* 'Posession Rights Threshold' */})}
-                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['d311ca']/* 'If unset, the default used will be 100%' */})}
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.new_exchange_or_certificate_target_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_exchange_or_certificate_target_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 
-                <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':this.format_proportion(this.state.posession_rights), 'details':this.props.app_state.loc['d311by']/* 'Posession Rights Proportion.' */, 'size':'l'})}
-
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_posession_rights_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'50.1%'}/>
-
+                {this.render_cross_exchange_target_selectors()} 
             </div>
         )
     }
 
-    render_set_certificate_model_part2(){
-        const selected_item = this.get_selected_item(this.state.get_new_certificate_bond_enabled_tags_object, 'e') == this.props.app_state.loc['616']/* 'enabled' */
-        const opac = selected_item == true ? 1.0 : 0.5
+    when_new_exchange_or_certificate_target_title_tags_object_updated(tag_obj){
+        this.setState({new_exchange_or_certificate_target_title_tags_object: tag_obj})
+    }
+
+    render_cross_exchange_target_selectors(){
+        const selected_item = this.get_selected_item(this.state.new_exchange_or_certificate_target_title_tags_object, 'e')
+
+        if(selected_item == this.props.app_state.loc['e311h']/* 'exchange' */){
+            return this.render_exchange_target_picker()
+        }
+        else if(selected_item == this.props.app_state.loc['3103d']/* 'certificate' */){
+            return this.render_certificate_target_picker()
+        }
+    }
+
+
+
+    render_exchange_target_picker(){
         return(
             <div>
-                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['d311y'] 'Split Periods.', 'details':this.props.app_state.loc['d311z']'You may optionally specify a periodic split, meaning the certificates will be purchased in a specified frequency within the time bounds set.', 'size':'l'})}
-                <div style={{height:10}}/>
-                
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.split_period), 'details':this.props.app_state.loc['1439'] 'Estimated Time.', 'size':'l'})}
-                
-                <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_split_period_time_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
-
-                {this.render_detail_item('0')} */}
-
-
-
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ba']/* 'Base-fee Price Multiplier' */, 'details':this.props.app_state.loc['d311bb']/* 'The base fee that will be applied when acquiring certificates in this class. If set to 0, all price multipliers excluding 0 used will be valid.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['d311bc']/* 'Price Multiplier' */, 'subtitle':this.format_power_figure(this.state.base_fee_price_multiplier), 'barwidth':this.calculate_bar_width(this.state.base_fee_price_multiplier), 'number':this.format_account_balance_figure(this.state.base_fee_price_multiplier), 'barcolor':'', 'relativepower':this.props.app_state.loc['d311bd']/* 'tokens' */, })}
-                </div>
-                <div style={{height:10}}/>
-                {this.render_multiplied_prices()}
-
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_base_fee_price_multiplier.bind(this)} theme={this.props.theme} power_limit={9}/>
-                
-
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ci']/* 'Bond Enabled.' */, 'details':this.props.app_state.loc['d311cj']/* 'If set to enabled, you will be required to repay the value of the certificate upon maturity.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_bond_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_bond_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['914']/* 'Token Targets' */, 'details':this.props.app_state.loc['3103e']/* 'Set the targeted token ID your transfering to the contract' */, 'size':'l'})}
                 <div style={{height:20}}/>
-                
-                <div style={{opacity: opac}}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ck']/* 'Interest Rate.' */, 'details':this.props.app_state.loc['d311cl']/* 'The interest rate that you will pay for the bond upon being purchased.' */, 'size':'l'})}
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['d311cu']/* 'For simplicity, the timeframe used with this metric is a year.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
 
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.bond_interest_rate), 'details':this.props.app_state.loc['d311cm']/* 'Interest Rate Proportion.' */, 'size':'l'})}
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['916']/* 'Token Target ID...' */} when_text_input_field_changed={this.when_token_target_text_input_field_changed.bind(this)} text={this.state.token_target} theme={this.props.theme}/>
 
-                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_bond_interest_rate.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'2.3%'}/>
-                    <div style={{height:20}}/>
-
-
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311cn']/* 'Coupon Payment Frequency' */, 'details':this.props.app_state.loc['d311co']/* 'The period of time between each coupon payment.' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.coupon_frequency), 'details':this.props.app_state.loc['1439'] /* 'Estimated Time.' */, 'size':'l'})}
-                
-                    <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_coupon_frequency_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
-                    <div style={{height:20}}/>
-
-
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311cp']/* 'Maturity Date.' */, 'details':this.props.app_state.loc['d311cq']/* 'The time when the bond will mature and you will pay back its value.' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-
-                    {this.render_detail_item('3', {'title':(new Date(this.state.bond_maturity*1000).toLocaleString()), 'details':this.get_time_diff(this.state.bond_maturity - (Date.now()/1000)), 'size':'l'})}
-
-                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
-                        <CssBaseline />
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_bond_maturity_date_time_value_set(newValue)}/>
-                        </LocalizationProvider>
-                    </ThemeProvider>
-                </div>
-                
-
-
-
+                {this.load_token_suggestions('token_target')}
                 {this.render_detail_item('0')}
 
 
-
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311bq']/* Class Details */, 'details':this.props.app_state.loc['d311br']/* You can optionally specify some details about the class. */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['e311i']/* 'Initial Liquidity' */, 'details':this.props.app_state.loc['e311j']/* 'Set the amount of the token you wish to fund the cross exchange as its starting liquidity.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_markdown_preview_or_editor_object} tag_size={'l'} when_tags_updated={this.when_get_markdown_preview_or_editor_object_updated.bind(this)} theme={this.props.theme}/>
-
-                {this.render_preview_or_editor_option_ui2()}
-                <div style={{height:10}}/>
-
-
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311be']/* 'Create New Class.' */, 'details':this.props.app_state.loc['d311bf']/* 'Create the new class with the specified details.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_class_tapped()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['d311bh']/* 'Create Class' */, 'action':''})}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['917']/* 'Targeted Amount' */, 'number':this.state.exchange_transfer_amount, 'relativepower':this.props.app_state.loc['918']/* 'units' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['917']/* 'Targeted Amount' */, 'subtitle':this.format_power_figure(this.state.exchange_transfer_amount), 'barwidth':this.calculate_bar_width(this.state.exchange_transfer_amount), 'number':this.format_account_balance_figure(this.state.exchange_transfer_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['918']/* 'units' */, })}
                 </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_exchange_transfer_amount_changed.bind(this)} theme={this.props.theme} power_limit={63}/>
             </div>
         )
     }
 
-    when_new_bond_maturity_date_time_value_set(value){
-        const selectedDate = value instanceof Date ? value : new Date(value);
-        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
-        this.setState({bond_maturity: timeInSeconds})
+    when_token_target_text_input_field_changed(text){
+        this.setState({token_target: text})
     }
 
-    when_coupon_frequency_set(number){
-        this.setState({coupon_frequency: number})
+    when_exchange_transfer_amount_changed(number){
+        this.setState({exchange_transfer_amount: number})
     }
 
-    when_bond_interest_rate(number){
-        this.setState({bond_interest_rate: number})
-    }
 
-    when_get_new_certificate_bond_enabled_tags_object_updated(tag_obj){
-        this.setState({get_new_certificate_bond_enabled_tags_object: tag_obj})
-    }
 
-    set_maximum_end_time_button(){
-        const t = (Date.now() / 1000) + (999_999_990 * 60)
-        this.setState({purchase_end_time: t})
-    }
-
-    when_posession_rights_proportion(number){
-        this.setState({posession_rights: number})
-    }
-
-    when_class_id_input_field_changed(text){
-        if(this.state.edit_id == null) this.setState({class_name: text});
-    }
-
-    when_maximum_supply(number){
-        this.setState({maximum_supply: number})
-    }
-
-    when_new_purchase_start_date_time_value_set(value){
-        const selectedDate = value instanceof Date ? value : new Date(value);
-        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
-        this.setState({purchase_start_time: timeInSeconds})
-    }
-
-    when_new_purchase_end_date_time_value_set(value){
-        const selectedDate = value instanceof Date ? value : new Date(value);
-        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
-        this.setState({purchase_end_time: timeInSeconds})
-    }
-
-    when_split_period_time_set(number){
-        this.setState({split_period: number})
-    }
-
-    when_base_fee_price_multiplier(number){
-        this.setState({base_fee_price_multiplier: number})
-    }
-
-    render_multiplied_prices(){
-        return(
-            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                {this.state.price_data.map((item, index) => (
-                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(this.state.base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
-                    </div>
-                ))}
-            </div>
-        )
-    }
-
-    when_add_class_tapped(){
-        const class_name = this.state.class_name.trim()
-        const maximum_supply = this.state.maximum_supply
-        const purchase_start_time = this.state.purchase_start_time
-        const purchase_end_time = this.state.purchase_end_time
-        // const split_period = this.state.split_period
-        const base_fee_price_multiplier = this.state.base_fee_price_multiplier
-        const class_markdown = this.state.class_markdown
-        const posession_rights = this.state.posession_rights
-
-        const bond_enabled = this.get_selected_item(this.state.get_new_certificate_bond_enabled_tags_object, 'e') == this.props.app_state.loc['616']/* 'enabled' */;
-        const bond_interest_rate = this.state.bond_interest_rate;
-        const coupon_frequency = this.state.coupon_frequency;
-        const bond_maturity = this.state.bond_maturity
-
-        if(class_name == ''){
-            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
-        }
-        else if(this.hasWhiteSpace(class_name)){
-            this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
-        }
-        else if(class_name.length > 35){
-            this.props.notify(this.props.app_state.loc['d311bi']/* 'That class name is too long' */, 4400)
-        }
-        else if(purchase_start_time > purchase_end_time){
-            this.props.notify(this.props.app_state.loc['d311bj']/* 'The start time cannot be after the end time' */, 6400)
-        }
-        // else if(base_fee_price_multiplier == 0){
-        //     this.props.notify(this.props.app_state.loc['d311bk']/* 'base fee multiplier cannot be 0' */, 4400)
-        // }
-        else if(bond_enabled == true && bond_interest_rate == 0){
-            this.props.notify(this.props.app_state.loc['d311cr']/* 'The interest rate cannot be 0.' */, 6400)
-        }
-        else if(bond_enabled == true && coupon_frequency == 0){
-            this.props.notify(this.props.app_state.loc['d311cs']/* 'The coupon frequency cannot be 0.' */, 6400)
-        }
-        else if(bond_enabled == true && bond_maturity < purchase_end_time){
-            this.props.notify(this.props.app_state.loc['d311ct']/* 'The bond maturity cannot be less than the purchase end time.' */, 8400)
-        }
-        else{
-            const clone = structuredClone(this.state.certificate_models)
-            const id = this.state.edit_id || make_number_id(9)
-            clone[id] = {
-                'id':id,
-                'class_name':class_name,
-                'maximum_supply':maximum_supply,
-                'purchase_start_time':purchase_start_time,
-                'purchase_end_time':purchase_end_time,
-                // 'split_period':split_period,
-                'base_fee_price_multiplier':base_fee_price_multiplier,
-                'class_markdown':class_markdown,
-                'posession_rights': posession_rights == 0 ? bgN(1,18) : posession_rights,
-                'time':Date.now(),
-                'bond_enabled':bond_enabled,
-                'bond_interest_rate':bond_interest_rate,
-                'coupon_frequency':coupon_frequency,
-                'bond_maturity':bond_maturity
-            }
-            this.setState({
-                certificate_models: clone, 
-                class_name: '', 
-                class_markdown:'', 
-                edit_id: null,
-                get_new_certificate_bond_enabled_tags_object: this.get_new_certificate_bond_enabled_tags_object()
-            })
-            this.props.notify(this.props.app_state.loc['d311bl']/* 'class data set.' */, 900)
-        }
-    }
-
-    render_set_models_list_part(){
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        var items = [].concat(this.sortByAttributeDescending(Object.values(this.state.certificate_models), 'time'))
-
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
-                                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                        <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }else{
-            return(
-                <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
-                        {items.map((item, index) => (
-                            <SwipeableList>
-                                <SwipeableListItem
-                                    swipeLeft={{
-                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
-                                    action: () =>this.when_model_clicked(item)
-                                    }}>
-                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
-                                        {this.render_model_item(item)}
-                                    </div>
-                                </SwipeableListItem>
-                            </SwipeableList>
-                            
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-        
-    }
-
-    render_model_item(data){
-        const title = data['class_name']
-        const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']).toLocaleString()))
-        const opacity = this.state.edit_id == data['id'] ? 0.5 : 1.0
-        return(
-            <div style={{opacity: opacity}} onClick={() => this.edit_model_item(data)}>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
-            </div>
-        )
-    }
-
-    edit_model_item(item){
-        const clone = structuredClone(this.state.certificate_models)
-        // delete clone[item]
-
-        if(this.state.edit_id == item['id']){
-            this.setState({edit_id: null, class_name: ''})
-        }else{
-            this.setState({
-                class_name: item['class_name'], 
-                maximum_supply: item['maximum_supply'], 
-                purchase_start_time: item['purchase_start_time'], 
-                purchase_end_time: item['purchase_end_time'], 
-                /* split_period: item['split_period'], */ 
-                base_fee_price_multiplier: item['base_fee_price_multiplier'], 
-                // certificate_models: clone, 
-                class_markdown: item['class_markdown'], 
-                posession_rights: item['posession_rights'], 
-                edit_id: item['id'],
-                get_new_certificate_bond_enabled_tags_object: this.get_new_certificate_bond_enabled_tags_object(item['bond_enabled']),
-                bond_interest_rate: item['bond_interest_rate'],
-                coupon_frequency: item['coupon_frequency'],
-                bond_maturity: item['bond_maturity']
-            })
-
-            this.props.notify(this.props.app_state.loc['d311bn']/* 'editing selected class.' */, 1900)
-        }
-    }
-
-    when_model_clicked(item){
-        const clone = structuredClone(this.state.certificate_models)
-        delete clone[item['id']]
-        this.setState({certificate_models: clone})
-    }
-
-    render_preview_or_editor_option_ui2(){
-        var selected_item = this.get_selected_item(this.state.get_markdown_preview_or_editor_object, this.state.get_markdown_preview_or_editor_object['i'].active)
-
-        if(selected_item == this.props.app_state.loc['a311bt']/* 'Editor' */){
-            return(
-                <div>
-                    <div style={{'margin':'0px 0px 0px 10px'}}>
-                        <TextInput height={200} placeholder={this.props.app_state.loc['d311bs']/* 'Class\' Details in Markdown..' */} when_text_input_field_changed={this.when_class_markdown_field_changed.bind(this)} text={this.state.class_markdown} theme={this.props.theme}/>
-                    </div>
-                    {this.render_markdown_shortcut_list2()}
-                </div>
-            )
-        }
-        else if(selected_item == this.props.app_state.loc['a311bu']/* 'preview' */){
-            return(
-                <div>
-                    {this.render_markdown_or_empty2()}
-                </div>
-            )
-        }
-    }
-
-    render_markdown_or_empty2(){
-        if(this.state.class_markdown.trim() == ''){
-            return(
-                <div>
-                    {this.render_empty_views(2)}
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    {this.render_detail_item('13', {'source':this.state.class_markdown})}
-                </div>
-            )
-        }
-    }
-
-    when_class_markdown_field_changed(text){
-        this.setState({class_markdown: text})
-    }
-
-    render_markdown_shortcut_list2(){
-        var items = this.props.app_state.markdown_shortcut_list
-
+    render_certificate_target_picker(){
         return(
             <div>
-                {this.render_detail_item('0')}
-                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_markdown_shortcut_clicked2(item['details'])}>
-                                {this.render_detail_item('3', item)}
-                            </li>
-                        ))}
-                    </ul>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['e311k']/* 'Certificate Target' */, 'details':this.props.app_state.loc['e311l']/* 'Select the certificate you wish to be the target for the cross-exchange.' */, 'size':'l'})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['3103h']/* 'Only fractionalized certificates will show here.' */})}
+
+                <div style={{margin:'5px 10px 0px 10px'}}>
+                    <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_typed_search_fractionalized_tokens_text_input_field_changed.bind(this)} text={this.state.typed_search_fractionalized_tokens} theme={this.props.theme}/>
                 </div>
+                <div style={{height:10}}/>
+                {this.load_certificates()}
+
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['e311m']/* 'Set the amount stake you wish to fund the cross exchange with as its starting liquidity.' */, 'title':this.props.app_state.loc['e311n']/* 'Starting Liquidity' */})}
+                                
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.proportion_amount), 'details':this.props.app_state.loc['3101g']/* 'Fractionalized Proportion to Receive.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_proportion_amount_proportion.bind(this)} power_limit={9} theme={this.props.theme} decimal_count={16} pick_with_text_area={true} text_area_hint={'5.3%'}/>
             </div>
         )
     }
 
-    when_markdown_shortcut_clicked2(text){
-        if(text == this.props.app_state.loc['a311ei']/* '![eImage alt text](image.jpg)' */){
-            this.props.show_pick_file_bottomsheet('image', 'create_markdown_image2', 1000000000000)
-        }else{
-            this.setState({class_markdown: this.state.class_markdown+'\n'+text})
-        }
+    when_typed_search_fractionalized_tokens_text_input_field_changed(text){
+        this.setState({typed_search_fractionalized_tokens: text})
     }
 
-    when_markdown_image_selected2 = async (files) => {
-        var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
-        var current_markdown = this.state.class_markdown.slice()
-        for(var f=0; f<files.length; f++){
-            const file = files[f]
-            cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
-            current_markdown += `\n![${this.props.app_state.loc['a311ej']/* eImage alt text */}](${file})`
-        }
-        this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords, class_markdown: current_markdown});
+    when_proportion_amount_proportion(number){
+        this.setState({proportion_amount: number})
     }
 
 
@@ -2923,6 +2500,372 @@ class NewCertificatePage extends Component {
 
 
 
+
+
+
+
+
+
+    render_set_basic_configurations_data(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_custom_config_small()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" >
+                        {this.render_custom_config_medium()}
+                    </div>
+                    <div className="col-6" >
+                        {this.render_custom_config_medium2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" >
+                        {this.render_custom_config_medium()}
+                    </div>
+                    <div className="col-5" >
+                        {this.render_custom_config_medium2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_custom_config_medium(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['e311p']/* 'Customize some of the default settings.' */})}
+                <div style={{height:20}}/>
+                {this.render_custom_token_section_parts(0)}
+                {this.render_detail_item('0')}
+                {this.render_custom_token_section_parts(1)}
+                {this.render_detail_item('0')}
+                {this.render_custom_token_section_parts(2)}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_custom_config_medium2(){
+        return(
+            <div>
+                {this.render_custom_token_section_parts(3)}
+                {this.render_detail_item('0')}
+                {this.render_custom_token_section_parts(4)}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_custom_config_small(){
+        var page = this.state.custom_page
+        const next_page_button = () => {
+            if(page < 4){
+                this.enter_custom_next_page()
+            }
+        }
+        const bottom_part = (message) => {
+            const image_height = 60
+            const standard_width = this.props.width - 20
+            return(
+                <div style={{'margin':'20px 0px 20px 0px', 'width':standard_width}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: standard_width}}>
+                        <div style={{'padding': '0px 0px 0px 0px', width:image_height}}>
+                            <img alt="" onClick={()=>this.enter_custom_previous_page()} src={this.props.app_state.static_assets['collapse_bottomsheet_button']} style={{height:image_height, width:'auto', 'transform': 'rotate(90deg)'}} />
+                        </div>
+                        <div style={{'padding':'25px 0px 0px 0px', width: standard_width - ((image_height) * 2)}}>
+                            {this.render_detail_item('16', {'message':message})}
+                        </div>
+                        <div style={{'padding': '0px 0px 0px 0px', width:image_height}}>
+                            <img alt="" onClick={()=>next_page_button()} src={this.props.app_state.static_assets['collapse_bottomsheet_button_light']} style={{height:image_height, width:'auto', 'margin': '0px 0px 0px 0px', 'transform': 'rotate(270deg)'}} />
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+        const message = (this.state.custom_page +1) + ' / '+ 5
+        return(
+            <div>
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['e311p']/* 'Customize some of the default settings.' */})}
+                <div style={{height:20}}/>
+                <div style={{height:this.props.height-280, 'overflow':'auto'}}>
+                    {this.render_custom_token_section_parts_viewpager(page)}
+                </div>
+                {bottom_part(message)}
+            </div>
+        )
+    }
+
+    show_custom_next_button(){
+        var page = this.state.custom_page
+        if(page < 4){
+            return(
+                <div style={{'padding': '5px'}} onClick={()=>this.enter_custom_next_page()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['641']/* 'Next' */, 'action':''})}
+                </div>
+            )
+        }
+    }
+
+    show_custom_previous_button(){
+        var page = this.state.custom_page
+        if(page != 0){
+            return(
+                <div style={{'padding': '5px'}} onClick={()=>this.enter_custom_previous_page()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['642']/* 'Previous' */, 'action':''})}
+                </div>
+            )
+        }
+    }
+
+    handleSwipeableViewsChange2 = (value) => {
+        this.setState({custom_page: parseInt(value)})
+    };
+
+    render_custom_token_section_parts_viewpager(page){
+        const items = []
+        for(var i=0; i<5; i++){
+            items.push(i)
+        }
+        return(
+            <div>
+                <MySwipeableViews width={this.props.width-30} index={page} onChangeIndex={this.handleSwipeableViewsChange2}>
+                    {items.map((item, index) => (
+                        <div key={''+item}>
+                            {this.render_custom_token_section_parts(item)}
+                        </div>
+                    ))}
+                </MySwipeableViews>
+            </div>
+        )
+    }
+
+    enter_custom_next_page(){
+        var page = this.state.custom_page
+        if(page < 4){
+            this.setState({custom_page: this.state.custom_page+1})
+            this.reset_the_number_picker()
+        }
+    }
+
+    enter_custom_previous_page(){
+        var page = this.state.custom_page
+        if(page > 0){
+            this.setState({custom_page: this.state.custom_page-1})
+            this.reset_the_number_picker()
+        }
+    }
+
+    render_custom_token_section_parts(page){
+        if(page == 0/* buy_limit */){//2
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'details':this.props.app_state.loc['e311q']/* 'The maximum amount of tokens or stake that can be bought in one transaction.' */, 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'number':this.state.default_exchange_amount_buy_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
+                    </div>
+
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+                </div>
+            )
+        }
+        else if(page == 1/* sell_limit */){//3
+            const selected_item = this.get_selected_item(this.state.new_exchange_or_certificate_target_title_tags_object, 'e')
+
+            if(selected_item == this.props.app_state.loc['e311h']/* 'exchange' */){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'details':this.props.app_state.loc['e311r']/* 'The maximum amount of tokens or stake that can be sold in one transaction.' */, 'size':'l'})}
+                        <div style={{height:20}}/>
+
+                        <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'number':this.state.default_exchange_amount_sell_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
+                        </div>
+
+                        <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+                    </div>
+                )
+            }
+            else if(selected_item == this.props.app_state.loc['3103d']/* 'certificate' */){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'details':this.props.app_state.loc['e311r']/* 'The maximum amount of tokens or stake that can be sold in one transaction.' */, 'size':'l'})}
+                        <div style={{height:20}}/>
+
+                        {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_exchange_amount_sell_limit), 'details':this.props.app_state.loc['653']/* 'Sell Limit' */, 'size':'l'})}
+
+                        <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={9} pick_with_text_area={true} text_area_hint={'5.3%'}/>
+                    </div>
+                )
+            }
+            
+        }
+        else if(page == 2/* minimum_time_between_swap */){//4
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['658']/* 'Minimum Time Between Swap' */, 'details':this.props.app_state.loc['e311s']/* 'The minimum amount of time a sender has to wait between making a swap.' */, 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.minimum_time_between_swap), 'details':this.props.app_state.loc['658']/* 'Minimum Time Between Swap' */, 'size':'l'})}
+
+                    <DurationPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_time_between_swap.bind(this)} theme={this.props.theme} power_limit={63} loc={this.props.app_state.loc}/>
+                </div>
+            )
+        }
+        else if(page == 3/* minimum_transactions_between_swap */){//6
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['663']/* 'Minimum Transactions Between Swap' */, 'details':this.props.app_state.loc['e311t']/* 'The minimum number of transactions a sender has to make between swaps' */, 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['663']/* 'Minimum Transactions Between Swap' */, 'number':this.state.minimum_transactions_between_swap, 'relativepower':this.props.app_state.loc['665']/* 'transactions' */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['663']/* 'Minimum Transactions Between Swap' */, 'subtitle':this.format_power_figure(this.state.minimum_transactions_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_transactions_between_swap), 'barcolor':'', 'relativepower':this.props.app_state.loc['665']/* 'transactions' */, })}
+                    </div>
+
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 4/* minimum_transactions_for_first_buy */){//9
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['671']/* 'Minimum Transactions For First Buy' */, 'details':this.props.app_state.loc['e311u']/* 'The minimum number of transactions a sender has to have made to swap in your cross-exchange for the first time.' */, 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['671']/* 'Minimum Transactions For First Buy' */, 'number':this.state.minimum_transactions_for_first_buy, 'relativepower':this.props.app_state.loc['665']/* 'transactions' */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['671']/* 'Minimum Transactions For First Buy' */, 'subtitle':this.format_power_figure(this.state.minimum_transactions_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_transactions_for_first_buy), 'barcolor':'', 'relativepower':this.props.app_state.loc['665']/* 'transactions' */, })}
+                    </div>
+
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+    }
+
+    when_default_exchange_amount_buy_limit(number){
+        this.setState({default_exchange_amount_buy_limit: number})
+    }
+
+    when_default_exchange_amount_sell_limit(number){
+        this.setState({default_exchange_amount_sell_limit: number})
+    }
+
+    when_minimum_transactions_between_swap(number){
+        this.setState({minimum_transactions_between_swap: number})
+    }
+
+    when_minimum_transactions_for_first_buy(number){
+        this.setState({minimum_transactions_for_first_buy: number})
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    load_certificates(){
+        const unfiltered_items = [].concat(this.get_suggested_certificates())
+        const items = unfiltered_items.filter((render_item) => {
+            const t = this.state.typed_search_fractionalized_tokens.trim().toLowerCase()
+            const item = render_item['object']
+            const depth_data = item['ipfs']['depth_item']['depth_data']
+            const model_config = item['ipfs']['model_data']
+            const class_name = model_config['class_name']
+            const ipfs = item['ipfs']['depth_item']['ipfs']
+            const markdown = ipfs['markdown']
+            const class_markdown = model_config['class_markdown']
+            return (
+                t == '' ||
+                class_name.toLowerCase().startsWith(t) ||
+                markdown.toLowerCase().includes(t) ||
+                class_markdown.toLowerCase().includes(t)
+            )
+        })
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                            {this.render_detail_item('3', item['label'])}
+                            {this.show_line_if_selected(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    show_line_if_selected(item){
+        if(item['object']['e5_id'] == this.state.selected_certificate_target){
+            return(
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+            )
+        }
+    }
+
+    get_suggested_certificates(){
+        const certificate_ids = Object.keys(this.props.app_state.fractionalized_assets)
+        const exchanges_from_sync = []
+        certificate_ids.forEach(certificate_id => {
+            const exchange_ids = Object.keys(this.props.app_state.fractionalized_assets[certificate_id])
+            exchange_ids.forEach(exchange_id => {
+                exchanges_from_sync.push(this.props.app_state.fractionalized_assets[certificate_id][exchange_id])
+            });
+        });
+        var sorted_token_exchange_data = []
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
+
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        const items = []
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            const object = sorted_token_exchange_data[i]
+            const model_data = object['ipfs']['model_data']
+            const class_name = model_data['class_name']
+            const time = object['ipfs']['depth_item']['time']
+            const footer = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+            items.push({'object':object, 'label':{'title':start_and_end(class_name), 'details':this.format_proportion(object['balance']), 'footer':footer, 'size':'l'}})
+        }
+        return items;
+    }
+
+    when_suggestion_clicked(item, index){
+        this.setState({selected_certificate_target: item['object']['e5_id'], selected_certificate: item['object']})
+    }
 
 
 
@@ -3010,8 +2953,15 @@ class NewCertificatePage extends Component {
     }
 
     when_price_suggestion_clicked(item, pos, target_type){
-        this.setState({exchange_id: item['id']})
+        if(target_type == 'token_target'){
+            this.setState({token_target: item['id']})
+        }else{
+            //exchange_id
+            this.setState({exchange_id: item['id']})
+        }
     }
+
+
 
 
 
@@ -3149,13 +3099,16 @@ class NewCertificatePage extends Component {
 
 
 
+
+
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
         var texts = this.state.entered_text_objects
         var images = this.state.entered_image_objects
         var price_data = this.state.price_data
-        var certificate_models = this.state.certificate_models
+
+        const selected_item = this.get_selected_item(this.state.new_exchange_or_certificate_target_title_tags_object, 'e')
 
         if(index_tags.length < 3){
             this.props.notify(this.props.app_state.loc['270'], 2700)
@@ -3166,19 +3119,19 @@ class NewCertificatePage extends Component {
         else if(title.length > this.props.app_state.title_size){
             this.props.notify(this.props.app_state.loc['272'], 2700)
         }
-        else if(price_data.length == 0){
-            this.props.notify(this.props.app_state.loc['d311i']/* 'A base fee for acquiring this certificate is required.' */, 7700)
-        }
         else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
             this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
         }
-        else if(Object.keys(certificate_models).length == 0){
-            this.props.notify(this.props.app_state.loc['d311bo']/* 'You need to define your new certificate\'s model with classes.' */, 9000)
+        else if(selected_item == this.props.app_state.loc['e311h']/* 'exchange' */ && !this.is_token_target_ok()){
+            return;
+        }
+        else if(selected_item == this.props.app_state.loc['3103d']/* 'certificate' */ && !this.is_certificate_target_ok()){
+            return;
         }
         else{
             this.props.when_add_new_object_to_stack(this.state)
             this.setState({
-                selected: 0, id: makeid(8), object_type:31, type:this.props.app_state.loc['d311a']/* 'certificate' */, e5:this.props.app_state.selected_e5,
+                selected: 0, id: makeid(8), object_type:31, e5:this.props.app_state.selected_e5,
                 
                 get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
                 entered_tag_text: '', entered_title_text:'', entered_text:'',
@@ -3202,26 +3155,85 @@ class NewCertificatePage extends Component {
                 new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
                 exchange_authority:'',moderator_id:'', moderators:[], interactible_id:'',  interactibles:[], interactible_timestamp:0, 
 
-                exchange_id:'', price_amount:0, price_data:[{'id':'5', 'amount':'1'}],
+                exchange_id:'', price_amount:0, price_data:[],
 
-                class_name:'', maximum_supply:0, purchase_start_time: (Date.now()+(1000*60*60*5))/1000, purchase_end_time: (Date.now()+(1000*60*60*24))/1000, split_period:0, base_fee_price_multiplier:1, 
-                certificate_models:{}, class_markdown:'', posession_rights:0,
+                new_exchange_or_certificate_target_title_tags_object:this.new_exchange_or_certificate_target_title_tags_object(), 
+                token_target:'', exchange_transfer_amount:0, proportion_amount:0, typed_search_fractionalized_tokens:'', 
+
+                custom_page:0,
+                default_exchange_amount_buy_limit:0, default_exchange_amount_sell_limit:0, minimum_time_between_swap:0, minimum_transactions_between_swap:0, minimum_transactions_for_first_buy:0,
+                
             })
             this.props.notify(this.props.app_state.loc['18']/* transaction added to stack' */, 1700);
         }
     }
 
+    is_token_target_ok(){
+        var target_amount = this.state.exchange_transfer_amount
+        var targeted_token = this.state.token_target.trim()
+
+        if(isNaN(targeted_token) || parseInt(targeted_token) < 0 || targeted_token == '' || !this.does_exchange_exist(targeted_token)){
+            this.props.notify(this.props.app_state.loc['e311v']/* 'The cross-exchange target token is invalid.' */, 7600)
+            return false
+        }
+        else if(target_amount == 0){
+            this.props.notify(this.props.app_state.loc['e311w']/* 'The cross-exchange target token initial liquidity is invalid.' */, 7600)
+            return false
+        }
+        return true;
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
+    }
+
+    is_certificate_target_ok(){
+        const selected_certificate = this.state.selected_certificate
+        const proportion = this.state.proportion_amount
+
+        if(selected_certificate == null){
+            this.props.notify(this.props.app_state.loc['e311x']/* 'Please set a certificate cross-exchange target first.' */, 7600)
+            return false
+        }
+        else if(proportion == 0){
+            this.props.notify(this.props.app_state.loc['e311y']/* 'You need to speficy some stake for the exchanges initial liquidity.' */, 8600)
+            return false
+        }
+        else if(bigInt(selected_certificate['balance']).minus(proportion).lesserOrEquals(0)){
+            this.props.notify(this.props.app_state.loc['3098bd']/* 'The shares youve set is higher than your balance.' */, 9600)
+            return false
+        }
+
+        return true;
+    }
 
 
 
 
 
 
+
+
+    format_exchange_ratio(ratio_x, ratio_y){
+        // Calculate the ratio
+        const gcd = this.calculateGCD(ratio_x, ratio_y);
+        const ratio = `${this.format_account_balance_figure(ratio_x / gcd)} : ${this.format_account_balance_figure(ratio_y / gcd)}`;
+        return ratio;
+    }
+
+    calculateGCD(a, b) {
+        if (b === 0) {
+            return a;
+        }
+        return this.calculateGCD(b, a % b);
+    }
 
     truncate(source, size) {
         return source.length > size ? source.slice(0, size - 1) + "…" : source;
     }
-
 
     render_empty_object(){
         var background_color = this.props.theme['card_background_color']
@@ -3404,9 +3416,11 @@ class NewCertificatePage extends Component {
         }
         return last_two_digits+'%'
     }
+
+
 }
 
 
 
 
-export default NewCertificatePage;
+export default NewCrossexchangePage;

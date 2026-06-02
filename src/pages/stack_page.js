@@ -4436,7 +4436,8 @@ class StackPage extends Component {
                     txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */|| 
                     txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */ ||
                     txs[i].type == this.props.app_state.loc['3072h']/* 'edit-poll' */ ||
-                    txs[i].type == this.props.app_state.loc['d311bt']/* 'edit-certificate' */
+                    txs[i].type == this.props.app_state.loc['d311bt']/* 'edit-certificate' */ || 
+                    txs[i].type == this.props.app_state.loc['e311bb']/* 'edit-cross-exchange' */
                 ){
                     var format_edit_object = await this.format_edit_object(txs[i], calculate_gas, ipfs_index)
                     strs.push(format_edit_object.metadata_strings)
@@ -5031,17 +5032,23 @@ class StackPage extends Component {
                     ints.push(obj.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['3094']/* 'exchange-deposit' */){
-                    var buy_album_obj = this.format_exchange_deposit_object(txs[i], ints)
-                    if(buy_album_obj.depth_swap_obj[1].length > 0){
+                    var exchnage_deposit_object = this.format_exchange_deposit_object(txs[i], ints)
+                    if(exchnage_deposit_object.depth_swap_obj[1].length > 0){
                         strs.push([])
                         adds.push([])
-                        ints.push(buy_album_obj.depth_swap_obj)
+                        ints.push(exchnage_deposit_object.depth_swap_obj)
                     }
 
-                    if(buy_album_obj.transfers_obj[1].length > 0){
+                    if(exchnage_deposit_object.transfers_obj[1].length > 0){
                         strs.push([])
                         adds.push([])
-                        ints.push(buy_album_obj.transfers_obj)
+                        ints.push(exchnage_deposit_object.transfers_obj)
+                    }
+
+                    if(exchnage_deposit_object.auth_mod[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(exchnage_deposit_object.auth_mod)
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1593lq']/* 'fulfil-obligations' */){
@@ -5223,6 +5230,81 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(verify_obj.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['e311a']/* 'cross-exchange' */){
+                    var token_obj = this.format_crossexchange_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(token_obj)
+
+                    new_tx_index = ints.length -1
+                    var token_stack_id = ints.length-1
+                    
+                    var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
+
+                    if(access_rights_setting == this.props.app_state.loc['616']/* 'enabled' */){
+                        var enable_interactibles_checker = [ /* enable interactible checkers */
+                            [20000, 5, 0],
+                            [token_stack_id], [35]/* target objects */
+                        ]
+                        strs.push([])
+                        adds.push([])
+                        ints.push(enable_interactibles_checker)
+                        // should_optimize_run = false
+                    }
+                    if(txs[i].interactibles.length != 0){
+                        var add_interactibles_accounts = [ /* set account to be interactible */
+                            [20000, 2, 0],
+                            [], [],/* target objects */
+                            [], [],/* target account ids*/
+                            []/* interacible expiry time limit */
+                        ]
+
+                        for(var j = 0; j < txs[i].interactibles.length; j++){
+                            add_interactibles_accounts[1].push(token_stack_id)
+                            add_interactibles_accounts[2].push(35)
+                            add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
+                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(23)
+                            add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_interactibles_accounts)
+                        // should_optimize_run = false
+        
+                    }
+                    if(txs[i].moderators.length != 0){
+                        var add_moderator_accounts = [ /* set account as mod */
+                            [20000, 4, 0],
+                            [], [],/* target objects */
+                            [], []/* target moderator account ids*/
+                        ]
+
+                        for(var j = 0; j < txs[i].moderators.length; j++){
+                            add_moderator_accounts[1].push(token_stack_id)
+                            add_moderator_accounts[2].push(35)
+                            add_moderator_accounts[3].push(txs[i].moderators[j])
+                            txs[i].moderators[j] == 53 ? add_moderator_accounts[4].push(53):add_moderator_accounts[4].push(23)
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_moderator_accounts)
+                        // should_optimize_run = false
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['3108']/* 'crossexchange-swap' */){
+                    var buy_sell_obj = this.format_crossexchange_swap_object(txs[i], ints)
+                    if(buy_sell_obj['depth'][1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_sell_obj['depth'])
+                    }
+
+                    strs.push([])
+                    adds.push([])
+                    ints.push(buy_sell_obj['obj'])
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -5259,7 +5341,8 @@ class StackPage extends Component {
                 pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */||
                 pushed_txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */ ||
                 pushed_txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */ ||
-                pushed_txs[i].type == this.props.app_state.loc['3101']/* 'fractionalize-certificate' */
+                pushed_txs[i].type == this.props.app_state.loc['3101']/* 'fractionalize-certificate' */ ||
+                pushed_txs[i].type == this.props.app_state.loc['e311a']/* 'cross-exchange' */
             ){
                 metadata_action[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 metadata_action[2].push(35)
@@ -5353,7 +5436,8 @@ class StackPage extends Component {
                 pushed_txs[i].type == this.props.app_state.loc['b311a']/* video */|| 
                 pushed_txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */||
                 pushed_txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */ ||
-                pushed_txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */
+                pushed_txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */ ||
+                pushed_txs[i].type == this.props.app_state.loc['e311a']/* 'cross-exchange' */
             ){
                 var identifier = setting[pushed_txs[i].content_channeling_setting]
                 if(identifier == 'local'){
@@ -6326,7 +6410,8 @@ class StackPage extends Component {
                     txs[i].type == this.props.app_state.loc['3023']/* 'edit-video' */ || 
                     txs[i].type == this.props.app_state.loc['3030']/* 'edit-nitro' */ ||
                     txs[i].type == this.props.app_state.loc['3072h']/* 'edit-poll' */ ||
-                    txs[i].type == this.props.app_state.loc['d311bt']/* 'edit-certificate' */
+                    txs[i].type == this.props.app_state.loc['d311bt']/* 'edit-certificate' */ ||
+                    txs[i].type == this.props.app_state.loc['e311bb']/* 'edit-cross-exchange' */
                 ){
                     const t = txs[i]
                     if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */){
@@ -6504,7 +6589,8 @@ class StackPage extends Component {
                     txs[i].type == this.props.app_state.loc['b311a']/* video */|| 
                     txs[i].type == this.props.app_state.loc['a273a']/* 'nitro' */ ||
                     txs[i].type == this.props.app_state.loc['c311a']/* 'poll' */ ||
-                    txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */
+                    txs[i].type == this.props.app_state.loc['d311a']/* 'certificate' */ ||
+                    txs[i].type == this.props.app_state.loc['e311a']/* 'cross-exchange' */
                 ){
                     var data = txs[i]
                     if(txs[i].type == this.props.app_state.loc['109']/* 'channel' */){
@@ -12638,12 +12724,21 @@ class StackPage extends Component {
             [],/* depth */
             []/* amount */
         ]
+
         var transfers_obj = [/* send tokens to another account */
             [30000, 1, 0],
             [], [],/* exchanges */
             [], [],/* receivers */
             [],/* amounts */
             []/* depths */
+        ]
+
+        var auth_mod = [/* auth modify token exchange */
+            [20000, 3, 0],
+            [], [],/* targets */
+            [],/* target_array */
+            [],/* target_array_items */
+            [], []/* new_items */
         ]
 
         const data = t.exchange_transfer_values
@@ -12674,11 +12769,36 @@ class StackPage extends Component {
                 transfers_obj[5].push(transfer_actions[u]['amount'])
                 transfers_obj[6].push(transfer_actions[u]['depth'])
             }
+
+            if(data[i]['adjusted_ratios'] != null){
+                const { new_x, new_y, new_supply, new_parent_token_balance } = data[i]['adjusted_ratios']
+                for(var p=0; p<4; p++){
+                    auth_mod[1].push(object['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                    auth_mod[2].push(23)
+                    auth_mod[3].push(2)
+                    auth_mod[6].push(23)
+                }
+                /* new_x */
+                auth_mod[4].push(0)
+                auth_mod[5].push(new_x.toString().toLocaleString('fullwide', {useGrouping:false}))
+                /* new_y */
+
+                auth_mod[4].push(1)
+                auth_mod[5].push(new_y.toString().toLocaleString('fullwide', {useGrouping:false}))
+                /* new_supply */
+
+                auth_mod[4].push(2)
+                auth_mod[5].push(new_supply.toString().toLocaleString('fullwide', {useGrouping:false}))
+                /* new_parent_token_balance */
+
+                auth_mod[4].push(3)
+                auth_mod[5].push(new_parent_token_balance.toString().toLocaleString('fullwide', {useGrouping:false}))
+            }
         }
         
 
 
-        return {depth_swap_obj:depth_swap_obj, transfers_obj:transfers_obj}
+        return { depth_swap_obj: depth_swap_obj, transfers_obj: transfers_obj, auth_mod: auth_mod }
     }
 
     format_fulfil_obligations_object = async (t, calculate_gas, ints, ipfs_index) => {
@@ -13225,6 +13345,134 @@ class StackPage extends Component {
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj}
+    }
+
+    format_crossexchange_object(t){
+        const target_type = this.get_selected_item2(t.new_exchange_or_certificate_target_title_tags_object, 'e')
+        const token_target = t.token_target
+        const exchange_transfer_amount = t.exchange_transfer_amount
+
+        const selected_certificate = t.selected_certificate
+        const proportion_amount = t.proportion_amount
+
+        const default_exchange_sell_limit = target_type == 1/* exchange */ ? 100_000_000 : bgN(10, 16)
+        
+        const token_exchange_ratio_x = target_type == 1/* exchange */ ? exchange_transfer_amount.toString().toLocaleString('fullwide', {useGrouping:false}) : proportion_amount.toString().toLocaleString('fullwide', {useGrouping:false})
+        
+        const token_exchange_ratio_y = target_type == 1/* exchange */ ? Math.floor(exchange_transfer_amount/1000).toString().toLocaleString('fullwide', {useGrouping:false}) : (100_000_000).toString().toLocaleString('fullwide', {useGrouping:false})
+
+        const classic_swap_exchange_parent_token = target_type == 1/* exchange */ ? token_target.toString().toLocaleString('fullwide', {useGrouping:false}) : selected_certificate['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+        
+
+
+        const default_exchange_amount_buy_limit = t.default_exchange_amount_buy_limit == 0 ? Math.floor(target_type == 1/* exchange */ ? exchange_transfer_amount/10 : proportion_amount/10).toString().toLocaleString('fullwide', {useGrouping:false}) : 
+        t.default_exchange_amount_buy_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+
+        const default_exchange_amount_sell_limit = t.default_exchange_amount_sell_limit == 0 ? default_exchange_sell_limit : t.default_exchange_amount_sell_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+
+        const minimum_transactions_between_swap = t.minimum_transactions_between_swap.toString().toLocaleString('fullwide', {useGrouping:false})
+
+        const minimum_time_between_swap = t.minimum_time_between_swap.toString().toLocaleString('fullwide', {useGrouping:false})
+                
+        const minimum_transactions_for_first_buy = t.minimum_transactions_for_first_buy.toString().toLocaleString('fullwide', {useGrouping:false})
+
+        const exchange_authority = t.exchange_authority == '' ? 53 : parseInt(t.exchange_authority)
+        const exchange_authority_type = exchange_authority == 53 ? 53 : 23
+        
+        const trust_fee_target = t.trust_fee_target == '' ? 53 : parseInt(t.trust_fee_target)
+        const trust_fee_target_type = trust_fee_target == 53 ? 53 : 23
+
+        const obj = [/* create token */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 31, 0],
+            [0, 1, 1, 3, 0],
+            [23, 23, 23, 23, 23],
+
+            [ default_exchange_amount_buy_limit, 0, minimum_transactions_between_swap, 0/* 3 */, minimum_time_between_swap, 0, 0, 1/* 7 */, 0, exchange_authority, trust_fee_target, default_exchange_amount_sell_limit/* 11 */, 0, 0, 0, 0/* 15 */, 0, minimum_transactions_for_first_buy, 0],
+            [23, 23, 23, 23, 23, 23, 23, 23, 23, exchange_authority_type, trust_fee_target_type, 23, 23, 23, 23, 23, 23, 23, 23],
+
+            [token_exchange_ratio_x, token_exchange_ratio_y, token_exchange_ratio_x/* 2 */, 0, 0, 0, 0/* 6  */, 0, 0, 0, 0, 0, 0, 0/* 13 */, 0, 0, 0, 0, classic_swap_exchange_parent_token, 0],
+            [23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
+
+            [], [],
+            [], [],
+            [], []
+        ]
+
+      if(t.price_data.length == 0){
+        obj[7].push(5)
+        obj[8].push(23)
+        obj[9].push(1)
+        obj[10].push(23)
+        obj[11].push(0)
+        obj[12].push(23)
+        
+      }else{
+        for(var i=0; i<t.price_data.length; i++){
+            obj[7].push(parseInt(t.price_data[i]['id']))
+            obj[8].push(23)
+            obj[9].push(parseInt(t.price_data[i]['amount']))
+            obj[10].push(23)
+            obj[11].push(0)
+            obj[12].push(23)
+        }
+      }
+
+      return obj
+    }
+
+    format_crossexchange_swap_object(t, ints){
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        var obj = [/* buy end/spend */
+            [30000, 8, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            []/* amounts */, [],/* action */
+            []/* lower_bounds */, [],/* upper_bounds */
+            [],/* depths */
+        ];
+
+
+      var amount = bigInt(t.amount).toString().toLocaleString('fullwide', {useGrouping:false})
+      var exchange = t.token_item['id']
+      var action = this.get_action(t)
+    
+      if(action == 1){
+        //if its a sell action
+        var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+        var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints)
+        for(var s=0; s<swap_actions.length; s++){
+            depth_swap_obj[1].push(exchange)
+            depth_swap_obj[2].push(23)
+            depth_swap_obj[3].push(0)
+            depth_swap_obj[4].push(53)
+            depth_swap_obj[5/* action */].push(0)
+            depth_swap_obj[6/* depth */].push(swap_actions[s])
+            depth_swap_obj[7].push('1')
+        }
+      }
+      
+      obj[5].push(amount)
+      obj[1].push(exchange)
+      obj[2].push(23)
+      obj[3].push(t.recipient_id)
+      if(t.recipient_id == 53){
+        obj[4].push(53)
+      }else{
+        obj[4].push(23)
+      }
+      
+      obj[6].push(action)
+      obj[9].push(0)
+
+      return {'obj':obj, 'depth':depth_swap_obj}
     }
 
     
