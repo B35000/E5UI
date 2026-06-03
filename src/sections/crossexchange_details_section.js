@@ -319,17 +319,21 @@ class CrossexchangeDetailsSection extends Component {
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', item['target_type'])}
+                    {this.render_detail_item('3', item['exchange_authority'])}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('2', item['buy_limit'])}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['buy_limit'])}
+                    </div>
                     <div style={{height: 10}}/>
                     
                     {target_type == 1/* exchange */ && (
                         <div>
-                            {this.render_detail_item('2', item['sell_limit'])}
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                                {this.render_detail_item('2', item['sell_limit'])}
+                            </div>
                         </div>
                     )}
 
@@ -353,6 +357,27 @@ class CrossexchangeDetailsSection extends Component {
                     <div style={{height: 10}}/>
 
                     {this.render_price_of_token(object)}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3108m']/* 'The available balances for fulfilling any swap action.' */, 'title':this.props.app_state.loc['3108l']/* 'Current Exchange\'s Liquidity' */})}
+                    <div style={{height: 10}}/>
+                    
+                    {target_type == 1/* exchange */ && (
+                        <div>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                                {this.render_detail_item('2', item['token_starting_liquidity'])}
+                            </div>
+                        </div>
+                    )}
+
+                    {target_type == 2/* certificate */ && (
+                        <div>
+                            {this.render_detail_item('3', item['certificate_starting_liquidity'])}
+                        </div>
+                    )}
+                    <div style={{height: 10}}/>
+
+                    {this.render_buy_token_uis(object)}
 
                     {this.render_detail_item('0')}
 
@@ -973,15 +998,16 @@ class CrossexchangeDetailsSection extends Component {
         const target_type = this.get_selected_item(object['ipfs'].new_exchange_or_certificate_target_title_tags_object, 'e')
 
         const token_target = object['ipfs'].token_target
-        const exchange_transfer_amount = object['ipfs'].exchange_transfer_amount
+        const exchange_transfer_amount = selected_obj_ratio_config[2/* <2>token_exchange_liquidity/total_supply */]
         
         const selected_certificate = object['ipfs'].selected_certificate
-        const proportion_amount = object['ipfs'].proportion_amount
-        const starting_liquidity_stake_text = this.props.app_state.loc['e311ba']/* 'Starting Liquidity Stake: $' */.replace('$', this.format_proportion(proportion_amount))
-        const model_data = selected_certificate['ipfs']['model_data']
-        const class_name = model_data['class_name']
-        const time = selected_certificate['ipfs']['depth_item']['time']
-        const footer = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+        const proportion_amount = selected_obj_ratio_config[2/* <2>token_exchange_liquidity/total_supply */]
+
+        const starting_liquidity_stake_text = this.props.app_state.loc['3108j']/* 'Starting Liquidity Stake: $' */.replace('$', this.format_proportion(proportion_amount))
+        const model_data = selected_certificate == null ? null : selected_certificate['ipfs']['model_data']
+        const class_name = selected_certificate == null ? '' : model_data['class_name']
+        const time2 = selected_certificate == null ? null : selected_certificate['ipfs']['depth_item']['time']
+        const footer = selected_certificate == null ? '' : this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time2 * 1000).toLocaleString()))
 
         const default_exchange_amount_buy_limit = selected_obj_config[0]
         const default_exchange_amount_sell_limit = selected_obj_config[11]
@@ -994,6 +1020,11 @@ class CrossexchangeDetailsSection extends Component {
             'id':{'title':title_space+objectid, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, },
             'exchange_authority': {'title':is_auth_main_contract, 'details':this.props.app_state.loc['3107g']/* 'Cross-Exchange Authority' */, 'size':'l'},
+
+            'token_starting_liquidity':{ 'style':'l', 'title':this.props.app_state.loc['3108k']/* 'Current Liquidity' */, 'subtitle':this.format_power_figure(exchange_transfer_amount), 'barwidth':this.calculate_bar_width(exchange_transfer_amount), 'number':this.format_account_balance_figure(exchange_transfer_amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[token_target], 'n':exchange_transfer_amount },
+
+            'certificate_starting_liquidity':{'title':start_and_end(class_name), 'details':starting_liquidity_stake_text, 'footer':footer, 'size':'l'},
+
             
             'buy_limit':{'style':'l','title':this.props.app_state.loc['1817']/* 'Mint Limit' */, 'subtitle':this.format_power_figure(default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(default_exchange_amount_buy_limit), 'relativepower':this.props.app_state.loc['918']/* 'units' */, 'n':default_exchange_amount_buy_limit},
             
@@ -1040,7 +1071,7 @@ class CrossexchangeDetailsSection extends Component {
         var buy_amounts = [].concat(selected_object['data'][4])
         var buy_depths = [].concat(selected_object['data'][5])
 
-        const token_target = object['ipfs'].token_target
+        const token_target = selected_object['ipfs'].token_target
         const details = target_type == 1/* exchange */ ? this.props.app_state.loc['3107j']/* 'The amount you get when you swap one unit of $' */.replace('$', this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[token_target]) : this.props.app_state.loc['3107k']/* 'The amount you get when you swap 1% stake of the certificate' */;
         return(
             <div>
@@ -1120,14 +1151,12 @@ class CrossexchangeDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2566']/* 'Author Moderator Privelages Disabled' */, 'details':this.props.app_state.loc['2567']/* 'Author of Object is not a Moderator by default' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
                 </div>
             )
         }else{
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2568']/* 'Author Moderator Privelages Enabled' */, 'details':this.props.app_state.loc['2569']/* 'Author of Object is a Moderator by default' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
                 </div>
             )
         }
@@ -1228,8 +1257,8 @@ class CrossexchangeDetailsSection extends Component {
         }
     }
 
-    render_swap_token_button(object){
-        if(selected_object['hidden'] == true || !this.is_token_in_my_channeling(selected_object) || selected_object['interactible_hidden'] == true){
+    render_swap_token_button(selected_object){
+        if(selected_object['hidden'] == true || selected_object['interactible_hidden'] == true){
             return;
         }
         return(
@@ -1238,7 +1267,7 @@ class CrossexchangeDetailsSection extends Component {
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3107l']/* ⇄ Swap Tokens' */, 'details':this.props.app_state.loc['3107m']/* 'Initiate a cross-exchange swap action for or against the targeted token.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <div onClick={()=>this.props.show_crossexchange_swap_bottomsheet(object)}>
+                <div onClick={()=>this.props.show_crossexchange_swap_bottomsheet(selected_object)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
                 </div>
             </div>
@@ -2715,6 +2744,10 @@ class CrossexchangeDetailsSection extends Component {
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['34'] + s;
         }
+    }
+
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
     }
 
 }

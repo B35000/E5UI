@@ -4371,7 +4371,7 @@ return data['data']
         }
     }
 
-    format_crossexchange_item(){
+    format_crossexchange_item(object){
         var tags = object['ipfs'] == null ? ['Crossexchange'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Crossexchange ID' : object['ipfs'].entered_title_text
         var age = object['event'].returnValues.p5

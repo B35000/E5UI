@@ -454,6 +454,7 @@ class PostListSection extends Component {
         this.spend_list = React.createRef();
         this.bill_list = React.createRef();
         this.certificate_list = React.createRef();
+        this.crossexchange_list = React.createRef();
 
         this.locationPickerRef = React.createRef();
         this.locationPickerRef2 = React.createRef();
@@ -789,6 +790,11 @@ class PostListSection extends Component {
         else this.certificate_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
     }
 
+    set_crossexchange_list(pos, smooth){
+        if(smooth == null || smooth == false) this.crossexchange_list.current?.scrollToIndex({ index: pos, align: "start", });
+        else this.crossexchange_list.current?.scrollToIndex({ index: pos, align: "start", behavior: "smooth" });
+    }
+
 
 
 
@@ -955,6 +961,7 @@ class PostListSection extends Component {
         object[this.props.app_state.loc['1219']/* 'spends' */] = this.props.app_state.created_tokens
         object[this.props.app_state.loc['1264ai']/* bills */] = this.props.app_state.created_bills
         object[this.props.app_state.loc['1264bw']/* 'certificates' */] = this.props.app_state.created_certificates
+        object[this.props.app_state.loc['1264bx']/* 'cross-exchanges' */] = this.props.app_state.created_crossexchanges
 
         if(reload != null){
             // console.log('is_loading_object_data', 'load_contract_data', this.props.app_state.is_fetching_objects, active_page)

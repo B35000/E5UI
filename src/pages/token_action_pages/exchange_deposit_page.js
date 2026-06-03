@@ -48,6 +48,13 @@ function makeid(length) {
     return result;
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 class ExchangeDepositPage extends Component {
     
     state = {
@@ -147,7 +154,10 @@ class ExchangeDepositPage extends Component {
             return(
                 <div>
                     {this.render_transfer_data_pickers()}
+                    {this.render_detail_item('0')}
                     {this.load_transfer_actions()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -156,6 +166,8 @@ class ExchangeDepositPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_transfer_data_pickers()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.load_transfer_actions()}
@@ -169,6 +181,8 @@ class ExchangeDepositPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_transfer_data_pickers()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.load_transfer_actions()}
@@ -185,7 +199,7 @@ class ExchangeDepositPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3094j']/* 'Deposit Target' */, 'details':this.props.app_state.loc['3094k']/* 'You may specify which deposit type you are dealing with, a normal token or a certificate.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.new_exchange_or_certificate_target_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_exchange_or_certificate_target_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                
+                <div style={{height:10}}/>
                 {this.render_transfer_token_or_certificate_pickers()} 
             </div>
         )
@@ -569,14 +583,14 @@ class ExchangeDepositPage extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, type)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, type)}>
+                            {this.render_detail_item('8', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         )
     }
 
@@ -608,7 +622,8 @@ class ExchangeDepositPage extends Component {
             buy_exchanges.forEach(exchange_id => {
                 var title = name_directory[this.state.e5+exchange_id]
                 var details = symbol_directory[exchange_id]
-                targets.push({'id':exchange_id+'', 'label':{'title':title, 'details':details, 'size':'s'}})
+                const thumbnail = this.props.app_state.token_thumbnail_directory[this.state.e5][exchange_id]
+                targets.push({'id':exchange_id+'', 'label':{'title':title, 'details':details, 'image':thumbnail, 'size':'s'}})
             });
             return targets;
 
@@ -934,6 +949,13 @@ class ExchangeDepositPage extends Component {
 
 
 
+
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
+    }
 
     get_all_sorted_objects(object){
         var all_objects = []

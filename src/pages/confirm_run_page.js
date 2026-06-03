@@ -298,7 +298,9 @@ class ConfirmRunPage extends Component {
                         txs[i].type == this.props.app_state.loc['3101']/* 'fractionalize-certificate' */ ||
                         txs[i].type == this.props.app_state.loc['3102']/* 'transfer-stake' */ ||
                         txs[i].type == this.props.app_state.loc['3103']/* 'add-stake' */ ||
-                        txs[i].type == this.props.app_state.loc['3105']/* 'coupon-payments' */
+                        txs[i].type == this.props.app_state.loc['3105']/* 'coupon-payments' */ ||
+                        txs[i].type == this.props.app_state.loc['e311a']/* 'cross-exchange' */ ||
+                        txs[i].type == this.props.app_state.loc['3108']/* 'crossexchange-swap' */
                     ){
                         should_include = true
                     }

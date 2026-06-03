@@ -276,7 +276,7 @@ class CrossexchangeSwapPage extends Component {
 
     render_buy_token_uis(object, amount){
         var buy_tokens = [].concat(object['data'][3])
-        var buy_amounts = [].concat(object['exchanges_balances'])
+        var buy_amounts = [].concat(object['data'][4])
         var buy_depths = [].concat(object['data'][5])
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
@@ -338,8 +338,6 @@ class CrossexchangeSwapPage extends Component {
                 
                 {this.render_buy_token_uis(object, this.get_token_buy_limit())}
                 
-                {this.render_detail_item('0')}
-
                 {this.render_my_balances_if_buy_action()}
                 
                 {this.set_price_data()}
@@ -349,7 +347,7 @@ class CrossexchangeSwapPage extends Component {
         )
     }
 
-    render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+    render_buy_token_uis2(buy_tokens, buy_amounts, buy_depths){
         const e5 = this.state.token_item['e5']
         var bt = [].concat(buy_tokens)
         return(
@@ -383,7 +381,7 @@ class CrossexchangeSwapPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3108e']/* 'The amounts you have available for the swap.' */, 'title':this.props.app_state.loc['970']/* 'Your balances' */})}
                 <div style={{height:10}}/>
-                {this.render_buy_token_uis(buy_tokens, buy_amount_balances, buy_depths)}
+                {this.render_buy_token_uis2(buy_tokens, buy_amount_balances, buy_depths)}
             </div>
         )
     }
@@ -536,6 +534,7 @@ class CrossexchangeSwapPage extends Component {
     }
 
     render_exchange_liquidity_values(buy_tokens, exchanges_balance_amounts){
+        const selected_object = this.state.token_item
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>

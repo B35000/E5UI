@@ -315,7 +315,7 @@ class ViewGroups extends Component {
             // const parts = clean_text.split(' ');
             const leading_trailing_spaces = this.extract_leading_trailing_spaces(clean_text)
             const box_shadow = this.props.theme['highlight_text_background'] == true ? '0px 0px 0px 0px '+this.props.theme['card_shadow_color'] : '0px 0px 0px 0px '+this.props.theme['card_shadow_color']
-            const footer = object_data['footer']
+            const footer = object_data != null ? object_data['footer'] : null
             if(item_id == '8'){
                 var img = E5EmptyIcon;
                 if(object_data != null){

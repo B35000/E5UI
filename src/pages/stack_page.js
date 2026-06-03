@@ -5231,10 +5231,10 @@ class StackPage extends Component {
                     ints.push(verify_obj.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['e311a']/* 'cross-exchange' */){
-                    var token_obj = this.format_crossexchange_object(txs[i])
+                    var { obj, transfers_obj } = this.format_crossexchange_object(txs[i], ints)
                     strs.push([])
                     adds.push([])
-                    ints.push(token_obj)
+                    ints.push(obj)
 
                     new_tx_index = ints.length -1
                     var token_stack_id = ints.length-1
@@ -5292,6 +5292,10 @@ class StackPage extends Component {
                         ints.push(add_moderator_accounts)
                         // should_optimize_run = false
                     }
+
+                    strs.push([])
+                    adds.push([])
+                    ints.push(transfers_obj)
                 }
                 else if(txs[i].type == this.props.app_state.loc['3108']/* 'crossexchange-swap' */){
                     var buy_sell_obj = this.format_crossexchange_swap_object(txs[i], ints)
@@ -13347,7 +13351,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_crossexchange_object(t){
+    format_crossexchange_object(t, ints){
         const target_type = this.get_selected_item2(t.new_exchange_or_certificate_target_title_tags_object, 'e')
         const token_target = t.token_target
         const exchange_transfer_amount = t.exchange_transfer_amount
@@ -13359,7 +13363,9 @@ class StackPage extends Component {
         
         const token_exchange_ratio_x = target_type == 1/* exchange */ ? exchange_transfer_amount.toString().toLocaleString('fullwide', {useGrouping:false}) : proportion_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         
-        const token_exchange_ratio_y = target_type == 1/* exchange */ ? Math.floor(exchange_transfer_amount/1000).toString().toLocaleString('fullwide', {useGrouping:false}) : (100_000_000).toString().toLocaleString('fullwide', {useGrouping:false})
+        const default_token_exchange_ratio_y = target_type == 1/* exchange */ ? Math.floor(exchange_transfer_amount/1000).toString().toLocaleString('fullwide', {useGrouping:false}) : (100_000_000).toString().toLocaleString('fullwide', {useGrouping:false})
+
+        const token_exchange_ratio_y = t.token_exchange_ratio_y == 0 ? default_token_exchange_ratio_y: t.token_exchange_ratio_y.toString().toLocaleString('fullwide', {useGrouping:false});
 
         const classic_swap_exchange_parent_token = target_type == 1/* exchange */ ? token_target.toString().toLocaleString('fullwide', {useGrouping:false}) : selected_certificate['id'].toString().toLocaleString('fullwide', {useGrouping:false})
         
@@ -13379,8 +13385,8 @@ class StackPage extends Component {
         const exchange_authority = t.exchange_authority == '' ? 53 : parseInt(t.exchange_authority)
         const exchange_authority_type = exchange_authority == 53 ? 53 : 23
         
-        const trust_fee_target = t.trust_fee_target == '' ? 53 : parseInt(t.trust_fee_target)
-        const trust_fee_target_type = trust_fee_target == 53 ? 53 : 23
+        const trust_fee_target = 0
+        const trust_fee_target_type = 53
 
         const obj = [/* create token */
             [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 31, 0],
@@ -13398,26 +13404,36 @@ class StackPage extends Component {
             [], []
         ]
 
-      if(t.price_data.length == 0){
-        obj[7].push(5)
-        obj[8].push(23)
-        obj[9].push(1)
-        obj[10].push(23)
-        obj[11].push(0)
-        obj[12].push(23)
-        
-      }else{
-        for(var i=0; i<t.price_data.length; i++){
-            obj[7].push(parseInt(t.price_data[i]['id']))
+        if(t.price_data.length == 0){
+            obj[7].push(5)
             obj[8].push(23)
-            obj[9].push(parseInt(t.price_data[i]['amount']))
+            obj[9].push(1)
             obj[10].push(23)
             obj[11].push(0)
             obj[12].push(23)
+            
+        }else{
+            for(var i=0; i<t.price_data.length; i++){
+                obj[7].push(parseInt(t.price_data[i]['id']))
+                obj[8].push(23)
+                obj[9].push(parseInt(t.price_data[i]['amount']))
+                obj[10].push(23)
+                obj[11].push(0)
+                obj[12].push(23)
+            }
         }
-      }
 
-      return obj
+
+        const object_pos = ints.length
+        const transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [classic_swap_exchange_parent_token], [23],/* exchanges */
+            [object_pos], [35],/* receivers */
+            [token_exchange_ratio_x],/* amounts */
+            [0]/* depths */
+        ]
+
+      return { obj, transfers_obj }
     }
 
     format_crossexchange_swap_object(t, ints){

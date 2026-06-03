@@ -4998,7 +4998,8 @@ class App extends Component {
         // accounts: this.state.accounts,
         sync_steps:28,
 
-        created_certificates:this.state.created_certificates, 
+        created_certificates: this.state.created_certificates, 
+        created_crossexchanges: this.state.created_crossexchanges,
         // non_fungible_token_data:this.state.non_fungible_token_data, 
         // fractionalized_assets:this.state.fractionalized_assets,
       }
@@ -6764,7 +6765,7 @@ class App extends Component {
           {this.render_coupon_payment_bottomsheet()}
           {this.render_staged_coupon_bottomsheet()}
           {this.render_quick_send_bottomsheet()}
-          {this.render_edit_crossexchange_element()}
+          {this.render_edit_crossexchange_object_bottomsheet()}
           {this.render_crossexchange_swap_bottomsheet()}
 
 
@@ -36743,6 +36744,7 @@ class App extends Component {
 
     object['sends'] = all_events[3];
     object['receipts'] = all_events[4];
+
     console.log('load_extra_token_data','sends and recepits events', all_events[3], all_events[4])
     console.log('load_extra_token_data','sends and recepits set data', object['sends'], object['receipts'])
 
@@ -36785,15 +36787,24 @@ class App extends Component {
       } 
       if(account == object['author']) await this.fetch_certificate_state_balances(object);
 
+    }else{
+      if(object['data'][2][18/* <18>classic_swap_exchange_parent_token */] != null && object['data'][2][18/* <18>classic_swap_exchange_parent_token */] > 0){
+        var created_crossexchanges_clone = structuredClone(this.state.created_crossexchanges)
+        const index = created_crossexchanges_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
+        created_crossexchanges_clone[e5][index] = object
+
+        this.setState({created_crossexchanges: created_crossexchanges_clone})
       }else{
-      var created_tokens_clone = structuredClone(this.state.created_tokens)
-      const index = created_tokens_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
-      created_tokens_clone[e5][index] = object
+        var created_tokens_clone = structuredClone(this.state.created_tokens)
+        const index = created_tokens_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
+        created_tokens_clone[e5][index] = object
 
-      var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
-      created_token_object_mapping_clone[e5][created_tokens[i]] = object
+        var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
+        created_token_object_mapping_clone[e5][created_tokens[i]] = object
 
-      this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
+        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
+      }
+      
     }
       
 

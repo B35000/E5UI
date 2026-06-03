@@ -73,6 +73,13 @@ function make_number_id(length) {
     return parseInt(result);
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 class NewCrossexchangePage extends Component {
     
     state = {
@@ -107,7 +114,7 @@ class NewCrossexchangePage extends Component {
         token_target:'', exchange_transfer_amount:0, proportion_amount:0, typed_search_fractionalized_tokens:'', 
 
         custom_page:0,
-        default_exchange_amount_buy_limit:0, default_exchange_amount_sell_limit:0, minimum_time_between_swap:0, minimum_transactions_between_swap:0, minimum_transactions_for_first_buy:0,
+        default_exchange_amount_buy_limit:0, default_exchange_amount_sell_limit:0, minimum_time_between_swap:0, minimum_transactions_between_swap:0, minimum_transactions_for_first_buy:0, token_exchange_ratio_y:0
     };
 
 
@@ -400,9 +407,9 @@ class NewCrossexchangePage extends Component {
     render_title_tags_part(){
         return(
             <div ref={this.screen} style={{'padding':'0px 0px 0px 3px'}}>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['d311b']/* Specify a title for your new Certificate. */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['e311bc']/* Specify a title for your new Cross-Exchange. */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['d311c']/* Certificate Name... */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['e311bd']/* Cross-Exchange Name... */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
@@ -428,13 +435,6 @@ class NewCrossexchangePage extends Component {
 
 
 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bl']/* 'Content Channeling' */, 'details':this.props.app_state.loc['a311bm']/* 'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
-
-
-
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bn']/* 'Channeling City (Optional)' */, 'details':this.props.app_state.loc['a311bo']/* 'If you\'ve set local channeling, you can restrict your post to a specific city.' */, 'size':'l'})}
@@ -455,7 +455,16 @@ class NewCrossexchangePage extends Component {
     render_title_tags_part2(){
         return(
             <div>
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bl']/* 'Content Channeling' */, 'details':this.props.app_state.loc['a311bm']/* 'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
+
+
+
                 {this.render_previous_edits_if_existing()}
+
+
 
 
                 {this.render_detail_item('0')}
@@ -750,6 +759,7 @@ class NewCrossexchangePage extends Component {
         }
         return(
             <div>
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311ds']/* 'Set to previous changes.' */, 'details':this.props.app_state.loc['a311dt']/* 'You can continue where you left off in a pevious edit.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -2403,7 +2413,7 @@ class NewCrossexchangePage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['e311f']/* 'Cross Exchange Target' */, 'details':this.props.app_state.loc['e311g']/* 'By Default, you can only specify one target for your cross-exchange; either an exchange or a fractionalized certificate.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.new_exchange_or_certificate_target_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_exchange_or_certificate_target_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                
+                <div style={{height:15}}/>
                 {this.render_cross_exchange_target_selectors()} 
             </div>
         )
@@ -2566,6 +2576,8 @@ class NewCrossexchangePage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_custom_token_section_parts(4)}
                 {this.render_detail_item('0')}
+                {this.render_custom_token_section_parts(5)}
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -2573,7 +2585,7 @@ class NewCrossexchangePage extends Component {
     render_custom_config_small(){
         var page = this.state.custom_page
         const next_page_button = () => {
-            if(page < 4){
+            if(page < 5){
                 this.enter_custom_next_page()
             }
         }
@@ -2596,7 +2608,7 @@ class NewCrossexchangePage extends Component {
                 </div>
             )
         }
-        const message = (this.state.custom_page +1) + ' / '+ 5
+        const message = (this.state.custom_page +1) + ' / '+ 6
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['e311p']/* 'Customize some of the default settings.' */})}
@@ -2611,7 +2623,7 @@ class NewCrossexchangePage extends Component {
 
     show_custom_next_button(){
         var page = this.state.custom_page
-        if(page < 4){
+        if(page < 5){
             return(
                 <div style={{'padding': '5px'}} onClick={()=>this.enter_custom_next_page()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['641']/* 'Next' */, 'action':''})}
@@ -2637,7 +2649,7 @@ class NewCrossexchangePage extends Component {
 
     render_custom_token_section_parts_viewpager(page){
         const items = []
-        for(var i=0; i<5; i++){
+        for(var i=0; i<6; i++){
             items.push(i)
         }
         return(
@@ -2655,7 +2667,7 @@ class NewCrossexchangePage extends Component {
 
     enter_custom_next_page(){
         var page = this.state.custom_page
-        if(page < 4){
+        if(page < 5){
             this.setState({custom_page: this.state.custom_page+1})
             this.reset_the_number_picker()
         }
@@ -2755,6 +2767,42 @@ class NewCrossexchangePage extends Component {
                 </div>
             )
         }
+        else if(page == 5/* exchange_ratio_y */){
+            const selected_item = this.get_selected_item(this.state.new_exchange_or_certificate_target_title_tags_object, 'e')
+
+            if(selected_item == this.props.app_state.loc['e311h']/* 'exchange' */){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['713']/* 'Exchange Ratio Y' */, 'details':this.props.app_state.loc['e311bf']/* 'The buy input exchange ratio Y. The higher this is, the cheaper your target will be against the buy tokens.' */, 'size':'l'})}
+                        <div style={{height:20}}/>
+                        
+                        <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['713']/* 'Exchange Ratio Y' */, 'number':this.state.token_exchange_ratio_y, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['713']/* 'Exchange Ratio Y' */, 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_y), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_y), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_y), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
+                        </div>
+
+                        <div style={{height:2}}/>
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['688']/* 'Recommended: ' */+this.format_account_balance_figure(this.state.exchange_transfer_amount/100), 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                        <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_y.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    </div>
+                )
+            }
+            else if(selected_item == this.props.app_state.loc['3103d']/* 'certificate' */){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['713']/* 'Exchange Ratio Y' */, 'details':this.props.app_state.loc['e311bf']/* 'The buy input exchange ratio Y. The higher this is, the cheaper your target will be against the buy tokens.' */, 'size':'l'})}
+                        <div style={{height:20}}/>
+
+                        {this.render_detail_item('3', {'title':this.format_proportion(this.state.token_exchange_ratio_y), 'details':this.props.app_state.loc['713']/* 'Exchange Ratio Y' */, 'size':'l'})}
+
+                        <div style={{height:2}}/>
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['688']/* 'Recommended: ' */+this.format_proportion(this.state.proportion_amount/100), 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                        <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_token_exchange_ratio_y.bind(this)} theme={this.props.theme} power_limit={9} pick_with_text_area={true} text_area_hint={'5.3%'}/>
+                    </div>
+                )
+            }
+        }
     }
 
     when_default_exchange_amount_buy_limit(number){
@@ -2771,6 +2819,14 @@ class NewCrossexchangePage extends Component {
 
     when_minimum_transactions_for_first_buy(number){
         this.setState({minimum_transactions_for_first_buy: number})
+    }
+
+    when_minimum_time_between_swap(number){
+        this.setState({minimum_time_between_swap: number})
+    }
+
+    when_token_exchange_ratio_y(number){
+        this.setState({token_exchange_ratio_y: number})
     }
 
 
@@ -3131,8 +3187,8 @@ class NewCrossexchangePage extends Component {
         else{
             this.props.when_add_new_object_to_stack(this.state)
             this.setState({
-                selected: 0, id: makeid(8), object_type:31, e5:this.props.app_state.selected_e5,
-                
+                selected: 0, id: makeid(8), object_type:31, type:this.props.app_state.loc['e311a']/* 'cross-exchange' */, e5:this.props.app_state.selected_e5,
+
                 get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
                 entered_tag_text: '', entered_title_text:'', entered_text:'',
                 entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
@@ -3144,13 +3200,14 @@ class NewCrossexchangePage extends Component {
                 device_region: this.props.app_state.device_region,
                 device_city: '', selected_device_city:'',
 
+
                 my_country: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country,
 
                 my_city: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city,
 
                 edit_text_item_pos:-1,
 
-                get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], get_new_certificate_fractionalizable_tags_object:this.get_new_certificate_fractionalizable_tags_object(),
+                get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
 
                 new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
                 exchange_authority:'',moderator_id:'', moderators:[], interactible_id:'',  interactibles:[], interactible_timestamp:0, 
@@ -3176,6 +3233,9 @@ class NewCrossexchangePage extends Component {
             this.props.notify(this.props.app_state.loc['e311v']/* 'The cross-exchange target token is invalid.' */, 7600)
             return false
         }
+        else if(!this.is_my_balance_sufficient(target_amount, targeted_token)){
+            this.props.notify(this.props.app_state.loc['e311be']/* Your balance is insufficient to deposit that initial liquidity. */, 6000)
+        }
         else if(target_amount == 0){
             this.props.notify(this.props.app_state.loc['e311w']/* 'The cross-exchange target token initial liquidity is invalid.' */, 7600)
             return false
@@ -3185,6 +3245,14 @@ class NewCrossexchangePage extends Component {
 
     does_exchange_exist(exchange_id){
         if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
+    }
+
+    is_my_balance_sufficient(amount, exchange_id){
+        const my_balance = this.props.calculate_actual_balance(this.state.token_item['e5'], exchange_id)
+        if(bigInt(my_balance).lesser(bigInt(amount))){
             return false
         }
         return true
