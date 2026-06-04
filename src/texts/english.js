@@ -504,7 +504,7 @@ const english = {
 
     
     /* crossexchange details section */
-    '3107':'✏️ Edit Indexed Cross-Exchange','3107a':'Change the basic details for your Indexed Cross-Exchange','3107b':'📌 Pin Cross-Exchange','3107c':'Pin the cross-exchange to your feed.','3107d':'Cross-Exchange Views.','3107e':'Chart containing the cross-exchange\'s views over time.','3107f':'Pin/Unpin Cross-Exchange','3107g':'Cross-Exchange Authority','3107h':'Exchange Transfer Events.','3107i':'Swap Price','3107j':'The amount you get when you swap one unit of $','3107k':'The amount you get when you swap 1% stake of the exchange\'s certificate target.','3107l':'⇄ Swap Tokens','3107m':'Initiate a cross-exchange swap action for or against the targeted token.','3107n':'','3107o':'','3107p':'','3107q':'','3107r':'','3107s':'','3107t':'','3107u':'','3107v':'','3107w':'','3107x':'','3107y':'','3107z':'',
+    '3107':'✏️ Edit Indexed Cross-Exchange','3107a':'Change the basic details for your Indexed Cross-Exchange','3107b':'📌 Pin Cross-Exchange','3107c':'Pin the cross-exchange to your feed.','3107d':'Cross-Exchange Views.','3107e':'Chart containing the cross-exchange\'s views over time.','3107f':'Pin/Unpin Cross-Exchange','3107g':'Cross-Exchange Authority','3107h':'Exchange Transfer Events.','3107i':'Swap Price','3107j':'The amount you get when you swap one unit of $','3107k':'The amount you get when you swap 1% stake of the exchange\'s certificate target.','3107l':'⇄ Swap Tokens','3107m':'Initiate a cross-exchange swap action for or against the targeted token.','3107n':'🛠️ Modify Cross-Exchange','3107o':'','3107p':'','3107q':'','3107r':'','3107s':'','3107t':'','3107u':'','3107v':'','3107w':'','3107x':'','3107y':'','3107z':'',
     
     
     /* crossexchange swap page */

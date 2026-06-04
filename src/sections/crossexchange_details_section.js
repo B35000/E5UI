@@ -1247,7 +1247,7 @@ class CrossexchangeDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2361']/* '🛠️ Modify Token' */, 'details':this.props.app_state.loc['2362']/* 'Modify the configuration of the exchange directly.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3107n']/* '🛠️ Modify Cross-Exchange' */, 'details':this.props.app_state.loc['2362']/* 'Modify the configuration of the exchange directly.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.props.open_modify_token_ui(object)}>
                         {this.render_detail_item('5', {'text':'Modify Exchange', 'action':''})}

@@ -1396,6 +1396,9 @@ class App extends Component {
     created_crossexchanges:{}
   };
 
+  //export NODE_OPTIONS="--max-old-space-size=8192" 
+  //export NODE_OPTIONS="--max-old-space-size=2048"
+
   get_app_version(){
     return document.querySelector('meta[name="version"]')?.getAttribute('content');
   }
@@ -27381,6 +27384,7 @@ class App extends Component {
     }
     
     const request = `${beacon_node}/coin_and_externals_data`
+    await this.wait(500)
     try{
       const response = await fetch(request);
       if (!response.ok) {
