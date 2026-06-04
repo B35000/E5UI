@@ -912,7 +912,7 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     when_pin_post_clicked(object){
-        this.props.pin_post(object)
+        this.props.pin_crossexchange(object)
     }
 
     render_item_data(items, object){

@@ -123,7 +123,8 @@ class ExchangeTransferPage extends Component {
 
     render_everything(){
         var size = this.props.app_state.size
-
+        if(this.state.e5 == null) return;
+        
         if(size == 's'){
             return(
                 <div>

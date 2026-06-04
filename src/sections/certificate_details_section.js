@@ -894,7 +894,7 @@ class CertificateDetailsSection extends Component {
     }
 
     when_pin_post_clicked(object){
-        this.props.pin_post(object)
+        this.props.pin_certificate(object)
     }
 
     render_item_data(items, object){

@@ -2689,7 +2689,7 @@ return data['data']
 
             console.log('fetch_modify_target_data', 'modify_target_data', modify_target_data, 'modify_target_type', modify_target_type)
 
-            this.setState({modify_target_data: modify_target_data, reconfig_items_tags_object: this.get_reconfig_items_tags_object(modify_target_type, parseInt(text) == 2), modify_target_type: modify_target_type})
+            this.setState({modify_target_data: modify_target_data, reconfig_items_tags_object: this.get_reconfig_items_tags_object(modify_target_type, parseInt(text) == 2), modify_target_type: modify_target_type, is_target_certificate: this.is_exchange_target_certificate(modify_target_data)})
         }
     }
 
@@ -3828,7 +3828,7 @@ return data['data']
 
         obj[this.props.app_state.loc['326']]/* 'Buy Limit' */ = {'position':[1,0], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'details':this.props.app_state.loc['649']/* 'The maximum amount of tokens that can be bought in one transaction.' */, 'size':'l'}, 'r':{},}
         obj[this.props.app_state.loc['327']]/* 'Trust Fee' */ = {'position':[1,7], 'picker':'proportion', 'powerlimit':9, 'e':{'title':this.props.app_state.loc['660']/* 'Trust Fee' */, 'details':this.props.app_state.loc['661']/* 'proportion or percentage fee enforced on all contract spending that takes place using token.' */, 'size':'l'}, 'r':{'text':this.props.app_state.loc['662']/* 'Recommended: 3.5%' */, 'textsize':'10px', 'font':this.props.app_state.font},}
-        obj[this.props.app_state.loc['328']]/* 'Sell Limit' */ = {'position':[1,11], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'details':this.props.app_state.loc['654']/* 'The maximum amount of your new token a sender can sell in a transaction.' */, 'size':'l'}, 'r':{},} 
+        obj[this.props.app_state.loc['328']]/* 'Sell Limit' */ = {'position':[1,11], 'picker':this.is_exchange_target_certificate() == true ? 'proportion' : 'number', 'powerlimit':this.is_exchange_target_certificate() == true ? 9 : 63, 'e':{'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'details':this.props.app_state.loc['654']/* 'The maximum amount of your new token a sender can sell in a transaction.' */, 'size':'l'}, 'r':{},} 
         obj[this.props.app_state.loc['329']]/* 'Minimum Time Between Swap' */ = {'position':[1,4], 'picker':'time', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['658']/* 'Minimum Time Between Swap' */, 'details':this.props.app_state.loc['659']/* 'the minimum amount of time a sender has to wait between making a swap for a given token.' */, 'size':'l'}, 'r':{},}
         obj[this.props.app_state.loc['330']]/* 'Minimum Transactions Between Swap' */ = {'position':[1,2], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['663']/* 'Minimum Transactions Between Swap' */, 'details':this.props.app_state.loc['664']/* 'The minimum number of transactions sender has to make between swaps for your new token.' */, 'size':'l'}, 'r':{},} 
         obj[this.props.app_state.loc['331']]/* 'Minimum Blocks Between Swap' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['666']/* 'Minimum Blocks Between Swap' */, 'details':this.props.app_state.loc['667']/* 'the minimum number of blocks sender has to wait between making a swap for your new token.' */, 'size':'l'}, 'r':{},} 
@@ -3846,6 +3846,14 @@ return data['data']
         obj[this.props.app_state.loc['396']]/* 'Exchange Ratio Y' */ = {'position':[2,1], 'picker':'number', 'powerlimit':63, 'e':{'title':this.props.app_state.loc['713']/* 'Exchange Ratio Y' */, 'details':this.props.app_state.loc['714']/* 'The buy input exchange ratio Y for your new token' */, 'size':'l'}, 'r':{},}
 
         return obj[property]
+    }
+
+    is_exchange_target_certificate(token_item = this.state.modify_target_data){
+        if(token_item['data'][2][18/* <18>classic_swap_exchange_parent_token */] != null && token_item['data'][2][18/* <18>classic_swap_exchange_parent_token */] > 0){
+            const target_type = this.get_selected_item2(token_item['ipfs'].new_exchange_or_certificate_target_title_tags_object, 'e')
+            return target_type == 2
+        }
+        return false
     }
 
 

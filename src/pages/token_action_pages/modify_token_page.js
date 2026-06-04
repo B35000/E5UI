@@ -74,15 +74,27 @@ class ModifyTokenPage extends Component {
         };
     }
 
-    get_reconfig_items_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['326']/* 'Buy Limit' */,this.props.app_state.loc['327']/* 'Trust Fee' */, this.props.app_state.loc['328']/* 'Sell Limit' */, this.props.app_state.loc['329']/* 'Minimum Time Between Swap' */, this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, this.props.app_state.loc['331']/* 'Minimum Blocks Between Swap' */, this.props.app_state.loc['332']/* 'Minimum Entered Contracts Between Swap' */, this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, this.props.app_state.loc['334']/* 'Minimum Entered Contracts For First Buy' */, this.props.app_state.loc['335']/* 'Block Limit' */, this.props.app_state.loc['336']/* 'Halving type' */, this.props.app_state.loc['337']/* 'Maturity Limit' */, this.props.app_state.loc['338']/* 'Internal Block Halving Proportion' */, this.props.app_state.loc['339']/* 'Block Limit Reduction Proportion' */, this.props.app_state.loc['340']/* 'Block Reset Limit' */, this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */, this.props.app_state.loc['861a']/* 'prices' */], [1]
-            ],
-        };
+    get_reconfig_items_tags_object(type='token'){
+        if(type == 'token'){
+            return{
+                'i':{
+                    active:'e', 
+                },
+                'e':[
+                    ['xor','',0], ['e',this.props.app_state.loc['326']/* 'Buy Limit' */,this.props.app_state.loc['327']/* 'Trust Fee' */, this.props.app_state.loc['328']/* 'Sell Limit' */, this.props.app_state.loc['329']/* 'Minimum Time Between Swap' */, this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, this.props.app_state.loc['331']/* 'Minimum Blocks Between Swap' */, this.props.app_state.loc['332']/* 'Minimum Entered Contracts Between Swap' */, this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, this.props.app_state.loc['334']/* 'Minimum Entered Contracts For First Buy' */, this.props.app_state.loc['335']/* 'Block Limit' */, this.props.app_state.loc['336']/* 'Halving type' */, this.props.app_state.loc['337']/* 'Maturity Limit' */, this.props.app_state.loc['338']/* 'Internal Block Halving Proportion' */, this.props.app_state.loc['339']/* 'Block Limit Reduction Proportion' */, this.props.app_state.loc['340']/* 'Block Reset Limit' */, this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */, this.props.app_state.loc['861a']/* 'prices' */], [1]
+                ],
+            };
+        }
+        else if(type == 'crossexchange'){
+            return{
+                'i':{
+                    active:'e', 
+                },
+                'e':[
+                    ['xor','',0], ['e',this.props.app_state.loc['326']/* 'Buy Limit' */, this.props.app_state.loc['328']/* 'Sell Limit' */, this.props.app_state.loc['329']/* 'Minimum Time Between Swap' */, this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' *//* , this.props.app_state.loc['861a'] *//* 'prices' */], [1]
+                ],
+            };
+        }
     }
 
     get_new_token_halving_type_tags_object(){
@@ -178,9 +190,8 @@ class ModifyTokenPage extends Component {
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['1002']/* 'Make changes to the configuration of the token ID: ' */+this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+this.state.token_item['id']]})}
-
-                {this.render_detail_item('0')}
-
+                <div style={{height:10}}/>
+                
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 {this.load_reconfig_item_selectors()}
@@ -428,7 +439,7 @@ class ModifyTokenPage extends Component {
 
         obj[this.props.app_state.loc['326']]/* 'Buy Limit' */ = {'position':[1,0], 'picker':'number', 'powerlimit':63}
         obj[this.props.app_state.loc['327']]/* 'Trust Fee' */ = {'position':[1,7], 'picker':'proportion', 'powerlimit':9}
-        obj[this.props.app_state.loc['328']]/* 'Sell Limit' */ = {'position':[1,11], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['328']]/* 'Sell Limit' */ = this.is_exchange_target_certificate() == true ? {'position':[1,11], 'picker':'proportion', 'powerlimit':9} : {'position':[1,11], 'picker':'number', 'powerlimit':63};
         obj[this.props.app_state.loc['329']]/* 'Minimum Time Between Swap' */ = {'position':[1,4], 'picker':'time', 'powerlimit':63}
         obj[this.props.app_state.loc['330']]/* 'Minimum Transactions Between Swap' */ = {'position':[1,2], 'picker':'number', 'powerlimit':63} 
         obj[this.props.app_state.loc['331']]/* 'Minimum Blocks Between Swap' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63} 
@@ -447,6 +458,15 @@ class ModifyTokenPage extends Component {
 
 
         return obj[property]
+    }
+
+    is_exchange_target_certificate(){
+        const token_item = this.state.token_item
+        if(token_item['data'][2][18/* <18>classic_swap_exchange_parent_token */] != null && token_item['data'][2][18/* <18>classic_swap_exchange_parent_token */] > 0){
+            const target_type = this.get_selected_item2(token_item['ipfs'].new_exchange_or_certificate_target_title_tags_object, 'e')
+            return target_type == 2
+        }
+        return false
     }
 
 
@@ -864,6 +884,10 @@ class ModifyTokenPage extends Component {
             })
         }
         this.setState({token_item: token_item, e5: token_item['e5']})
+
+        if(token_item['data'][2][18/* <18>classic_swap_exchange_parent_token */] != null && token_item['data'][2][18/* <18>classic_swap_exchange_parent_token */] > 0){
+            this.setState({reconfig_items_tags_object: this.get_reconfig_items_tags_object('crossexchange')})
+        }
     }
 
     finish(){
@@ -879,6 +903,15 @@ class ModifyTokenPage extends Component {
 
 
 
+
+
+
+
+
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){

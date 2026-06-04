@@ -36282,7 +36282,7 @@ class App extends Component {
 
       if(this.homepage.current?.state.selected_end_item == token_id+e5 || this.homepage.current?.state.selected_spend_item == token_id+e5){
         // the token is being viewed
-        const previous_obj = is_certificate == true ? this.state.created_certificates[e5].find(e => e['e5_id'] == (token_id+e5)) : (is_crossexchange == true ? this.state.created_crossexchanges[e5].find(e => e['e5_id'] == (token_id+e5)): this.state.created_tokens[e5].find(e => e['e5_id'] == (token_id+e5)))
+        const previous_obj = is_certificate == true ? this.state.created_certificates[e5].find(e => e['e5_id'] == (token_id+e5)) : (is_crossexchange == true ? this.state.created_crossexchanges[e5].find(e => e['e5_id'] == (token_id+e5)) : this.state.created_tokens[e5].find(e => e['e5_id'] == (token_id+e5)))
         if(previous_obj != null){
           token_obj['exchanges_balances'] = previous_obj['exchanges_balances']
           token_obj['moderators'] = previous_obj['moderators']
