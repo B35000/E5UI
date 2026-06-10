@@ -103,10 +103,11 @@ class TextInput extends Component {
   }
 
   render_textarea_or_input(f){
+    var os = getOS()
     var height = this.props.height
     if(height < 0 || this.props.adjust_height == false){
       var text_type = this.state.input_type == null ? 'text' : this.state.input_type
-      if(text_type == 'number'){
+      if(text_type == 'number' && (os != 'Android' && os != 'iOS')){
         text_type = 'tel'
       }
       var step = text_type == 'number' ? 'any' : ''

@@ -1037,16 +1037,32 @@ class ViewGroups extends Component {
                             },
 
                             h1: ({ node, ...props }) => <h1 style={{ color:this.props.theme['primary_text_color'] }} {...props} />,
+
                             h2: ({ node, ...props }) => <h2 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+
                             h3: ({ node, ...props }) => <h3 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+
                             h4: ({ node, ...props }) => <h4 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+
                             h5: ({ node, ...props }) => <h5 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+
                             h6: ({ node, ...props }) => <h6 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+
                             li: ({ node, ...props }) => <li style={{ color: this.props.theme['secondary_text_color'] }} {...props} />,
-                            a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'] }} {...props} onClick={(e) => this.handleLinkClick(e, props.href)} /* target="_blank" rel="noopener noreferrer" */ />,
+
+                            a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'], 'text-decoration':'underline', cursor: 'pointer'}} {...props} href={undefined} onMouseDown={(e) => this.handleLinkClick(props.href, e)} />,
+
                             hr: ({ node, ...props }) => <hr style={{ color: this.props.theme['line_color'] }} {...props} />,
+
                             br: ({ node, ...props }) => <br style={{ color: this.props.theme['line_color'] }} {...props} />,
-                            img: ({ node, ...props }) => ( <img onClick={() => this.when_image_clicked([props.src], 0)} src={this.get_image_from_file(props.src)} alt={props.alt || "e"} style={{ width: 'auto', maxWidth:'100px', height: 'auto', 'border-radius': '10px' }} /* {...props} */ /> )
+
+                            img: ({ node, ...props }) => ( <img onClick={() => this.when_image_clicked([props.src], 0)} src={this.get_image_from_file(props.src)} alt={props.alt || "e"} style={{ width: 'auto', maxWidth:'100px', height: 'auto', 'border-radius': '10px' }} /* {...props} */ /> ),
+
+                            code: ({ node, inline, className, children, ...props }) => {
+                                return(
+                                    <code {...props} style={{ color: this.props.theme['primary_text_color'], backgroundColor: this.props.theme['nav_bar_color'], 'border-radius': '3px', 'padding':'0px 4px 0px 4px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow}}>{children}</code>
+                                );
+                            },
                         }}
                     >{source}</Markdown>
                 </div>
@@ -1147,6 +1163,8 @@ class ViewGroups extends Component {
     extract_leading_trailing_spaces(clean_text){
         const letters = clean_text.split('')
         const leading_trailing_spaces = ['', '']
+        if(clean_text == null) return leading_trailing_spaces;
+        
         var letter_hit = false
         letters.forEach(letter => {
             if(letter == ' ' && letter_hit == false){
@@ -1424,6 +1442,7 @@ class ViewGroups extends Component {
     }
 
     process_source(source){
+        if(source == null) return;
         const parts = this.mask_profane_words(source).split(' ');
         var final_string = ''
         parts.forEach((word, index) => {

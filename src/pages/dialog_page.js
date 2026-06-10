@@ -127,7 +127,7 @@ class DialogPage extends Component {
 
         out_of_stock_items:[], seed_passcode:'', passcode_expiry_time:0, passcode_entry_tries:5, cypher_passcode:'', get_remember_seed_during_initial_synch_tags_object: this.get_remember_seed_during_initial_synch_tags_object(),
 
-        selected_conditions:[], get_include_exit_contract_after_finish_transaction_object:this.get_include_exit_contract_after_finish_transaction_object()
+        selected_conditions:[], get_include_exit_contract_after_finish_transaction_object:this.get_include_exit_contract_after_finish_transaction_object(),
     };
 
 
@@ -4417,7 +4417,6 @@ return data['data']
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_account_option_items2()}
-                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -4433,7 +4432,6 @@ return data['data']
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_account_option_items2()}
-                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -4490,6 +4488,10 @@ return data['data']
     }
 
     render_account_option_items2(){
+        var account_id = this.state.data['account']
+        var e5 = this.state.data['e5']
+        const me = this.props.app_state.user_account_id[e5]
+        const opacity = me == account_id ? 0.5 : 1.0
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bc']/* 'View Account' */, 'details':this.props.app_state.loc['3055bd']/* 'View the accounts entire activity on e.' */, 'size':'l'})}
@@ -4502,6 +4504,17 @@ return data['data']
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055be']/* 'Copy Account' */, 'details':this.props.app_state.loc['3055bf']/* 'Copy the accounts ID to your clipboard' */, 'size':'l'})}
                 {this.render_copy_alias_if_exists()}
+
+
+
+                <div style={{opacity: opacity}}>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055qo']/* 'Directly Message.' */, 'details':this.props.app_state.loc['3055qp']/* 'Send a message and start a dialogue with the account on e.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.open_direct_message_ui()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055qq']/* 'Begin Chat' */, 'action':'', 'font':this.props.app_state.font})}
+                    </div>
+                </div> 
             </div>
         )
     }
@@ -4568,6 +4581,14 @@ return data['data']
         var account_id = this.state.data['account']
         var e5 = this.state.data['e5']
         this.props.when_view_account_details_selected(account_id, e5)
+    }
+
+    open_direct_message_ui(){
+        var account_id = this.state.data['account']
+        var e5 = this.state.data['e5']
+        const me = this.props.app_state.user_account_id[e5]
+        if(me == account_id) return;
+        this.props.start_new_direct_message_chat(account_id, e5)
     }
 
 
@@ -15075,10 +15096,19 @@ return data['data']
             <div>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qc']/* 'Confirm the details for your transfer befor initiating the run.' */, 'title':this.props.app_state.loc['3055qb']/* 'Confirm Transfers.' */})}
                 <div style={{height:10}}/>
+
                 {this.render_my_balances()}
                 {this.render_detail_item('0')}
+
                 {this.render_set_amounts_list_part()}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qs']/* 'You may optionally set the gas price, or how quickly your transfers are to be validated. Slow is the default used.' */, 'title':this.props.app_state.loc['3055qr']/* 'Select Gas Price.' */})}
                 <div style={{height:10}}/>
+
+                {this.render_gas_price_options()}
+                <div style={{height:10}}/>
+
                 <div style={{'padding': '5px'}} onClick={() => this.begin_transfers()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055qd']/* Confirm Transfers' */, 'action':''})}
                 </div>
@@ -15198,10 +15228,100 @@ return data['data']
         else return alias;
     }
 
+    get_gas_price_from_runs(e5){
+        var last_events = this.props.app_state.all_E5_runs[e5['id']]
+        var sum = 0
+        if(last_events != null){
+            var last_check = last_events.length < 50 ? last_events.length : 50
+            for(var i=0; i<last_check; i++){
+                sum += last_events[i].returnValues.p7
+            }
+            sum = sum/last_check;
+        }
+        return sum
+    }
+
+    render_gas_price_options(){
+        const items = this.get_gas_price_items()
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_custom_price_picked(item)}>
+                            {this.render_detail_item('3', {'title':item['title'], 'details':this.round_off(item['price']/10**9)+' gwei', 'size':'s'})}
+                            {this.render_line_if_selected(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_gas_price_items(){
+        var e5 = this.props.app_state.selected_e5
+        var gas_price = this.props.app_state.gas_price[e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs()
+        }
+
+        if(gas_price == null || isNaN(gas_price)) return [];
+        
+        var items = [
+            {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price)},
+            {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.7 * gas_price)},
+            {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.6 * gas_price)},
+            {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.1 * gas_price)},
+        ]
+
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            items = [
+                {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price), 'max_priority_fee':2_000_000_000 },
+                {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.8 * gas_price), 'max_priority_fee':3_000_000_000},
+                {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.9 * gas_price), 'max_priority_fee':4_000_000_000},
+                {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.6 * gas_price), 'max_priority_fee':5_000_000_000},
+            ]
+        }
+
+        return items;
+    }
+
+    render_line_if_selected(item){
+        if(this.state.custom_quick_transfer_price != null && this.state.custom_quick_transfer_price['title'] == item['title']){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    when_custom_price_picked(item){
+        this.setState({custom_quick_transfer_price: item})
+    }
+
+    
     begin_transfers(){
         this.props.open_dialog_bottomsheet()
         const price_data = this.state.data['price_data']
-        this.props.start_quick_transfer_action(price_data)
+        const selected_gas_prices = this.get_selected_gas_price_data()
+        this.props.start_quick_transfer_action(price_data, selected_gas_prices)
+    }
+
+    get_selected_gas_price_data(){
+        const item = this.state.custom_quick_transfer_price || this.get_gas_price_items()[0];
+        var picked_max_fee_per_gas_amount = 0
+        var picked_max_priority_per_gas_amount = 0;
+        var run_gas_price = 0
+
+        const e5 = this.props.app_state.selected_e5
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            picked_max_fee_per_gas_amount = item['price'] + item['max_priority_fee']
+            picked_max_priority_per_gas_amount = item['max_priority_fee']
+        }else{
+            run_gas_price = item['price']
+        }
+
+        return { picked_max_fee_per_gas_amount, picked_max_priority_per_gas_amount, run_gas_price }
     }
 
 

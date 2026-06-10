@@ -64,7 +64,9 @@ class ConfigureObligationsPage extends Component {
 
         default_award_payment_obligation:0, default_direct_purchase_obligation:0, default_fulfilled_bags_obligation:0, default_audiopost_purchase_obligation:0, default_videopost_purchase_obligation:0, default_creator_group_payout_obligation:0, targeted_explore_keyword: '', default_explore_keyword_obligation:0, explore_keywords:{}, 
 
-        default_direct_transfer_obligation:0, default_iTransfer_obligation:0, default_bill_payment_obligation:0, default_token_acquisition_obligation:0, default_token_remarket_obligation:0, default_royalty_payout_obligation:0, default_liquidity_deposit_withdraw_obligation:0, /* default_trust_fee_obligation:0, */
+        default_direct_transfer_obligation:0, default_iTransfer_obligation:0, default_bill_payment_obligation:0, default_token_acquisition_obligation:0, default_token_remarket_obligation:0, default_royalty_payout_obligation:0, default_liquidity_deposit_withdraw_obligation:0, 
+        /* default_trust_fee_obligation:0, */
+        default_certificate_acquisition_obligation:0, default_certificate_transfer_obligation:0, default_coupon_payment_obligation:0,
 
         default_keyword_combination:0, deadline_datetime:'1:1',
 
@@ -302,7 +304,7 @@ class ConfigureObligationsPage extends Component {
 
             default_award_payment_obligation:default_proportion, default_direct_purchase_obligation:default_proportion, default_fulfilled_bags_obligation:default_proportion, default_audiopost_purchase_obligation:default_proportion, default_videopost_purchase_obligation:default_proportion, default_creator_group_payout_obligation:default_proportion, 
 
-            default_direct_transfer_obligation:default_proportion, default_iTransfer_obligation:default_proportion, default_bill_payment_obligation:default_proportion, default_token_acquisition_obligation:default_proportion, default_token_remarket_obligation:default_proportion, default_royalty_payout_obligation:default_proportion, default_liquidity_deposit_withdraw_obligation:default_proportion,
+            default_direct_transfer_obligation:default_proportion, default_iTransfer_obligation:default_proportion, default_bill_payment_obligation:default_proportion, default_token_acquisition_obligation:default_proportion, default_coupon_payment_obligation:default_proportion,default_certificate_transfer_obligation:default_proportion, default_certificate_acquisition_obligation:default_proportion, default_token_remarket_obligation:default_proportion, default_royalty_payout_obligation:default_proportion, default_liquidity_deposit_withdraw_obligation:default_proportion,
         })
     }
 
@@ -461,6 +463,16 @@ class ConfigureObligationsPage extends Component {
 
                 {/* {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_trust_fee_obligation), 'details':this.props.app_state.loc['3093dt'] 'Trust Fee Obligation.', 'size':'l'})}
                 <div style={{height:10}}/> */}
+
+                
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_certificate_acquisition_obligation), 'details':this.props.app_state.loc['3093fj']/* 'Certificate Acquisition Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_certificate_transfer_obligation), 'details':this.props.app_state.loc['3093fk']/* 'Certificate Transfer Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_coupon_payment_obligation), 'details':this.props.app_state.loc['3093fl']/* 'Coupon Payment Obligation.' */, 'size':'l'})}
+                <div style={{height:10}}/>
                 
             </div>
         )
@@ -483,7 +495,7 @@ class ConfigureObligationsPage extends Component {
                                 {this.render_obligation_configuration_item(item)}
                             </li>
                         ))}
-                        {items2.map(() => (
+                        {items.length == 0 && items2.map(() => (
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 {this.render_empty_horizontal_list_item()}
                             </li>
@@ -1294,6 +1306,20 @@ class ConfigureObligationsPage extends Component {
                 {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_token_acquisition_obligation), 'details':this.props.app_state.loc['3093di']/* 'Token Acquisition Obligation.' */, 'size':'l'})}
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_token_acquisition_obligation_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+                {this.render_detail_item('0')}
+
+
+
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093fp']/* 'Certificate Transfer Obligation.' */, 'details': this.props.app_state.loc['3093fq']/* 'Set the default proportion for certificate transfers.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_certificate_transfer_obligation), 'details':this.props.app_state.loc['3093fr']/* 'Certificate Transfer Obligation.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_certificate_transfer_obligation_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+                
+
+
             </div>
         )
     }
@@ -1337,6 +1363,29 @@ class ConfigureObligationsPage extends Component {
                 {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_trust_fee_obligation), 'details':this.props.app_state.loc['3093dt']'Trust Fee Obligation.', 'size':'l'})}
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_trust_fee_obligation_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/> */}
+
+
+                {/* default_certificate_acquisition_obligation:0, default_certificate_transfer_obligation:0, default_coupon_payment_obligation:0, */}
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093fm']/* 'Certificate Mint Proportion.' */, 'details': this.props.app_state.loc['3093fn']/* 'SSet the default proportion for actions involving the minting of a certificate from an exchange.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_certificate_acquisition_obligation), 'details':this.props.app_state.loc['3093fo']/* 'Certificate Mint Obligation.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_certificate_acquisition_obligation_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+                {this.render_detail_item('0')}
+
+
+
+
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093fs']/* 'Coupon Payout Obligation.' */, 'details': this.props.app_state.loc['3093ft']/* 'Set the default proportion for actions involving coupon payouts for certificate bonds.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_coupon_payment_obligation), 'details':this.props.app_state.loc['3093fu']/* 'Certificate Coupon Payout Obligation.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_coupon_payment_obligation_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -1371,6 +1420,18 @@ class ConfigureObligationsPage extends Component {
 
     when_default_trust_fee_obligation_proportion(number){
         this.setState({default_trust_fee_obligation: number})
+    }
+
+    when_default_certificate_acquisition_obligation_proportion(number){
+        this.setState({default_certificate_acquisition_obligation: number})
+    }
+
+    when_default_certificate_transfer_obligation_proportion(number){
+        this.setState({default_certificate_transfer_obligation: number})
+    }
+
+    when_default_coupon_payment_obligation_proportion(number){
+        this.setState({default_coupon_payment_obligation: number})
     }
 
 
@@ -1799,11 +1860,14 @@ class ConfigureObligationsPage extends Component {
             this.state.default_direct_transfer_obligation > bigInt('51e16') ||
             this.state.default_iTransfer_obligation > bigInt('51e16') ||
             this.state.default_bill_payment_obligation > bigInt('51e16') ||
-            this.state.default_token_acquisition_obligation > bigInt('51e16') ||
+            this.state.default_certificate_transfer_obligation > bigInt('51e16') ||
             this.state.default_token_remarket_obligation > bigInt('51e16') ||
             this.state.default_royalty_payout_obligation > bigInt('51e16') ||
-            this.state.default_liquidity_deposit_withdraw_obligation > bigInt('51e16')
+            this.state.default_liquidity_deposit_withdraw_obligation > bigInt('51e16') ||
             // this.state.default_trust_fee_obligation > bigInt('51e16')
+            this.state.default_certificate_acquisition_obligation > bigInt('51e16') ||
+            this.state.default_token_acquisition_obligation > bigInt('51e16') ||
+            this.state.default_coupon_payment_obligation > bigInt('51e16')
         ){
             this.props.notify(this.props.app_state.loc['3093br'], 6400)/* 'You cant set a target higher than 51%' */
         }
@@ -1829,8 +1893,11 @@ class ConfigureObligationsPage extends Component {
             this.state.default_token_acquisition_obligation == 0 ||
             this.state.default_token_remarket_obligation == 0 ||
             this.state.default_royalty_payout_obligation == 0 ||
-            this.state.default_liquidity_deposit_withdraw_obligation == 0
+            this.state.default_liquidity_deposit_withdraw_obligation == 0 ||
             // this.state.default_trust_fee_obligation == 0
+            this.state.default_certificate_transfer_obligation == 0 ||
+            this.state.default_certificate_acquisition_obligation == 0 ||
+            this.state.default_coupon_payment_obligation == 0
         ){
             this.props.notify(this.props.app_state.loc['3093bs'], 6400)/* 'You cant set a target of 0%' */
         }

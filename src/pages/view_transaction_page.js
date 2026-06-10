@@ -9203,6 +9203,16 @@ return data['data']
                     {/* <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                         {this.render_detail_item('3', {'title':this.format_proportion(transaction_item.default_trust_fee_obligation), 'details':this.props.app_state.loc['3093dt']'Trust Fee Obligation.', 'size':'l'})}
                     </li> */}
+
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_certificate_acquisition_obligation), 'details':this.props.app_state.loc['3093fj']/* 'Certificate Acquisition Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_certificate_transfer_obligation), 'details':this.props.app_state.loc['3093fk']/* 'Certificate Transfer Obligation.' */, 'size':'l'})}
+                    </li>
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_coupon_payment_obligation), 'details':this.props.app_state.loc['3093fl']/* 'Coupon Payment Obligation.' */, 'size':'l'})}
+                    </li>
                 </ul>
             </div>
         )

@@ -147,7 +147,7 @@ class SearchedAccountPage extends Component {
             f = 90
         }
 
-        f+=60
+        f+=90
 
         if(this.state.searched_account == null){
             return(
@@ -357,7 +357,7 @@ class SearchedAccountPage extends Component {
 
         if(size == 's'){
             return(
-                <div>
+                <div style={{'width':'98%'}}>
                     {this.render_search_bar()}
                     
                     {this.render_content()}
@@ -367,32 +367,34 @@ class SearchedAccountPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_search_bar()}
-                        {this.render_content()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_search_account_balances_ui()}
-                       
+                <div style={{'width':'98%'}}>
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_search_bar()}
+                            {this.render_content()}
+                        </div>
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_search_account_balances_ui()}
+                        
+                        </div>
                     </div>
                 </div>
-                
             )
         }
         else if(size == 'l'){
             return(
-                <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_search_bar()}
-                        {this.render_content()}
-                    </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_search_account_balances_ui()}
-                        
+                <div style={{'width':'98%'}}>
+                    <div className="row">
+                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_search_bar()}
+                            {this.render_content()}
+                        </div>
+                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_search_account_balances_ui()}
+                            
+                        </div>
                     </div>
                 </div>
-                
             )
         }
     }
@@ -710,10 +712,10 @@ class SearchedAccountPage extends Component {
     }
 
     render_searched_account_origin(address){
-        if(this.state.obligation_subscriptions[address] == null) return;
+        if(this.props.app_state.obligation_subscriptions[address] == null) return;
 
-        const country = this.state.obligation_subscriptions[address].my_original_country
-        const city = this.state.obligation_subscriptions[address].my_original_city
+        const country = this.props.app_state.obligation_subscriptions[address].my_original_country
+        const city = this.props.app_state.obligation_subscriptions[address].my_original_city
 
         const my_country = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country
 

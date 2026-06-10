@@ -326,7 +326,8 @@ class QuickTransferPage extends Component {
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var recipient = await this.get_typed_alias_id(this.state.recipient_id.toString().trim())
         var amount = this.state.amount
-        const includes = this.state.price_data.find(e => e['id'] == exchange_id)
+        // const includes = this.state.price_data.find(e => e['id'] == exchange_id)
+        
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
             this.props.notify(this.props.app_state.loc['1185']/* 'Please put a valid exchange ID.' */, 3600)
         }
@@ -336,8 +337,8 @@ class QuickTransferPage extends Component {
         else if(amount == 0){
             this.props.notify(this.props.app_state.loc['1186']/* 'Please put a valid amount.' */, 3600)
         }
-        else if(includes != null){
-            this.props.notify(this.props.app_state.loc['3068aw']/* 'You cant use the same exchange twice.' */, 5600)
+        else if(this.state.price_data.length == 23){
+            this.props.notify(this.props.app_state.loc['3106o']/* 'You cant make more than 35 multi-transfers here.' */, 5600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
@@ -587,7 +588,7 @@ class QuickTransferPage extends Component {
     }
 
     when_price_suggestion_clicked(item, pos){
-        this.setState({exchange_id: item['id']})
+        this.setState({exchange_id: item['id'].toString()})
         this.reset_the_number_picker()
     }
 

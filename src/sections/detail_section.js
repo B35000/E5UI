@@ -266,13 +266,14 @@ class PostDetailSection extends Component {
             if(selected_option_name == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_option_name == 'e'){
                 return(
                     <CoinsDetailsSection
-                    app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_coin_item={this.props.selected_coin_item} notify={this.props.notify.bind(this)} view_number={this.props.view_number.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.props.start_send_receive_coin_bottomsheet.bind(this)} update_coin_balances={this.props.update_coin_balances.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} show_successful_send_bottomsheet={this.props.show_successful_send_bottomsheet.bind(this)}
+                    app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_coin_item={this.props.selected_coin_item} notify={this.props.notify.bind(this)} view_number={this.props.view_number.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.props.start_send_receive_coin_bottomsheet.bind(this)} update_coin_balances={this.props.update_coin_balances.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} show_successful_send_bottomsheet={this.props.show_successful_send_bottomsheet.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)}
+                    render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
                     />
                 )
             }
             else if(selected_option_name == this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
                 return(
-                    <EthersDetailsSection  app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_ether_item={this.props.selected_ether_item} notify={this.props.notify.bind(this)} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)} open_rpc_settings={this.props.open_rpc_settings.bind(this)} get_wallet_data_for_specific_e5={this.props.get_wallet_data_for_specific_e5.bind(this)} view_number={this.props.view_number.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} show_successful_send_bottomsheet={this.props.show_successful_send_bottomsheet.bind(this)} show_bridge_ether_bottomsheet={this.props.show_bridge_ether_bottomsheet.bind(this)}
+                    <EthersDetailsSection  app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_ether_item={this.props.selected_ether_item} notify={this.props.notify.bind(this)} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)} open_rpc_settings={this.props.open_rpc_settings.bind(this)} get_wallet_data_for_specific_e5={this.props.get_wallet_data_for_specific_e5.bind(this)} view_number={this.props.view_number.bind(this)} render_files_part={this.render_files_part.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} show_successful_send_bottomsheet={this.props.show_successful_send_bottomsheet.bind(this)} show_bridge_ether_bottomsheet={this.props.show_bridge_ether_bottomsheet.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)} render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)} 
                     />
                 )
             }
@@ -759,6 +760,16 @@ class PostDetailSection extends Component {
                 if(extra_data['certificate_mint_events'] != null){
                     return_text.push(this.props.app_state.loc['2509dy']/* '$ mints' */.replace('$', this.format_count(extra_data['certificate_mint_events']['all_hits'])));
                 }
+
+                if(extra_data['send_ether_coin_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509dz']/* '$ transfers' */.replace('$', this.format_count(extra_data['send_ether_coin_events']['all_hits'])));
+                }
+                if(extra_data['bridge_ether_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509ea']/* '$ bridgings' */.replace('$', this.format_count(extra_data['bridge_ether_events']['all_hits'])));
+                }
+                if(extra_data['ether_request_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509eb']/* '$ requests' */.replace('$', this.format_count(extra_data['ether_request_events']['all_hits'])));
+                }
             }
             const result_string = return_text.join(' • ')
             return result_string
@@ -808,7 +819,11 @@ class PostDetailSection extends Component {
                 'repost_object_event':this.props.app_state.loc['2509de']/* reposts 🔄 */,
                 'storefront_purchase_request_events':this.props.app_state.loc['2509dm']/* purchase-requests 🛍️ */,
                 'token_swap_events':this.props.app_state.loc['2509dq']/* 'swap-actions ⇄' */,
-                'certificate_mint_events':this.props.app_state.loc['2509du']/* 'mint-actions 🌱' */
+                'certificate_mint_events':this.props.app_state.loc['2509du']/* 'mint-actions 🌱' */,
+
+                'send_ether_coin_events':this.props.app_state.loc['2509ec']/* 'transfer-actions ⇄' */,
+                'bridge_ether_events':this.props.app_state.loc['2509ed']/* 'bridge-actions 𖣑' */,
+                'ether_request_events':this.props.app_state.loc['2509ee']/* 'request-actions 🙏' */,
             }
 
             const available_items = ['e']
@@ -892,6 +907,23 @@ class PostDetailSection extends Component {
                     'title':this.props.app_state.loc['2509dv']/* Certificate Mints' */, 
                     'details':this.props.app_state.loc['2509dw']/* 'Chart containing the mint requests sent to the exchange over time.' */,
                     'y_axis':this.props.app_state.loc['2509dx']/* Y-Axis: Mints */
+                },
+
+
+                'send_ether_coin_events':{
+                    'title':this.props.app_state.loc['2509ef']/* Coin/Ether Transfers' */, 
+                    'details':this.props.app_state.loc['2509eg']/* 'Chart containing the transfers made with this coin/ether on e over time.' */,
+                    'y_axis':this.props.app_state.loc['2509eh']/* Y-Axis: Transfers */
+                },
+                'bridge_ether_events':{
+                    'title':this.props.app_state.loc['2509ei']/* Bridge Ether Actions.' */, 
+                    'details':this.props.app_state.loc['2509ej']/* 'Chart containing the bridge actions made to this L2 blockchain from its L1 counterpart over time.' */,
+                    'y_axis':this.props.app_state.loc['2509em']/* Y-Axis: Bridges */
+                },
+                'ether_request_events':{
+                    'title':this.props.app_state.loc['2509ek']/* Transfer Requests Made.' */, 
+                    'details':this.props.app_state.loc['2509el']/* 'Chart containing the request traffic for this coin/ether over time.' */,
+                    'y_axis':this.props.app_state.loc['2509en']/* Y-Axis: Requests */
                 }
             }
 

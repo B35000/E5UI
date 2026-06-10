@@ -1446,7 +1446,6 @@ class App extends Component {
       'collapse_bottomsheet_button': collapse_bottomsheet_button,
       'collapse_bottomsheet_button_light': collapse_bottomsheet_button_light
     }
-    //csv_file_button, json_file_button, lrc_file_button, pdf_file_button, vtt_file_button, image_file_button, zip_file_button, music_file_button, video_file_button
   }
 
   get_e5s(){
@@ -3578,6 +3577,12 @@ class App extends Component {
       'purchase-credits':this.getLocale()['3092']/* 'purchase-credits' */,
       'finish-payment':this.getLocale()['1632o']/* 'finish-payment' */,
       'exchange-deposit':this.getLocale()['3094']/* 'exchange-deposit' */,
+      'mint-certificate':this.getLocale()['3099']/* 'mint-certificate' */,
+      'transfer-certificate':this.getLocale()['3100']/* 'transfer-certificate' */,
+      'fractionalize-certificate':this.getLocale()['3101']/* 'fractionalize-certificate' */,
+      'transfer-stake':this.getLocale()['3102']/* 'transfer-stake' */,
+      'add-stake':this.getLocale()['3103']/* 'add-stake' */,
+      'coupon-payments':this.getLocale()['3105']/* 'coupon-payments' */,
     }
   }
 
@@ -7893,6 +7898,8 @@ class App extends Component {
       'ether_id':ether_id
     }
     await this.emit_new_ether_or_coin_request(state_object)
+    await this.wait(1500)
+    this.emit_comment_record_object_event([ether_id], 'ether_request_events');
   }
 
 
@@ -18559,6 +18566,17 @@ class App extends Component {
     console.log('ether_coin_receipt', 'object_data', object_data)
 
     await this.emit_new_ether_or_coin_receipt(object_data)
+    
+    const comment_record_tag_obj = {
+      'ether':'send_ether_coin_events',
+      'coin':'send_ether_coin_events',
+      'op_bridge':'bridge_ether_events',
+      'zk_bridge':'bridge_ether_events',
+      'ar_bridge':'bridge_ether_events',
+      'op2_bridge':'bridge_ether_events',
+    }
+    await this.wait(1500)
+    this.emit_comment_record_object_event([ether_id], comment_record_tag_obj[data['type']]);
   }
 
 
@@ -20388,9 +20406,9 @@ class App extends Component {
     }
   }
 
-  async start_quick_transfer_action(price_data){
+  async start_quick_transfer_action(price_data, selected_gas_prices){
     this.quick_send_page.current?.add_recipients_to_memory(price_data)
-    await this.start_quick_transfers(price_data)
+    await this.start_quick_transfers(price_data, selected_gas_prices)
   }
 
   add_recognise_certificate_transaction_to_stack(state_obj){
@@ -25566,8 +25584,8 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       if(me.view_configure_obligations_page.current != null){
-        if(object['obligation_configurations'].length > 0){
-          const latest_configuration = this.sortByAttributeDescending(object['obligation_configurations'], 'time')[0]
+        if(object['obligation_configurations'] != null && object['obligation_configurations'].length > 0){
+          const latest_configuration = me.sortByAttributeDescending(object['obligation_configurations'], 'time')[0]
           me.view_configure_obligations_page.current.setState(latest_configuration)
         }
         me.view_configure_obligations_page.current.set_data(object)
@@ -26865,7 +26883,7 @@ class App extends Component {
     }
   }
 
-  async start_quick_transfers(price_data){
+  async start_quick_transfers(price_data, selected_gas_prices){
     this.prompt_top_notification(this.getLocale()['3106i']/* 'Running your Transfers...' */, 4600)
     this.lock_run_in_stack(true)
     const e5 = this.state.selected_e5
@@ -26880,7 +26898,8 @@ class App extends Component {
     const run_expiry_time = parseInt(now) + parseInt(60*60*5)
 
     const v5/* t_limits */ = [100000000000000, run_expiry_time];
-    var run_gas_price = await web3.eth.getGasPrice()
+    var network_run_gas_price = await web3.eth.getGasPrice()
+    var run_gas_price = selected_gas_prices.run_gas_price == 0 ? network_run_gas_price : selected_gas_prices.run_gas_price
     console.log("gasPrice: "+run_gas_price);
     const gasLimit = this.get_gas_limit(e5) || 3_500_000;
 
@@ -26922,9 +26941,9 @@ class App extends Component {
 
     if(this.state.e5s[this.state.selected_e5].type == '1559'){
       const block = await web3.eth.getBlock('pending');
-      run_gas_price = Number(block.baseFeePerGas);
+      run_gas_price = selected_gas_prices.picked_max_priority_per_gas_amount == 0 ?  Number(block.baseFeePerGas) : selected_gas_prices.picked_max_priority_per_gas_amount
       const maxPriorityFeePerGas = ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price);
-      const maxFeePerGas = (maxPriorityFeePerGas * 2)
+      const maxFeePerGas = selected_gas_prices.picked_max_fee_per_gas_amount == 0 ? (maxPriorityFeePerGas * 2) : selected_gas_prices.picked_max_fee_per_gas_amount
 
       tx = {
         gas: gasLimit,
@@ -27219,7 +27238,7 @@ class App extends Component {
     await this.load_root_config()
     await this.wait(500)
     await this.check_and_set_default_rpc()
-    await this.wait(500)
+    await this.wait(1000)
     await this.load_coin_and_externals_data()
     await this.wait(500)
     if(this.is_allowed_in_e5()){
@@ -27243,6 +27262,7 @@ class App extends Component {
         await this.check_if_beacon_node_is_online()
       }
       await this.start_synchronization_process()
+      await this.load_ether_and_coin_views_data()
     }else{
       this.prompt_top_notification(this.getLocale()['2738']/* 'Not available in your region yet.' */, (35*60*1000))
       this.set_document_title('??(Beta)')
@@ -27255,15 +27275,19 @@ class App extends Component {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     await this.check_and_set_default_rpc()
     this.inc_synch_progress()
+    await this.wait(500)
 
     await this.update_nitro_privacy_signature(false)
     this.inc_synch_progress()
+    await this.wait(500)
 
     await this.load_root_config()
     this.inc_synch_progress()
 
+    await this.wait(1000)
     await this.load_coin_and_externals_data()
     this.inc_synch_progress()
+    await this.wait(500)
 
     await this.check_and_set_default_rpc()
     this.inc_synch_progress()
@@ -27291,6 +27315,7 @@ class App extends Component {
         this.inc_synch_progress()
         await this.wait(10)
       }
+      await this.load_ether_and_coin_views_data()
     }
     else{
       this.prompt_top_notification(this.getLocale()['2738']/* 'Not available in your region yet.' */, (35*60*1000))
@@ -27298,6 +27323,22 @@ class App extends Component {
       this.disableConsole()
       this.changeFavicon('/not_available_tab_icon.png')
     }
+  }
+
+  async load_ether_and_coin_views_data(){
+    const coins_and_ethers = []
+
+    const state_list = this.state.ether_data
+    state_list.forEach(ether_desc => {
+      coins_and_ethers.push(ether_desc.symbol)
+    });
+
+    const coins = Object.keys(this.state.coins)
+    coins.forEach(coin => {
+      coins_and_ethers.push(coin)
+    });
+
+    await this.fetch_and_set_loaded_object_views(coins_and_ethers, '')
   }
 
   async start_synchronization_process(){
@@ -27384,7 +27425,6 @@ class App extends Component {
     }
     
     const request = `${beacon_node}/coin_and_externals_data`
-    await this.wait(500)
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -48621,7 +48661,8 @@ class App extends Component {
     
     while(absolute_load_limit < current_filter_end_time){
       //target, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10)
-      const socket_data = await this.get_socket_data([target], current_filter_end_time, current_filter_start_time, (1024*100), [])
+      
+      const socket_data = await this.get_socket_data([target], current_filter_end_time, current_filter_start_time, (1024*100), [], false, 0, [], '', [])
       if(socket_data == null){
         current_filter_end_time -= load_step
         current_filter_start_time -= load_step
@@ -48652,6 +48693,7 @@ class App extends Component {
                 await this.process_new_storefront_request_message(object_data, object_hash, from)
               }
               else{
+                console.log('process_new_comment_message', 'process new comment message', object_data)
                 await this.process_new_comment_message(object_data, object_hash)
               }
             }
@@ -52122,19 +52164,25 @@ class App extends Component {
           data_found = true
           var pending_withdraw_balance = await contractInstance.methods.f167([id], [], 1).call((error, result) => {});
 
-          var run_data = (this.state.e5s[e5].e5_address == '0xF3895fe95f423A4EBDdD16232274091a320c5284' ? await contractInstance.methods.f287([id]).call((error, result) => {}) : await contractInstance.methods.f287([id]).call((error, result) => {})[0])
+          var run_data;
+          if(this.state.e5s[e5].e5_address == '0xF3895fe95f423A4EBDdD16232274091a320c5284'){
+            run_data = await contractInstance.methods.f287([id]).call((error, result) => {})
+          }else{
+            var call_data_f287 = await contractInstance.methods.f287([id]).call((error, result) => {})
+            run_data = call_data_f287[0]
+          }
 
-          var make_object_event_data = null
-          var withdraw_event_data = null
-          var pending_withdraw_event_data = null
-          var transaction_event_data = null
-          var pay_subscription_event_data = null
-          var cancel_subscription_event_data = null
-          var enter_contract_event_data = null
-          var exit_contract_event_data = null
-          var record_proposal_vote_event_data = null
-          var update_exchange_ratio_event_data = null
-          var accounts_token_transfer_event_data = null
+          var make_object_event_data;
+          var withdraw_event_data;
+          var pending_withdraw_event_data;
+          var transaction_event_data;
+          var pay_subscription_event_data;
+          var cancel_subscription_event_data;
+          var enter_contract_event_data;
+          var exit_contract_event_data;
+          var record_proposal_vote_event_data;
+          var update_exchange_ratio_event_data;
+          var accounts_token_transfer_event_data;
 
           if(this.state.beacon_node_enabled == true){
             var event_params = [
@@ -52150,7 +52198,8 @@ class App extends Component {
               [web3, H5contractInstance, 'e1', e5, {p3/* sender_account */: id }],
               [web3, H52contractInstance, 'e1', e5, {p2/* sender */: id }],
             ]
-            var { all_events } = await this.load_multiple_events_from_nitro(event_params)
+            var all_event_data = await this.load_multiple_events_from_nitro(event_params)
+            var all_events = all_event_data.all_events
             make_object_event_data = all_events[0]
             withdraw_event_data = all_events[1]
             pending_withdraw_event_data = all_events[2]
@@ -58141,6 +58190,7 @@ class App extends Component {
 
     
     const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
+    console.log('process_new_comment_message', 'message ipfs', ipfs)
 
     if(ipfs != message.data){
       const e5 = message.e5;
@@ -60553,7 +60603,7 @@ class App extends Component {
   }
 
   async get_existing_comment_socket_events(current_filter_start_time, current_filter_end_time, targets, filter_authors=[]){
-    const socket_data = await this.get_socket_data(targets, current_filter_end_time, current_filter_start_time, (1024*100), [], false, 0, filter_authors)
+    const socket_data = await this.get_socket_data(targets, current_filter_end_time, current_filter_start_time, (1024*100), [], false, 0, filter_authors, '', [])
     const target_data = socket_data
     const events = []
     if(target_data != null){
@@ -60596,7 +60646,8 @@ class App extends Component {
     }
     const target = target_object[type]
     
-    const socket_data = await this.get_socket_data([target], current_filter_end_time, current_filter_start_time, (1024*100), [])
+    
+    const socket_data = await this.get_socket_data([target], current_filter_end_time, current_filter_start_time, (1024*100), [], false, 0, [], '', [])
     const target_data = socket_data
     const events = []
     if(target_data != null){

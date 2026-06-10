@@ -536,15 +536,16 @@ class home_page extends Component {
         else if(size == 'm'){
             var middle = this.props.height-126;
             return (
-                <div className="row" style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                    <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
-                        <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 15px', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
+                <div className="row" style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'padding':'0px', 'margin':'0px'}}>
+                    <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px', 'margin':'0px'}}>
+                        
+                        <div style={{height:top_bar, 'width': '100%', 'padding':'9px 0px 0px 15px', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                             {this.render_top_tag_bar(size)}
                         </div>
                         
                         <div style={{height:5}}/>
                         {this.render_post_details_with_orientation(middle, width, size)}
-                        <div style={{height:10}}/>
+                        <div style={{height:5}}/>
                         
                         <div style={{height:bottom_bar, width: '100%', 'background-color':  navbar_color, 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                             {this.render_navbar_button_group(size)}
@@ -5460,7 +5461,7 @@ class home_page extends Component {
         }, (1 * 1000));
     }
 
-    when_ether_object_clicked(index, id, e5){
+    async when_ether_object_clicked(index, id, e5){
         this.setState({selected_ether_item: id})
         this.set_detail_data()
         if(this.props.screensize == 's'){
@@ -5468,9 +5469,12 @@ class home_page extends Component {
         }
         this.props.get_wallet_data_for_specific_e5(e5, true)
         this.props.set_audio_pip_opacity_because_of_inactivity()
+
+        await this.props.emit_view_object_event(id)
+        await this.props.fetch_and_set_loaded_object_views([id], '')
     }
 
-    when_coin_object_clicked(item, item_object){
+    async when_coin_object_clicked(item, item_object){
         this.setState({selected_coin_item: item})
         this.set_detail_data()
         if(this.props.screensize == 's'){
@@ -5481,6 +5485,8 @@ class home_page extends Component {
             this.props.update_coin_balances(item_object['symbol'], false, true)
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.emit_view_object_event(item)
+        await this.props.fetch_and_set_loaded_object_views([item], '')
     }
 
     is_address_set(address){

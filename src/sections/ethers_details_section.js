@@ -232,6 +232,7 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 20}}/>
                     {this.show_moderator_note_if_any(item)}
+                    {this.render_object_views(item)}
                     {this.render_wallet_status(item)}
                     <div style={{height:10}}/>
                     <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
@@ -323,6 +324,124 @@ class EthersDetailsSection extends Component {
             </div>
         )
     }
+
+
+    render_object_views(object){
+        const e5_id = object['id']
+        const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
+        if(hits > 0){
+            return(
+                <div>
+                    <div onClick={() => this.when_object_views_clicked(e5_id)}>
+                        {this.props.render_object_view_count_message(hits, e5_id, this.get_object_views_footer(object))}
+                    </div>
+                    <div style={{height: 10}}/>
+                    {this.render_object_views_chart_if_enabled(e5_id)}
+                </div>
+            )
+        }
+    }
+
+    get_object_views_footer(object){
+        return;
+        // const my_country =  this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country;
+
+        // const my_city = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city;
+
+        // const post_country = object['ipfs']['my_country']
+        // const post_city = object['ipfs']['my_city']
+
+        // if(post_country == null || post_city == null) return;
+
+        // if(post_country == my_country) return;
+
+        // return `${post_city} • ${post_country}`
+    }
+
+    when_object_views_clicked(e5_id){
+        const clone = (this.state.viewed_objects_views_full || []).slice()
+        const pos = clone.indexOf(e5_id)
+        if(pos == -1){
+            clone.push(e5_id)
+        }
+        else {
+            clone.splice(pos, 1)
+        }
+        this.setState({viewed_objects_views_full: clone})
+    }
+
+    render_object_views_chart_if_enabled(e5_id){
+        if(this.state.viewed_objects_views_full != null && this.state.viewed_objects_views_full.includes(e5_id)){
+            const view_data = this.props.app_state.object_view_data[e5_id]['entries']
+            const sorted_view_data = this.sortByAttributeDescending(view_data, 'time').reverse()//from least recent to most recent
+            const time_filter_tags_object = this.state.selected_time_filter_chart_tags_object2 || this.selected_time_filter_chart_tags_object()
+            const filter_time = this.get_filter_end_time(time_filter_tags_object)
+            const upload_data_filtered = sorted_view_data.filter(function (trend_hit) {
+                return (trend_hit['time'] > filter_time)
+            });
+            const upload_data_dps = this.props.get_upload_data_datapoints(upload_data_filtered)
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481r']/* 'Ethers Views.' */, 'details':this.props.app_state.loc['2481s']/* 'Chart containing the ether\'s views over time.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':upload_data_dps.dps, 'start_time': upload_data_dps.starting_time, 'end_time':upload_data_dps.ending_time})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['a2527co']/* 'Y-Axis: Views' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                    <Tags font={this.props.app_state.font} page_tags_object={time_filter_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_time_filter_chart_tags_object_updated2.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+                    {this.props.render_object_metadata_if_exists(e5_id)}
+                </div>
+            )
+        }
+    }
+
+    when_selected_time_filter_chart_tags_object_updated2(tag_obj){
+        this.setState({selected_time_filter_chart_tags_object2: tag_obj})
+    }
+
+    selected_time_filter_chart_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+            ],
+        };
+    }
+
+    get_filter_end_time(selected_time_filter_chart_tags_object){
+        var selected_item = this.get_selected_item(selected_time_filter_chart_tags_object, selected_time_filter_chart_tags_object['i'].active)
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
+            filter_value = 10**10
+        }
+
+        return Date.now() - (filter_value * 1000)
+    }
+
+
+
+
 
     show_bridge_button(item){
         if(this.props.app_state.e5s[item['e5']].bridge_enabled == true){

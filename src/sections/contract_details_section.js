@@ -1184,7 +1184,7 @@ class ContractDetailsSection extends Component {
         const can_author_configure_obligation_as_moderator = moderator_item_logs.length == 0
         const contract_type = object['ipfs'].contract_type || 'custom'
 
-        if(object['id'] != 2 && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
+        if(object['id'] != 2 && object['hidden'] == false && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
             return(
                 <div>
                     {this.render_detail_item('0')}

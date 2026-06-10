@@ -1340,6 +1340,17 @@ class PostListSection extends Component {
                 if(extra_data['certificate_mint_events'] != null){
                     return_text.push(this.props.app_state.loc['2509dy']/* '$ mints' */.replace('$', this.format_count(extra_data['certificate_mint_events']['all_hits'])));
                 }
+
+                if(extra_data['send_ether_coin_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509dz']/* '$ transfers' */.replace('$', this.format_count(extra_data['send_ether_coin_events']['all_hits'])));
+                }
+                if(extra_data['bridge_ether_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509ea']/* '$ bridgings' */.replace('$', this.format_count(extra_data['bridge_ether_events']['all_hits'])));
+                }
+                if(extra_data['ether_request_events'] != null){
+                    return_text.push(this.props.app_state.loc['2509eb']/* '$ requests' */.replace('$', this.format_count(extra_data['ether_request_events']['all_hits'])));
+                }
+                
             }
             const result_string = return_text.join(' • ')
             return result_string
@@ -7257,9 +7268,12 @@ return data['data']
     }
 
     render_coin_object(item, index){
+        const label = item['label']
+        label['footer'] = this.get_object_views_text(item['id'])
+        label['image_width'] = 'auto'
         return ( 
             <div onClick={() => this.when_coin_object_clicked(index, item)}>
-                {this.render_detail_item('8', item['label'])}
+                {this.render_detail_item('8', label)}
             </div>
         );
     }
@@ -7412,9 +7426,12 @@ return data['data']
     render_ethers_object(item, index){
         var clone = structuredClone(item['label'])
         clone['title'] = this.get_ethers_wallet_status_icon(item)+clone['title']
+        const label = item['label']
+        label['footer'] = this.get_object_views_text(item['id'])
+        label['image_width'] = 'auto'
         return (
             <div onClick={() => this.when_ether_object_clicked(index, item)}>
-                {this.render_detail_item('8', item['label'])}
+                {this.render_detail_item('8', label)}
             </div>
         );
     }
@@ -7696,8 +7713,8 @@ return data['data']
             name = item['e5'].replace('E','3')
         }
         var active_tags = item['ipfs'] == null ? [''+type, this.props.app_state.loc['601']/* token */, name] : item['ipfs'].entered_indexing_tags
-        var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
-        // var image = item['ipfs'] == null ? img : item['ipfs'].token_image
+        var symbol = item['ipfs'] == null || item['ipfs'].entered_symbol_text == null ? ''+type : item['ipfs'].entered_symbol_text
+
         var image = img
         if(item['ipfs']!= null){
             if(item['ipfs'].token_image!= null){

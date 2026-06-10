@@ -633,13 +633,14 @@ class TransferTokenPage extends Component {
     }
 
 
+
     async add_transaction(){
         var clone = this.state.stack_items.slice()
         var amount = this.state.amount
         var recipient = await this.get_typed_alias_id(this.state.recipient_id.toString().trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify(this.props.app_state.loc['1030']/* 'Please put a valid account ID.' */, 1600)
+            this.props.notify(this.props.app_state.loc['1030']/* 'Please put a valid account ID that exists in $.' */.replace('$', this.state.token_item['e5']), 1600)
         }
         else if(amount == 0){
             this.props.notify(this.props.app_state.loc['1031']/* 'Please put a valid amount.' */, 1600)
@@ -731,43 +732,6 @@ class TransferTokenPage extends Component {
         return recipient
     }
 
-    get_all_sorted_objects(object){
-        var all_objects = []
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            if(e5_objects != null){
-                all_objects = all_objects.concat(e5_objects)
-            }
-        }
-        return this.sortByAttributeDescending(all_objects, 'timestamp')
-    }
-
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
-
-    get_all_sorted_objects_mappings(object){
-        var all_objects = {}
-        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
-            var e5 = this.props.app_state.e5s['data'][i]
-            var e5_objects = object[e5]
-            var all_objects_clone = structuredClone(all_objects)
-            all_objects = { ...all_objects_clone, ...e5_objects}
-        }
-
-        return all_objects
-    }
-
-
     when_stack_item_clicked(item){
         var cloned_array = this.state.stack_items.slice()
         const index = cloned_array.indexOf(item);
@@ -777,6 +741,9 @@ class TransferTokenPage extends Component {
         this.setState({stack_items: cloned_array, debit_balance: bigInt(this.state.debit_balance).minus(bigInt(item.amount))})
         this.props.notify(this.props.app_state.loc['1036']/* 'Transaction removed.' */, 600)
     }
+
+
+
 
 
     
@@ -871,6 +838,12 @@ class TransferTokenPage extends Component {
     }
 
 
+
+
+
+
+
+
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         return(
@@ -961,6 +934,48 @@ class TransferTokenPage extends Component {
     format_proportion(proportion){
         return ((proportion/10**18) * 100)+'%';
     }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
+
+
+
+
+
 
 
 
