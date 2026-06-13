@@ -301,6 +301,8 @@ class EthersDetailsSection extends Component {
                     </div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['block_time'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['network_utilization'])}
                     {this.render_detail_item('0')}
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2457']/* '💸 Send/Receive Ether' */, 'details':this.props.app_state.loc['2458']/* 'Send or receive ether from a specified account.' */, 'size':'l'})}
@@ -698,6 +700,8 @@ class EthersDetailsSection extends Component {
 
                 'address':{'details':this.get_account_address(e5), 'title':this.props.app_state.loc['2472']/* 'Your Address' */, 'size' :'l'},
                 'block_time':{'title':this.get_average_block_time_from_blocks(e5), 'details':this.props.app_state.loc['2473']/* 'Average block time for the last 5 blocks' */, 'size' :'l'},
+
+                'network_utilization':{'title':this.get_network_utilization_rate_average(e5)+'%', 'details':this.props.app_state.loc['2481t']/* 'The network\'s average utilization rate.' */, 'size' :'l'}
         }
     }
 
@@ -1191,6 +1195,20 @@ class EthersDetailsSection extends Component {
 
         if(total == 0) return 0;
         return Math.floor(total / noOfDps)
+    }
+
+    get_network_utilization_rate_average(e5){
+        var noOfDps = this.props.app_state.last_blocks[e5] == null ? 0 : this.props.app_state.last_blocks[e5].length-1;
+        var total = 0
+        for(var i = 0; i < noOfDps; i++) {
+            if(this.props.app_state.last_blocks[e5][i] != null){
+                const block_gas_used = this.props.app_state.last_blocks[e5][i].gasUsed
+                const block_gas_limit = this.props.app_state.last_blocks[e5][i].gasLimit
+                total += ((block_gas_used * 100) / block_gas_limit)
+            }
+        }
+        if(total == 0) return 0;
+        return (total / noOfDps).toFixed(6)
     }
 
     get_latest_block_data(e5){

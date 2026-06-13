@@ -1393,7 +1393,7 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -5010,6 +5010,26 @@ class App extends Component {
         created_crossexchanges: this.state.created_crossexchanges,
         // non_fungible_token_data:this.state.non_fungible_token_data, 
         // fractionalized_assets:this.state.fractionalized_assets,
+
+
+        cached_pinns_and_viewed_objects: {
+          created_subscriptions: this.filter_e5_object_list(this.state.created_subscriptions),
+          created_subscription_object_mapping: this.filter_e5_object_mapping_list(this.state.created_subscription_object_mapping),
+          my_proposals:this.filter_e5_object_list(this.state.my_proposals),
+          created_posts:this.filter_e5_object_list(this.state.created_posts),
+          created_channels:this.filter_e5_object_list(this.state.created_channels),
+          created_stores:this.filter_e5_object_list(this.state.created_stores),
+          created_store_mappings:this.filter_e5_object_mapping_list(this.state.created_store_mappings),
+          created_bags:this.filter_e5_object_list(this.state.created_bags),
+          created_contractors:this.filter_e5_object_list(this.state.created_contractors),
+          created_audios:this.filter_e5_object_list(this.state.created_audios),
+          created_audio_mappings:this.filter_e5_object_mapping_list(this.state.created_audio_mappings),
+          created_videos:this.filter_e5_object_list(this.state.created_videos),
+          created_video_mappings:this.filter_e5_object_mapping_list(this.state.created_video_mappings),
+          created_polls:this.filter_e5_object_list(this.state.created_polls),
+          socket_created_jobs: this.filter_e5_object_list(this.state.socket_created_jobs),
+          socket_created_posts: this.filter_e5_object_list(this.state.socket_created_posts),
+        },
       }
 
       return cached_state_obj
@@ -5025,7 +5045,41 @@ class App extends Component {
     delete preserved_state.this_alias_data;
     const state = structuredClone(this.state)
     Object.assign(state, preserved_state)
+    // console.log('set_preserved_state_data', 'created_posts', state.created_posts)
     this.setState(state)
+  }
+
+  filter_e5_object_list(state_object){
+    const pinned_list = this.homepage.current?.state.all_pinns || []
+    const viewed_list = this.homepage.current?.state.viewed_objects || []
+    // console.log('filter_e5_object_list', 'pinned_list', pinned_list, viewed_list)
+    const new_state_object = {}
+    Object.keys(state_object).forEach(e5 => {
+      const e5s_objects = state_object[e5]
+      new_state_object[e5] = e5s_objects.filter((object) => {
+        return (pinned_list.includes(object['e5_id']) || viewed_list.includes(object['e5_id']))
+      })
+      if(new_state_object[e5].length == 0) delete new_state_object[e5];
+    });
+
+    // console.log('filter_e5_object_list', 'new_state_object', new_state_object)
+
+    return new_state_object
+  }
+
+  filter_e5_object_mapping_list(state_mapping_object){
+    const pinned_list = this.homepage.current?.state.all_pinns || []
+    const viewed_list = this.homepage.current?.state.viewed_objects || []
+    const new_state_object = {}
+    Object.keys(state_mapping_object).forEach(e5 => {
+      const e5s_objects = state_mapping_object[e5]
+      new_state_object[e5] = Object.fromEntries(
+        Object.entries(e5s_objects).filter(([key, value]) => (pinned_list.includes(value['e5_id']) || viewed_list.includes(value['e5_id'])))
+      );
+      if(new_state_object[e5].length == 0) delete new_state_object[e5];
+    });
+
+    return new_state_object
   }
 
 
@@ -5905,7 +5959,8 @@ class App extends Component {
         
         'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
 
-        'my_messages_color':{'g':'rgba(199, 216, 195, 0.6)','r':'rgba(217, 198, 198, 0.6)','b':'rgba(198, 206, 218, 0.6)','y':'rgba(218, 219, 195, 0.6)','p':'rgba(210, 191, 211, 0.6)','o':'rgba(215, 207, 195, 0.6)',},
+        'my_messages_color':{'g':'rgba(199, 216, 195, 0.6)','r':'rgba(217, 198, 198, 0.6)','b':'rgba(198, 206, 218, 0.6)','y':'rgba(218, 219, 195, 0.6)','p':'rgba(210, 191, 211, 0.6)','o':'rgba(215, 207, 195, 0.6)',}, 
+        'markdown_code_background':'rgba(203, 203, 203, 0.64)',
         
         'chart_color2':'#FCFCFC','chart_background_color':'#D5D5D5', 'chart_color':'rgb(170, 170, 170)',
   
@@ -5951,6 +6006,7 @@ class App extends Component {
         'view_group_card_item_background':'#292929','tag_background_color':'rgb(54, 53, 53)', 'indexed_tag_background':'rgb(38, 38, 38)', 'tag_shadow':'#424242', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #292929,rgb(57, 57, 57))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+        'markdown_code_background':'rgba(116, 116, 116, 0.64)',
 
         'chart_color':'#333333','chart_background_color':'#232323', 'chart_color2':'rgb(100, 100, 100)',
 
@@ -6000,6 +6056,7 @@ class App extends Component {
         'chart_color':'#1a1a1a','chart_background_color':'#0a0a0a', 'chart_color2':'rgb(96, 95, 95)',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+        'markdown_code_background':'rgba(85, 85, 85, 0.64)',
 
         'number_picker_label_color':'#171717','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
@@ -6045,6 +6102,7 @@ class App extends Component {
         'view_group_card_item_background':'#13190c','tag_background_color':'rgb(29, 48, 11)', 'indexed_tag_background':'#0f230f', 'tag_shadow':'transparent', 'tag_text_color':'#8af7a2', 'view_group_card_item_background2':'linear-gradient(135deg,rgb(12, 25, 12),rgb(29, 57, 26))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+        'markdown_code_background':'rgba(75, 107, 61, 0.64)',
 
         'chart_color':'#01c601','chart_background_color':'#141e0a', 'chart_color2':'rgb(77, 255, 77)',
 
@@ -6093,7 +6151,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#d4e2cc','tag_background_color':'#8bc68b','indexed_tag_background':'#01c601','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #d4e2cc,rgb(196, 209, 189))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgba(142, 186, 134, 0.64)',
         
         'chart_color':'#01c601','chart_background_color':'#d4e2cc', 'chart_color2':'rgb(0, 136, 0)',
   
@@ -6144,6 +6202,7 @@ class App extends Component {
         'view_group_card_item_background':'#190c0c','tag_background_color':'rgb(51, 18, 14)', 'indexed_tag_background':'#210000', 'tag_shadow':'transparent', 'tag_text_color':'#f78a8a', 'view_group_card_item_background2':'linear-gradient(135deg, #190c0c,rgb(38, 18, 18))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+        'markdown_code_background':'rgba(89, 57, 57, 0.64)',
 
         'chart_color':'#f70404','chart_background_color':'#190c0c', 'chart_color2':'rgb(252, 122, 122)',
 
@@ -6192,7 +6251,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#e2cdcc','tag_background_color':'#c68b8b','indexed_tag_background':'#c60b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2cdcc,rgb(211, 192, 191))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgba(186, 134, 134, 0.64)',
         
         'chart_color':'#c60b01','chart_background_color':'#e2cdcc', 'chart_color2':'rgb(114, 7, 2)',
   
@@ -6244,6 +6303,7 @@ class App extends Component {
         'view_group_card_item_background':'#0d0c19','tag_background_color':'rgb(13, 28, 43)', 'indexed_tag_background':'#010021', 'tag_shadow':'transparent', 'tag_text_color':'#2587f7', 'view_group_card_item_background2':'linear-gradient(135deg, #0d0c19,rgb(27, 24, 51))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+        'markdown_code_background':'rgba(53, 79, 89, 0.64)',
 
         'chart_color':'#0079ff','chart_background_color':'#0d0c19', 'chart_color2':'rgb(99, 171, 253)',
 
@@ -6293,7 +6353,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#ccdce2','tag_background_color':'#8badc6','indexed_tag_background':'#0181c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #ccdce2,rgb(187, 203, 209))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},'markdown_code_background':'rgba(134, 149, 186, 0.64)',
         
         'chart_color':'#0181c6','chart_background_color':'#ccdce2', 'chart_color2':'rgb(2, 77, 118)',
   
@@ -6345,6 +6405,8 @@ class App extends Component {
         'view_group_card_item_background':'#19190c','tag_background_color':'rgb(68, 67, 20)', 'indexed_tag_background':'#202100', 'tag_shadow':'transparent', 'tag_text_color':'#f7f38a', 'view_group_card_item_background2':'linear-gradient(135deg, #19190c,rgb(43, 43, 21))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+        'markdown_code_background':'rgba(81, 82, 51, 0.64)',
+        'markdown_code_background':'rgba(186, 161, 134, 0.64)',
 
         'chart_color':'#f3f704','chart_background_color':'#19190c', 'chart_color2':'rgb(255, 255, 255)',
 
@@ -6393,7 +6455,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#e2e2cc','tag_background_color':'#c5c68b','indexed_tag_background':'#9ba003','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2e2cc,rgb(208, 208, 187))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgba(182, 186, 134, 0.64)',
         
         'chart_color':'#9ba003','chart_background_color':'#e2e2cc', 'chart_color2':'rgb(90, 93, 0)',
   
@@ -6444,6 +6506,7 @@ class App extends Component {
         'view_group_card_item_background':'#160c19','tag_background_color':'rgb(59, 19, 70)', 'indexed_tag_background':'#190021', 'tag_shadow':'transparent', 'tag_text_color':'#e58af7', 'view_group_card_item_background2':'linear-gradient(135deg, #160c19,rgb(39, 21, 44))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+        'markdown_code_background':'rgba(85, 48, 91, 0.64)',
 
         'chart_color':'#e704f7','chart_background_color':'#160c19', 'chart_color2':'rgb(244, 133, 251)',
 
@@ -6492,7 +6555,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#decce2','tag_background_color':'#bf8bc6','indexed_tag_background':'#af01c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #decce2,rgb(206, 188, 209))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgba(175, 134, 186, 0.64)',
         
         'chart_color':'#af01c6','chart_background_color':'#decce2', 'chart_color2':'rgb(114, 1, 129)',
   
@@ -6543,6 +6606,7 @@ class App extends Component {
         'view_group_card_item_background':'#19130c','tag_background_color':'rgb(70, 45, 20)', 'indexed_tag_background':'#211100', 'tag_shadow':'transparent', 'tag_text_color':'#f7c28a', 'view_group_card_item_background2':'linear-gradient(135deg, #19130c,rgb(43, 32, 20))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
+        'markdown_code_background':'rgba(91, 71, 48, 0.64)',
 
         'chart_color':'#f78204','chart_background_color':'#19130c', 'chart_color2':'rgb(242, 185, 125)',
 
@@ -6591,7 +6655,7 @@ class App extends Component {
         
         'view_group_card_item_background':'#e2d7cc','tag_background_color':'#c6b18b','indexed_tag_background':'#c67b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2d7cc,rgb(200, 190, 180))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgba(186, 161, 134, 0.64)',
         
         'chart_color':'#c67b01','chart_background_color':'#e2d7cc',  'chart_color2':'rgb(124, 77, 0)',
   
@@ -6915,7 +6979,7 @@ class App extends Component {
 
           show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} 
 
-          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)}
+          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -20406,9 +20470,9 @@ class App extends Component {
     }
   }
 
-  async start_quick_transfer_action(price_data, selected_gas_prices){
+  async start_quick_transfer_action(price_data, selected_gas_prices, selected_item, identifier){
     this.quick_send_page.current?.add_recipients_to_memory(price_data)
-    await this.start_quick_transfers(price_data, selected_gas_prices)
+    await this.start_quick_transfers(price_data, selected_gas_prices, selected_item, identifier, false)
   }
 
   add_recognise_certificate_transaction_to_stack(state_obj){
@@ -26883,9 +26947,9 @@ class App extends Component {
     }
   }
 
-  async start_quick_transfers(price_data, selected_gas_prices){
-    this.prompt_top_notification(this.getLocale()['3106i']/* 'Running your Transfers...' */, 4600)
-    this.lock_run_in_stack(true)
+  async start_quick_transfers(price_data, selected_gas_prices, selected_item, identifier, estimate=false){
+    if(estimate == false)this.prompt_top_notification(this.getLocale()['3106i']/* 'Running your Transfers...' */, 4600);
+    if(estimate == false) this.lock_run_in_stack(true);
     const e5 = this.state.selected_e5
     const web3_url = this.get_selected_web3_url()
     const web3 = new Web3(web3_url);
@@ -26908,26 +26972,64 @@ class App extends Component {
     const ints = []
     const strs = []
 
-    const transfers_obj = [/* send tokens to another account */
-      [30000, 1, 0],
-      [], [],/* exchanges */
-      [], [],/* receivers */
-      [],/* amounts */
-      []/* depths */
-    ]
 
-    price_data.forEach(transfer => {
-      transfers_obj[1].push(transfer['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
-      transfers_obj[2].push(23)
-      transfers_obj[3].push(transfer['recipient'].toString().toLocaleString('fullwide', {useGrouping:false}))
-      transfers_obj[4].push(23)
-      transfers_obj[5].push(transfer['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
-      transfers_obj[6].push(0)
-    });
+    if(selected_item == this.getLocale()['3106']/* 'quick-transfer' */){
+      const transfers_obj = [/* send tokens to another account */
+        [30000, 1, 0],
+        [], [],/* exchanges */
+        [], [],/* receivers */
+        [],/* amounts */
+        []/* depths */
+      ]
 
-    strs.push([])
-    adds.push([])
-    ints.push(transfers_obj)
+      price_data.forEach(transfer => {
+        transfers_obj[1].push(transfer['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+        transfers_obj[2].push(23)
+        transfers_obj[3].push(transfer['recipient'].toString().toLocaleString('fullwide', {useGrouping:false}))
+        transfers_obj[4].push(23)
+        transfers_obj[5].push(transfer['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+        transfers_obj[6].push(0)
+      });
+
+      strs.push([])
+      adds.push([])
+      ints.push(transfers_obj)
+    }
+    else if(selected_item == this.getLocale()['3106p']/* quick-iTransfer */){
+      const author = price_data[0]['recipient']
+      const string_data = this.hash_data(identifier)
+      const transfers_obj = [/* send awwards */
+        [30000, 7, 0],
+        [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
+        ['1'],/* awward contexts */
+        
+        [], [],/* exchange ids for first target receiver */
+        [],/* amounts for first target receiver */
+        [],/* depths for the first targeted receiver*/
+      ]
+      const string_obj = [[]]
+      string_obj[0].push(string_data)
+
+      price_data.forEach(transfer => {
+        transfers_obj[4].push(transfer['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+        transfers_obj[5].push(23)
+        transfers_obj[6].push(transfer['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+        transfers_obj[7].push(0)
+      });
+
+      strs.push(string_obj)
+      adds.push([])
+      ints.push(transfers_obj)
+    }
+
+    if(estimate == true){
+      contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).estimateGas({from: me.state.accounts[e5].address, gas: gasLimit, value: '0'}, function(error, gasAmount){
+          console.log('---------------------calculate_gas_with_e-------------------------')
+          console.log(gasAmount)
+          me.setState({estimated_quick_transfer_gas: gasAmount})
+      });
+      return;
+    }
 
     const encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
 
@@ -46243,7 +46345,7 @@ class App extends Component {
     return result;
   }
 
-  fetch_multiple_file_datas_from_one_nitro_storage = async (nitro_url, nitro_cids, search_data_file_types, search_data_cids, search_index, keys, nitro_url_e5_id) => {
+  fetch_multiple_file_datas_from_one_nitro_storage = async (nitro_url, nitro_cids, search_data_file_types, search_data_cids, search_index, keys, nitro_url_e5_id, tries=0) => {
     console.log('apppage','get_nitro_data', 'starting fetch of files from nitro storage...')
     await this.update_nitro_privacy_signature(false)
     await this.wait(300)
@@ -46379,6 +46481,9 @@ class App extends Component {
     }
     catch(e){
       console.log('apppage','fetch_multiple_file_datas_from_one_nitro_storage', e)
+      if(tries < 3){
+        return await this.fetch_multiple_file_datas_from_one_nitro_storage(nitro_url, nitro_cids, search_data_file_types, search_data_cids, search_index, keys, nitro_url_e5_id, tries+1)
+      }
       this.fetch_index[search_index]['successful']++
     }
   }

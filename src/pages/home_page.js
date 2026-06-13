@@ -2919,7 +2919,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_bags = []
-            var all_bags = this.get_items_for_page2(id, selected_page)
+            var all_bags = this.remove_duplicates(this.get_items_for_page2(id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {})))
             for(var i=0; i<this.state.viewed_bags.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_bags[i], all_bags)
                 if(obj != null) my_viewed_bags.push(obj)
@@ -2928,7 +2928,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_bags = []
-            var all_bags = this.get_items_for_page2(id, selected_page)
+            var all_bags = this.remove_duplicates(this.get_items_for_page2(id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {})))
             for(var i=0; i<this.state.pinned_bags.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_bags[i], all_bags)
                 if(obj != null) my_viewed_bags.push(obj)
@@ -3005,7 +3005,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_channels = []
-            var created_channels = this.get_items_for_page2(page_id, selected_page)
+            var created_channels = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_channels || {})))
             for(var i=0; i<this.state.viewed_channels.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_channels[i], created_channels)
                 if(obj != null) my_viewed_channels.push(obj)
@@ -3014,7 +3014,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_channels = []
-            var created_channels = this.get_items_for_page2(page_id, selected_page)
+            var created_channels = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_channels || {})))
             for(var i=0; i<this.state.pinned_channels.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_channels[i], created_channels)
                 if(obj != null) my_viewed_channels.push(obj)
@@ -3082,7 +3082,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_contractors = []
-            var all_contractors = this.get_items_for_page2(page_id, selected_page)
+            var all_contractors = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_contractors || {})))
             for(var i=0; i<this.state.viewed_contractors.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_contractors[i], all_contractors)
                 if(obj != null) my_viewed_contractors.push(obj)
@@ -3091,7 +3091,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_contractors = []
-            var all_contractors = this.get_items_for_page2(page_id, selected_page)
+            var all_contractors = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_contractors || {})))
             for(var i=0; i<this.state.pinned_contractor.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_contractor[i], all_contractors)
                 if(obj != null) my_viewed_contractors.push(obj)
@@ -3346,7 +3346,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_jobs = []
-            var all_jobs = this.get_items_for_page2(page_id, selected_page)
+            var all_jobs = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_jobs || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_jobs || {})))
             for(var i=0; i<this.state.viewed_jobs.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_jobs[i], all_jobs)
                 if(obj != null) my_viewed_jobs.push(obj)
@@ -3356,7 +3356,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_jobs = []
-            var all_jobs = this.get_items_for_page2(page_id, selected_page)
+            var all_jobs = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_jobs || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_jobs || {})))
             for(var i=0; i<this.state.pinned_job.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_job[i], all_jobs)
                 if(obj != null) my_viewed_jobs.push(obj)
@@ -3551,7 +3551,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_posts = []
-            var all_posts = this.get_items_for_page2(page_id, selected_page)
+            var all_posts = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_posts || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_posts || {})))
             for(var i=0; i<this.state.viewed_posts.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_posts[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -3560,7 +3560,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_posts = []
-            var all_posts = this.get_items_for_page2(page_id, selected_page)
+            var all_posts = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_posts || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_posts || {})))
             for(var i=0; i<this.state.pinned_post.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_post[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -3649,7 +3649,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_proposals = []
-            var all_proposals = this.get_items_for_page2(page_id, selected_page)
+            var all_proposals = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.my_proposals || {})))
             for(var i=0; i<this.state.viewed_proposals.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_proposals[i], all_proposals)
                 if(obj != null) my_viewed_proposals.push(obj)
@@ -3658,7 +3658,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_proposals = []
-            var all_proposals = this.get_items_for_page2(page_id, selected_page)
+            var all_proposals = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.my_proposals || {})))
             for(var i=0; i<this.state.pinned_proposal.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_proposal[i], all_proposals)
                 if(obj != null) my_viewed_proposals.push(obj)
@@ -3698,7 +3698,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_stores = []
-            var all_stores = this.get_items_for_page2(page_id, selected_page)
+            var all_stores = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_stores || {})))
             for(var i=0; i<this.state.viewed_stores.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_stores[i], all_stores)
                 if(obj != null) my_viewed_stores.push(obj)
@@ -3707,7 +3707,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_stores = []
-            var all_stores = this.get_items_for_page2(page_id, selected_page)
+            var all_stores = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_stores || {})))
             for(var i=0; i<this.state.pinned_item.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_item[i], all_stores)
                 if(obj != null) my_viewed_stores.push(obj)
@@ -3776,7 +3776,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_subscriptions = []
-            var all_subscriptions = this.get_items_for_page2(page_id, selected_page)
+            var all_subscriptions = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_subscriptions || {})))
             for(var i=0; i<this.state.viewed_subscriptions.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_subscriptions[i], all_subscriptions)
                 if(obj != null) my_viewed_subscriptions.push(obj)
@@ -3785,7 +3785,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_subscriptions = []
-            var all_subscriptions = this.get_items_for_page2(page_id, selected_page)
+            var all_subscriptions = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_subscriptions || {})))
             for(var i=0; i<this.state.pinned_subscriptions.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_subscriptions[i], all_subscriptions)
                 if(obj != null) my_viewed_subscriptions.push(obj)
@@ -3865,7 +3865,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_audios = []
-            var all_audios = this.get_items_for_page2(page_id, selected_page)
+            var all_audios = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_audios || {})))
             for(var i=0; i<this.state.viewed_audios.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_audios[i], all_audios)
                 if(obj != null) my_viewed_audios.push(obj)
@@ -3874,7 +3874,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_audios = []
-            var all_audios = this.get_items_for_page2(page_id, selected_page)
+            var all_audios = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_audios || {})))
             for(var i=0; i<this.state.pinned_audios.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_audios[i], all_audios)
                 if(obj != null) my_viewed_audios.push(obj)
@@ -3981,7 +3981,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_videos = []
-            var all_videos = this.get_items_for_page2(page_id, selected_page)
+            var all_videos = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_videos || {})))
             for(var i=0; i<this.state.viewed_videos.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_videos[i], all_videos)
                 if(obj != null) my_viewed_videos.push(obj)
@@ -3990,7 +3990,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_videos = []
-            var all_videos = this.get_items_for_page2(page_id, selected_page)
+            var all_videos = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_videos || {})))
             for(var i=0; i<this.state.pinned_videos.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_videos[i], all_videos)
                 if(obj != null) my_viewed_videos.push(obj)
@@ -4101,7 +4101,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_nitros = []
-            var all_nitros = this.get_items_for_page2(page_id, selected_page)
+            var all_nitros = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {})))
             for(var i=0; i<this.state.viewed_nitros.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_nitros[i], all_nitros)
                 if(obj != null) my_viewed_nitros.push(obj)
@@ -4120,7 +4120,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_nitros = []
-            var all_nitros = this.get_items_for_page2(page_id, selected_page)
+            var all_nitros = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {})))
             for(var i=0; i<this.state.pinned_nitros.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_nitros[i], all_nitros)
                 if(obj != null) my_viewed_nitros.push(obj)
@@ -4236,7 +4236,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_posts = []
-            var all_posts = this.get_items_for_page2(page_id, selected_page)
+            var all_posts = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_polls || {})))
             for(var i=0; i<this.state.viewed_polls.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_polls[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -4245,7 +4245,7 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_posts = []
-            var all_posts = this.get_items_for_page2(page_id, selected_page)
+            var all_posts = this.remove_duplicates(this.get_items_for_page2(page_id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_polls || {})))
             for(var i=0; i<this.state.pinned_polls.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_polls[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
@@ -4468,6 +4468,19 @@ class home_page extends Component {
             // console.log('homepage', 'returning pages_objects', pages_objects.length)
             return pages_objects
         }
+    }
+
+    remove_duplicates(list){
+        if(list == null) return []
+        var filtered = []
+        var item_mapping = {}
+        list.forEach(element => {
+            if(element != null && !filtered.includes(element) && item_mapping[element['e5_id']] == null){
+                filtered.push(element)
+                item_mapping[element['e5_id']] = element['e5_id']
+            }
+        });
+        return filtered
     }
 
 
@@ -5439,7 +5452,7 @@ class home_page extends Component {
             set_page_refresh_feed_tapped_data={this.set_page_refresh_feed_tapped_data.bind(this)}
             current_load_time={this.state.current_load_time} show_view_call_interface={this.props.show_view_call_interface.bind(this)} set_watched_account_id={this.props.set_watched_account_id.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} set_contextual_transfer_identifier={this.props.set_contextual_transfer_identifier.bind(this)}
 
-            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} viewed_items_data={this.state.viewed_items_data} page_search_data={this.state.page_search_data} set_page_objects_that_should_be_in_focus={this.props.set_page_objects_that_should_be_in_focus.bind(this)}
+            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} viewed_items_data={this.state.viewed_items_data} page_search_data={this.state.page_search_data} set_page_objects_that_should_be_in_focus={this.props.set_page_objects_that_should_be_in_focus.bind(this)} perform_itransfer_search={this.props.perform_itransfer_search.bind(this)}
             />
         )
     }

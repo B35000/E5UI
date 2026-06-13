@@ -1060,7 +1060,7 @@ class ViewGroups extends Component {
 
                             code: ({ node, inline, className, children, ...props }) => {
                                 return(
-                                    <code {...props} style={{ color: this.props.theme['primary_text_color'], backgroundColor: this.props.theme['nav_bar_color'], 'border-radius': '3px', 'padding':'0px 4px 0px 4px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow}}>{children}</code>
+                                    <code {...props} style={{ color: this.props.theme['primary_text_color'], backgroundColor: this.props.theme['markdown_code_background'], 'border-radius': '3px', 'padding':'0px 4px 0px 4px', 'box-shadow': '0px 0px 0px 0px '+tag_shadow}}>{children}</code>
                                 );
                             },
                         }}

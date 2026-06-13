@@ -8464,9 +8464,14 @@ return data['data']
         else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(identifier) || /\p{Emoji}/u.test(identifier)){
             this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
         }
+        else if(this.props.app_state.has_wallet_been_set == false){
+            this.props.notify(this.props.app_state.loc['1593mr']/* 'You need to set your wallet first.' */, 4000)
+        }
         else{
             this.props.notify(this.props.app_state.loc['1593gn']/* 'Listening for current iTransfers..' */, 4000)
             this.props.set_contextual_transfer_identifier(identifier)
+            const recipient = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+            this.props.perform_itransfer_search(identifier, '', recipient, this.props.app_state.selected_e5, true)
             if(this.state.selected_watched_itransfer_identifier == null){
                 this.setState({selected_watched_itransfer_identifier: identifier})
             }
@@ -8482,12 +8487,19 @@ return data['data']
         else if(size == 'm'){
             middle = this.props.height-110
         }
+        
+        middle -= (this.state.selected_watched_itransfer_identifier == null ? 0 : 4)
+
+        var unsorted_items = [].concat(this.load_itransfer_result_items(this.state.selected_watched_itransfer_identifier), this.load_itransfer_result_items2(this.state.selected_watched_itransfer_identifier))
+        
         if(items == null){
             items = []
         }
-        middle -= (this.state.selected_watched_itransfer_identifier == null ? 0 : 4)
 
-        var items = [].concat(this.load_itransfer_result_items(this.state.selected_watched_itransfer_identifier))
+        var items = this.sortByAttributeDescending(unsorted_items, 'time')
+
+        
+
         if(items.length == 0){
             return(
                 <div style={{}}>
@@ -8523,10 +8535,10 @@ return data['data']
         var alias = this.get_senders_name_or_you2(item['account'], item['e5'])
         return(
             <div>
-                {this.render_detail_item('8', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%', 'image':this.props.app_state.e5s[item['e5']].e5_img},)}
+                {this.render_detail_item('3', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[item['e5']].e5_img},)}
                 <div style={{height: 3}}/>
 
-                {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                 <div style={{height: 3}}/>
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -8550,7 +8562,7 @@ return data['data']
             return this.props.app_state.loc['1694']/* You. */
         }
         var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
-        var alias = (bucket[sender] == null ? this.props.app_state.loc['1591']/* Unknown */ : bucket[sender])
+        var alias = (bucket[sender] == null ? this.props.app_state.loc['1592']/* Alias Unknown */ : bucket[sender])
         return alias
     }
 
@@ -8568,6 +8580,31 @@ return data['data']
                 var transfer_data = this.process_transfers(object[block][account])
                 var time = object[block][account][0].returnValues.p5/* timestamp */
                 object_array.push({'account':account, 'block':block, 'transfers':transfer_data.final_transfers, 'time':time, 'e5':transfer_data.e5 || selected_e5})
+            });
+        });
+
+        return this.sortByAttributeDescending(object_array, 'time')
+    }
+
+    load_itransfer_result_items2(identifier){
+        var pos = this.state.pos
+        if(pos == -1) return []
+
+        const selected_e5 = this.props.app_state.selected_e5
+        const recipient = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        var key = identifier + '' + recipient + selected_e5
+        var object = this.props.app_state.searched_itransfer_results[key]
+        console.log('itransfer_data', this.props.app_state.searched_itransfer_results, object)
+        if(object == null) return []
+
+        var blocks = Object.keys(object)
+        var object_array = []
+        blocks.forEach(block => {
+            var sender_accounts = Object.keys(object[block])
+            sender_accounts.forEach(account => {
+                var transfers = this.process_transfers(object[block][account])
+                var time = object[block][account][0].returnValues.p5/* timestamp */
+                object_array.push({'account':account, 'block':block, 'transfers':transfers.final_transfers, 'time':time, 'e5':transfers.e5 || selected_e5})
             });
         });
 
@@ -8630,7 +8667,8 @@ return data['data']
 
     render_included_identifier_item(item){
         const title = start_and_end(item)
-        var event_count = this.format_count(this.load_itransfer_result_items(item).length)
+        var event_count = this.format_count((this.load_itransfer_result_items(item).length)+(this.load_itransfer_result_items2(item).length))
+        
         if(event_count == 0){
             event_count = '000'
         }
@@ -8658,6 +8696,8 @@ return data['data']
         if(Date.now() - this.last_all_click_time < 200){
             //double tap
             me.props.set_contextual_transfer_identifier(identifier)
+            const recipient = me.props.app_state.user_account_id[me.props.app_state.selected_e5]
+            me.props.perform_itransfer_search(identifier, '', recipient, me.props.app_state.selected_e5, true)
             clearTimeout(this.all_timeout);
         }else{
             this.all_timeout = setTimeout(function() {

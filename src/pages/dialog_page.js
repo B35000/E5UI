@@ -15092,16 +15092,42 @@ return data['data']
     }
 
     render_confirm_quick_transfer_data_data(){
+        const selected_item = this.state.data['type']
+        const identifier = this.state.data['identifier']
+        const item = this.state.data['price_data'][0]
+        const alias = this.get_account_alias2(item['recipient']) 
+        const recipient_details = this.props.app_state.loc['3106n']/* 'To $' */.replace('$', (item['recipient'] + (alias == '' ? '' : ' • '+ alias)))
+        const estimated_gas = this.props.app_state.estimated_quick_transfer_gas || 0
         return(
             <div>
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qc']/* 'Confirm the details for your transfer befor initiating the run.' */, 'title':this.props.app_state.loc['3055qb']/* 'Confirm Transfers.' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qc']/* 'Confirm the details for your transfer before initiating the run.' */, 'title':this.props.app_state.loc['3055qb']/* 'Confirm Transfers.' */})}
                 <div style={{height:10}}/>
 
                 {this.render_my_balances()}
                 {this.render_detail_item('0')}
 
-                {this.render_set_amounts_list_part()}
+                {selected_item == this.props.app_state.loc['3106p']/* quick-iTransfer */ && (
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3068d']/* 'iTransfer Identifier.' */, 'title':identifier})}
+                        <div style={{height:10}}/>
+
+                        {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106b']/* 'Send Recipient.' */, 'title':recipient_details})}
+
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+
+                {selected_item == this.props.app_state.loc['3106']/* 'quick-transfer' */ && this.render_set_amounts_list_part()}
+
+                {selected_item == this.props.app_state.loc['3106p']/* quick-iTransfer */ && this.render_set_itransfer_amounts_list_part()}
                 {this.render_detail_item('0')}
+                
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}  onClick={()=>this.fetch_gas_figures()}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1452']/* 'Estimated Gas To Be Consumed' */, 'subtitle':this.format_power_figure(estimated_gas), 'barwidth':this.calculate_bar_width(estimated_gas), 'number':this.format_account_balance_figure(estimated_gas), 'barcolor':'', 'relativepower':'gas', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* proportion */, })}
+                </div>
+                <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qs']/* 'You may optionally set the gas price, or how quickly your transfers are to be validated. Slow is the default used.' */, 'title':this.props.app_state.loc['3055qr']/* 'Select Gas Price.' */})}
                 <div style={{height:10}}/>
@@ -15114,6 +15140,25 @@ return data['data']
                 </div>
             </div>
         )
+    }
+
+    calculate_wallet_impact_figure(){
+        var estimated_gas_to_be_consumed = this.props.app_state.estimated_quick_transfer_gas || 0
+        var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs()
+        }
+        const selected_gas_prices = this.get_selected_gas_price_data()
+        if(this.state.custom_quick_transfer_price != null){
+            gas_price = this.state.custom_quick_transfer_price['price']
+        }
+        var total_ether_to_be_spent = estimated_gas_to_be_consumed * gas_price
+        var my_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
+
+        if(my_balance == 0) return 0
+
+        var x = (total_ether_to_be_spent / my_balance) * 100
+        return Math.round(x * 1000) / 1000
     }
 
     render_my_balances(){
@@ -15228,6 +15273,64 @@ return data['data']
         else return alias;
     }
 
+    render_set_itransfer_amounts_list_part(){
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        const price_data = this.state.data['price_data']
+        var items = [].concat(price_data)
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                        {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106t']/* 'The actions youve set for your quick iTransfer run.' */, 'title':this.props.app_state.loc['3106j']/* 'Set Transfers.' */})}
+                        <div style={{height:10}}/>
+
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106t']/* 'The actions youve set for your quick iTransfer run.' */, 'title':this.props.app_state.loc['3106j']/* 'Set Transfers.' */})}
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_transfer_item2(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    render_transfer_item2(item){
+        const title = item['amount'] + ' '+ this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':title, 'textsize':'13px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+
+
     get_gas_price_from_runs(e5){
         var last_events = this.props.app_state.all_E5_runs[e5['id']]
         var sum = 0
@@ -15303,8 +15406,10 @@ return data['data']
     begin_transfers(){
         this.props.open_dialog_bottomsheet()
         const price_data = this.state.data['price_data']
+        const selected_item = this.state.data['type']
+        const identifier = this.state.data['identifier']
         const selected_gas_prices = this.get_selected_gas_price_data()
-        this.props.start_quick_transfer_action(price_data, selected_gas_prices)
+        this.props.start_quick_transfer_action(price_data, selected_gas_prices, selected_item, identifier)
     }
 
     get_selected_gas_price_data(){

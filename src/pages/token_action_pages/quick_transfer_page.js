@@ -56,7 +56,7 @@ class QuickTransferPage extends Component {
     state = {
         selected: 0, new_transfers_title_tags_object:this.new_transfers_title_tags_object(), 
         price_data:[], recipient_id:'', amount:0, exchange_id:'', e5: this.props.app_state.selected_e5,
-        cypher_passcode:'',
+        cypher_passcode:'', identifier:'', itransfer_objects:[]
     };
 
     new_transfers_title_tags_object(){
@@ -65,7 +65,7 @@ class QuickTransferPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['3106']/* 'quick-transfer' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['3106']/* 'quick-transfer' */, this.props.app_state.loc['3106p']/* quick-iTransfer */], [1]
             ],
         };
     }
@@ -105,9 +105,22 @@ class QuickTransferPage extends Component {
         }
     }
 
-
-
     render_everything(){
+        const selected_item = this.get_selected_item(this.state.new_transfers_title_tags_object, 'e')
+
+        if(selected_item == this.props.app_state.loc['3106']/* 'quick-transfer' */){
+            return this.render_quick_transfer_ui()
+        }
+        else if(selected_item == this.props.app_state.loc['3106p']/* quick-iTransfer */){
+            return this.render_quick_itransfer_ui()
+        }
+    }
+
+
+
+
+
+    render_quick_transfer_ui(){
         var size = this.props.app_state.size
         if(size == 's'){
             return(
@@ -163,7 +176,7 @@ class QuickTransferPage extends Component {
                 <div style={{height:10}}/> 
 
                 {this.render_my_balances()}
-                <div style={{height:10}}/> 
+                {this.render_detail_item('0')}  
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1180']/* 'Exchange ID' */, 'details':this.props.app_state.loc['3106d']/* 'Select a token by its exchange id you wish to transfer.' */, 'size':'l'})}
                 
@@ -456,6 +469,284 @@ class QuickTransferPage extends Component {
 
 
 
+
+
+    render_quick_itransfer_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_select_itransfer_amount_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_select_itransfer_amount_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_itransfer_amounts_list_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_itransfer_amount_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_itransfer_amount_data2()}
+                        {this.render_detail_item('0')}
+                        {this.render_set_itransfer_amounts_list_part()}
+                    </div>
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_itransfer_amount_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_itransfer_amount_data2()}
+                        {this.render_detail_item('0')}
+                        {this.render_set_itransfer_amounts_list_part()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_select_itransfer_amount_data(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['3106q']/* 'Quickly make a contextual transfer (iTransfer) of some end or spend from your account to another account.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_my_balances()}
+                {this.render_detail_item('0')} 
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3068d']/* 'iTransfer Identifier.' */, 'details':this.props.app_state.loc['3068e']/* 'Type a unique identifier for the transfers.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_identifier_input_field_changed.bind(this)} text={this.state.identifier} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                {this.render_previous_itransfer_objects()}
+
+
+                {this.render_detail_item('0')} 
+
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106r']/* 'Set a recipient for all your transfers.' */, 'title':this.props.app_state.loc['3106b']/* 'Send Recipient.' */})}
+                
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
+                {this.load_account_suggestions()} 
+
+
+                {this.props.app_state.locked_wallet_hashed_password != '' && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'If you locked your wallet, set the password used here.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
+
+            </div>
+        )
+    }
+
+    render_select_itransfer_amount_data2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1180']/* 'Exchange ID' */, 'details':this.props.app_state.loc['3106d']/* 'Select a token by its exchange id you wish to transfer.' */, 'size':'l'})}
+                
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1180']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+
+                {this.load_token_suggestions('exchange')}
+
+                {this.render_detail_item('0')} 
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106m']/* 'Specify an amount you wish to transfer.' */, 'title':this.props.app_state.loc['3106l']/* 'Transfer Amount.' */})}
+                
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':this.state.amount, 'relativepower':this.props.app_state.loc['1183']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1182']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1183']/* 'tokens' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={(el) => (this.amount_picker = el)} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)} pick_with_text_area={true} text_area_hint={'1000'}
+                />
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set2()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3106e']/* Add Transfer' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_identifier_input_field_changed(text){
+        this.setState({identifier: text})
+    }
+
+    render_previous_itransfer_objects(){
+        var items = [].concat(this.state.itransfer_objects)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_previous_itransfer_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_previous_itransfer_item(item){
+        //{recipient, price_data, identifier}
+        const title = this.truncate(item['identifier'], 23)
+        const details = item['recipient']
+        return(
+            <div onClick={() => this.when_previous_itransfer_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_previous_itransfer_item_clicked(item){
+        this.setState({identifier: item['identifier'], recipient_id: item['recipient'], price_data: item['price_data']})
+        this.props.notify(this.props.app_state.loc['3068bl']/* 'Previous preset set in state.' */, 4700)
+    }
+
+    async when_add_price_set2(){
+        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
+        var recipient = await this.get_typed_alias_id(this.state.recipient_id.toString().trim())
+        var amount = this.state.amount
+        
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify(this.props.app_state.loc['1185']/* 'Please put a valid exchange ID.' */, 3600)
+        }
+        else if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
+            this.props.notify(this.props.app_state.loc['1030']/* 'Please put a valid account ID.' */, 2600)
+        }
+        else if(amount == 0){
+            this.props.notify(this.props.app_state.loc['1186']/* 'Please put a valid amount.' */, 3600)
+        }
+        else if(this.state.price_data.length == 23){
+            this.props.notify(this.props.app_state.loc['3106o']/* 'You cant make more than 35 multi-transfers here.' */, 5600)
+        }
+        else{
+            var price_data_clone = this.state.price_data.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount, 'recipient': recipient})
+            this.setState({price_data: price_data_clone, exchange_id:'', amount:0});
+            this.props.notify(this.props.app_state.loc['1187']/* 'Added amount.' */, 1400)
+            this.reset_the_number_picker()
+        }
+    }
+
+
+
+
+
+
+    render_set_itransfer_amounts_list_part(){
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.price_data)
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                        {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106t']/* 'The actions youve set for your quick iTransfer run.' */, 'title':this.props.app_state.loc['3106j']/* 'Set Transfers.' */})}
+                        <div style={{height:10}}/>
+
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106t']/* 'The actions youve set for your quick iTransfer run.' */, 'title':this.props.app_state.loc['3106j']/* 'Set Transfers.' */})}
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_amount_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                        <li style={{'padding': '5px'}}>
+                                            {this.render_transfer_item2(item)}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    render_transfer_item2(item){
+        const title = item['amount'] + ' '+ this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':title, 'textsize':'13px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
     load_account_suggestions(){
         var items = [].concat(this.get_suggested_accounts())
         var background_color = this.props.theme['card_background_color']
@@ -606,6 +897,7 @@ class QuickTransferPage extends Component {
 
     componentDidMount(){
         this.set_recipients_data()
+        this.set_previous_itransfers_in_state()
     }
 
     get_recipients_from_memory(){
@@ -628,6 +920,42 @@ class QuickTransferPage extends Component {
         var trimmed = recipient_acc_ids.slice(-7)
         var obj = {'data':trimmed}
         this.props.set_local_storage_data_if_enabled("transfer_data", JSON.stringify(obj));
+
+        const selected_item = this.get_selected_item(this.state.new_transfers_title_tags_object, 'e')
+        if(selected_item == this.props.app_state.loc['3106p']/* quick-iTransfer */){
+            this.add_itransfer_in_local_storage({recipient: this.state.recipient_id, price_data: this.state.price_data, identifier: this.state.identifier})
+        }
+    }
+
+    async set_previous_itransfers_in_state(){
+        var string_data = await this.props.get_local_storage_data_if_enabled("itransfer");
+        if(string_data != null){
+            const parsed_obj = JSON.parse(JSON.parse(string_data))
+            const itransfer_objects = parsed_obj['transfers']
+            console.log('set_previous_itransfers_in_state','string_data', parsed_obj, itransfer_objects)
+            this.setState({itransfer_objects: itransfer_objects})
+        }
+    }
+
+    add_itransfer_in_local_storage(itransfer_object){
+        const clone = this.state.itransfer_objects.slice()
+        if(!this.does_object_exist(clone, itransfer_object)) clone.push(itransfer_object)
+        const storage_object = {'transfers': clone}
+        this.props.set_local_storage_data_if_enabled("itransfer", JSON.stringify(storage_object, (key, value) =>
+            typeof value === 'bigint' ? value.toString() : value)
+        );
+        this.setState({itransfer_objects: clone})
+    }
+
+    does_object_exist(list, object){
+        var exists = false;
+        list.forEach(element => {
+            //{recipient, price_data, identifier}
+            if(element['recipient'] == object['recipient'] && element['identifier'] == object['identifier']){
+                exists = true;
+            }
+        });
+        return exists
     }
 
 
@@ -639,12 +967,14 @@ class QuickTransferPage extends Component {
 
     finish(){
         const price_data = this.state.price_data
+        const identifier = this.state.identifier
+        const selected_item = this.get_selected_item(this.state.new_transfers_title_tags_object, 'e')
         
         if(price_data.length == 0){
             this.props.notify(this.props.app_state.loc['3106h']/* 'You havent set any transfers.' */, 5600)
         }
-        else if(!this.check_if_sender_has_enough_balance_for_awards()){
-            this.props.notify(this.props.app_state.loc['3106h']/* 'You havent set any transfers.' */, 5600)
+        else if(!this.check_if_sender_has_enough_balance_for_transfers()){
+            this.props.notify(this.props.app_state.loc['3106s']/* 'Your balance is insufficient to make those transfers.' */, 9600)
         }
         else if(this.props.app_state.locked_wallet_hashed_password != '' && this.state.cypher_passcode.trim() == ''){
             this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
@@ -652,15 +982,19 @@ class QuickTransferPage extends Component {
         else if(this.props.app_state.locked_wallet_hashed_password != '' && !this.does_password_match_hash(this.state.cypher_passcode.trim())){
             this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
         }
+        else if(selected_item == this.props.app_state.loc['3106p']/* quick-iTransfer */ && identifier == ''){
+            this.props.notify(this.props.app_state.loc['3068o']/* 'You need to set an identifier first.' */, 6000)
+        }
+        else if(selected_item == this.props.app_state.loc['3106p']/* quick-iTransfer */ && /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(identifier) || /\p{Emoji}/u.test(identifier)){
+            this.props.notify(this.props.app_state.loc['162m']/* You cant use special characters. */, 4400)
+        }
         else{
-
-            this.props.show_dialog_bottomsheet({'price_data':price_data}, 'confirm_quick_transfer_data')
-            // this.add_recipients_to_memory(price_data)
-            // this.props.start_quick_transfers(price_data)
+            this.props.show_dialog_bottomsheet({'price_data':price_data, 'type': selected_item, 'identifier':identifier}, 'confirm_quick_transfer_data')
+            this.props.start_quick_transfers(price_data, {}, selected_item, identifier, true)
         }
     }
 
-    check_if_sender_has_enough_balance_for_awards(){
+    check_if_sender_has_enough_balance_for_transfers(){
         var has_enough = true
         var price_data = this.state.price_data
         for(var i=0; i<price_data.length; i++){
@@ -686,6 +1020,21 @@ class QuickTransferPage extends Component {
 
 
 
+
+
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:90, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     render_empty_object(){
         var background_color = this.props.theme['card_background_color']
@@ -865,6 +1214,10 @@ class QuickTransferPage extends Component {
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['34'] + s;
         }
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
     }
 
 
