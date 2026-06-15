@@ -135,7 +135,7 @@ class TextInput extends Component {
               }
             `}
           </style>
-            <textarea onKeyDown={(e) => this.handleKeyDown(e)} ref={this.inputRef} className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} autocapitalize="off" onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></textarea>
+            <textarea onKeyDown={(e) => this.handleKeyDown(e)} ref={this.inputRef} className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} autocapitalize="off" onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text} onSelect={this.getCaretPosition} onKeyUp={this.getCaretPosition} onClick={this.getCaretPosition}/>
         </div> 
       )
     }
@@ -219,6 +219,14 @@ class TextInput extends Component {
       }catch(e){
         console.log(e)
       }
+    }
+  }
+
+  getCaretPosition = () => {
+    const textarea = this.inputRef.current;
+    const pos = textarea.selectionEnd;
+    if(typeof(this.props.when_caret_position_changed) === 'function'){
+      this.props.when_caret_position_changed(pos)
     }
   }
 

@@ -2840,7 +2840,8 @@ class home_page extends Component {
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1197']/* 'contracts' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_contracts)
+            // return this.get_all_sorted_objects(this.props.app_state.created_contracts)
+            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_contracts).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_contracts || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -2911,7 +2912,8 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1216']/* 'bags' */
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1216']/* 'bags' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_bags)
+            // return this.get_all_sorted_objects(this.props.app_state.created_bags)
+            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_bags).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -2997,7 +2999,8 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1214']/* 'channels' */
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1214']/* 'channels' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_channels)
+            // return this.get_all_sorted_objects(this.props.app_state.created_channels)
+            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_channels).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_channels || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -3074,7 +3077,8 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1198']/* 'contractors' */
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1198']/* 'contractors' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_contractors)
+            // return this.get_all_sorted_objects(this.props.app_state.created_contractors)
+            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_contractors).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_contractors || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */ || selected_option_name == this.props.app_state.loc['1264br']/* contractor-map 🗺️ */){
@@ -3338,7 +3342,8 @@ class home_page extends Component {
             var chain_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
             var socket_jobs = this.get_all_sorted_objects(this.props.app_state.socket_created_jobs)
             const all_jobs = this.sortByAttributeDescending(chain_jobs.concat(socket_jobs), 'timestamp')
-            return all_jobs
+            // return all_jobs
+            return this.remove_duplicates(all_jobs.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_jobs || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */ || selected_option_name == this.props.app_state.loc['1264bq']/* job-map 🗺️ */){
@@ -3544,6 +3549,7 @@ class home_page extends Component {
             var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_posts)
             const all_posts = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
             return all_posts;
+            return this.remove_duplicates(all_posts.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_posts || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -3622,7 +3628,8 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1199']/* 'proposals' */
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1199']/* 'proposals' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.my_proposals)
+            // return this.get_all_sorted_objects(this.props.app_state.my_proposals)
+            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.my_proposals).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.my_proposals || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1211']/* 'my-proposals' */){
@@ -3690,7 +3697,8 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1215']/* 'storefront' */
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1215']/* 'storefront' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_stores)
+            // return this.get_all_sorted_objects(this.props.app_state.created_stores)
+            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_stores).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_stores || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -3768,7 +3776,8 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1200']/* 'subscriptions' */
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1200']/* 'subscriptions' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+            // return this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_subscriptions).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_subscriptions || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -3857,7 +3866,8 @@ class home_page extends Component {
         }
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264k']/* 'audioport' */ || all != null){
-            return (this.get_all_sorted_objects(this.props.app_state.created_audios)).concat(this.props.app_state.my_playlists)
+            const existing =  this.get_all_sorted_objects(this.props.app_state.created_audios).concat(this.props.app_state.my_playlists)
+            return this.remove_duplicates(existing.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_audios || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -3973,7 +3983,8 @@ class home_page extends Component {
         }
         
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264p']/* 'videoport' */ || all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_videos)
+            // return this.get_all_sorted_objects(this.props.app_state.created_videos)
+            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_videos).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_videos || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -4094,7 +4105,8 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1264s']/* 'nitro' */
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1264s']/* 'nitro' */|| all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_nitros)
+            // return this.get_all_sorted_objects(this.props.app_state.created_nitros)
+            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_nitros).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {})))
         }
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
             return this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
@@ -4226,7 +4238,7 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1264ao']/* 'polls' */
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264ao']/* 'polls' */ || all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_polls)
+            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_polls).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_polls || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){

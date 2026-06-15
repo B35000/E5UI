@@ -1810,6 +1810,8 @@ class NewContractPage extends Component {
             return(
                 <div>
                     {this.render_moderator_ui()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -1818,6 +1820,8 @@ class NewContractPage extends Component {
                 <div className="row">
                     <div className="col-6" >
                         {this.render_moderator_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.render_empty_views(3)}
@@ -1831,6 +1835,8 @@ class NewContractPage extends Component {
                 <div className="row">
                     <div className="col-5" >
                         {this.render_moderator_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_empty_views(3)}
@@ -1959,8 +1965,10 @@ class NewContractPage extends Component {
             return(
                 <div>
                     {this.render_interactable_calendar_picker()}
-                    <div style={{height:20}}/>
+                    {this.render_detail_item('0')}
                     {this.render_set_interactible_accounts()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -1969,6 +1977,8 @@ class NewContractPage extends Component {
                 <div className="row">
                     <div className="col-6" >
                         {this.render_interactable_calendar_picker()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.render_set_interactible_accounts()}
@@ -1982,6 +1992,8 @@ class NewContractPage extends Component {
                 <div className="row">
                     <div className="col-5" >
                         {this.render_interactable_calendar_picker()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_set_interactible_accounts()}
@@ -2146,8 +2158,10 @@ class NewContractPage extends Component {
             return(
                 <div>
                     {this.render_set_token_and_amount_part()}
-                    <div style={{height: 20}}/>
+                    {this.render_detail_item('0')}
                     {this.render_set_prices_list_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -2156,6 +2170,8 @@ class NewContractPage extends Component {
                 <div className="row">
                     <div className="col-6" >
                         {this.render_set_token_and_amount_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.render_set_prices_list_part()}
@@ -2169,6 +2185,8 @@ class NewContractPage extends Component {
                 <div className="row">
                     <div className="col-5" >
                         {this.render_set_token_and_amount_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_set_prices_list_part()}

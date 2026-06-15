@@ -1731,7 +1731,7 @@ class NewPollPage extends Component {
                         <div style={{height:10}}/>
 
                         <div style={{'margin':'0px 0px 0px 10px'}}>
-                            <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
+                            <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} when_caret_position_changed={this.when_caret_position_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
                         </div>
                         {this.render_markdown_shortcut_list()}
                     </div>
@@ -1784,7 +1784,7 @@ class NewPollPage extends Component {
             return(
                 <div>
                     <div style={{'margin':'0px 0px 0px 10px'}}>
-                        <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
+                        <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} when_caret_position_changed={this.when_caret_position_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
                     </div>
 
                     {this.render_markdown_shortcut_list()}
@@ -1798,6 +1798,10 @@ class NewPollPage extends Component {
                 </div>
             )
         }
+    }
+
+    when_caret_position_changed(pos){
+        this.setState({caret_pos: pos})
     }
 
     when_markdown_field_changed(text){
@@ -1827,19 +1831,22 @@ class NewPollPage extends Component {
         if(text == this.props.app_state.loc['a311ei']/* '![eImage alt text](image.jpg)' */){
             this.props.show_pick_file_bottomsheet('image', 'create_markdown_image', 1000000000000)
         }else{
-            this.setState({markdown: this.state.markdown+'\n'+text})
+            var current_markdown = this.state.markdown.slice(0, this.state.caret_pos || this.state.markdown.length-1)
+            const remaining_markdown = this.state.markdown.slice(this.state.caret_pos || this.state.markdown.length-1, this.state.markdown.length-1)
+            this.setState({markdown: current_markdown+'\n'+text+'\n'+remaining_markdown})
         }
     }
 
     when_markdown_image_selected = async (files) => {
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
-        var current_markdown = this.state.markdown.slice()
+        var current_markdown = this.state.markdown.slice(0, this.state.caret_pos || this.state.markdown.length-1)
+        const remaining_markdown = this.state.markdown.slice(this.state.caret_pos || this.state.markdown.length-1, this.state.markdown.length-1)
         for(var f=0; f<files.length; f++){
             const file = files[f]
             cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
             current_markdown += `\n![${this.props.app_state.loc['a311ej']/* eImage alt text */}](${file})`
         }
-        this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords, markdown: current_markdown});
+        this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords, markdown: current_markdown+'\n'+remaining_markdown});
     }
 
 
@@ -2689,7 +2696,7 @@ class NewPollPage extends Component {
             return(
                 <div>
                     <div style={{'margin':'0px 0px 0px 10px'}}>
-                        <TextInput height={200} placeholder={this.props.app_state.loc['c311cx']/* 'Candidate's Details in Markdown...' */} when_text_input_field_changed={this.when_candidate_markdown_field_changed.bind(this)} text={this.state.candidate_markdown} theme={this.props.theme}/>
+                        <TextInput height={200} placeholder={this.props.app_state.loc['c311cx']/* 'Candidate's Details in Markdown...' */} when_text_input_field_changed={this.when_candidate_markdown_field_changed.bind(this)} when_caret_position_changed={this.when_candidate_caret_position_changed.bind(this)} text={this.state.candidate_markdown} theme={this.props.theme}/>
                     </div>
                     {this.render_markdown_shortcut_list2()}
                 </div>
@@ -2720,6 +2727,10 @@ class NewPollPage extends Component {
         }
     }
 
+    when_candidate_caret_position_changed(pos){
+        this.setState({candidate_caret_pos: pos})
+    }
+
     when_candidate_markdown_field_changed(text){
         this.setState({candidate_markdown: text})
     }
@@ -2747,19 +2758,22 @@ class NewPollPage extends Component {
         if(text == this.props.app_state.loc['a311ei']/* '![eImage alt text](image.jpg)' */){
             this.props.show_pick_file_bottomsheet('image', 'create_markdown_image2', 1000000000000)
         }else{
-            this.setState({candidate_markdown: this.state.candidate_markdown+'\n'+text})
+            var current_markdown = this.state.candidate_markdown.slice(0, this.state.candidate_caret_pos || this.state.candidate_markdown.length-1)
+            const remaining_markdown = this.state.candidate_markdown.slice(this.state.candidate_caret_pos || this.state.candidate_markdown.length-1, this.state.candidate_markdown.length-1)
+            this.setState({candidate_markdown: current_markdown+'\n'+text+'\n'+remaining_markdown})
         }
     }
 
     when_markdown_image_selected2 = async (files) => {
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
-        var current_markdown = this.state.candidate_markdown.slice()
+        var current_markdown = this.state.candidate_markdown.slice(0, this.state.caret_pos || this.state.candidate_markdown.length-1)
+        const remaining_markdown = this.state.candidate_markdown.slice(this.state.caret_pos || this.state.candidate_markdown.length-1, this.state.candidate_markdown.length-1)
         for(var f=0; f<files.length; f++){
             const file = files[f]
             cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
             current_markdown += `\n![${this.props.app_state.loc['a311ej']/* eImage alt text */}](${file})`
         }
-        this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords, candidate_markdown: current_markdown});
+        this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords, candidate_markdown: current_markdown+'\n'+remaining_markdown});
     }
 
     show_consensus_type_message(){

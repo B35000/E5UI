@@ -2153,6 +2153,14 @@ class StackPage extends Component {
     }
 
     render_extra_information(){
+        const footer = this.props.app_state.latest_version != this.props.app_state.version ? this.props.app_state.loc['1593ms']/* 'A newer version $ is available. Tap this to refresh.' */.replace('$', this.props.app_state.latest_version) : null;
+
+        const when_version_clicked = () => {
+            if(this.props.app_state.latest_version != this.props.app_state.version){
+                window.location.reload();
+            }
+        }
+
         return(
             <div>
                 {this.render_detail_item('0')}
@@ -2165,7 +2173,9 @@ class StackPage extends Component {
                 </div>
                 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.version, 'details':this.props.app_state.loc['1593mh']/* 'App Version.' */, 'size':'l'})}
+                <div onClick={() => when_version_clicked()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.version, 'details':this.props.app_state.loc['1593mh']/* 'App Version.' */, 'footer':footer, 'size':'l'})}
+                </div>
             </div>
         )
     }

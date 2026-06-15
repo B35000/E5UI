@@ -1274,7 +1274,7 @@ class App extends Component {
   // }
 
   state = {
-    version:this.get_app_version(), os: getOS(),
+    version:this.get_app_version(), latest_version: this.get_app_version(), os: getOS(),
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
@@ -3794,6 +3794,7 @@ class App extends Component {
     // this.test_key_hasher()
     // this.fetch_filter_and_export_all_my_cities()
     // this.test_load_events_from_nitro()
+    // this.start_test_load_events_from_nitro()
     this.setState({logo_title: await this.get_default_logo_title(), selected_dark_emblem_country: await this.get_default_dark_emblem_country()})
 
     await this.load_cookies();
@@ -3923,8 +3924,14 @@ class App extends Component {
     console.log('base64', base64)
   }
 
-  async test_load_events_from_nitro(){
-    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+  async start_test_load_events_from_nitro(){
+    const beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    const beacon_node2 = `https://tunnel.twentythreeinreverse.com`
+    await this.test_load_events_from_nitro(beacon_node)
+    await this.test_load_events_from_nitro(beacon_node2)
+  }
+
+  async test_load_events_from_nitro(beacon_node){
     var event_request = {'requested_e5':'E35', 'requested_contract':'E52', 'requested_event_id':'e5', 'filter':{}}
     const params = new URLSearchParams({
       arg_string:JSON.stringify({requests:[event_request]}),
@@ -5828,7 +5835,21 @@ class App extends Component {
 
 
 
+  async check_for_updates() {
+    try {
+      const res = await fetch(`/index.html?_=${Date.now()}`, {
+        cache: 'no-store',
+      });
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const latestVersion = doc.querySelector('meta[name="app-version"]')?.getAttribute('content');
 
+      if(latestVersion != null) this.setState({latest_version: latestVersion})
+    } 
+    catch (err) {
+      console.error('Update check failed', err);
+    }
+  }
 
   background_sync(){
     if(this.state.accounts[this.state.selected_e5] != null){
@@ -5839,6 +5860,7 @@ class App extends Component {
     }
 
     this.reset_theme()
+    this.check_for_updates()
   }
 
   background_coin_sync(){

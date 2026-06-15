@@ -2542,7 +2542,7 @@ return data['data']
                         <div style={{height:10}}/>
 
                         <div style={{'margin':'0px 0px 0px 10px'}}>
-                            <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
+                            <TextInput height={this.props.height-350} placeholder={this.props.app_state.loc['a311bs']/* 'New Markdown here...' */} when_text_input_field_changed={this.when_markdown_field_changed.bind(this)} when_caret_position_changed={this.when_caret_position_changed.bind(this)} text={this.state.markdown} theme={this.props.theme}/>
                         </div>
 
                         {this.render_markdown_shortcut_list()}
@@ -2612,6 +2612,10 @@ return data['data']
         }
     }
 
+    when_caret_position_changed(pos){
+        this.setState({caret_pos: pos})
+    }
+
     when_markdown_field_changed(text){
         this.setState({markdown: text})
     }
@@ -2639,19 +2643,22 @@ return data['data']
         if(text == this.props.app_state.loc['a311ei']/* '![eImage alt text](image.jpg)' */){
             this.props.show_pick_file_bottomsheet('image', 'create_markdown_image', 1000000000000)
         }else{
-            this.setState({markdown: this.state.markdown+'\n'+text})
+            var current_markdown = this.state.markdown.slice(0, this.state.caret_pos || this.state.markdown.length-1)
+            const remaining_markdown = this.state.markdown.slice(this.state.caret_pos || this.state.markdown.length-1, this.state.markdown.length-1)
+            this.setState({markdown: current_markdown+'\n'+text+'\n'+remaining_markdown})
         }
     }
 
     when_markdown_image_selected = async (files) => {
         var cloned_ecid_encryption_passwords = this.state.ecid_encryption_passwords == null ? {} : structuredClone(this.state.ecid_encryption_passwords)
-        var current_markdown = this.state.markdown.slice()
+        var current_markdown = this.state.markdown.slice(0, this.state.caret_pos || this.state.markdown.length-1)
+        const remaining_markdown = this.state.markdown.slice(this.state.caret_pos || this.state.markdown.length-1, this.state.markdown.length-1)
         for(var f=0; f<files.length; f++){
             const file = files[f]
             cloned_ecid_encryption_passwords[file] = await this.props.get_ecid_file_password_if_any(file)
             current_markdown += `\n![${this.props.app_state.loc['a311ej']/* eImage alt text */}](${file})`
         }
-        this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords, markdown: current_markdown});
+        this.setState({ecid_encryption_passwords: cloned_ecid_encryption_passwords, markdown: current_markdown+'\n'+remaining_markdown});
     }
 
 
@@ -2725,8 +2732,8 @@ return data['data']
                     me.props.emit_new_object_in_socket(me.state)
                 }else{
                     me.props.when_add_new_object_to_stack(me.state)
-                    me.reset_state()
                 }
+                me.reset_state()
             }, (1 * 1000));
             
             if(post_indexing != me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
