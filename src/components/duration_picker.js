@@ -255,7 +255,7 @@ class DurationPicker extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.font} item_id={item_id} object_data={object_data} theme={this.props.theme}/>
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} font={this.props.font} item_id={item_id} object_data={object_data} theme={this.props.theme}/>
             </div>
         )
 

@@ -1393,7 +1393,7 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -5842,7 +5842,7 @@ class App extends Component {
       });
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, 'text/html');
-      const latestVersion = doc.querySelector('meta[name="app-version"]')?.getAttribute('content');
+      const latestVersion = doc.querySelector('meta[name="version"]')?.getAttribute('content');
 
       if(latestVersion != null) this.setState({latest_version: latestVersion})
     } 
@@ -6019,7 +6019,7 @@ class App extends Component {
         
         'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#424242','send_receive_ether_overlay_shadow':'#424242',
 
-        'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
+        'primary_text_color':'#ffffff', 'secondary_text_color':'#e6e6e6',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#545454a2','card_background_color':'rgba(51, 51, 51,.8)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#424242',
@@ -6067,7 +6067,7 @@ class App extends Component {
         
         'homepage_background_color':'#050505','syncronizing_page_background_color':'#050505','send_receive_ether_background_color':'#050505','send_receive_ether_overlay_background':'#303030','send_receive_ether_overlay_shadow':'#303030',
 
-        'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
+        'primary_text_color':'#ffffff', 'secondary_text_color':'#e6e6e6',
         'online_dot_color':'green', 'offline_dot_color':'red', 'unset_dot_color':'yellow',
         
         'navbar_button_selected_color':'#333333a4','card_background_color':'rgba(20, 20, 20,.8)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','navbar_text_shadow_color':'#BABABA','card_shadow_color':'#212121',
@@ -36357,6 +36357,7 @@ class App extends Component {
     const token_symbol_directory = structuredClone(this.state.token_directory)
     const token_name_directory = structuredClone(this.state.token_name_directory)
     var token_thumbnail_directory = this.state.token_thumbnail_directory[e5] == null ? {} : structuredClone(this.state.token_thumbnail_directory[e5])
+    const token_name_thumbnail_directory = structuredClone(this.state.token_name_thumbnail_directory)
     var end_tokens = this.state.end_tokens[e5] == null ? [] : this.state.end_tokens[e5].slice()
 
     if(token_symbol_directory[e5] == null){
@@ -36419,6 +36420,7 @@ class App extends Component {
       
       if(tokens_data != null){
         token_thumbnail_directory[token_id] = tokens_data.token_image
+        token_name_thumbnail_directory[tokens_data.entered_title_text] = tokens_data.token_image
         if(tokens_data.image_bundle != null){
           const uploaded_data_clone = structuredClone(this.state.uploaded_data)
           uploaded_data_clone[tokens_data.token_image] = tokens_data.image_bundle
@@ -36427,9 +36429,11 @@ class App extends Component {
       }
       else if(token_id == 3){
         token_thumbnail_directory[token_id] = this.state.e5s[e5].end_image
+        token_name_thumbnail_directory[e5] = this.state.e5s[e5].end_image
       }
       else if(token_id == 5){
         token_thumbnail_directory[token_id] = this.state.e5s[e5].spend_image
+        token_name_thumbnail_directory[e5.replace('E','3')] = this.state.e5s[e5].spend_image
       }
 
       if(exchanges_depth != 0){
@@ -36577,7 +36581,7 @@ class App extends Component {
         var end_tokens_clone = structuredClone(this.state.end_tokens)
         end_tokens_clone[e5] = end_tokens
 
-        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone, created_certificates: created_certificates_clone, created_crossexchanges: created_crossexchanges_clone})
+        this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone, created_certificates: created_certificates_clone, created_crossexchanges: created_crossexchanges_clone, token_name_thumbnail_directory: token_name_thumbnail_directory})
         
         if((i%4 == 0 || i == created_tokens.length-1)){
           await this.wait(350)

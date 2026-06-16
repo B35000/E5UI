@@ -8850,7 +8850,7 @@ return data['data']
         var censor_list = this.props.app_state.censored_keyword_phrases.concat(this.props.app_state.censored_keywords_by_my_following)
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} censored_keyword_phrases={censor_list} when_audio_image_clicked={this.when_audio_image_clicked.bind(this)} when_audio_text_clicked={this.when_audio_text_clicked.bind(this)} when_video_image_clicked={this.when_video_image_clicked.bind(this)} when_video_text_clicked={this.when_video_text_clicked.bind(this)}
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} censored_keyword_phrases={censor_list} when_audio_image_clicked={this.when_audio_image_clicked.bind(this)} when_audio_text_clicked={this.when_audio_text_clicked.bind(this)} when_video_image_clicked={this.when_video_image_clicked.bind(this)} when_video_text_clicked={this.when_video_text_clicked.bind(this)}
                 
                 />
             </div>

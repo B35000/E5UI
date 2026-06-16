@@ -211,6 +211,19 @@ class ViewGroups extends Component {
                 number = '000'
             }
 
+            var image = object_data != null ? object_data['image'] : null
+            if(this.props.token_name_thumbnail_directory != null && this.props.token_name_thumbnail_directory[title] != null){
+                image = this.props.token_name_thumbnail_directory[title]
+            }
+            else if(this.props.e5s != null){
+                const e5_value = Object.keys(this.props.e5s).filter((e5_id) => {
+                    return (e5_id != 'data' && this.props.e5s[e5_id].token == title)
+                })
+                if(e5_value.length > 0){
+                    image = this.props.e5s[e5_value[0]].ether_image
+                }
+            }
+
             const number_ui = () => {
                 if(style == 's'){
                     return (
@@ -236,7 +249,10 @@ class ViewGroups extends Component {
                         <div style={{'margin': '5px 20px 0px 15px'}}>
                             <div className="row">
                                 <div className="col-10" style={{'padding': '0px 0px 0px 14px' }}> 
-                                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.font}} className="fw-bold">{title}</p>
+                                    <div style={{'display': 'flex','flex-direction': 'row'}}>
+                                        {this.render_text_image(image, ['','','','','', 14], '50%')}
+                                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.font}} className="fw-bold">{title}</p>
+                                    </div>
                                 </div>
                                 <div className="col-2" style={{'padding': '0px 15px 0px 0px' }}>
                                     <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '11px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{subtitle}</p>

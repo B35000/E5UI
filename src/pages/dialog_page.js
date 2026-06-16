@@ -7658,7 +7658,7 @@ return data['data']
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ef']/* Application Time.' */, 'details':this.props.app_state.loc['3055eg']/* 'Set the time after which the note will be no longer visible.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], primary: { main: this.props.theme['primary_text_color'] }  }, })}>
                     <CssBaseline />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
@@ -8105,7 +8105,7 @@ return data['data']
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2642y']/* Filter Time.' */, 'details':this.props.app_state.loc['2642z']/* 'Set the date and time after which a given direct purchase event will be included in the export.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], primary: { main: this.props.theme['primary_text_color'] }  }, })}>
                     <CssBaseline />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_export_date_time_value_set(newValue)}/>
@@ -10618,7 +10618,7 @@ return data['data']
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2642y']/* Filter Time.' */, 'details':this.props.app_state.loc['2214v']/* 'Set the date and time after which a given transaction will be included in the pre-purchase' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], primary: { main: this.props.theme['primary_text_color'] }  }, })}>
                     <CssBaseline />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_prepurchase_export_date_time_value_set(newValue)}/>
@@ -15494,7 +15494,7 @@ return data['data']
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} show_images={this.props.show_images.bind(this)} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width}  />
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} show_images={this.props.show_images.bind(this)} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width}  />
             </div>
         )
     }

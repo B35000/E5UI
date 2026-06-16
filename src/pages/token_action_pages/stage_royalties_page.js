@@ -259,7 +259,7 @@ class StageRoyaltiesPage extends Component {
 
                 <div style={{height:10}}/>
                 <div style={{}}>
-                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], primary: { main: this.props.theme['primary_text_color'] }  }, })}>
                         <CssBaseline />
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
@@ -308,7 +308,7 @@ class StageRoyaltiesPage extends Component {
 
                 <div style={{height:10}}/>
                 <div style={{}}>
-                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], primary: { main: this.props.theme['primary_text_color'] }  }, })}>
                         <CssBaseline />
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set2(newValue)}/>
@@ -791,7 +791,7 @@ class StageRoyaltiesPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

@@ -348,7 +348,7 @@ class EditVideoPage extends Component {
                     </div>
                 </div> */}
                 
-                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-(120 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
+                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-(130 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
                     {this.render_everything()}   
                 </div>
             </div>
@@ -2800,7 +2800,7 @@ return data['data']
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['b311aj']/* 'Scheduled Release.' */, 'details':this.props.app_state.loc['b311ai']/* 'Schedule a time after which the video will be available for viewing.' */, 'size':'l'})}
                 <div style={{height:20}}/>
-                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], primary: { main: this.props.theme['primary_text_color'] }  }, })}>
                     <CssBaseline />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
@@ -3432,7 +3432,7 @@ return data['data']
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)} when_language_selected={this.when_language_selected.bind(this)} show_images={this.props.show_images.bind(this)}
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)} when_language_selected={this.when_language_selected.bind(this)} show_images={this.props.show_images.bind(this)}
                 
                 />
             </div>

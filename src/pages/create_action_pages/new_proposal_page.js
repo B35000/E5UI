@@ -129,7 +129,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['313'], 'e.'+this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */,this.props.app_state.loc['314'],this.props.app_state.loc['315']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['313']/* 'configuration 🛠️' */, this.props.app_state.loc['314']/* 'proposal-data 📝' */,this.props.app_state.loc['315']/* 'bounty-data 💰' */, 'e.'+this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */, 'e.'+this.props.app_state.loc['120']/* 'e.font' */, 'e.'+this.props.app_state.loc['121']/* 'e.size' */], [0]
@@ -377,7 +377,7 @@ class NewProposalPage extends Component {
                     </div>
                 </div> */}
 
-                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-(120 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
+                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-(130 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
                     <div style={{'width':'98%'}}>
                         {this.render_everything()}
                     </div>   
@@ -2573,7 +2573,7 @@ return data['data']
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', { 'title': this.get_time_diff(contract_config[5]), 'details': this.props.app_state.loc['350']/* 'Proposal Expiry Duration Limit' */, 'size': 'l'})}
                     <div style={{height:10}}/>
-                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], primary: { main: this.props.theme['primary_text_color'] }   }, })}>
                         <CssBaseline />
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
@@ -2613,7 +2613,7 @@ return data['data']
                     {this.render_detail_item('3', {'title': this.get_time_diff(contract_config[36]), 'details': this.props.app_state.loc['357']/* 'Maximum Proposal Expiry Submit Expiry Time Difference' */, 'size': 'l'})}
                     <div style={{height:10}}/>
 
-                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], primary: { main: this.props.theme['primary_text_color'] } }, })}>
                         <CssBaseline />
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_submit_time_value_set(newValue)}/>
@@ -2974,10 +2974,14 @@ return data['data']
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['438bw']/* 'Certificate Transfer Target' */, 'details':this.props.app_state.loc['438bx']/* 'Set a target that will receive the certificate shares set below.' */, 'size':'l'})}
-                <div style={{height:20}}/>
+                <div style={{'margin':'0px 0px 0px 10px'}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['438bw']/* 'Certificate Transfer Target' */, 'details':this.props.app_state.loc['438bx']/* 'Set a target that will receive the certificate shares set below.' */, 'size':'l'})}
+                    <div style={{height:20}}/>
 
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_spend_target_text_input_field_changed.bind(this)} text={this.state.spend_target_input_text} theme={this.props.theme}/>
+                    <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_spend_target_text_input_field_changed.bind(this)} text={this.state.spend_target_input_text} theme={this.props.theme}/>
+                </div>
+
+                
 
                 {this.render_detail_item('0')}
 
@@ -3170,7 +3174,7 @@ return data['data']
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked2(item, index)}>
                             {this.render_detail_item('3', item['label'])}
                             {this.show_line_if_selected(item)}
                         </li>
@@ -3227,7 +3231,7 @@ return data['data']
         return { all_exchange_data, exchanges_from_sync }
     }
 
-    when_suggestion_clicked(item, index){
+    when_suggestion_clicked2(item, index){
         this.setState({selected_certificate_target: item['object']['e5_id'], selected_certificate: item['object']})
     }
 
@@ -3253,7 +3257,11 @@ return data['data']
             return(
                 <div>
                     {this.spend_action_data_ui()}
-                    <div style={{height:20}}/>
+                    {this.render_detail_item('0')}
+
+                    {this.spend_action_data_ui2()}
+                    {this.render_detail_item('0')}
+
                     {this.render_spend_actions()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -3269,6 +3277,8 @@ return data['data']
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
+                        {this.spend_action_data_ui2()}
+                        {this.render_detail_item('0')}
                         {this.render_spend_actions()}
                     </div>
                 </div>
@@ -3284,6 +3294,8 @@ return data['data']
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
+                        {this.spend_action_data_ui2()}
+                        {this.render_detail_item('0')}
                         {this.render_spend_actions()}
                     </div>
                 </div>
@@ -3322,9 +3334,14 @@ return data['data']
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_spend_token_text_input_field_changed.bind(this)} text={this.state.spend_token_input_text} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('spend_token')}
+                
+            </div>
+        )
+    }
 
-                {this.render_detail_item('0')}
-
+    spend_action_data_ui2(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['384']/* 'Spend Amount' */, 'details':this.props.app_state.loc['385']/* 'Set an amount for the spend action' */, 'size':'l'})}
 
                 <div style={{height:20}}/>
@@ -4565,6 +4582,9 @@ return data['data']
             return(
                 <div>
                     {this.render_bounty_amount_picker_ui()}
+                    {this.render_detail_item('0')}
+                    {this.render_bounty_amount_picker_ui2()}
+                    {this.render_detail_item('0')}
                     {this.render_bounty_amounts()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -4580,6 +4600,8 @@ return data['data']
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
+                        {this.render_bounty_amount_picker_ui2()}
+                        {this.render_detail_item('0')}
                         {this.render_bounty_amounts()}
                     </div>
                 </div>
@@ -4595,6 +4617,8 @@ return data['data']
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
+                        {this.render_bounty_amount_picker_ui2()}
+                        {this.render_detail_item('0')}
                         {this.render_bounty_amounts()}
                     </div>
                 </div>
@@ -4641,8 +4665,14 @@ return data['data']
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_bounty_exchange_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('bounty_exchange_target')}
-                {this.render_detail_item('0')}
+                
+            </div>
+        )
+    }
 
+    render_bounty_amount_picker_ui2(){
+        return(
+            <div>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.props.app_state.loc['425']/* 'Targeted Amount' */, 'number':this.state.bounty_amount, 'relativepower':this.props.app_state.loc['391']/* 'units' */})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['425']/* 'Targeted Amount' */, 'subtitle':this.format_power_figure(this.state.bounty_amount), 'barwidth':this.calculate_bar_width(this.state.bounty_amount), 'number':this.format_account_balance_figure(this.state.bounty_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                 </div>
@@ -4809,7 +4839,7 @@ return data['data']
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} show_images={this.props.show_images.bind(this)}
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} show_images={this.props.show_images.bind(this)}
                 
                 />
             </div>
