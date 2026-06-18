@@ -1367,7 +1367,7 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        middle -= 200
+        middle -= 220
         const job_location_pins = this.get_location_pins(this.get_job_items(), this.get_filter_end_time(this.state.selected_jobs_time_filter_chart_tags_object))
         return(
             <div>
@@ -2595,7 +2595,7 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        middle -= 200
+        middle -= 220
         const contractor_location_pins = this.get_location_pins(this.get_contractor_items(), this.get_filter_end_time(this.state.selected_contractors_time_filter_chart_tags_object))
         return(
             <div>

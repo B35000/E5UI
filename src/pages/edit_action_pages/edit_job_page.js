@@ -2186,6 +2186,8 @@ return data['data']
             return(
                 <div>
                     {this.render_pick_location_parts()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -2194,6 +2196,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" >
                         {this.render_pick_location_parts()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.render_empty_views(3)}
@@ -2207,6 +2211,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" >
                         {this.render_pick_location_parts()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_empty_views(3)}

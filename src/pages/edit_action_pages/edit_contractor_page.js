@@ -2179,6 +2179,8 @@ return data['data']
             return(
                 <div>
                     {this.render_pick_location_parts()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -2187,6 +2189,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" >
                         {this.render_pick_location_parts()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.render_empty_views(3)}
@@ -2200,6 +2204,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" >
                         {this.render_pick_location_parts()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_empty_views(3)}
@@ -2350,8 +2356,10 @@ return data['data']
             return(
                 <div>
                     {this.render_set_token_and_amount_part()}
-                    <div style={{height: 20}}/>
+                    {this.render_detail_item('0')}
                     {this.render_set_prices_list_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -2360,6 +2368,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" >
                         {this.render_set_token_and_amount_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.render_set_prices_list_part()}
@@ -2373,6 +2383,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" >
                         {this.render_set_token_and_amount_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_set_prices_list_part()}

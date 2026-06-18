@@ -982,7 +982,7 @@ class CertificateDetailsSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'id':{'title':title_space+objectid, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
-            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, },
+            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}`},
             'exchange_authority': {'title':is_auth_main_contract, 'details':this.props.app_state.loc['3098i']/* 'Certificate Authority' */, 'size':'l'},
             'fractionalizable': {'title':this.get_access_rights_status(fractionalizable), 'details':this.props.app_state.loc['d311bw']/* 'Fractionalization' */, 'size':'l'},
             'verification':{'title':verification_message, 'details':this.props.app_state.loc['d311cx']/* Verification */, 'size':'l'},

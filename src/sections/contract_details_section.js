@@ -1682,7 +1682,7 @@ class ContractDetailsSection extends Component {
         return {
             'tags': { 'active_tags': tags, 'index_option': 'indexed', 'selected_tags':this.props.app_state.job_section_tags,'when_tapped':'select_deselect_tag' },
             'id': { 'title':'• '+object_id, 'details': title, 'size': 'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
-            'age': { 'style': 'l', 'title': this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle': '', 'barwidth': barwidth, 'number': `${number}`, 'barcolor': '', 'relativepower': `${relativepower} `+this.props.app_state.loc['2047']/* ago */, },
+            'age': { 'style': 'l', 'title': this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle': '', 'barwidth': barwidth, 'number': `${number}`, 'barcolor': '', 'relativepower': `${relativepower} `+this.props.app_state.loc['2047']/* ago */, 'number_when_tapped':this.should_hide_contract_info_because_private(object) ? '???':`${(new Date(time*1000).toLocaleString())}`},
 
             'default_vote_bounty_split_proportion': { 'title': this.format_proportion(contract_config[1]), 'details': this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */, 'size': 'l' },
 

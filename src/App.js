@@ -5990,7 +5990,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
         'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon, 'add_icon':add_icon, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light', 'json_view_theme':'summerfruit:inverted', 'map_theme':'light',
+        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':alert_icon, 'add_icon':add_icon, 'text_input_background':'rgb(255, 255, 255)'/* 'rgba(217, 217, 217,.6)' */, 'text_input_color':'#393e46', 'messsage_reply_background':'white', 'markdown_theme':'light', 'pdf_theme':'light', 'json_view_theme':'summerfruit:inverted', 'map_theme':'light',
 
         'background':background/* 'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4' */, 'JobIcon':JobIcon, 'ExploreIcon': ExploreIcon, 'WalletIcon':WalletIcon, 'StackIcon': StackIcon, 
 
@@ -10499,6 +10499,7 @@ class App extends Component {
     const me = this
     const e5 = this.state.selected_e5
     var v5/* t_limits */ = [1000000000000, 1000000000000];
+    const gas_limit = this.get_gas_limit(e5)
     console.log('calculating gas price for current stack...', strs, ints, adds, run_gas_limit, wei)
     if(this.state.stack_items.length == 0){
       var clone = structuredClone(me.state.calculated_gas_figures)
@@ -10510,7 +10511,7 @@ class App extends Component {
 
     // const block_gas_limit = this.get_gas_limit(e5)
     // const run_gas_limit_to_use = block_gas_limit != null && block_gas_limit != 0 && run_gas_limit > block_gas_limit ? block_gas_limit : run_gas_limit;
-    contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).estimateGas({from: me.state.accounts[e5].address, gas: run_gas_limit, value: wei}, function(error, gasAmount){
+    contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).estimateGas({from: me.state.accounts[e5].address, gas: gas_limit, value: wei}, function(error, gasAmount){
         console.log('---------------------calculate_gas_with_e-------------------------')
         console.log(gasAmount)
         if(gasAmount == null && !me.is_e5_locked()){
@@ -10554,7 +10555,8 @@ class App extends Component {
     var network_gp = await web3.eth.getGasPrice()
     var run_gas_price = (_run_gas_price == null || _run_gas_price == 0 || _run_gas_price > 100**18) ? network_gp : _run_gas_price
     console.log("gasPrice: "+run_gas_price);
-    const gasLimit = run_gas_limit;
+    const block_gas_limit = this.get_gas_limit(e5)
+    const gasLimit = run_gas_limit < 110_000 ? (block_gas_limit > 10_000_000 ? 10_000_000 : block_gas_limit) : run_gas_limit;
 
     var encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
 
@@ -27429,6 +27431,8 @@ class App extends Component {
       this.load_coin_and_ether_coin_prices()
       this.inc_synch_progress()
 
+      this.load_cities_data()
+
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
       }
@@ -36655,24 +36659,34 @@ class App extends Component {
     const created_token_objects = this.get_all_sorted_objects(this.state.created_tokens)
     const token_symbol_directory2 = structuredClone(this.state.token_directory)
     const token_name_directory2 = structuredClone(this.state.token_name_directory)
+    const token_name_thumbnail_directory = structuredClone(this.state.token_name_thumbnail_directory)
 
     const get_token_name_title = (tokens_data, token_id, e5) => {
       const token_name = tokens_data == null ? 'tokens' : tokens_data.entered_symbol_text
       const token_title = tokens_data == null ? 'tokens' : tokens_data.entered_title_text
+      const token_image = tokens_data == null ? null : tokens_data.token_image
       if(token_id == 3){
-        return { token_name: this.getLocale()['3078']/* END */, token_title: e5 }
+        return { 
+          token_name: this.getLocale()['3078']/* END */, 
+          token_title: e5, 
+          token_image: this.state.e5s[e5].end_image 
+        }
       }
       else if(token_id == 5) {
         // console.log('get_token_data2', 'token id is 5. setting to spend', e5)
-        return { token_name: this.getLocale()['3079']/* SPEND */, token_title: e5.replace('E','3') }
+        return { 
+          token_name: this.getLocale()['3079']/* SPEND */, 
+          token_title: e5.replace('E','3'), 
+          token_image: this.state.e5s[e5].spend_image 
+        }
       }
-      return { token_name, token_title }
+      return { token_name, token_title, token_image }
     }
 
     created_token_objects.forEach(object => {
       const e5 = object['e5']
       const token_id = object['id']
-      const { token_name, token_title } = get_token_name_title(object['ipfs'], object['id'], e5)
+      const { token_name, token_title, token_image } = get_token_name_title(object['ipfs'], object['id'], e5)
       if(token_symbol_directory2[e5] == null){
         token_symbol_directory2[e5] = {}
       }
@@ -36686,9 +36700,11 @@ class App extends Component {
       token_symbol_directory2[e5][0] = 'wei'
       token_symbol_directory2[e5]['wei'] = 0
       token_name_directory2[e5][e5+'0'] = this.state.e5s[e5].token
+
+      token_name_thumbnail_directory[token_title] = token_image
     });
 
-    this.setState({token_directory: token_symbol_directory2, token_name_directory: token_name_directory2})
+    this.setState({token_directory: token_symbol_directory2, token_name_directory: token_name_directory2, token_name_thumbnail_directory: token_name_thumbnail_directory})
   }
 
   reload_end_spend_balance = async (e5) => {
@@ -45844,6 +45860,7 @@ class App extends Component {
       }
     }
     catch(e){
+      console.error(e)
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       this.lock_run(false)
       return '';

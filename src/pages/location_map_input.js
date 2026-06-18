@@ -108,6 +108,8 @@ class LocationMapInput extends Component {
                     </div>
                     <div className="col-6" style={{'padding': '20px 10px 0px 20px'}}>
                         {this.render_cities()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                 </div>
             )
@@ -120,6 +122,8 @@ class LocationMapInput extends Component {
                     </div>
                     <div className="col-5" style={{'padding': '20px 10px 0px 20px'}}>
                         {this.render_cities()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                 </div>
             )

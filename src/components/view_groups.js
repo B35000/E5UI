@@ -250,8 +250,8 @@ class ViewGroups extends Component {
                             <div className="row">
                                 <div className="col-10" style={{'padding': '0px 0px 0px 14px' }}> 
                                     <div style={{'display': 'flex','flex-direction': 'row'}}>
-                                        {this.render_text_image(image, ['','','','','', 14], '50%')}
                                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.font}} className="fw-bold">{title}</p>
+                                        {this.render_text_image(image, ['','','','','', 14], '50%', true)}
                                     </div>
                                 </div>
                                 <div className="col-2" style={{'padding': '0px 15px 0px 0px' }}>
@@ -267,7 +267,7 @@ class ViewGroups extends Component {
 
                             <div className="row">
                                 <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
-                                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.font}} className="fw-bold">{number}</p>
+                                    <p onClick={() => this.when_number_relativepower_clicked()} style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.font}} className="fw-bold">{number}</p>
                                 </div>
                                 <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
                                     <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '10px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.font}} className="text-end">{relativepower}</p>
@@ -1511,8 +1511,16 @@ class ViewGroups extends Component {
         }
     }
 
-    render_text_image(title_image, font_size, text_image_border_radius){
+    render_text_image(title_image, font_size, text_image_border_radius, reverse=false){
         if(title_image != null && title_image != ''){
+            if(reverse == true){
+                return(
+                    <div style={{'display': 'flex','flex-direction': 'row', 'padding':'1px 0px 0px 0px'}}>
+                        <div style={{width:2}}/>
+                        <img src={this.get_image_from_file(title_image)} alt={title_image} style={{height:font_size[5],width:font_size[5], 'border-radius':text_image_border_radius}}/>
+                    </div>
+                )
+            }
             return(
                 <div style={{'display': 'flex','flex-direction': 'row', 'padding':'1px 0px 0px 0px'}}>
                     <img src={this.get_image_from_file(title_image)} alt={title_image} style={{height:font_size[5],width:font_size[5], 'border-radius':text_image_border_radius}}/>

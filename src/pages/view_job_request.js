@@ -413,7 +413,7 @@ class ViewJobRequestPage extends Component {
                     {this.render_image_part([].concat(item['entered_images']))}
                     
                     {this.render_job_request_location_pins(item['pins'])}
-                    <div style={{height:10}}/>
+                    
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1682']/* 'Accepted' */, 'details':this.props.app_state.loc['1698']/* 'The contractor Accepted the job request.' */, 'size':'l'})}
                     {this.render_view_contract_button(item)}
@@ -448,10 +448,8 @@ class ViewJobRequestPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_image_part([].concat(item['entered_images']))}
 
-
                     {this.render_job_request_location_pins(item['pins'])}
 
-                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1689']/* 'Set Pay' */, 'details':this.props.app_state.loc['1690']/* 'The amounts youll be receiving for the job.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_set_prices_list_part(item)}
@@ -922,6 +920,7 @@ class ViewJobRequestPage extends Component {
                             </ImageListItem>
                         ))}
                     </ImageList>
+                    <div style={{height:10}}/>
                 </div>
             )
         }else{
@@ -936,6 +935,7 @@ class ViewJobRequestPage extends Component {
                             </ImageListItem>
                         ))}
                     </ImageList>
+                    <div style={{height:10}}/>
                 </div>
             )
         }
@@ -1135,18 +1135,18 @@ class ViewJobRequestPage extends Component {
             var items = ['0','1'];
             return (
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <div style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
-                            </li>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             );
         }

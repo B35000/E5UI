@@ -200,6 +200,10 @@ class SendJobRequestPage extends Component {
             return(
                 <div>
                     {this.render_title_details_part_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_title_details_part_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -208,9 +212,11 @@ class SendJobRequestPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_title_details_part_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_title_details_part_data2()}
                     </div>
                 </div>
                 
@@ -221,9 +227,11 @@ class SendJobRequestPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_title_details_part_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_title_details_part_data2()}
                     </div>
                 </div>
                 
@@ -261,8 +269,14 @@ class SendJobRequestPage extends Component {
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
                     
-                {this.render_detail_item('0')}
+                
+            </div>
+        )
+    }
 
+    render_title_details_part_data2(){
+        return(
+            <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1042f']/* 'Gray stages images and black stages a pdf. Then tap to remove.' */})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_pdfs_part()}

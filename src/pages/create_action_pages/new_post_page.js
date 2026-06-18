@@ -2732,8 +2732,8 @@ return data['data']
                     me.props.emit_new_object_in_socket(me.state)
                 }else{
                     me.props.when_add_new_object_to_stack(me.state)
+                    me.reset_state()
                 }
-                me.reset_state()
             }, (1 * 1000));
             
             if(post_indexing != me.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){

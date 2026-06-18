@@ -1018,7 +1018,7 @@ class CrossexchangeDetailsSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'id':{'title':title_space+objectid, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
-            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, },
+            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}`},
             'exchange_authority': {'title':is_auth_main_contract, 'details':this.props.app_state.loc['3107g']/* 'Cross-Exchange Authority' */, 'size':'l'},
 
             'token_starting_liquidity':{ 'style':'l', 'title':this.props.app_state.loc['3108k']/* 'Current Liquidity' */, 'subtitle':this.format_power_figure(exchange_transfer_amount), 'barwidth':this.calculate_bar_width(exchange_transfer_amount), 'number':this.format_account_balance_figure(exchange_transfer_amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[token_target], 'n':exchange_transfer_amount },

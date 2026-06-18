@@ -905,7 +905,7 @@ class SubscriptionDetailsSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.jobs_section_tags,'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             
-            'age':{ 'style':'l', 'title':this.props.app_state.loc['2206']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${this.format_account_balance_figure(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
+            'age':{ 'style':'l', 'title':this.props.app_state.loc['2206']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${this.format_account_balance_figure(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}`},
             
             'target_authority_id': {'title':this.get_senders_name(subscription_config[0], object), 'details':this.props.app_state.loc['1830']/* 'Authority ID' */, 'size':'l'},
             
