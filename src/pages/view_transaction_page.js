@@ -9051,6 +9051,9 @@ return data['data']
 
                 {this.render_detail_item('3', {'title':''+(date_object.toLocaleDateString(locale, { month: 'long', day: 'numeric' })), 'details':this.props.app_state.loc['3093eg']/* 'Deadline Date.' */, 'size':'l'})}
 
+                <div style={{ height:10 }}/>
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.progressive_obligation_proportion), 'details':this.props.app_state.loc['3093fx']/* 'Progressive Obligation Proportion.' */, 'size':'l'})}
+
                 {this.render_detail_item('0')}
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>

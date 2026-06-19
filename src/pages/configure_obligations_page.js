@@ -72,7 +72,7 @@ class ConfigureObligationsPage extends Component {
 
         reserved_keyword:'', reserved_keywords:[],
 
-        selected_e5: this.props.app_state.selected_e5, typed_contract_account:'', contract_beneficiaries:{}
+        selected_e5: this.props.app_state.selected_e5, typed_contract_account:'', contract_beneficiaries:{}, progressive_obligation_proportion:0
     };
 
     get_configure_obligations_title_tags_object(){
@@ -293,6 +293,15 @@ class ConfigureObligationsPage extends Component {
                 <div onClick={() => this.set_default_proportion()}>
                     {this.render_detail_item('5', { 'text': this.props.app_state.loc['3093fi']/* 'Set Default' */, 'action': '' })}
                 </div>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093fv']/* 'Progressive Obligations.' */, 'details': this.props.app_state.loc['3093fw']/* 'The proportion used to progressively increase the required obligation if a given amount exceeds SPENDs mint limit..' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.progressive_obligation_proportion), 'details':this.props.app_state.loc['3093fx']/* 'Progressive Obligation Proportion.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_progressive_obligation_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
             </div>
         )
     }
@@ -381,6 +390,12 @@ class ConfigureObligationsPage extends Component {
         var alias = (bucket[sender] == null ? sender : bucket[sender])
             return alias
     }
+
+    when_progressive_obligation_proportion(number){
+        this.setState({progressive_obligation_proportion: number})
+    }
+
+
 
     render_set_values(){
         const work_keyword_count = Object.keys(this.state.work_keywords).length

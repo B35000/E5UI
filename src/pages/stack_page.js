@@ -43,7 +43,7 @@ import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import media_processors from '../resources/media_processors';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, progress } from "framer-motion";
 import { Virtuoso, VirtuosoGrid } from "react-virtuoso";
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -7200,6 +7200,20 @@ class StackPage extends Component {
 
         //obligation records
         const obligation_object = { 'data':[], 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'e5':this.props.app_state.selected_e5 }
+        const calculate_final_progressive_obligation = (progressive_obligation_proportion, obligation_proportion, token_id, amount) => {
+            if(progressive_obligation_proportion == null || progressive_obligation_proportion == 0) return 0;
+            const e5 = this.props.app_state.selected_e5
+            const token_object = this.props.app_state.created_tokens[e5][token_id]
+            const token_mint_limit = token_object['data'][1][0/* <0>default_exchange_amount_buy_limit */];
+            if(bigInt(amount).lesser(token_mint_limit)) return 0;
+            const multiplier = bigInt(amount).divide(token_mint_limit)
+            const remainder = bigInt(amount).mod(token_mint_limit)
+            const proportion_to_add = bigInt(progressive_obligation_proportion).times(multiplier)
+            const remainder_to_add = bigInt(remainder).times(progressive_obligation_proportion).divide(token_mint_limit)
+            const final_proportion = proportion_to_add.plus(remainder_to_add)
+            if(final_proportion.greater(bigInt('51e16'))) return bigInt('51e16');
+            return final_proportion
+        }
         for(var i=0; i<txs.length; i++){
             const tx = txs[i]
             if(!this.props.app_state.hidden.includes(tx) && tx.e5 == this.props.app_state.selected_e5){
@@ -7279,7 +7293,6 @@ class StackPage extends Component {
                     }
                 }
                 else if(tx.type == this.props.app_state.loc['1018']/* 'transfer' */){
-                    
                     const object = tx.token_item
                     const amount_data = tx.stack_items
                     const fulfillers = []
@@ -7318,9 +7331,18 @@ class StackPage extends Component {
 
                                 const default_obligation_proportion = configuration['ipfs'].default_direct_transfer_obligation
 
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+                                    progressive_proportions[index] = {}
+                                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[default_obligation_proportion],
-                                    'transfers':final_object_value_transfer_data
+                                    'transfers':final_object_value_transfer_data,
+                                    'progressive_proportions':progressive_proportions,
                                 }
                             });
                             obligation_object['data'].push(obligation_promise_data)
@@ -7354,7 +7376,7 @@ class StackPage extends Component {
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                     if(authors_obligation_contracts.length > 0){
-                        const obligation_promise_data = { 
+                        const obligation_promise_data = {
                             'id': tx.type, 
                             'identifier':tx.id,
                             'city':this.props.app_state.city,
@@ -7371,9 +7393,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_enter_contract_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                'progressive_proportions':progressive_proportions,
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -7416,9 +7447,18 @@ class StackPage extends Component {
 
                                 const default_obligation_proportion = configuration['ipfs'].default_enter_contract_obligation
 
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+                                    progressive_proportions[index] = {}
+                                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[default_obligation_proportion],
-                                    'transfers':final_object_value_transfer_data
+                                    'transfers':final_object_value_transfer_data,
+                                    'progressive_proportions':progressive_proportions
                                 }
                             });
                             obligation_object['data'].push(obligation_promise_data)
@@ -7456,16 +7496,24 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_proposal_bounty_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                'progressive_proportions':progressive_proportions,
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
                     }
                 }
-                else if(tx.type == this.props.app_state.loc['783']/* 'submit' */){
-                    
+                else if(tx.type == this.props.app_state.loc['783']/* 'submit' */){   
                     const object = tx.proposal_item
                     const proposal_config = object['data'][1]
                     if(proposal_config[0] == 0/* spend */){
@@ -7501,9 +7549,18 @@ class StackPage extends Component {
 
                                     const default_obligation_proportion = configuration['ipfs'].default_spend_contract_obligation
 
+                                    const progressive_proportions = {}
+                                    final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                        const exchange_id = transfer_item['exchange']
+                                        const amount = transfer_item['amount']
+                                        progressive_proportions[index] = {}
+                                        progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                    });
+
                                     obligation_promise_data['promises'][contract] = {
                                         'proportions':[default_obligation_proportion],
-                                        'transfers':final_object_value_transfer_data
+                                        'transfers':final_object_value_transfer_data,
+                                        progressive_proportions,
                                     }
                                 });
                                 obligation_object['data'].push(obligation_promise_data)
@@ -7545,9 +7602,18 @@ class StackPage extends Component {
 
                                     const default_obligation_proportion = configuration['ipfs'].default_liquidity_deposit_withdraw_obligation
 
+                                    const progressive_proportions = {}
+                                    final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                        const exchange_id = transfer_item['exchange']
+                                        const amount = transfer_item['amount']
+                                        progressive_proportions[index] = {}
+                                        progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                    });
+
                                     obligation_promise_data['promises'][contract] = {
                                         'proportions':[default_obligation_proportion],
-                                        'transfers':final_object_value_transfer_data
+                                        'transfers':final_object_value_transfer_data,
+                                        progressive_proportions,
                                     }
                                 });
                                 obligation_object['data'].push(obligation_promise_data)
@@ -7590,9 +7656,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_subscription_purchase_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -7641,9 +7716,18 @@ class StackPage extends Component {
 
                                 const default_obligation_proportion = configuration['ipfs'].default_liquidity_deposit_withdraw_obligation
 
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+                                    progressive_proportions[index] = {}
+                                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[default_obligation_proportion],
-                                    'transfers':final_object_value_transfer_data
+                                    'transfers':final_object_value_transfer_data,
+                                    progressive_proportions
                                 }
                             });
                             obligation_object['data'].push(obligation_promise_data)
@@ -7687,9 +7771,18 @@ class StackPage extends Component {
                             authors_obligation_contracts.forEach(contract => {
                                 const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
 
+                                const progressive_proportions = {}
+                                // final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                //     const exchange_id = transfer_item['exchange']
+                                //     const amount = transfer_item['amount']
+                                //     progressive_proportions[index] = {}
+                                //     progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                // });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[],
-                                    'transfers':final_object_value_transfer_data
+                                    'transfers':final_object_value_transfer_data,
+                                    progressive_proportions,
                                 }
                             });
                             obligation_object['data'].push(obligation_promise_data)
@@ -7753,9 +7846,18 @@ class StackPage extends Component {
 
                                 const default_obligation_proportion = configuration['ipfs'].default_award_payment_obligation
 
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+                                    progressive_proportions[index] = {}
+                                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[default_obligation_proportion],
-                                    'transfers':final_object_value_transfer_data
+                                    'transfers':final_object_value_transfer_data,
+                                    progressive_proportions
                                 }
                             });
                             obligation_object['data'].push(obligation_promise_data)
@@ -7805,9 +7907,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_direct_purchase_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -7851,9 +7962,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_award_payment_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -7914,9 +8034,18 @@ class StackPage extends Component {
 
                                     const default_obligation_proportion = configuration['ipfs'].default_royalty_payout_obligation
 
+                                    const progressive_proportions = {}
+                                    final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                        const exchange_id = transfer_item['exchange']
+                                        const amount = transfer_item['amount']
+                                        progressive_proportions[index] = {}
+                                        progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                    });
+
                                     obligation_promise_data['promises'][contract] = {
                                         'proportions':[default_obligation_proportion],
-                                        'transfers':final_object_value_transfer_data
+                                        'transfers':final_object_value_transfer_data,
+                                        progressive_proportions
                                     }
                                 });
                                 obligation_object['data'].push(obligation_promise_data)
@@ -7971,9 +8100,18 @@ class StackPage extends Component {
 
                                 const default_obligation_proportion = configuration['ipfs'].default_subscription_purchase_obligation
 
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+                                    progressive_proportions[index] = {}
+                                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[default_obligation_proportion],
-                                    'transfers':final_object_value_transfer_data
+                                    'transfers':final_object_value_transfer_data,
+                                    progressive_proportions
                                 }
                             });
                             obligation_object['data'].push(obligation_promise_data)
@@ -8012,9 +8150,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_audiopost_purchase_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8052,9 +8199,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_videopost_purchase_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8092,9 +8248,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_liquidity_deposit_withdraw_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8131,9 +8296,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_iTransfer_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8170,9 +8344,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_bill_payment_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8223,9 +8406,18 @@ class StackPage extends Component {
 
                                     const default_obligation_proportion = configuration['ipfs'].default_creator_group_payout_obligation
 
+                                    const progressive_proportions = {}
+                                    final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                        const exchange_id = transfer_item['exchange']
+                                        const amount = transfer_item['amount']
+                                        progressive_proportions[index] = {}
+                                        progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                    });
+
                                     obligation_promise_data['promises'][contract] = {
                                         'proportions':[default_obligation_proportion],
-                                        'transfers':final_object_value_transfer_data
+                                        'transfers':final_object_value_transfer_data,
+                                        progressive_proportions
                                     }
                                 });
                                 obligation_object['data'].push(obligation_promise_data)
@@ -8282,9 +8474,18 @@ class StackPage extends Component {
 
                                 const default_obligation_proportion = configuration['ipfs'].default_storage_purchase_renewal_obligation
 
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+                                    progressive_proportions[index] = {}
+                                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[default_obligation_proportion],
-                                    'transfers':final_object_value_transfer_data
+                                    'transfers':final_object_value_transfer_data,
+                                    progressive_proportions
                                 }
                             });
                             obligation_object['data'].push(obligation_promise_data)
@@ -8332,9 +8533,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_direct_purchase_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8376,9 +8586,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_direct_purchase_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8412,9 +8631,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_purchase_contract_credits_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8490,16 +8718,39 @@ class StackPage extends Component {
                                     const hash_word = await this.props.encryptTag(word, process.env.REACT_APP_TAG_ENCRYPTION_KEY)
                                     keywords.push(hash_word)
                                 }
+
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+                                    progressive_proportions[index] = {}
+                                    Object.values(top_hits_proportion_mapping).forEach(base_proportion => {
+                                        progressive_proportions[index][base_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, base_proportion, exchange_id, amount)
+                                    });
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':Object.values(top_hits_proportion_mapping),
                                     'transfers':final_object_value_transfer_data,
-                                    'keywords': keywords
+                                    'keywords': keywords,
+                                    'progressive_proportions':progressive_proportions
                                 }
                             }else{
+
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+
+                                    progressive_proportions[index] = {}
+                                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[default_obligation_proportion],
                                     'transfers':final_object_value_transfer_data,
-                                    'keywords':[]
+                                    'keywords':[],
+                                    progressive_proportions,
                                 }
                             }
                         }
@@ -8537,9 +8788,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_liquidity_deposit_withdraw_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8585,9 +8845,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_certificate_acquisition_obligation || 0
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions,
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8627,9 +8896,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_certificate_transfer_obligation || 0
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8676,9 +8954,18 @@ class StackPage extends Component {
 
                                 const default_obligation_proportion = configuration['ipfs'].default_certificate_transfer_obligation || 0
 
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+                                    progressive_proportions[index] = {}
+                                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[default_obligation_proportion],
-                                    'transfers':final_object_value_transfer_data
+                                    'transfers':final_object_value_transfer_data,
+                                    progressive_proportions
                                 }
                             });
                             obligation_object['data'].push(obligation_promise_data)
@@ -8726,9 +9013,18 @@ class StackPage extends Component {
 
                                 const default_obligation_proportion = configuration['ipfs'].default_certificate_transfer_obligation || 0
 
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+                                    progressive_proportions[index] = {}
+                                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[default_obligation_proportion],
-                                    'transfers':final_object_value_transfer_data
+                                    'transfers':final_object_value_transfer_data,
+                                    progressive_proportions
                                 }
                             });
                             obligation_object['data'].push(obligation_promise_data)
@@ -8771,9 +9067,18 @@ class StackPage extends Component {
 
                             const default_obligation_proportion = configuration['ipfs'].default_enter_contract_obligation
 
+                            const progressive_proportions = {}
+                            final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                const exchange_id = transfer_item['exchange']
+                                const amount = transfer_item['amount']
+                                progressive_proportions[index] = {}
+                                progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                            });
+
                             obligation_promise_data['promises'][contract] = {
                                 'proportions':[default_obligation_proportion],
-                                'transfers':final_object_value_transfer_data
+                                'transfers':final_object_value_transfer_data,
+                                progressive_proportions
                             }
                         });
                         obligation_object['data'].push(obligation_promise_data)
@@ -8830,9 +9135,18 @@ class StackPage extends Component {
 
                                 const default_obligation_proportion = configuration['ipfs'].default_coupon_payment_obligation || 0
 
+                                const progressive_proportions = {}
+                                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                                    const exchange_id = transfer_item['exchange']
+                                    const amount = transfer_item['amount']
+                                    progressive_proportions[index] = {}
+                                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                                });
+
                                 obligation_promise_data['promises'][contract] = {
                                     'proportions':[default_obligation_proportion],
-                                    'transfers':final_object_value_transfer_data
+                                    'transfers':final_object_value_transfer_data,
+                                    progressive_proportions
                                 }
                             });
                             obligation_object['data'].push(obligation_promise_data)
@@ -23657,7 +23971,7 @@ class StackPage extends Component {
                         }
                         const transfers = contracts_promise['transfers']
                         const proportions = contracts_promise['proportions']
-                        transfers.forEach(transfer => {
+                        transfers.forEach((transfer, index) => {
                             const exchange = transfer['exchange']
                             const amount = transfer['amount']
                             if(totals_obj[contract][exchange] == null){
@@ -23666,7 +23980,9 @@ class StackPage extends Component {
                             let obligation_amount = bigInt(0)
                             let active_amount = bigInt(0).plus(amount)
                             proportions.forEach(proportion => {
-                                const obligation = bigInt(active_amount).multiply(proportion).divide('100e16')
+                                const extra_obligation_proportion = contracts_promise['progressive_proportions'] == null ? 0 : contracts_promise['progressive_proportions'][index][proportion]
+                                const final_proportion = bigInt(proportion).plus(extra_obligation_proportion)
+                                const obligation = bigInt(active_amount).multiply(final_proportion).divide('100e16')
                                 obligation_amount = bigInt(obligation_amount).plus(obligation)
                                 active_amount = bigInt(active_amount).minus(obligation)
                             });

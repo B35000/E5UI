@@ -4444,27 +4444,34 @@ return data['data']
         var e5 = this.state.data['e5']
         var alias = (this.props.app_state.alias_bucket[e5][account_id] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : this.props.app_state.alias_bucket[e5][account_id])
         const message = this.state.data['message']
+        
+        const me = this.props.app_state.user_account_id[e5]
+        const opacity = me == account_id ? 0.5 : 1.0
         return(
             <div>
                 {this.render_detail_item('3', {'title':account_id, 'details':alias, 'size':'l'})}
                 {message != null && this.render_country_if_exists(message)}
                 {this.render_detail_item('0')}
                 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055y']/* 'Add to Contacts' */, 'details':this.props.app_state.loc['3055z']/* 'Add the account to your contact list for easier access in the future.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <div onClick={() => this.when_add_to_contacts_selected()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055y']/* 'Add to Contacts' */, 'action':'', 'font':this.props.app_state.font})}
+                <div style={{opacity: opacity}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055y']/* 'Add to Contacts' */, 'details':this.props.app_state.loc['3055z']/* 'Add the account to your contact list for easier access in the future.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.when_add_to_contacts_selected()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055y']/* 'Add to Contacts' */, 'action':'', 'font':this.props.app_state.font})}
+                    </div>
                 </div>
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'details':this.props.app_state.loc['3055bb']/* 'Hide the acccounts content from your feed, your content and the feed of your followers.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <div onClick={() => this.when_block_contact_selected()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'action':'', 'font':this.props.app_state.font})}
+                <div style={{opacity: opacity}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'details':this.props.app_state.loc['3055bb']/* 'Hide the acccounts content from your feed, your content and the feed of your followers.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.when_block_contact_selected()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'action':'', 'font':this.props.app_state.font})}
+                    </div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['3055bi']/* 'If you do this, the changes will reflect on other feeds after your next run. This action cannot be undone.' */ , 'textsize':'10px', 'font':this.props.app_state.font})}
                 </div>
-                <div style={{height:5}}/>
-                {this.render_detail_item('10', {'text':this.props.app_state.loc['3055bi']/* 'If you do this, the changes will reflect on other feeds after your next run. This action cannot be undone.' */ , 'textsize':'10px', 'font':this.props.app_state.font})}
             </div>
         )
     }
@@ -4560,6 +4567,8 @@ return data['data']
     when_block_contact_selected(){
         var account_id = this.state.data['account']
         var e5 = this.state.data['e5']
+        const me = this.props.app_state.user_account_id[e5]
+        if(me == account_id) return;
         if(!this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['1577']/* 'Please set your wallet first.' */, 3200);
             return;
@@ -4570,6 +4579,9 @@ return data['data']
     when_add_to_contacts_selected(){
         var account_id = this.state.data['account']
         var e5 = this.state.data['e5']
+        const me = this.props.app_state.user_account_id[e5]
+        if(me == account_id) return;
+
         if(!this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['1577']/* 'Please set your wallet first.' */, 3200);
             return;
@@ -11573,6 +11585,9 @@ return data['data']
                 <div style={{ height:10 }}/>
 
                 {this.render_detail_item('3', {'title':''+(date_object.toLocaleDateString(locale, { month: 'long', day: 'numeric' })), 'details':this.props.app_state.loc['3093eg']/* 'Deadline Date.' */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(item_obligation_configuration.progressive_obligation_proportion || 0), 'details':this.props.app_state.loc['3093fx']/* 'Progressive Obligation Proportion.' */, 'size':'l'})}
 
                 {this.render_detail_item('0')}
 
@@ -12020,7 +12035,7 @@ return data['data']
             }
             const transfers = contracts_promise['transfers']
             const proportions = contracts_promise['proportions']
-            transfers.forEach(transfer => {
+            transfers.forEach((transfer, index) => {
                 const exchange = transfer['exchange']
                 const amount = transfer['amount']
                 if(totals_obj[year][exchange] == null){
@@ -12029,7 +12044,9 @@ return data['data']
                 let obligation_amount = bigInt(0)
                 let active_amount = bigInt(0).plus(amount)
                 proportions.forEach(proportion => {
-                    const obligation = bigInt(active_amount).multiply(proportion).divide('100e16')
+                    const extra_obligation_proportion = contracts_promise['progressive_proportions'] == null ? 0 : contracts_promise['progressive_proportions'][index][proportion]
+                    const final_proportion = bigInt(proportion).plus(extra_obligation_proportion)
+                    const obligation = bigInt(active_amount).multiply(final_proportion).divide('100e16')
                     obligation_amount = bigInt(obligation_amount).plus(obligation)
                     active_amount = bigInt(active_amount).minus(obligation)
                 });

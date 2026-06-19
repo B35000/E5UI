@@ -19027,7 +19027,7 @@ class App extends Component {
       'update_out_of_stock_switch_view':600,
       'mempool_notification':550,
       'open_remember_account_settings_ui':600,
-      'request_passcode_for_decrypting_stored_seed':300,
+      'request_passcode_for_decrypting_stored_seed':350,
       'confirm_bridge_ether_dialog':500,
       'finalize_storefront_request_transaction':550,
       'view_storefront_bag_receipt_item':550,
