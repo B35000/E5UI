@@ -679,6 +679,7 @@ class AudioDetailSection extends Component {
 
 
     copy_id_to_clipboard(object){
+        if(this.is_post_anonymous(object)) return;
         navigator.clipboard.writeText('e'+object['id'])
         this.props.notify(this.props.app_state.loc['1403']/* Copied to clipboard. */, 800)
     }

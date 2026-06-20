@@ -1750,7 +1750,12 @@ class PostListSection extends Component {
         // this.setState({ animate_click: object['e5_id'] }, () => {
         //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
         // });
-        setTimeout(() => this.props.when_contract_item_clicked(index, object['id'], object['e5'], null, object), animate_time);
+        if(this.props.app_state.locked_wallet_hashed_password != '' && object['ipfs'] != null && object['ipfs'].contract_type == 'personal'){
+            setTimeout(() => this.props.show_dialog_bottomsheet({index, 'id': object['id'], 'e5': object['e5'], object}, 'confirm_password_before_opening_contract'), animate_time);
+        }
+        else{
+            setTimeout(() => this.props.when_contract_item_clicked(index, object['id'], object['e5'], null, object), animate_time);
+        }
         
     }
 
@@ -1759,10 +1764,20 @@ class PostListSection extends Component {
             return false
         }
         var should_show =  object['ipfs'].contract_type == 'personal' || object['ipfs'].contract_type == 'life';
-        if(this.props.app_state.user_account_id[object['e5']] == object['author']){
+        if(this.props.app_state.user_account_id[object['e5']] == object['author'] || this.is_sender_part_of_contract(object)){
             return false
         }
         return should_show
+    }
+
+    is_sender_part_of_contract(object){
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
+
+        if ((expiry_time_in_seconds != 0 && time_to_expiry > 0) && object['id'] != 2) {
+            return true
+        }
+        return false;
     }
 
 

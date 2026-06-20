@@ -739,6 +739,9 @@ class DialogPage extends Component {
         else if(option == 'confirm_quick_transfer_data'){
             return this.view_confirm_quick_transfer_data_ui()
         }
+        else if(option == 'confirm_password_before_opening_contract'){
+            return this.view_confirm_password_before_opening_contract_ui()
+        }
     }
 
 
@@ -15444,6 +15447,162 @@ return data['data']
         }
 
         return { picked_max_fee_per_gas_amount, picked_max_priority_per_gas_amount, run_gas_price }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    view_confirm_password_before_opening_contract_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_password_before_opening_contract_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_password_before_opening_contract_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_password_before_opening_contract_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    render_confirm_password_before_opening_contract_data(){
+        const object = this.state.data['object']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['3055qt']/* 'You locked your wallet. Please set the lock password to view that contract.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_contract_item(object)}
+
+                <div style={{height: 10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                <div style={{height:10}}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.open_contract()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055qu']/* Confirm Password.' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    render_contract_item(object, index){
+        if(object == null || (object['ipfs'] == null && object['id'] != 2)){
+            if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                return(
+                    <div>
+                        {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_contract_item(object)
+        if(this.is_object_sender_blocked(object) || object == null){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        var opacity =  1.0
+        if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+            return(
+                <div>
+                    <div>
+                        {this.render_detail_item('3', item['min'])}
+                    </div>
+                </div>
+                
+            )
+        }
+        return(
+            <div>
+                <div style={{height:'auto',opacity:opacity, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_contract_item_clicked(index, object)} */>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                        
+                    </div>         
+                </div>
+            </div>
+            
+        )
+    }
+
+    when_passcode_input_field_changed(text){
+        this.setState({cypher_passcode: text})
+    }
+
+    open_contract(){
+        if(this.state.cypher_passcode.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
+        }
+        else if(!this.does_password_match_hash(this.state.cypher_passcode.trim())){
+            this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
+        else{
+            this.props.open_dialog_bottomsheet()
+            this.props.open_private_contract(this.state.data)
+        }
+    }
+
+    does_password_match_hash(passcode){
+        if(this.props.app_state.locked_wallet_hashed_password != ''){
+            const provided_hash = this.props.hash_data_with_randomizer(passcode);
+            return provided_hash == this.props.app_state.locked_wallet_hashed_password
+        }
+        else return false
     }
 
 
