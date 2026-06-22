@@ -85,6 +85,11 @@ const currencies = [
     "name": "CANTO"
   },
   {
+    "id": "cardano",
+    "symbol": "ada",
+    "name": "Cardano"
+  },
+  {
     "id": "celestia",
     "symbol": "tia",
     "name": "Celestia"
@@ -375,14 +380,14 @@ const currencies = [
     "name": "Sonic"
   },
   {
-    "id": "blockstack",
-    "symbol": "stx",
-    "name": "Stacks"
-  },
-  {
     "id": "stellar",
     "symbol": "xlm",
     "name": "Stellar"
+  },
+  {
+    "id": "stacks",
+    "symbol": "stx",
+    "name": "Stacks"
   },
   {
     "id": "step-app-fitfi",

@@ -289,8 +289,8 @@ class CrossexchangeDetailsSection extends Component {
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         const target_type = this.get_selected_item2(object['ipfs'].new_exchange_or_certificate_target_title_tags_object, 'e')
         return(
-            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 15px 0px 15px'}}>
+                <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
                     {object['hidden'] == true && (
                         <div>
                             <div style={{ height: 10 }} />

@@ -1393,7 +1393,7 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -4276,7 +4276,7 @@ class App extends Component {
   }
   
   get_account_address(){
-    if(this.state.accounts[this.state.selected_e5] != null){
+    if(this.state.accounts[this.state.selected_e5] != null && (this.state.has_wallet_been_set == true || this.state.has_account_been_loaded_from_storage == true)){
       return this.state.accounts[this.state.selected_e5].address
     }
   }
@@ -5982,7 +5982,8 @@ class App extends Component {
         'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
 
         'my_messages_color':{'g':'rgba(199, 216, 195, 0.6)','r':'rgba(217, 198, 198, 0.6)','b':'rgba(198, 206, 218, 0.6)','y':'rgba(218, 219, 195, 0.6)','p':'rgba(210, 191, 211, 0.6)','o':'rgba(215, 207, 195, 0.6)',}, 
-        'markdown_code_background':'rgba(203, 203, 203, 0.64)',
+        'markdown_code_background':'rgb(255, 255, 255)', 
+        'markdown_code_container_background':'rgb(255, 255, 255)',
         
         'chart_color2':'#FCFCFC','chart_background_color':'#D5D5D5', 'chart_color':'rgb(170, 170, 170)',
   
@@ -6028,7 +6029,7 @@ class App extends Component {
         'view_group_card_item_background':'#292929','tag_background_color':'rgb(54, 53, 53)', 'indexed_tag_background':'rgb(38, 38, 38)', 'tag_shadow':'#424242', 'tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #292929,rgb(57, 57, 57))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
-        'markdown_code_background':'rgba(116, 116, 116, 0.64)',
+        'markdown_code_background':'#171717', 'markdown_code_container_background':'#171717',
 
         'chart_color':'#333333','chart_background_color':'#232323', 'chart_color2':'rgb(100, 100, 100)',
 
@@ -6078,7 +6079,7 @@ class App extends Component {
         'chart_color':'#1a1a1a','chart_background_color':'#0a0a0a', 'chart_color2':'rgb(96, 95, 95)',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
-        'markdown_code_background':'rgba(85, 85, 85, 0.64)',
+        'markdown_code_background':'rgb(0, 0, 0)', 'markdown_code_container_background':'rgb(0, 0, 0)',
 
         'number_picker_label_color':'#171717','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
@@ -6124,7 +6125,7 @@ class App extends Component {
         'view_group_card_item_background':'#13190c','tag_background_color':'rgb(29, 48, 11)', 'indexed_tag_background':'#0f230f', 'tag_shadow':'transparent', 'tag_text_color':'#8af7a2', 'view_group_card_item_background2':'linear-gradient(135deg,rgb(12, 25, 12),rgb(29, 57, 26))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
-        'markdown_code_background':'rgba(75, 107, 61, 0.64)',
+        'markdown_code_background':'#000000', 'markdown_code_container_background':'#000000',
 
         'chart_color':'#01c601','chart_background_color':'#141e0a', 'chart_color2':'rgb(77, 255, 77)',
 
@@ -6173,7 +6174,8 @@ class App extends Component {
         
         'view_group_card_item_background':'#d4e2cc','tag_background_color':'#8bc68b','indexed_tag_background':'#01c601','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #d4e2cc,rgb(196, 209, 189))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgba(142, 186, 134, 0.64)',
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgb(255, 255, 255)', 
+        'markdown_code_container_background':'rgb(255, 255, 255)',
         
         'chart_color':'#01c601','chart_background_color':'#d4e2cc', 'chart_color2':'rgb(0, 136, 0)',
   
@@ -6224,7 +6226,7 @@ class App extends Component {
         'view_group_card_item_background':'#190c0c','tag_background_color':'rgb(51, 18, 14)', 'indexed_tag_background':'#210000', 'tag_shadow':'transparent', 'tag_text_color':'#f78a8a', 'view_group_card_item_background2':'linear-gradient(135deg, #190c0c,rgb(38, 18, 18))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
-        'markdown_code_background':'rgba(89, 57, 57, 0.64)',
+        'markdown_code_background':'#000000', 'markdown_code_container_background':'#000000',
 
         'chart_color':'#f70404','chart_background_color':'#190c0c', 'chart_color2':'rgb(252, 122, 122)',
 
@@ -6273,7 +6275,8 @@ class App extends Component {
         
         'view_group_card_item_background':'#e2cdcc','tag_background_color':'#c68b8b','indexed_tag_background':'#c60b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2cdcc,rgb(211, 192, 191))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgba(186, 134, 134, 0.64)',
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgb(255, 255, 255)', 
+        'markdown_code_container_background':'rgb(255, 255, 255)',
         
         'chart_color':'#c60b01','chart_background_color':'#e2cdcc', 'chart_color2':'rgb(114, 7, 2)',
   
@@ -6325,7 +6328,7 @@ class App extends Component {
         'view_group_card_item_background':'#0d0c19','tag_background_color':'rgb(13, 28, 43)', 'indexed_tag_background':'#010021', 'tag_shadow':'transparent', 'tag_text_color':'#2587f7', 'view_group_card_item_background2':'linear-gradient(135deg, #0d0c19,rgb(27, 24, 51))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
-        'markdown_code_background':'rgba(53, 79, 89, 0.64)',
+        'markdown_code_background':'#000000', 'markdown_code_container_background':'#000000',
 
         'chart_color':'#0079ff','chart_background_color':'#0d0c19', 'chart_color2':'rgb(99, 171, 253)',
 
@@ -6375,7 +6378,8 @@ class App extends Component {
         
         'view_group_card_item_background':'#ccdce2','tag_background_color':'#8badc6','indexed_tag_background':'#0181c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #ccdce2,rgb(187, 203, 209))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},'markdown_code_background':'rgba(134, 149, 186, 0.64)',
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',},'markdown_code_background':'rgb(255, 255, 255)', 
+        'markdown_code_container_background':'rgb(255, 255, 255)',
         
         'chart_color':'#0181c6','chart_background_color':'#ccdce2', 'chart_color2':'rgb(2, 77, 118)',
   
@@ -6427,8 +6431,7 @@ class App extends Component {
         'view_group_card_item_background':'#19190c','tag_background_color':'rgb(68, 67, 20)', 'indexed_tag_background':'#202100', 'tag_shadow':'transparent', 'tag_text_color':'#f7f38a', 'view_group_card_item_background2':'linear-gradient(135deg, #19190c,rgb(43, 43, 21))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
-        'markdown_code_background':'rgba(81, 82, 51, 0.64)',
-        'markdown_code_background':'rgba(186, 161, 134, 0.64)',
+        'markdown_code_background':'#000000', 'markdown_code_container_background':'#000000',
 
         'chart_color':'#f3f704','chart_background_color':'#19190c', 'chart_color2':'rgb(255, 255, 255)',
 
@@ -6477,7 +6480,8 @@ class App extends Component {
         
         'view_group_card_item_background':'#e2e2cc','tag_background_color':'#c5c68b','indexed_tag_background':'#9ba003','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2e2cc,rgb(208, 208, 187))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgba(182, 186, 134, 0.64)',
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgb(255, 255, 255)', 
+        'markdown_code_container_background':'rgb(255, 255, 255)',
         
         'chart_color':'#9ba003','chart_background_color':'#e2e2cc', 'chart_color2':'rgb(90, 93, 0)',
   
@@ -6528,7 +6532,7 @@ class App extends Component {
         'view_group_card_item_background':'#160c19','tag_background_color':'rgb(59, 19, 70)', 'indexed_tag_background':'#190021', 'tag_shadow':'transparent', 'tag_text_color':'#e58af7', 'view_group_card_item_background2':'linear-gradient(135deg, #160c19,rgb(39, 21, 44))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
-        'markdown_code_background':'rgba(85, 48, 91, 0.64)',
+        'markdown_code_background':'#000000', 'markdown_code_container_background':'#000000',
 
         'chart_color':'#e704f7','chart_background_color':'#160c19', 'chart_color2':'rgb(244, 133, 251)',
 
@@ -6577,7 +6581,8 @@ class App extends Component {
         
         'view_group_card_item_background':'#decce2','tag_background_color':'#bf8bc6','indexed_tag_background':'#af01c6','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #decce2,rgb(206, 188, 209))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgba(175, 134, 186, 0.64)',
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgb(255, 255, 255)', 
+        'markdown_code_container_background':'rgb(255, 255, 255)',
         
         'chart_color':'#af01c6','chart_background_color':'#decce2', 'chart_color2':'rgb(114, 1, 129)',
   
@@ -6628,7 +6633,7 @@ class App extends Component {
         'view_group_card_item_background':'#19130c','tag_background_color':'rgb(70, 45, 20)', 'indexed_tag_background':'#211100', 'tag_shadow':'transparent', 'tag_text_color':'#f7c28a', 'view_group_card_item_background2':'linear-gradient(135deg, #19130c,rgb(43, 32, 20))',
 
         'my_messages_color':{'g':'rgba(54, 70, 50, 0.6)','r':'rgba(76, 55, 55, 0.6)','b':'rgba(54, 69, 77, 0.6)','y':'rgba(65, 67, 44, 0.6)','p':'rgba(66, 47, 66, 0.6)','o':'rgba(69, 57, 46, 0.6)',},
-        'markdown_code_background':'rgba(91, 71, 48, 0.64)',
+        'markdown_code_background':'#000000', 'markdown_code_container_background':'#000000',
 
         'chart_color':'#f78204','chart_background_color':'#19130c', 'chart_color2':'rgb(242, 185, 125)',
 
@@ -6677,7 +6682,8 @@ class App extends Component {
         
         'view_group_card_item_background':'#e2d7cc','tag_background_color':'#c6b18b','indexed_tag_background':'#c67b01','tag_shadow':'transparent','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, #e2d7cc,rgb(200, 190, 180))',
 
-        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgba(186, 161, 134, 0.64)',
+        'my_messages_color':{'g':'rgba(164, 213, 153, 0.6)','r':'rgba(215, 158, 158, 0.6)','b':'rgba(155, 178, 214, 0.6)','y':'rgba(212, 215, 145, 0.6)','p':'rgba(204, 149, 207, 0.6)','o':'rgba(212, 189, 155, 0.6)',}, 'markdown_code_background':'rgb(255, 255, 255)', 
+        'markdown_code_container_background':'rgb(255, 255, 255)',
         
         'chart_color':'#c67b01','chart_background_color':'#e2d7cc',  'chart_color2':'rgb(124, 77, 0)',
   
@@ -27530,7 +27536,13 @@ class App extends Component {
     const web3_url = this.get_web3_url_from_e5(e5)
     const web3 = new Web3(web3_url);
 
-    var blockNumber = await web3.eth.getBlockNumber()
+    var blockNumber = 0
+    try{
+      blockNumber = await web3.eth.getBlockNumber()
+    }
+    catch(e){
+      console.log('check_and_set_default_rpc', e)
+    }
     console.log('check_and_set_default_rpc', 'blockNumber', blockNumber)
     if(blockNumber == null || blockNumber == 0){
       const clone = structuredClone(this.state.e5s)
@@ -27541,7 +27553,11 @@ class App extends Component {
         await this.wait(1500)
         await this.check_and_set_default_rpc()
       }else{
-        return;
+        clone[e5].url = 0
+        if(e5 == 'E25') clone['E35'].url = 0;
+        this.setState({e5s: clone})
+        await this.wait(1500)
+        await this.check_and_set_default_rpc()
       }
     }else{
       return;
@@ -27659,7 +27675,7 @@ class App extends Component {
     var web3_url = this.get_web3_url_from_e5(e5)
     var account = this.get_account_from_seed(seed, web3_url)
     
-    if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && account.address != this.state.stack_address && this.state.stacked_ids.length > 0){
+    if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && account.address != this.state.stack_address && this.state.stacked_ids.length > 0 && this.state.stack_address != '0xB5195BA86F7a2D6AE1bFE15129Dbc9202f04B4c1'){
       this.show_dialog_bottomsheet({added_tags, set_salt, selected_item, is_synching, selected_item_2}, 'confirm_new_wallet')
     }else{
       this.when_wallet_data_updated3(added_tags, set_salt, selected_item, is_synching, selected_item_2)
@@ -27746,7 +27762,7 @@ class App extends Component {
     }
 
     await this.wait(400);
-    if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5].address != this.state.stack_address && this.state.stacked_ids.length > 0){
+    if(this.state.stacked_ids != null && this.state.has_wallet_been_set == false && this.state.accounts[this.state.selected_e5].address != this.state.stack_address && this.state.stacked_ids.length > 0 && this.state.stack_address != '0xB5195BA86F7a2D6AE1bFE15129Dbc9202f04B4c1'){
       //sender has set a different address from the previously used one, so delete the transactions they created with the other address
       var stack = this.state.stack_items.slice()
       var new_stack = []
@@ -27794,7 +27810,7 @@ class App extends Component {
       var focused_e5 = this.state.e5s['data'][i];
       _accounts[focused_e5] = {privateKey:account.privateKey, address: account.address}
     }
-    // console.log('generate_one_account_for_all_e5s', _accounts)
+    console.log('generate_one_account_for_all_e5s', _accounts)
     this.setState({accounts: _accounts})
 
     const default_socket_account = this.get_account_from_seed(makeid(12), web3_url)
@@ -29729,6 +29745,32 @@ class App extends Component {
 
 
 
+  load_coin_and_ether_coin_supplies = async () => {
+    var { all_symbols, symbol_mappings } = this.get_all_coin_and_ether_symbols()
+    const assetFilter = all_symbols.join(',');
+    const request = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${assetFilter}`;
+
+    try{
+      const response = await fetch(request);
+      if (!response.ok) {
+        console.log('apppage', 'load_coin_and_ether_coin_supplies', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var json_data = JSON.parse(data)
+      const supply_data = {}
+      json_data.forEach(price_object => {
+        const total_supply = price_object['total_supply']
+        const asset_id = price_object['symbol']
+        supply_data[asset_id] = total_supply
+      });
+      console.log('apppage', 'load_coin_and_ether_coin_supplies', supply_data)
+      this.setState({asset_supply_data: supply_data})
+    }
+    catch(e){
+      console.log('apppage', 'load_coin_and_ether_coin_supplies', e)
+    }
+  }
 
   load_coin_and_ether_coin_prices = async () => {
     // var api_key = `${process.env.REACT_APP_COINAPI_KEY}`;
@@ -29789,6 +29831,8 @@ class App extends Component {
       // }
       console.log('apppage', 'load_coin_and_ether_coin_prices', 'final', price_data)
       this.setState({asset_price_data: price_data})
+      await this.wait(3000)
+      await this.load_coin_and_ether_coin_supplies()
     }
     catch(e){
       console.log('apppage', 'load_coin_and_ether_coin_prices', e)

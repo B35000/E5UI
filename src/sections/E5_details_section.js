@@ -188,8 +188,8 @@ class E5DetailsSection extends Component {
         var spent_end = bigInt('1e72').minus(bigInt('1e70')).minus(bigInt(this.props.app_state.end_balance_of_E5[e5]))
         var e5_chart_data = this.props.app_state.all_data[obj['id']]
         return(
-            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 15px 0px 15px'}}>
+                <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
                     <Virtuoso
                         style={{ height: he }}
                         totalCount={51}

@@ -97,6 +97,8 @@ class PaySubscriptionPage extends Component {
                     {this.render_pay_amount_part()}
                     {this.render_detail_item('0')}
                     {this.render_total_debit_amount_ui()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -105,6 +107,8 @@ class PaySubscriptionPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_pay_amount_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_total_debit_amount_ui()}
@@ -118,6 +122,8 @@ class PaySubscriptionPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_pay_amount_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_total_debit_amount_ui()}

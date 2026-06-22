@@ -225,9 +225,28 @@ class EthersDetailsSection extends Component {
         var e5_transactions_per_ether = bigInt('1e18').divide(gas_price).divide(2_300_000)
         var gas_transactions_per_ether =  bigInt('1e18').divide(gas_price).divide(23_000)
 
+        const supply_data = this.props.app_state.asset_supply_data[item['symbol'].toLowerCase()]
+        const supply = supply_data == null ? null : parseInt(supply_data)
+        const atomic_supply = supply_data == null ? null : bigInt(supply).multiply('1e18')
+
+        const market_cap_data = this.props.app_state.asset_price_data[item['symbol']]
+        const market_cap = market_cap_data == null ? null : parseInt(market_cap_data['cap'])
+
+        const get_market_cap_in_sats = (denom_coin_name, conversion) => {
+            const total_supply = supply == null ? 0.0 : supply
+            if(this.props.app_state.asset_price_data['BTC'] == null || this.props.app_state.asset_price_data[item['symbol']] == null) return;
+            const coin_price = this.props.app_state.asset_price_data[item['symbol']]['price']
+            const bitcoin_price = this.props.app_state.asset_price_data[denom_coin_name]['price']
+            const balance_value_in_usd = coin_price * total_supply;
+            const number_of_btc_for_one_usd = 1 / bitcoin_price
+            const balance_value_in_btc = number_of_btc_for_one_usd * balance_value_in_usd
+            const balance_value_in_sat = parseInt(balance_value_in_btc * conversion)
+            return balance_value_in_sat
+        }
+        const market_cap_in_sats = get_market_cap_in_sats('BTC', this.props.app_state.coins['BTC']['conversion'])
         return(
-            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 10px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 15px 0px 15px'}}>
+                <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 20}}/>
@@ -253,6 +272,37 @@ class EthersDetailsSection extends Component {
                     {/* <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['peer_count'])} */}
                     <div style={{height: 10}}/>
+
+                    {supply != null && (
+                        <div>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481u']/* 'Ether\'s Supply.' */, 'number':supply, 'relativepower':'ether'})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481u']/* 'Ether\'s Supply.' */, 'subtitle':this.format_power_figure(supply), 'barwidth':this.calculate_bar_width(supply), 'number':''+this.format_account_balance_figure(supply), 'barcolor':'#606060', 'relativepower':'ether', })}
+                                </div>
+
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481v']/* 'Ether\'s Atomic Supply.' */, 'number':atomic_supply, 'relativepower':'wei'})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481v']/* 'Ether\'s Atomic Supply.' */, 'subtitle':this.format_power_figure(atomic_supply), 'barwidth':this.calculate_bar_width(atomic_supply), 'number':''+this.format_account_balance_figure(atomic_supply), 'barcolor':'#606060', 'relativepower':'wei', })}
+                                </div>
+                            </div>
+                            <div style={{height:10}}/>
+                        </div>
+                    )}
+
+                    {market_cap != null && (
+                        <div>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481w']/* 'Ether\'s Market Capitalization.' */, 'number':market_cap, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481w']/* 'Ether\'s Market Capitalization.' */, 'subtitle':this.format_power_figure(market_cap), 'barwidth':this.calculate_bar_width(market_cap), 'number':''+this.format_account_balance_figure(market_cap), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */, })}
+                                </div>
+
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481x']/* 'Ether\'s Market Cap in $' */.replace('$', 'SATs'), 'number':market_cap_in_sats, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481x']/* 'Ether\'s Market Cap in $' */.replace('$', 'SATs'), 'subtitle':this.format_power_figure(market_cap_in_sats), 'barwidth':this.calculate_bar_width(market_cap_in_sats), 'number':''+this.format_account_balance_figure(market_cap_in_sats), 'barcolor':'#606060', 'relativepower':'SATs', })}
+                                </div>
+                            </div>
+                            <div style={{height:10}}/>
+                        </div>
+                    )}
+
                     {this.render_wallet_address(item, item['e5'])}
                     {this.render_detail_item('0')}
 
@@ -304,6 +354,7 @@ class EthersDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['network_utilization'])}
                     {this.render_detail_item('0')}
+                    
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2457']/* '💸 Send/Receive Ether' */, 'details':this.props.app_state.loc['2458']/* 'Send or receive ether from a specified account.' */, 'size':'l'})}
                     <div style={{height:10}}/>

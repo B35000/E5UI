@@ -196,8 +196,8 @@ class BillDetailsSection extends Component {
         const item = this.format_bill_object(object)
         var recurring_enabled = object['ipfs'].recurring_enabled == true ? this.props.app_state.loc['3068bb']/* 'recurring-bill' */: this.props.app_state.loc['3068bc']/* 'one-time' */
         return(
-            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 10px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 15px 0px 15px'}}>
+                <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     

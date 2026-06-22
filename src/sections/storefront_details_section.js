@@ -500,8 +500,8 @@ class StorefrontDetailsSection extends Component {
         var sale_type_id = object['ipfs'].get_option_storefront_type_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_option_storefront_type_object, 'e')
         
         return(
-            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 15px 0px 15px'}}>
+                <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_storefront_item_art_if_any(object)}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>

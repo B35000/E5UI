@@ -1075,10 +1075,25 @@ class ViewGroups extends Component {
                             img: ({ node, ...props }) => ( <img onClick={() => this.when_image_clicked([props.src], 0)} src={this.get_image_from_file(props.src)} alt={props.alt || "e"} style={{ width: 'auto', maxWidth:'100px', height: 'auto', 'border-radius': '10px' }} /* {...props} */ /> ),
 
                             code: ({ node, inline, className, children, ...props }) => {
+                                const isBlock = node?.position?.start.line !== node?.position?.end.line || className;
+                                const background_color = isBlock ? 'transparent' : this.props.theme['markdown_code_background'];
                                 return(
-                                    <code {...props} style={{ color: this.props.theme['primary_text_color'], backgroundColor: this.props.theme['markdown_code_background'], 'border-radius': '3px', 'padding':'0px 4px 0px 4px', 'box-shadow': '0px 0px 0px 0px '+tag_shadow}}>{children}</code>
+                                    <code {...props} style={{ color: this.props.theme['primary_text_color'], backgroundColor: background_color, 'border-radius': '3px', 'padding':'0px 4px 0px 4px', 'box-shadow': '0px 0px 0px 0px '+tag_shadow}}>{children}</code>
                                 );
                             },
+
+                            pre: ({ children }) => (
+                                <pre
+                                    style={{
+                                        backgroundColor: this.props.theme['markdown_code_container_background'],
+                                        padding: '12px',
+                                        overflowX: 'auto',
+                                        borderRadius: '10px'
+                                    }}
+                                >
+                                    {children}
+                                </pre>
+                            ),
                         }}
                     >{source}</Markdown>
                 </div>

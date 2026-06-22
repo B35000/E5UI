@@ -200,9 +200,29 @@ class CoinsDetailsSection extends Component {
             per = data['fee'] == null ? '...' : data['fee']['per']
             type = data['fee'] == null ? '...' : data['fee']['type']
         }
+
+        const supply_data = this.props.app_state.asset_supply_data[item['symbol'].toLowerCase()]
+        const supply = supply_data == null ? null : parseInt(supply_data)
+        const atomic_supply = supply_data == null ? null : bigInt(supply).multiply(item['conversion'])
+
+        const market_cap_data = this.props.app_state.asset_price_data[item['symbol']]
+        const market_cap = market_cap_data == null ? null : parseInt(market_cap_data['cap'])
+
+        const get_market_cap_in_sats = (denom_coin_name, conversion) => {
+            const total_supply = supply == null ? 0.0 : supply
+            if(this.props.app_state.asset_price_data['BTC'] == null || this.props.app_state.asset_price_data[item['symbol']] == null) return;
+            const coin_price = this.props.app_state.asset_price_data[item['symbol']]['price']
+            const bitcoin_price = this.props.app_state.asset_price_data[denom_coin_name]['price']
+            const balance_value_in_usd = coin_price * total_supply;
+            const number_of_btc_for_one_usd = 1 / bitcoin_price
+            const balance_value_in_btc = number_of_btc_for_one_usd * balance_value_in_usd
+            const balance_value_in_sat = parseInt(balance_value_in_btc * conversion)
+            return balance_value_in_sat
+        }
+        const market_cap_in_sats = get_market_cap_in_sats('BTC', this.props.app_state.coins['BTC']['conversion'])
         return(
-            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 10px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 15px 0px 15px'}}>
+                <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 20}}/>
@@ -228,6 +248,36 @@ class CoinsDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':item['throughput']+' TPS', 'details':this.props.app_state.loc['2927d']/* Ledger Throughput. */, 'size':'l'})}
                     
                     {this.render_block_size_metric(item['block_size'])}
+
+                    {supply != null && (
+                        <div>
+                            <div style={{height: 10}}/>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2927s']/* 'Coin\'s Supply.' */, 'number':supply, 'relativepower':item['symbol']})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927s']/* 'Coin\'s Supply.' */, 'subtitle':this.format_power_figure(supply), 'barwidth':this.calculate_bar_width(supply), 'number':''+this.format_account_balance_figure(supply), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                                </div>
+
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2927t']/* 'Coin\'s Atomic Supply.' */, 'number':atomic_supply, 'relativepower':item['base_unit']})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927t']/* 'Coin\'s Atomic Supply.' */, 'subtitle':this.format_power_figure(atomic_supply), 'barwidth':this.calculate_bar_width(atomic_supply), 'number':''+this.format_account_balance_figure(atomic_supply), 'barcolor':'#606060', 'relativepower':item['base_unit'], })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {market_cap != null && (
+                        <div>
+                            <div style={{height:10}}/>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2927u']/* 'Coin\'s Market Capitalization.' */, 'number':market_cap, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927u']/* 'Coin\'s Market Capitalization.' */, 'subtitle':this.format_power_figure(market_cap), 'barwidth':this.calculate_bar_width(market_cap), 'number':''+this.format_account_balance_figure(market_cap), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */, })}
+                                </div>
+
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2927v']/* 'Coin\'s Market Cap in $' */.replace('$', 'SATs'), 'number':market_cap_in_sats, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927v']/* 'Coin\'s Market Cap in $' */.replace('$', 'SATs'), 'subtitle':this.format_power_figure(market_cap_in_sats), 'barwidth':this.calculate_bar_width(market_cap_in_sats), 'number':''+this.format_account_balance_figure(market_cap_in_sats), 'barcolor':'#606060', 'relativepower':'SATs', })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     
                     {this.render_detail_item('0')}
 
