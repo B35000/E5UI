@@ -2373,6 +2373,16 @@ class home_page extends Component {
         this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, targeted_accounts)
 
         this.reload_object_album_arts_if_any()
+
+        
+        const page_id = this.get_page_id()
+        const viewed_items_data_clone = structuredClone(this.state.viewed_items_data)
+        const page_searched_item = this.state.page_search_data[page_id] || ''
+        if(viewed_items_data_clone[page_searched_item] == null){
+            viewed_items_data_clone[page_searched_item] = {}
+        }
+        viewed_items_data_clone[page_searched_item][page_id] = []
+        this.setState({viewed_items_data: viewed_items_data_clone})
     }
 
     

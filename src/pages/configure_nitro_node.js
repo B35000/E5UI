@@ -77,7 +77,7 @@ class ConfigureNitroNodePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e'/* ,this.props.app_state.loc['3040'] *//* 'boot' */,this.props.app_state.loc['3041']/* 'restore' */,this.props.app_state.loc['3042']/* 'backup' */, this.props.app_state.loc['3043']/* 'new-E5' */, this.props.app_state.loc['3044']/* 'delete-E5' */,this.props.app_state.loc['3045']/* 'iteration' *//* , this.props.app_state.loc['3046'] *//* 'content-gateway' */, this.props.app_state.loc['3047']/* 'provider' */, this.props.app_state.loc['3048']/* 'boot-storage' */, this.props.app_state.loc['3049']/* 'reconfigure-storage' */], [0]
+                ['or','',0], ['e'/* ,this.props.app_state.loc['3040'] *//* 'boot' */,this.props.app_state.loc['3041']/* 'restore' */,this.props.app_state.loc['3042']/* 'backup' */, this.props.app_state.loc['3043']/* 'new-E5' */, this.props.app_state.loc['3044']/* 'delete-E5' */,this.props.app_state.loc['3045']/* 'iteration' *//* , this.props.app_state.loc['3046'] *//* 'content-gateway' */, this.props.app_state.loc['3047']/* 'provider' */, this.props.app_state.loc['3048']/* 'boot-storage' */, this.props.app_state.loc['3049']/* 'reconfigure-storage' */, this.props.app_state.loc['3054es']/* 'resync-node' */], [0]
             ],
         };
     }
@@ -281,6 +281,9 @@ class ConfigureNitroNodePage extends Component {
                     {this.reconfigure_storage()}
                 </div>
             ) 
+        }
+        else if(selected_item == this.props.app_state.loc['3054es']/* 'resync-node' */){
+            return this.render_resync_ui()
         }
     }
 
@@ -2396,6 +2399,95 @@ class ConfigureNitroNodePage extends Component {
 
 
 
+    render_resync_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_resync_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_resync_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_resync_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_resync_data(){
+        var node_details = this.props.app_state.nitro_node_details[this.state.nitro_object['e5_id']]
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['3054en']/* 'Resync your node from a certain block.' */})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['3053']/* 'Backup key (Optional)...' */} when_text_input_field_changed={this.when_backup_key_text_input_field_changed.bind(this)} text={this.state.entered_backup_text} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+                {this.load_preferred_e5_ui2()}
+                <div style={{height:10}}/>
+                
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3054eo']/* 'block...' */} when_text_input_field_changed={this.when_block_number_input_field_changed.bind(this)} text={this.state.entered_block_number_text} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+                <div style={{height:20}}/>
+                <div onClick={()=> this.when_resync_node_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3054ep']/* 'Begin Resync' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_block_number_input_field_changed(text){
+        this.setState({entered_block_number_text: text})
+    }
+
+    when_resync_node_tapped(){
+        var entered_backup_text = this.state.entered_backup_text
+        var entered_block_number_text = parseInt(this.state.entered_block_number_text.trim())
+        var selected_e5 = this.state.selected_e5
+
+        if(isNaN(entered_block_number_text)){
+            this.props.notify(this.props.app_state.loc['3054eq']/* 'That block number is not valid.' */, 4000)
+        }
+        else if(selected_e5 == null){
+            this.props.notify(this.props.app_state.loc['3054bc']/* 'Please select an E5.' */, 4000)
+        }
+        else{
+            this.props.resync_node(entered_backup_text, entered_block_number_text, selected_e5, this.state.nitro_object)
+        }
+    }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2540,6 +2632,10 @@ class ConfigureNitroNodePage extends Component {
     when_suggestion_clicked(item, pos){
         this.setState({recipient_id: parseInt(item['id']) })
     }
+
+
+
+
 
 
 

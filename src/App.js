@@ -21336,7 +21336,7 @@ class App extends Component {
         <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 
          'overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
             <ConfigureNitroNodePage ref={this.configure_nitro_node_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} boot_nitro_node={this.boot_nitro_node.bind(this)} restore_nitro_node={this.restore_nitro_node.bind(this)} isValidE5Address={this.isValidE5Address.bind(this)} boot_new_e5={this.boot_new_e5.bind(this)} delete_e5_from_node={this.delete_e5_from_node.bind(this)} change_iteration_in_node={this.change_iteration_in_node.bind(this)} change_gateway={this.change_gateway.bind(this)} update_web3_provider_in_node={this.update_web3_provider_in_node.bind(this)} boot_storage={this.boot_storage.bind(this)} update_storage_config={this.update_storage_config.bind(this)} back_up_node={this.back_up_node.bind(this)}
-            decrypt_storage_data_using_key={this.decrypt_storage_data_using_key.bind(this)} update_dialer_provider_in_node={this.update_dialer_provider_in_node.bind(this)}
+            decrypt_storage_data_using_key={this.decrypt_storage_data_using_key.bind(this)} update_dialer_provider_in_node={this.update_dialer_provider_in_node.bind(this)} resync_node={this.resync_node.bind(this)}
             />
         </div>
       </div>
@@ -21827,6 +21827,42 @@ class App extends Component {
     const user_temp_hash = node_details['user_temp_hash']
     const encrypted_data_string = await this.encrypt_data_string(JSON.stringify(data), user_temp_encryption_key)
     return { 'registered_user': user_temp_hash, 'encrypted_data':encrypted_data_string }
+  }
+
+  async resync_node(entered_backup_key_text, block_number, selected_e5, nitro_object){
+    this.prompt_top_notification(this.getLocale()['3054er']/* 'Attempting to reset indexer node...' */, 1200)
+    var encrypted_object_backup_key = nitro_object['ipfs'].encrypted_key
+    var final_backup_key = entered_backup_key_text == '' ? await this.decrypt_nitro_node_key_with_my_public_key(encrypted_object_backup_key, nitro_object['e5']) : entered_backup_key_text
+    var node_url = nitro_object['ipfs'].node_url
+
+    const arg_obj = {
+      backup_key: final_backup_key,
+      block: block_number,
+      e5: selected_e5,
+    }
+
+    var body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object(nitro_object['e5_id'], arg_obj))
+    }
+    var request = `${node_url}/${this.load_registered_endpoint_from_link(node_url, 'resync')}/${await this.fetch_nitro_privacy_signature(node_url)}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        console.log(response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, node_url);
+      var duration = obj.success == true ? 3700 : 4800
+      this.prompt_top_notification(obj.message, duration)
+    }
+    catch(e){
+      this.prompt_top_notification(this.getLocale()['3054k']/* 'Something went wrong with the request.' */, 6200)
+    }
   }
 
 
