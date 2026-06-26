@@ -1397,7 +1397,7 @@ class App extends Component {
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
-  //export NODE_OPTIONS="--max-old-space-size=2048"
+  //export NODE_OPTIONS="--max-old-space-size=3248"
 
   get_app_version(){
     return document.querySelector('meta[name="version"]')?.getAttribute('content');
@@ -2320,6 +2320,7 @@ class App extends Component {
       {'title':this.getLocale()['a311cg']/* 'Ordered List' */, 'details':this.getLocale()['a311ec']/* '1. First item \n2. Second item \n3. Third item' */, 'size':'l'},
       {'title':this.getLocale()['a311ch']/* 'Unordered List' */, 'details':this.getLocale()['a311ed']/* '- First item \n- Second item \n- Third item' */, 'size':'l'},
       {'title':this.getLocale()['a311ci']/* 'Code' */, 'details':this.getLocale()['a311ee']/* '`code`' */, 'size':'l'},
+      {'title':this.getLocale()['a311ek']/* 'Code Block' */, 'details':this.getLocale()['a311el']/* '```\n Code Block\n```' */, 'size':'l'},
       {'title':this.getLocale()['a311cj']/* 'Horizontal rule' */, 'details':this.getLocale()['a311ef']/* '---' */, 'size':'l'},
       {'title':this.getLocale()['a311ck']/* 'Link' */, 'details':this.getLocale()['a311eg']/* '[title](https://www.example.com)' */, 'size':'l'},
       {'title':this.getLocale()['a311cl']/* 'Image' */, 'details':this.getLocale()['a311eh']/* '![alt text](image.jpg)' */, 'size':'l'},
@@ -5626,9 +5627,9 @@ class App extends Component {
 
   get_key = async () => {
     var seed = ''+process.env.REACT_APP_SEED_API_KEY
-    // var web3_url = this.get_web3_url_from_e5('E35')
-    // var account = this.get_account_from_seed(seed, web3_url)
-    // console.log(account)
+    var web3_url = this.get_web3_url_from_e5('E35')
+    var account = this.get_account_from_seed(seed, web3_url)
+    console.log('get_key', account.address)
     // console.log(toBech32(account.address))
 
     // const web3 = new Web3(web3_url);
@@ -5684,43 +5685,43 @@ class App extends Component {
 
     //--------------------------------RUN TRANSACTION---------------------------------------------
 
-    const web3_url = 'https://etc.etcdesktop.com'
-    var account = this.get_account_from_seed(seed, web3_url)
-    const web3 = new Web3(web3_url);
-    const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = '0xEBDDD02c5106143B0DfB10513DeEc546F90c2152'
-    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
-    const me = this
+    // const web3_url = 'https://etc.etcdesktop.com'
+    // var account = this.get_account_from_seed(seed, web3_url)
+    // const web3 = new Web3(web3_url);
+    // const contractArtifact = require('./contract_abis/E5.json');
+    // const contractAddress = '0xEBDDD02c5106143B0DfB10513DeEc546F90c2152'
+    // const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
+    // const me = this
 
-    const v5/* t_limits */ = [100000000000000, 100000000000000];
-    var run_gas_price = await web3.eth.getGasPrice()
-    console.log("gasPrice: "+run_gas_price);
-    const gasLimit = 5_300_000;
+    // const v5/* t_limits */ = [100000000000000, 100000000000000];
+    // var run_gas_price = await web3.eth.getGasPrice()
+    // console.log("gasPrice: "+run_gas_price);
+    // const gasLimit = 5_300_000;
 
-    const ints = [
-      [
-        [30000, 8, 0],
-        [3], [23],/* exchanges */
-        [0], [53],/* receivers */
-        [1000]/* amounts */, [0],/* action */
-        []/* lower_bounds */, []/* upper_bounds */,
-        [0]/* depths */
-      ],
-    ]
-    const adds = [[]]
-    const strs = [[]]
+    // const ints = [
+    //   [
+    //     [30000, 8, 0],
+    //     [3], [23],/* exchanges */
+    //     [0], [53],/* receivers */
+    //     [1000]/* amounts */, [0],/* action */
+    //     []/* lower_bounds */, []/* upper_bounds */,
+    //     [0]/* depths */
+    //   ],
+    // ]
+    // const adds = [[]]
+    // const strs = [[]]
 
-    var encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
-    const wei = bigInt(1000_000_000).times(1003)
-    var tx = {
-      gas: gasLimit,
-      value: wei.toString(),
-      to: contractAddress,
-      data: encoded,
-      gasPrice: run_gas_price.toString(),
-    }
+    // var encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
+    // const wei = bigInt(1000_000_000).times(1003)
+    // var tx = {
+    //   gas: gasLimit,
+    //   value: wei.toString(),
+    //   to: contractAddress,
+    //   data: encoded,
+    //   gasPrice: run_gas_price.toString(),
+    // }
 
-    const private_key = account.privateKey
+    // const private_key = account.privateKey
     
     // web3.eth.accounts.signTransaction(tx, private_key).then(signed => {
     //   web3.eth.sendSignedTransaction(signed.rawTransaction)
@@ -10563,10 +10564,12 @@ class App extends Component {
     console.log("gasPrice: "+run_gas_price);
     const block_gas_limit = this.get_gas_limit(e5)
     const gasLimit = run_gas_limit < 110_000 ? (block_gas_limit > 10_000_000 ? 10_000_000 : block_gas_limit) : run_gas_limit;
+    const nonce = await web3.eth.getTransactionCount(me.state.accounts[e5].address, 'pending');
 
     var encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
 
     var tx = {
+      nonce:nonce,
       gas: gasLimit,
       value: wei,
       to: contractAddress,
@@ -10581,6 +10584,7 @@ class App extends Component {
       const maxFeePerGas = set_max_fee_per_gas == 0 ? (maxPriorityFeePerGas * 2) : set_max_fee_per_gas
 
       tx = {
+        nonce:nonce,
         gas: gasLimit,
         value: wei,
         to: contractAddress,
@@ -11031,7 +11035,7 @@ class App extends Component {
     const web3 = new Web3(url);
     try{
       var original_address = await web3.eth.accounts.recover(data.toString(), signature)
-      const contractArtifact = require('./contract_abis/E5.json');
+      const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
       const contractAddress = this.state.addresses[e5][0]
       const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
       var accounts = await contractInstance.methods.f167([],[original_address], 2).call((error, result) => {});
@@ -17444,7 +17448,7 @@ class App extends Component {
     this.prompt_top_notification(this.getLocale()['2722']/* 'withdrawing your ether...' */, 9000)
 
     const web3 = new Web3(this.get_selected_web3_url());
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
     const contractAddress = this.state.addresses[e5][0]
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
@@ -17456,14 +17460,15 @@ class App extends Component {
 
     var v5/* t_limits */ = [100000000000000, run_expiry_time];
     var encoded = contractInstance.methods.f145(target_recipient_address, v5/* t_limits */).encodeABI()
-
+    const nonce = await web3.eth.getTransactionCount(me.state.accounts[e5].address, 'pending');
 
     var tx = {
-        gas: 65000,
-        value: 0,
-        to: contractAddress,
-        data: encoded,
-        gasPrice: run_gas_price.toString().toLocaleString('fullwide', {useGrouping:false}),
+      nonce,
+      gas: 65000,
+      value: 0,
+      to: contractAddress,
+      data: encoded,
+      gasPrice: run_gas_price.toString().toLocaleString('fullwide', {useGrouping:false}),
     }
 
     if(this.state.e5s[e5].type == '1559'){
@@ -17808,7 +17813,7 @@ class App extends Component {
 
   get_senders_account_on_my_e5 = async (their_account, their_e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(their_e5));
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = their_e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
     const contractAddress = this.get_contract_from_e5(their_e5)
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
     const their_address = await contractInstance.methods.f289(their_account).call((error, result) => {});
@@ -27037,7 +27042,7 @@ class App extends Component {
     var run_gas_price = selected_gas_prices.run_gas_price == 0 ? network_run_gas_price : selected_gas_prices.run_gas_price
     console.log("gasPrice: "+run_gas_price);
     const gasLimit = this.get_gas_limit(e5) || 3_500_000;
-
+    const nonce = await web3.eth.getTransactionCount(me.state.accounts[e5].address, 'pending');
 
     const adds = []
     const ints = []
@@ -27105,6 +27110,7 @@ class App extends Component {
     const encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
 
     var tx = {
+      nonce,
       gas: gasLimit,
       value: '0',
       to: contractAddress,
@@ -27119,6 +27125,7 @@ class App extends Component {
       const maxFeePerGas = selected_gas_prices.picked_max_fee_per_gas_amount == 0 ? (maxPriorityFeePerGas * 2) : selected_gas_prices.picked_max_fee_per_gas_amount
 
       tx = {
+        nonce,
         gas: gasLimit,
         value: '0',
         to: contractAddress,
@@ -27651,6 +27658,7 @@ class App extends Component {
     }
     const seed = process.env.REACT_APP_PRIVACY_SIGNATURE_KEY
     const web3_url = this.get_web3_url_from_e5('E25')
+    console.log('update_nitro_privacy_signature', 'web3_url', web3_url)
     var account = this.get_account_from_seed(seed, web3_url)
     var address = account.address
     const web3 = new Web3(web3_url);
@@ -30410,7 +30418,7 @@ class App extends Component {
   /* here */
   get_all_events_from_e5 = async (_account, is_syncing, web3_url, e5_address, e5, should_skip_account_data, pre_launch_data={}) => {
     const web3 = new Web3(web3_url);
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
     const contractAddress = e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
     const address_account = _account
@@ -30614,7 +30622,8 @@ class App extends Component {
         const selected_dark_emblem_country = root_data.selected_dark_emblem_country
         const get_theme_stage_tags_object = this.get_selected_item(root_data.get_theme_stage_tags_object, 'e')
         const get_content_channeling_tags_object = this.get_selected_item(root_data.get_content_channeling_tags_object, 'e')
-        var beacon_chain_url = root_data.data['beacon_chain_url']
+        var beacon_chain_url = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`; /* root_data.data['beacon_chain_url']; */
+        console.log('load_root_config', 'resetting beacon chain url to', beacon_chain_url)
         // beacon_chain_url = 'http://localhost:4000';
         const e5_ether_override = root_data.get_ether_e5_softwrite_object == null ? 'e' : this.get_selected_item(root_data.get_ether_e5_softwrite_object, 'e');
         const e5s = e5_ether_override == 'e' ? this.update_e5_images(structuredClone(this.state.e5s)) : this.update_e5_images(root_data.data['e5s'])
@@ -31188,7 +31197,7 @@ class App extends Component {
   get_accounts_data = async (_account, is_syncing, web3_url, e5_address, e5, pre_launch_return_data) => {
     this.set_e5_as_loading(e5, true)
     const web3 = new Web3(web3_url);
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
     const contractAddress = e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
     const address_account = _account
@@ -41121,7 +41130,7 @@ class App extends Component {
         var account = this.state.user_account_id[e5]
         var contract_addresses = this.state.addresses[e5]
 
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = e5_address
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -41224,7 +41233,7 @@ class App extends Component {
         var account = this.state.user_account_id[e5]
         var contract_addresses = this.state.addresses[e5]
 
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = e5_address
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -41369,7 +41378,7 @@ class App extends Component {
         var account = this.state.user_account_id[e5]
         var contract_addresses = this.state.addresses[e5]
 
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = e5_address
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -41399,7 +41408,7 @@ class App extends Component {
         var account = this.state.user_account_id[e5]
         var contract_addresses = this.state.addresses[e5]
 
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = e5_address
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -41436,7 +41445,7 @@ class App extends Component {
         var account = this.state.user_account_id[e5]
         var contract_addresses = this.state.addresses[e5]
 
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = e5_address
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -41579,7 +41588,7 @@ class App extends Component {
     var account = this.state.user_account_id[e5]
     var contract_addresses = this.state.addresses[e5]
 
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
     const contractAddress = e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -41642,7 +41651,7 @@ class App extends Component {
     var account = this.state.user_account_id[e5]
     var contract_addresses = this.state.addresses[e5]
 
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
     const contractAddress = e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -41698,7 +41707,7 @@ class App extends Component {
       var account = this.state.user_account_id[e5]
       var contract_addresses = this.state.addresses[e5]
 
-      const contractArtifact = require('./contract_abis/E5.json');
+      const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
       const contractAddress = e5_address
       const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -41769,7 +41778,7 @@ class App extends Component {
       var account = this.state.user_account_id[e5]
       var contract_addresses = this.state.addresses[e5]
 
-      const contractArtifact = require('./contract_abis/E5.json');
+      const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
       const contractAddress = e5_address
       const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -41950,7 +41959,7 @@ class App extends Component {
       var account = this.state.user_account_id[e5]
       var contract_addresses = this.state.addresses[e5]
 
-      const contractArtifact = require('./contract_abis/E5.json');
+      const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
       const contractAddress = e5_address
       const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -42197,7 +42206,7 @@ class App extends Component {
         var account = this.state.user_account_id[e5]
         var contract_addresses = this.state.addresses[e5]
 
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = e5_address
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -44077,7 +44086,7 @@ class App extends Component {
         var account = this.state.user_account_id[e5]
         var contract_addresses = this.state.addresses[e5]
 
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = e5_address
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -44230,7 +44239,7 @@ class App extends Component {
         var account = this.state.user_account_id[e5]
         var contract_addresses = this.state.addresses[e5]
 
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = e5_address
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -44805,7 +44814,7 @@ class App extends Component {
         if(account != null && account > 1000){
           const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
           var contract_addresses = this.state.addresses[focused_e5]
-          const contractArtifact = require('./contract_abis/E5.json');
+          const contractArtifact = focused_e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
           const contractAddress = contract_addresses[0]
           const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
           event_params.push([web3, contractInstance, 'e1', focused_e5, {p3/* sender_account_id */: account}])
@@ -44848,7 +44857,7 @@ class App extends Component {
         if(account != null && account > 1000){
           const web3 = new Web3(this.get_web3_url_from_e5(focused_e5));
           var contract_addresses = this.state.addresses[focused_e5]
-          const contractArtifact = require('./contract_abis/E5.json');
+          const contractArtifact = focused_e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
           const contractAddress = contract_addresses[0]
           const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -48692,7 +48701,7 @@ class App extends Component {
 
   get_accounts_public_key_from_other_e5s = async(account, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
     const contractAddress = this.get_contract_from_e5(e5)
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
     const account_address = await contractInstance.methods.f289(account).call((error, result) => {});
@@ -49967,7 +49976,7 @@ class App extends Component {
       var e5 = this.state.e5s['data'][i]
       if(this.state.e5s[e5].active == true){
         const web3 = new Web3(this.get_web3_url_from_e5(e5));
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = this.get_contract_from_e5(e5)
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
         var account = 0
@@ -50028,7 +50037,7 @@ class App extends Component {
 
   get_accounts_address = async(account, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
     const contractAddress = this.get_contract_from_e5(e5)
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
     return await contractInstance.methods.f289(account).call((error, result) => {});
@@ -50650,7 +50659,7 @@ class App extends Component {
         await this.wait(300)
         return await this.get_nitro_telemetry_data(object, true)
       }
-
+      console.log('get_nitro_telemetry_data', 'obj', obj)
       const clone = structuredClone(this.state.nitro_telemetry_data_object)
       clone[e5_id] = obj
       this.setState({nitro_telemetry_data_object: clone})
@@ -51820,7 +51829,7 @@ class App extends Component {
 
     this.prompt_top_notification(this.getLocale()['2736']/* 'Adding account ID to Contacts...' */, 2000)
     const web3 = new Web3(this.get_selected_web3_url());
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -51865,7 +51874,7 @@ class App extends Component {
     }
     this.prompt_top_notification(this.getLocale()['2733']/* 'Adding account ID to blocked list...' */, 1600)
     const web3 = new Web3(this.get_selected_web3_url());
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -52303,7 +52312,7 @@ class App extends Component {
       var e5 = this.state.e5s['data'][i]
       if(this.state.e5s[e5].active == true){
         const web3 = new Web3(this.get_web3_url_from_e5(e5));
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = this.get_contract_from_e5(e5)
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
       
@@ -52363,7 +52372,7 @@ class App extends Component {
       var e5 = this.state.e5s['data'][i]
       if(this.state.e5s[e5].active == true && e5_to_focus_on == e5){
         const web3 = new Web3(this.get_web3_url_from_e5(e5));
-        const contractArtifact = require('./contract_abis/E5.json');
+        const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json');
         const contractAddress = this.get_contract_from_e5(e5)
         const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
@@ -53061,11 +53070,11 @@ class App extends Component {
 
 
 
-  load_nitro_node_details = async (object, should_load_subscription_if_any=false, should_load_account_storage_info=false, image_load_from_nitro_data={}) =>{
+  load_nitro_node_details = async (object, should_load_subscription_if_any=false, should_load_account_storage_info=false, image_load_from_nitro_data={}, attempts=0) =>{
     var link = object['ipfs'] == null ? null : object['ipfs'].node_url
     console.log('load_nitro_node_details', 'loading link: ', link)
 
-    if(this.state.nitro_node_details[object['e5_id']] != null && this.state.nitro_node_details[object['e5_id']]['user_temp_encryption_key'] != null){
+    if(this.state.nitro_node_details[object['e5_id']] != null && this.state.nitro_node_details[object['e5_id']] != 'unavailable' && this.state.nitro_node_details[object['e5_id']]['user_temp_encryption_key'] != null){
       return;
     }
 
@@ -53106,11 +53115,19 @@ class App extends Component {
       }
     }
     catch(e){
-      var clone = structuredClone(this.state.nitro_node_details)
-      clone[object['e5_id']] = 'unavailable'
-      this.setState({nitro_node_details:clone})
+      console.log('apppage', 'request: ', request, e)
+      if(attempts < 3){
+        await this.wait(5000)
+        return await this.load_nitro_node_details(object, should_load_subscription_if_any, should_load_account_storage_info, image_load_from_nitro_data, attempts+1)
+      }
+      else{
+        var clone = structuredClone(this.state.nitro_node_details)
+        clone[object['e5_id']] = 'unavailable'
+        this.setState({nitro_node_details:clone})
+      }
     }
   }
+
 
   load_nitro_directory_details = async (link, attempts=0) => {
     if(this.state.nitro_privacy_signature == null){
@@ -53151,7 +53168,7 @@ class App extends Component {
       this.setState({nitro_node_details: clone})
     }
 
-    if(this.state.nitro_link_directory_data[link] != null || this.state.nitro_node_details[e5_id] != null){
+    if(this.state.nitro_link_directory_data[link] != null && this.state.nitro_node_details[e5_id] != null){
       await this.start_update_url_endpoint_if_exists(link)
       return;
     }
@@ -55462,7 +55479,7 @@ class App extends Component {
       return this.searched_address_targets[their_account+their_e5]
     }
     const web3 = new Web3(this.get_web3_url_from_e5(their_e5));
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = their_e5 == 'E25' ? require('./contract_abis_old/E5.json') : require('./contract_abis/E5.json'); require('./contract_abis/E5.json');
     const contractAddress = this.get_contract_from_e5(their_e5)
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
     const targets_address = await contractInstance.methods.f289(their_account).call((error, result) => {});
@@ -59275,7 +59292,7 @@ class App extends Component {
     }
     if(this.get_account_from_address_mapping[address+e5] != null) return this.get_account_from_address_mapping[address+e5];
     const web3 = this.get_web3_instance_from_e5(e5)
-    const contractArtifact = require('./contract_abis/E5.json');
+    const contractArtifact = e5 == 'E25' ? require('./contract_abis_old/E5.json') :  require('./contract_abis/E5.json');
     const contractAddress = this.state.addresses[e5][0]
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
     var accounts = await contractInstance.methods.f167([],[address], 2).call((error, result) => {});

@@ -7778,12 +7778,12 @@ return data['data']
                     {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3035']/* 'Selected Space.' */, 'subtitle':this.format_power_figure(transaction_item.amount), 'barwidth':this.get_number_width(transaction_item.amount), 'number':`${this.format_account_balance_figure(transaction_item.amount)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['c2527p']/* Mbs */, })}
                 </div>
                 <div style={{height:20}}/>
-                {this.render_payment_amounts()}
+                {this.render_payment_amounts2()}
             </div>
         )
     }
 
-    render_payment_amounts(){
+    render_payment_amounts2(){
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index]
         var object = transaction_item.nitro_object
         var node_details = this.props.app_state.nitro_node_details[object['e5_id']]

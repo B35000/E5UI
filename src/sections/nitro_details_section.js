@@ -1096,6 +1096,7 @@ class NitroDetailsSection extends Component {
         if(node_details['is_synching_socket_with_beacon'] == true){
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', {'title':''+node_details['socket_section_synchronization']+'%', 'details':this.props.app_state.loc['c2527ec']/* 'Synchronization Level.' */, 'size':'l'})}
                 </div>
             )
@@ -1621,7 +1622,7 @@ class NitroDetailsSection extends Component {
         var data = []
         const data_point = this.get_selected_memory_stat_position()
         var timestamp_datapoints = Object.keys(memory_stats_data)
-        if(timestamp_datapoints.length == 0 || memory_stats_data[timestamp_datapoints[0]][data_point] == null) return { dps: [], largest: 0, starting_time: Date.now() - (1000*60*60*24), ending_time: Date.now() }
+        if(timestamp_datapoints.length == 0 /* || memory_stats_data[timestamp_datapoints[0]][data_point] == null */) return { dps: [], largest: 0, starting_time: Date.now() - (1000*60*60*24), ending_time: Date.now() }
         const start_time = Date.now() - (1000*60*60*24)
         if(start_time - timestamp_datapoints[0] > (1000*60*5)){
             var diff = start_time - timestamp_datapoints[0]
@@ -1630,7 +1631,7 @@ class NitroDetailsSection extends Component {
             }
         }
         for(var i=0; i<timestamp_datapoints.length; i++){
-            const focused_item = memory_stats_data[timestamp_datapoints[i]][data_point]
+            const focused_item = memory_stats_data[timestamp_datapoints[i]][data_point] || 0
             data.push(focused_item)
 
             if(i==timestamp_datapoints.length-1){
@@ -1640,7 +1641,6 @@ class NitroDetailsSection extends Component {
                         data.push(data[data.length-1]*0.999)     
                     }
                 }
-                
             }
             else{
                 var diff = timestamp_datapoints[i+1] - timestamp_datapoints[i]
@@ -1766,7 +1766,7 @@ class NitroDetailsSection extends Component {
         var data = []
         const data_point = this.get_selected_request_stat_position()
         var timestamp_datapoints = Object.keys(memory_stats_data)
-        if(timestamp_datapoints.length == 0 || memory_stats_data[timestamp_datapoints[0]][data_point] == null) return { dps: [], largest: 0, starting_time: Date.now() - (1000*60*60*24), ending_time: Date.now() }
+        if(timestamp_datapoints.length == 0 /* || memory_stats_data[timestamp_datapoints[0]][data_point] == null */) return { dps: [], largest: 0, starting_time: Date.now() - (1000*60*60*24), ending_time: Date.now() }
         const start_time = Date.now() - (1000*60*60*24)
         if(start_time - timestamp_datapoints[0] > (1000*60*5)){
             var diff = start_time - timestamp_datapoints[0]
@@ -1775,7 +1775,7 @@ class NitroDetailsSection extends Component {
             }
         }
         for(var i=0; i<timestamp_datapoints.length; i++){
-            const focused_item = memory_stats_data[timestamp_datapoints[i]][data_point]
+            const focused_item = memory_stats_data[timestamp_datapoints[i]][data_point] || 0
             data.push(focused_item)
 
             if(i==timestamp_datapoints.length-1){
@@ -1795,6 +1795,7 @@ class NitroDetailsSection extends Component {
         }
 
 
+        console.log('get_request_stats_data_points', 'data', data)
 
         var xVal = 1, yVal = 0, original_y_val = 0;
         var dps = [];

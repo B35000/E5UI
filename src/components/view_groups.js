@@ -124,6 +124,61 @@ class ViewGroups extends Component {
         }
     };
 
+    markdown_components = {
+        p: ({ node, ...props }) => {
+            // console.log('markdown',props.children)
+            const text = props.children
+
+            const processed = typeof text === "string" ? this.split_text(text).map((part, i) => (this.check_if_is_link(part) || this.check_if_is_account_link(part)) ? (
+                    <span key={i} style={{'width': 'fit-content', 'background-color': this.props.theme['tag_background_color'], 'border-radius': '7px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_e5_link_tapped(part, this.check_if_is_link(part), this.check_if_is_account_link(part))}>
+                        <span style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 3px 11px 3px 11px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{part}</span>
+                    </span>
+                    
+                ) : (
+                    <React.Fragment key={i}>{this.mask_word_if_censored(part)}</React.Fragment>
+                )
+            ) : props.children;
+
+            return (
+                <p style={{ color: this.props.theme['secondary_text_color'], wordWrap: 'normal' }}>{processed}</p>
+            );
+        },
+
+        h1: ({ node, ...props }) => <h1 style={{ color:this.props.theme['primary_text_color'] }} {...props} />,
+
+        h2: ({ node, ...props }) => <h2 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+
+        h3: ({ node, ...props }) => <h3 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+
+        h4: ({ node, ...props }) => <h4 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+
+        h5: ({ node, ...props }) => <h5 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+
+        h6: ({ node, ...props }) => <h6 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+
+        li: ({ node, ...props }) => <li style={{ color: this.props.theme['secondary_text_color'] }} {...props} />,
+
+        a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'], 'text-decoration':'underline', cursor: 'pointer'}} {...props} href={undefined} onMouseDown={(e) => this.handleLinkClick(props.href, e)} />,
+
+        hr: ({ node, ...props }) => <hr style={{ color: this.props.theme['line_color'] }} {...props} />,
+
+        br: ({ node, ...props }) => <br style={{ color: this.props.theme['line_color'] }} {...props} />,
+
+        img: ({ node, ...props }) => ( <img onClick={() => this.when_image_clicked([props.src], 0)} src={this.get_image_from_file(props.src)} alt={props.alt || "e"} style={{ width: 'auto', maxWidth:'100px', height: 'auto', 'border-radius': '10px' }} /* {...props} */ /> ),
+
+        code: ({ node, inline, className, children, ...props }) => {
+            const isBlock = node?.position?.start.line !== node?.position?.end.line || className;
+            const background_color = isBlock ? 'transparent' : this.props.theme['markdown_code_background'];
+            return(
+                <code {...props} style={{ color: this.props.theme['primary_text_color'], backgroundColor: background_color, 'border-radius': '3px', 'padding':'0px 4px 0px 4px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['tag_shadow']}}>{children}</code>
+            );
+        },
+
+        pre: ({ children }) => (
+            <pre style={{ backgroundColor: this.props.theme['markdown_code_container_background'], padding: '12px', overflowX: 'auto', borderRadius: '10px' }}>{children}</pre>
+        ),
+    }
+
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
@@ -1029,73 +1084,7 @@ class ViewGroups extends Component {
             var word_wrap_value = this.longest_word_length(source) > 53 ? 'break-word' : 'normal'
             return(
                 <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':this.props.theme['view_group_card_item_background']}}>
-                    <Markdown
-                    components={{
-                            // p: ({ node, ...props }) => <p style={{ color: this.props.theme['secondary_text_color'],  'word-wrap': word_wrap_value }} {...props} />,
-
-                            p: ({ node, ...props }) => {
-                                // console.log('markdown',props.children)
-                                const text = props.children
-
-                                const processed = typeof text === "string" ? this.split_text(text).map((part, i) => (check_if_is_link(part) || check_if_is_account_link(part)) ? (
-                                        <span key={i} style={{'width': 'fit-content', 'background-color': tag_background_color, 'border-radius': '7px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow, cursor: 'pointer'}} onClick={() => this.when_e5_link_tapped(part, check_if_is_link(part), check_if_is_account_link(part))}>
-                                            <span style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 3px 11px 3px 11px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{part}</span>
-                                        </span>
-                                        
-                                    ) : (
-                                        <React.Fragment key={i}>{this.mask_word_if_censored(part)}</React.Fragment>
-                                    )
-                                ) : props.children;
-
-                                return (
-                                    <p style={{ color: this.props.theme['secondary_text_color'], wordWrap: word_wrap_value }}>{processed}</p>
-                                );
-                            },
-
-                            h1: ({ node, ...props }) => <h1 style={{ color:this.props.theme['primary_text_color'] }} {...props} />,
-
-                            h2: ({ node, ...props }) => <h2 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
-
-                            h3: ({ node, ...props }) => <h3 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
-
-                            h4: ({ node, ...props }) => <h4 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
-
-                            h5: ({ node, ...props }) => <h5 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
-
-                            h6: ({ node, ...props }) => <h6 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
-
-                            li: ({ node, ...props }) => <li style={{ color: this.props.theme['secondary_text_color'] }} {...props} />,
-
-                            a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'], 'text-decoration':'underline', cursor: 'pointer'}} {...props} href={undefined} onMouseDown={(e) => this.handleLinkClick(props.href, e)} />,
-
-                            hr: ({ node, ...props }) => <hr style={{ color: this.props.theme['line_color'] }} {...props} />,
-
-                            br: ({ node, ...props }) => <br style={{ color: this.props.theme['line_color'] }} {...props} />,
-
-                            img: ({ node, ...props }) => ( <img onClick={() => this.when_image_clicked([props.src], 0)} src={this.get_image_from_file(props.src)} alt={props.alt || "e"} style={{ width: 'auto', maxWidth:'100px', height: 'auto', 'border-radius': '10px' }} /* {...props} */ /> ),
-
-                            code: ({ node, inline, className, children, ...props }) => {
-                                const isBlock = node?.position?.start.line !== node?.position?.end.line || className;
-                                const background_color = isBlock ? 'transparent' : this.props.theme['markdown_code_background'];
-                                return(
-                                    <code {...props} style={{ color: this.props.theme['primary_text_color'], backgroundColor: background_color, 'border-radius': '3px', 'padding':'0px 4px 0px 4px', 'box-shadow': '0px 0px 0px 0px '+tag_shadow}}>{children}</code>
-                                );
-                            },
-
-                            pre: ({ children }) => (
-                                <pre
-                                    style={{
-                                        backgroundColor: this.props.theme['markdown_code_container_background'],
-                                        padding: '12px',
-                                        overflowX: 'auto',
-                                        borderRadius: '10px'
-                                    }}
-                                >
-                                    {children}
-                                </pre>
-                            ),
-                        }}
-                    >{source}</Markdown>
+                    <Markdown components={this.markdown_components}>{source}</Markdown>
                 </div>
             )
         }
@@ -1812,6 +1801,15 @@ class ViewGroups extends Component {
         }
 
         return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
+    }
+
+    check_if_is_link = (part) => {
+        const num = part.startsWith('e') ? parseInt(part.replace('e',''), 10): parseInt(part, 10);
+        return !isNaN(num) && num > 1000 && part.startsWith('e') && (part.match(/e/g) || []).length == 1;
+    }
+
+    check_if_is_account_link = (part) => {
+        return isNaN(part.replace('@', '')) && part.startsWith('@') && (part.match(/@/g) || []).length == 1;
     }
 
 }

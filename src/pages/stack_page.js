@@ -15725,7 +15725,7 @@ class StackPage extends Component {
 
                     {this.render_notification_setting_if_not_mobile()}
 
-                    {this.does_title_details_contain_searched_text('', '') && (
+                    {this.does_title_details_contain_searched_text('1593mi', '1593mj') && (
                         <div>
                             {this.render_detail_item('3',{'title':this.props.app_state.loc['1593mi']/* '🧠 Preserve State.' */, 'details':this.props.app_state.loc['1593mj']/* 'e can remember your current session between reloads for faster synchronization times.' */, 'size':'l'})}
                             <div style={{height: 10}}/>

@@ -325,6 +325,7 @@ class home_page extends Component {
             delete cached_state_obj.detail_page
             delete cached_state_obj.detail_selected_tag
             delete cached_state_obj.tabs;
+            delete cached_state_obj.viewed_items_data
 
             cached_state_obj.view_post_bottomsheet = false; 
             cached_state_obj.filter_section_bottomsheet = false; 
