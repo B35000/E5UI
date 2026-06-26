@@ -1173,17 +1173,29 @@ class NewJobPage extends Component {
     render_kaomoji_list(){
         var items = this.props.app_state.kaomojis
 
-        return(
-            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+        return (
+            <div style={{ margin: '0px', padding: '0px', backgroundColor: 'transparent' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px', padding: '2px', overflowY: 'auto', alignItems: 'flex-start' }}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_kamoji_clicked(item)}>
-                            {this.render_detail_item('4',this.get_kamoji_text_object(item))}
-                        </li>
+                        <div key={index} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: '2px', borderRadius: '2px', flexShrink: 0 }} onClick={() => this.when_kamoji_clicked(item)}>
+                            {this.render_detail_item('4', this.get_kamoji_text_object(item))}
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
         )
+
+        // return(
+        //     <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+        //         <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+        //             {items.map((item, index) => (
+        //                 <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_kamoji_clicked(item)}>
+        //                     {this.render_detail_item('4',this.get_kamoji_text_object(item))}
+        //                 </li>
+        //             ))}
+        //         </ul>
+        //     </div>
+        // )
     }
 
     get_kamoji_text_object(text){
@@ -2288,7 +2300,20 @@ return data['data']
 
     render_markdown_shortcut_list(){
         var items = this.props.app_state.markdown_shortcut_list
-
+        // return (
+        //     <div>
+        //         {this.render_detail_item('0')}
+        //         <div style={{ margin: '0px', padding: '0px', backgroundColor: 'transparent' }}>
+        //             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', padding: '4px', overflowY: 'auto', alignItems: 'flex-start' }}>
+        //                 {items.map((item, index) => (
+        //                     <div key={index} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: '4px', borderRadius: '4px', flexShrink: 0 }} onClick={() => this.when_markdown_shortcut_clicked(item['details'])}>
+        //                         {this.render_detail_item('3', item)}
+        //                     </div>
+        //                 ))}
+        //             </div>
+        //         </div>
+        //     </div>
+        // )
         return(
             <div>
                 {this.render_detail_item('0')}

@@ -1134,18 +1134,29 @@ class NewContractorPage extends Component {
 
     render_kaomoji_list(){
         var items = this.props.app_state.kaomojis
-
-        return(
-            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+        return (
+            <div style={{ margin: '0px', padding: '0px', backgroundColor: 'transparent' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px', padding: '2px', overflowY: 'auto', alignItems: 'flex-start' }}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_kamoji_clicked(item)}>
-                            {this.render_detail_item('4',this.get_kamoji_text_object(item))}
-                        </li>
+                        <div key={index} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: '2px', borderRadius: '2px', flexShrink: 0 }} onClick={() => this.when_kamoji_clicked(item)}>
+                            {this.render_detail_item('4', this.get_kamoji_text_object(item))}
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
         )
+
+        // return(
+        //     <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+        //         <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+        //             {items.map((item, index) => (
+        //                 <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_kamoji_clicked(item)}>
+        //                     {this.render_detail_item('4',this.get_kamoji_text_object(item))}
+        //                 </li>
+        //             ))}
+        //         </ul>
+        //     </div>
+        // )
     }
 
     get_kamoji_text_object(text){
