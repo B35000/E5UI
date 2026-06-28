@@ -509,6 +509,9 @@ import monad_logo from  './assets/monad.png'
 import zora_logo from './assets/zora.png'
 import nova_logo from './assets/nova.png'
 import arenaz_logo from './assets/arenaz.png'
+import polkadot_evm_logo from './assets/polkadot_evm.png'
+import immutable_zkevm_logo from './assets/immutable_zkevm.png'
+import kite_ai_logo from './assets/kite.png'
 
 import celestia_logo from './assets/celestia.png'
 import algorand_logo from './assets/algorand.png'
@@ -774,7 +777,7 @@ var bigInt = require("big-integer");
 var primary_following = ['E25:1002']
 const root_e5 = 'E25'
 const root_account = [1002, 1804]
-const default_nitro_option = '1479E25'
+const default_nitro_option = '1111E35'
 // const originalConsole = { ...console };
 
 
@@ -1452,7 +1455,7 @@ class App extends Component {
     if(this.state != null && this.state.original_e5s_data != null){
       return this.state.original_e5s_data
     }
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335', 'E1345']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335', 'E1345', 'E1355', 'E1365', 'E1375']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -2286,6 +2289,25 @@ class App extends Component {
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image: arenaz_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185',
       },
+      'E1355':{
+        web3:['https://eth-rpc.polkadot.io', 'https://services.polkadothub-rpc.com/mainnet'],
+        token:'DOT',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image: polkadot_evm_logo, iteration:3_000, url:0, active:false, e5_img:null,
+      },
+
+      'E1365':{
+        web3:['https://rpc.immutable.com'],
+        token:'IMX',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image: immutable_zkevm_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559',
+      },
+      'E1375':{
+        web3:['https://rpc.gokite.ai/', 'https://rpc-virginia.gokite.ai', 'https://rpc-tokyo.gokite.ai', 'https://rpc-ireland.gokite.ai'],
+        token:'KITE',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image: kite_ai_logo, iteration:3_000, url:0, active:false, e5_img:null,
+      },
     }
   }
 
@@ -2471,6 +2493,9 @@ class App extends Component {
       this.get_token('ZOETH', 'Zora', 'E1325'),
       this.get_token('ANETH', 'Arbitrum Nova', 'E1335'),
       this.get_token('ARETH', 'Arena-Z', 'E1345'),
+      this.get_token('DOT', 'Polkadot PolkaVM', 'E1355', true),
+      this.get_token('IMX', 'Immutable zkEVM', 'E1365'),
+      this.get_token('KITE', 'KiteAI', 'E1375')
     ]
 
     return list
@@ -2495,7 +2520,7 @@ class App extends Component {
 
         'TRX': this.get_coin_info('TRX', 'Tron', tron_logo, 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof Of Stake', '3 sec.', this.get_time_difference(1529885280), 2000, 1),
         
-        'XRP': this.get_coin_info('XRP', 'Xrp', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~'),
+        'XRP': this.get_coin_info('XRP', 'XRP', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~'),
 
         'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
 
@@ -2509,7 +2534,7 @@ class App extends Component {
 
         'ATOM': this.get_coin_info('ATOM', 'Cosmos', cosmos_logo, 'uATOM', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
 
-        'FIL': this.get_coin_info('FIL', 'Filecoin', filecoin_logo, 'attoFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
+        'FIL': this.get_coin_info('FIL', 'Filecoin', filecoin_logo, 'aFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
 
         'SOL': this.get_coin_info('SOL', 'Solana',solana_logo, 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2 ),
 
@@ -8533,9 +8558,14 @@ class App extends Component {
   }
 
   broadcast_bitcoin_cash_transaction = async (rawTxHex) => {
-    var request = `https://api.fullstack.cash/v5/rawtransactions/sendRawTransaction/${rawTxHex}`
+    const request = `https://bch.fullstack.cash/v6/fulcrum/tx/broadcast`
+    const body = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ txHex: rawTxHex })
+    }
     try{
-      const response = await fetch(request);
+      const response = await fetch(request, body);
       if (!response.ok) {
         console.log(response)
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -8834,7 +8864,7 @@ class App extends Component {
   create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_dot_wallet(seed)
-    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-polkadot');
+    const wsProvider = new WsProvider('wss://polkadot-asset-hub-rpc.polkadot.io');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady;
 
@@ -8853,7 +8883,7 @@ class App extends Component {
   create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_ksm_wallet(seed)
-    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-kusama');
+    const wsProvider = new WsProvider('wss://kusama-asset-hub-rpc.polkadot.io');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady;
 
@@ -8908,7 +8938,7 @@ class App extends Component {
     var seed = this.state.final_seed
     const wallet = await this.generate_tezos_wallet(seed)
     // const wallet = data['wallet']
-    const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
+    const Tezos = new TezosToolkit('https://tezos-mainnet.octez.io');
     Tezos.setProvider({ signer: wallet });
     // const Tezos = data['Tezos']
     const amount = this.get_amount_int_tez(transfer_amount)
@@ -27441,6 +27471,7 @@ class App extends Component {
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
       }
+      this.set_coin_icons_in_data()
       await this.start_synchronization_process()
       await this.load_ether_and_coin_views_data()
     }else{
@@ -27497,6 +27528,7 @@ class App extends Component {
         this.inc_synch_progress()
         await this.wait(10)
       }
+      this.set_coin_icons_in_data()
       await this.load_ether_and_coin_views_data()
     }
     else{
@@ -27633,6 +27665,15 @@ class App extends Component {
     catch(e){
       console.log('apppage', 'something went wrong with get_socket_data', e)
     }
+  }
+
+  set_coin_icons_in_data(){
+    const token_name_thumbnail_directory = structuredClone(this.state.token_name_thumbnail_directory)
+    const coins = this.get_coin_data()
+    Object.keys(coins).forEach(coin => {
+      token_name_thumbnail_directory[coin] = coins[coin]['image']
+    });
+    this.setState({token_name_thumbnail_directory: token_name_thumbnail_directory})
   }
 
   
@@ -28330,7 +28371,7 @@ class App extends Component {
   }
 
   get_bitcoin_cash_utxos = async (address) => {
-    var request = `https://api.fullstack.cash/v5/electrumx/utxos/${address}`
+    var request = `https://bch.fullstack.cash/v6/fulcrum/utxos/${address}`
     // if(!this.is_address_set(address)) return {}
     try{
       const response = await fetch(request);
@@ -28899,7 +28940,7 @@ class App extends Component {
     var seed = seed1
     const wallet = await this.generate_dot_wallet(seed)
     const address = wallet.dot_address
-    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-polkadot');
+    const wsProvider = new WsProvider('wss://polkadot-asset-hub-rpc.polkadot.io');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady;
     const existential_deposit = await this.get_existential_dot_deposit(api)
@@ -28962,7 +29003,7 @@ class App extends Component {
   update_dot_balance = async (clone) => {
     // var clone = structuredClone(this.state.coin_data)
     const address = clone['DOT']['address']
-    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-polkadot');
+    const wsProvider = new WsProvider('wss://polkadot-asset-hub-rpc.polkadot.io');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady;
     const address_balance = await this.get_dot_balance(address, api)
@@ -28978,7 +29019,7 @@ class App extends Component {
   get_and_set_kusama_wallet_info = async (seed) => {
     const wallet = await this.generate_ksm_wallet(seed)
     const address = wallet.ksm_address
-    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-kusama');
+    const wsProvider = new WsProvider('wss://kusama-asset-hub-rpc.polkadot.io');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady
     const existential_deposit = await this.get_existential_ksm_deposit(api)
@@ -29041,7 +29082,7 @@ class App extends Component {
 
   update_ksm_balance = async (clone) => {
     const address = clone['KSM']['address']
-    const wsProvider = new WsProvider('wss://sys.ibp.network/asset-hub-kusama');
+    const wsProvider = new WsProvider('wss://kusama-asset-hub-rpc.polkadot.io');
     const api = await ApiPromise.create({ provider: wsProvider });
     await api.isReady;
     const address_balance = await this.get_ksm_balance(address, api)
@@ -29106,7 +29147,7 @@ class App extends Component {
 
   get_and_set_tezos_wallet_info = async (seed) => {
     const wallet = await this.generate_tezos_wallet(seed)
-    const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
+    const Tezos = new TezosToolkit('https://tezos-mainnet.octez.io');
     Tezos.setProvider({ signer: wallet });
     const address = await Tezos.signer.publicKeyHash();
     const balance = (await Tezos.tz.getBalance(address)).toString()
@@ -29143,7 +29184,7 @@ class App extends Component {
   update_tezos_balance = async (clone) => {
     // var clone = structuredClone(this.state.coin_data)
     var address = clone['XTZ']['address']
-    const Tezos = new TezosToolkit('https://mainnet.ecadinfra.com');
+    const Tezos = new TezosToolkit('https://tezos-mainnet.octez.io');
     const balance = (await Tezos.tz.getBalance(address)).toString()
     clone['XTZ']['balance'] = balance
     // this.setState({coin_data: clone})
@@ -30929,7 +30970,7 @@ class App extends Component {
       // mempool_clone[e5] = mempool
       // this.setState({mempool: mempool_clone})
     }catch(e){
-
+      console.log(e)
     }
 
 
@@ -37908,28 +37949,34 @@ class App extends Component {
 
         var channel_obj = {'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':[], 'access_rights_enabled':false, 'my_interactible_time_value':0, 'my_blocked_time_value':0,'e5':e5, 'timestamp':parseInt(created_channel_events[i].returnValues.p6), 'author':created_channel_events[i].returnValues.p5, 'e5_id':id+e5, 'hidden':false , 'object_type':'channel'}
 
+        console.log('get_channel_data', 'channel_data_keys', channel_data['channel_keys'])
+        console.log('get_channel_data', 'my_unique_crosschain_identifier', my_unique_crosschain_identifier)
+        console.log('get_channel_data', 'channel_object', id, channel_data)
+
         if(channel_data['channel_keys'] != null && channel_data['channel_keys'].length > 0){
           var active_key = channel_data['channel_keys'].length - 1;
-          var encrypted_key = channel_data['channel_keys'][active_key][my_unique_crosschain_identifier]
-          channel_obj['hidden'] = encrypted_key == null
-          var unencrypted_keys = []
-          for(var k=0; k<channel_data['channel_keys'].length; k++){
-            var focused_encrypted_key = channel_data['channel_keys'][k][my_unique_crosschain_identifier]
-            if(focused_encrypted_key != null){
-              if(channel_data['channel_keys'][k]['encryptor_pub_key'] != null){
-                var my_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, channel_data['channel_keys'][k]['encryptor_pub_key'])
-                unencrypted_keys.push(my_key.toString())
+          if(Object.keys(channel_data['channel_keys'][active_key]).length != 0){
+            var encrypted_key = channel_data['channel_keys'][active_key][my_unique_crosschain_identifier]
+            channel_obj['hidden'] = encrypted_key == null
+            var unencrypted_keys = []
+            for(var k=0; k<channel_data['channel_keys'].length; k++){
+              var focused_encrypted_key = channel_data['channel_keys'][k][my_unique_crosschain_identifier]
+              if(focused_encrypted_key != null){
+                if(channel_data['channel_keys'][k]['encryptor_pub_key'] != null){
+                  var my_key = this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, channel_data['channel_keys'][k]['encryptor_pub_key'])
+                  unencrypted_keys.push(my_key.toString())
+                }else{
+                  var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
+                  var my_key = await ecies.decrypt(private_key_to_use, uint8array)
+                  unencrypted_keys.push(my_key.toString())
+                }
               }else{
-                var uint8array = Uint8Array.from(focused_encrypted_key.split(',').map(x=>parseInt(x,10)));
-                var my_key = await ecies.decrypt(private_key_to_use, uint8array)
-                unencrypted_keys.push(my_key.toString())
+                unencrypted_keys.push('')
               }
-            }else{
-              unencrypted_keys.push('')
             }
+            channel_obj['unencrypted_keys'] = unencrypted_keys
+            console.log('apppage', 'channel keys',channel_data.entered_title_text, unencrypted_keys)
           }
-          channel_obj['unencrypted_keys'] = unencrypted_keys
-          console.log('apppage', 'channel keys',channel_data.entered_title_text, unencrypted_keys)
         }
 
 

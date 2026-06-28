@@ -449,7 +449,7 @@ class SpendDetailSection extends Component {
                                     {/* {this.render_post_state(selected_object)} */}
                                     {index == 6 && this.render_token_type(selected_object)}
                                     {index == 7 && this.render_object_age(selected_object, item)}
-                                    {index == 8 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3098l']/* 'Access Rights' */, 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
+                                    {index == 8 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
                                     {index == 9 && this.render_detail_item('0')}
 
                                     {index == 10 && this.render_detail_item('3', item['token_type'])}

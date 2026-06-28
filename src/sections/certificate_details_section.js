@@ -1056,7 +1056,7 @@ class CertificateDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}         
                     
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2363']/* 'Exchange Transfer' */, 'details':this.props.app_state.loc['3098l']/* 'Transfer the exchange\'s account balances to a specified target.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2363']/* 'Exchange Transfer' */, 'details':this.props.app_state.loc['3098bp']/* 'Transfer the exchange\'s account balances to a specified target.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_buy_token_uis(object)}
                     <div style={{height:10}}/>

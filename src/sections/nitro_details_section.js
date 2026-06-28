@@ -128,7 +128,7 @@ class NitroDetailsSection extends Component {
                 active:'e',
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['c2527cr']/* '/events' */, this.props.app_state.loc['c2527cs']/* '/data' */, this.props.app_state.loc['c2527ct']/* '/tags' */, this.props.app_state.loc['c2527cu']/* '/marco' */, this.props.app_state.loc['c2527cv']/* '/traffic_stats' */, this.props.app_state.loc['c2527cw']/* '/trends' */, this.props.app_state.loc['c2527cx']/* '/reserve_upload' */, this.props.app_state.loc['c2527cy']/* '/upload' */, this.props.app_state.loc['c2527cz']/* '/account_storage_data' */, this.props.app_state.loc['c2527da']/* '/stream_file' */, this.props.app_state.loc['c2527db']/* '/store_data' */, this.props.app_state.loc['c2527dc']/* '/streams' */, this.props.app_state.loc['c2527dd']/* '/itransfers' */, this.props.app_state.loc['c2527de']/* '/bill_payments' */, this.props.app_state.loc['c2527df']/* '/subscription' */, this.props.app_state.loc['c2527dg']/* '/count_votes' */, this.props.app_state.loc['c2527dh']/* '/subscription_income_stream_datapoints' */, this.props.app_state.loc['c2527di']/* '/creator_group_payouts' */, this.props.app_state.loc['c2527dj']/* '/delete_files' */, this.props.app_state.loc['c2527dn']/* '/token_price' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['c2527cr']/* '/events' */, this.props.app_state.loc['c2527cs']/* '/data' */, this.props.app_state.loc['c2527ct']/* '/tags' */, this.props.app_state.loc['c2527cu']/* '/marco' */, this.props.app_state.loc['c2527cv']/* '/traffic_stats' */, this.props.app_state.loc['c2527cw']/* '/trends' */, this.props.app_state.loc['c2527cx']/* '/reserve_upload' */, this.props.app_state.loc['c2527cy']/* '/upload' */, this.props.app_state.loc['c2527cz']/* '/account_storage_data' */, this.props.app_state.loc['c2527da']/* '/stream_file' */, this.props.app_state.loc['c2527db']/* '/store_data' */, this.props.app_state.loc['c2527dc']/* '/streams' */, this.props.app_state.loc['c2527dd']/* '/itransfers' */, this.props.app_state.loc['c2527de']/* '/bill_payments' */, this.props.app_state.loc['c2527df']/* '/subscription' */, this.props.app_state.loc['c2527dg']/* '/count_votes' */, this.props.app_state.loc['c2527dh']/* '/subscription_income_stream_datapoints' */, this.props.app_state.loc['c2527di']/* '/creator_group_payouts' */, this.props.app_state.loc['c2527dj']/* '/delete_files' */, this.props.app_state.loc['c2527dn']/* '/token_price' */, this.props.app_state.loc['c2527ei']/* '/coin_and_externals_data' */, this.props.app_state.loc['c2527ej']/* '/send_signature_request' */, this.props.app_state.loc['c2527ek']/* '/send_prepurchase_transaction' */, this.props.app_state.loc['c2527el']/* '/tag_prices' */], [1]
             ],
         };
     }
@@ -1868,6 +1868,11 @@ class NitroDetailsSection extends Component {
         obj[this.props.app_state.loc['c2527dh']/* '/subscription_income_stream_datapoints' */] = '/subscription_income_stream_datapoints'
         obj[this.props.app_state.loc['c2527di']/* '/creator_group_payouts' */] = '/creator_group_payouts'
         obj[this.props.app_state.loc['c2527dj']/* '/delete_files' */] = '/delete_files'
+        obj[this.props.app_state.loc['c2527ei']/* '/coin_and_externals_data' */] = '/coin_and_externals_data'
+        obj[this.props.app_state.loc['c2527dn']/* '/token_price' */] = '/token_price'
+        obj[this.props.app_state.loc['c2527ej']/* '/send_signature_request' */] = '/send_signature_request'
+        obj[this.props.app_state.loc['c2527ek']/* '/send_prepurchase_transaction' */] = '/send_prepurchase_transaction'
+        obj[this.props.app_state.loc['c2527el']/* '/tag_prices' */] = '/tag_prices'
 
         return obj[this.get_selected_item(this.state.request_stats_chart_tags_object, 'e')]
     }

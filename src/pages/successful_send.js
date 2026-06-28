@@ -491,7 +491,15 @@ class SuccessfulSend extends Component {
             return `https://arbitrum-nova.blockscout.com/tx/${hash}`
         }else if(e5 == 'E1345'){
             return `https://explorer.arena-z.gg/tx/${hash}`
+        }else if(e5 == 'E1355'){
+            return `https://blockscout.polkadot.io/tx/${hash}`
+        }else if(e5 == 'E1365'){
+            return `https://explorer.immutable.com/tx/${hash}`
+        }else if(e5 == 'E1375'){
+            return `https://kitescan.ai/tx/${hash}`
         }
+
+
         else{
             var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link
             if(blockexplorer_link != null){

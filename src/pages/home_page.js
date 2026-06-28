@@ -5520,8 +5520,8 @@ class home_page extends Component {
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
-        const data = this.props.app_state.coin_data[item_object['symbol']]
-        if(this.props.app_state.has_wallet_been_set && data['address'] != null && this.is_address_set(data['address'])){
+        const data = this.props.app_state.coin_data[item_object['symbol']] || {}
+        if(this.props.app_state.has_wallet_been_set == true && data['address'] != null && this.is_address_set(data['address'])){
             this.props.update_coin_balances(item_object['symbol'], false, true)
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()

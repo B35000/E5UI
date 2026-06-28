@@ -115,9 +115,12 @@ class NewStorefrontItemPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */, 'e.'+this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */, this.props.app_state.loc['c311cf']/* access */, this.props.app_state.loc['441']/* 'variants' *//* , this.props.app_state.loc['535h'] *//* 'purchase-options' */, this.props.app_state.loc['535am']/* 'expiry-time' */, this.props.app_state.loc['535aw']/* 'registration-deposit' */], [0]
+                    ['or','',0], ['e', 'e.'+this.props.app_state.loc['162az']/* configuration */, 'e.'+this.props.app_state.loc['110']/* 'e.text' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
                 ],
             };
+            obj[this.props.app_state.loc['162az']/* configuration */] = [
+                ['or','',0], [this.props.app_state.loc['162az']/* configuration */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['c311cf']/* access */, this.props.app_state.loc['535am']/* 'expiry-time' */, this.props.app_state.loc['535aw']/* 'registration-deposit' */], [0]
+            ];
         }else{
             //normal storefront
             obj = {
@@ -125,20 +128,23 @@ class NewStorefrontItemPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */, 'e.'+this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' *//* , this.props.app_state.loc['c311cf'] *//* access */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' *//* , this.props.app_state.loc['535am'] *//* 'expiry-time' *//* , this.props.app_state.loc['535aw'] *//* 'registration-deposit' */], [0]
+                    ['or','',0], ['e', 'e.'+this.props.app_state.loc['162az']/* configuration */, 'e.'+this.props.app_state.loc['110']/* 'e.text' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */], [0]
                 ],
             };
+            obj[this.props.app_state.loc['162az']/* configuration */] = [
+                ['or','',0], [this.props.app_state.loc['162az']/* configuration */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' */], [0]
+            ];
         }
 
         obj[this.props.app_state.loc['115']] = [
-                ['or','',0], [this.props.app_state.loc['115']/* 'text' */, 'e.'+this.props.app_state.loc['120']/* 'e.font' */, 'e.'+this.props.app_state.loc['121']/* 'e.size' */], [0]
-            ];
+            ['or','',0], [this.props.app_state.loc['115']/* 'text' */, 'e.'+this.props.app_state.loc['120']/* 'e.font' */, 'e.'+this.props.app_state.loc['121']/* 'e.size' */], [0]
+        ];
         obj[this.props.app_state.loc['116']] = [
-                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
-            ];
+            ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
+        ];
         obj[this.props.app_state.loc['117']] = [
-                ['xor','e',1], [this.props.app_state.loc['117']/* 'size' */,'15px','11px','25px','40px'], [1],[1]
-            ];
+            ['xor','e',1], [this.props.app_state.loc['117']/* 'size' */,'15px','11px','25px','40px'], [1],[1]
+        ];
 
         return obj;
     }
@@ -416,9 +422,9 @@ class NewStorefrontItemPage extends Component {
                 <div>
                     {this.render_enter_tags_part()}
                 </div>
-            )    
+            )
         }
-        if(selected_item == this.props.app_state.loc['440']/* 'configuration' */){
+        if(selected_item == this.props.app_state.loc['162az']/* configuration */){
             return(
                 <div>
                     {this.render_storefront_configuration_part()}

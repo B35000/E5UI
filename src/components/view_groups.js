@@ -792,7 +792,7 @@ class ViewGroups extends Component {
                         ctx.moveTo(point.x, chartArea.top);
                         ctx.lineTo(point.x, chartArea.bottom);
                         ctx.lineWidth = 1;
-                        ctx.strokeStyle = config.chartColor;
+                        ctx.strokeStyle = config.labelFontColor;
                         ctx.setLineDash([4, 4]);
                         ctx.stroke();
                         ctx.setLineDash([]);
