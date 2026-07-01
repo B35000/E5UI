@@ -718,6 +718,9 @@ class NewNitroPage extends Component {
         else if(!this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['a273r']/* 'You need to set your wallet first to encrypt that nitro key.' */, 4000)
         }
+        else if(this.has_url_already_been_used(link)){
+            this.props.notify(this.props.app_state.loc['a273y']/* 'That link is already in use.' */, 4000)
+        }
         else{
             this.props.test_node_url_link(link, key)
         }
@@ -731,6 +734,18 @@ class NewNitroPage extends Component {
             return false;  
         }
         return /* url.protocol === "http:" || */ url.protocol === "https:" || url.protocol === "wss:";
+    }
+
+    has_url_already_been_used(string){
+        var has_been_used = false
+        Object.keys(this.props.app_state.nitro_links).forEach(e5 => {
+            Object.values(this.props.app_state.nitro_links[e5]).forEach(link => {
+                if(string == link){
+                    has_been_used = true
+                }
+            });
+        });
+        return has_been_used
     }
 
     set_node_url(link, encrypted_key){
@@ -2088,7 +2103,18 @@ class NewNitroPage extends Component {
 
 
 
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
 
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
 
     render_empty_views(size){
         var items = []

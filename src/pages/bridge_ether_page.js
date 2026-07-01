@@ -41,7 +41,7 @@ class BridgeEtherPage extends Component {
     
     state = {
         selected: 0, get_bridge_ether_tags_object: this.get_bridge_ether_tags_object(),
-        picked_wei_amount: 0, recipient_address:'',
+        picked_wei_amount: 0, recipient_address:'', cypher_passcode:'',
     };
 
     get_bridge_ether_tags_object(){
@@ -181,6 +181,17 @@ class BridgeEtherPage extends Component {
 
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
 
+
+                {this.props.app_state.locked_wallet_hashed_password != '' && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'If you locked your wallet, set the password used here.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                    </div>
+                )}
+
             </div>
         )
     }
@@ -215,6 +226,10 @@ class BridgeEtherPage extends Component {
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['3095s']/* 'Bridge transactions usually take 10 to 20 minutes to finialize.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
             </div>
         )
+    }
+
+    when_passcode_input_field_changed(text){
+        if(this.props.app_state.locked_wallet_hashed_password != '') this.setState({cypher_passcode: text})
     }
 
     when_text_input_field_changed(text){
@@ -343,10 +358,24 @@ class BridgeEtherPage extends Component {
         else if((picked_amount+gas_price) > my_balance){
             this.props.notify(this.props.app_state.loc['1404']/* 'Your ether balance is insufficient to fulfil that transaction.' */, 7200)
         }
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && this.state.cypher_passcode.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
+        }
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && !this.does_password_match_hash(this.state.cypher_passcode.trim())){
+            this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
         else{
             this.props.show_dialog_bottomsheet({'picked_amount':picked_amount, 'item':this.state.item, 'recipient_address':recipient_address, 'gas_price':gas_price, 'my_balance':my_balance, 'sender_address':this.get_account_address()}, 'confirm_bridge_ether_dialog')
         }
         
+    }
+
+    does_password_match_hash(passcode){
+        if(this.props.app_state.locked_wallet_hashed_password != ''){
+            const provided_hash = this.props.hash_data_with_randomizer(passcode);
+            return provided_hash == this.props.app_state.locked_wallet_hashed_password
+        }
+        else return true
     }
 
     isValidAddress = (adr) => {

@@ -724,9 +724,24 @@ class EditNitroPage extends Component {
         else if(!this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['a273r']/* 'You need to set your wallet first to encrypt that nitro key.' */, 4000)
         }
+        else if(this.has_url_already_been_used(link)){
+            this.props.notify(this.props.app_state.loc['a273y']/* 'That link is already in use.' */, 4000)
+        }
         else{
             this.props.test_node_url_link(link, key)
         }
+    }
+
+    has_url_already_been_used(string){
+        var has_been_used = false
+        Object.keys(this.props.app_state.nitro_links).forEach(e5 => {
+            Object.values(this.props.app_state.nitro_links[e5]).forEach(link => {
+                if(string == link){
+                    has_been_used = true
+                }
+            });
+        });
+        return has_been_used
     }
 
     isValidURL(string) {

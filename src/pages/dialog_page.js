@@ -742,6 +742,9 @@ class DialogPage extends Component {
         else if(option == 'confirm_password_before_opening_contract'){
             return this.view_confirm_password_before_opening_contract_ui()
         }
+        else if(option == 'quick_pay_for_subscription'){
+            return this.view_quick_pay_for_subscription_ui()
+        }
     }
 
 
@@ -15502,7 +15505,6 @@ return data['data']
         }
     }
 
-
     render_confirm_password_before_opening_contract_data(){
         const object = this.state.data['object']
         return(
@@ -15613,8 +15615,351 @@ return data['data']
 
 
 
+
+    view_quick_pay_for_subscription_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_quick_pay_for_subscription_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_quick_pay_for_subscription_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_pay_for_subscription_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_pay_for_subscription_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_pay_for_subscription_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_pay_for_subscription_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_quick_pay_for_subscription_data(){
+        const subscription = this.state.data['object']
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qv']/* 'Youll need to select time-units to purchase from the options provided below.' */, 'title':this.props.app_state.loc['3055qw']/* 'Purchase Time Units.' */})}
+                <div style={{height:10}}/>
+                {this.render_subscription_object(subscription)}
+                {this.render_detail_item('0')}
+
+                {this.render_subscription_payment_amount_options(subscription)}
+                <div style={{height:10}}/>
+                {this.render_subscription_fees(subscription)}
+            </div>
+        )
+    }
+
+    render_quick_pay_for_subscription_data2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qs']/* 'You may optionally set the gas price, or how quickly your transfers are to be validated. Slow is the default used.' */, 'title':this.props.app_state.loc['3055qr']/* 'Select Gas Price.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_gas_price_options()}
+
+                {this.props.app_state.locked_wallet_hashed_password != '' && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'If you locked your wallet, set the password used here.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
+
+
+                {is_running == true || (this.props.app_state.did_just_set_wallet == true && this.props.app_state.pre_launch_fetch_loading == true) ? (
+                    <div style={{'padding': '5px'}}>
+                        {this.render_small_skeleton_object()}
+                    </div>
+                ) : (
+                    <div>
+                        <div style={{'padding': '5px'}} onClick={() => this.begin_subscription_purchases()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055qy']/* Run Subscriptions' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_subscription_object(object){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_subscription_item(object)
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    render_subscription_payment_amount_options(subscription){
+        const items = this.calculate_time_unit_options(subscription)
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_custom_time_unit_picked(item)}>
+                            {this.render_detail_item('3', {'title': this.props.app_state.loc['3055qx']/* '$ Time-Units' */.replace('$', item['units']), 'details':this.get_time_diff(item['time']), 'size':'l'})}
+                            {this.render_line_if_selected2(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_custom_time_unit_picked(item){
+        this.setState({selected_time_unit_item: item})
+    }
+
+    render_line_if_selected2(item){
+        if(this.state.selected_time_unit_item != null && this.state.selected_time_unit_item['time'] == item['time']){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    calculate_time_unit_options(subscription){
+        const time_unit = subscription['data'][1][5/* <5>time_unit */];
+        const minimum_buy_amount = subscription['data'][1][1/* <1>minimum_buy_amount */];
+        const maximum_buy_amount = subscription['data'][1][3/* <3>maximum_buy_amount */];
+
+        const units_to_use = []
+
+        var small_amount = Math.ceil((60*60*24*3) / time_unit)
+        var minimum = false
+        if(small_amount < minimum_buy_amount){
+            small_amount = minimum_buy_amount
+            minimum = true
+        }
+        units_to_use.push({'units':small_amount, 'time':(small_amount * time_unit), 'minimum': minimum, 'maximum':false})
+
+
+
+
+        var medium_amount = Math.ceil((60*60*24*8) / time_unit)
+        var maximum = false
+        if(medium_amount > maximum_buy_amount){
+            medium_amount = maximum_buy_amount
+            maximum = true
+        }
+        if(units_to_use[units_to_use.length-1]['units'] != medium_amount){
+            units_to_use.push({'units':medium_amount, 'time':(medium_amount * time_unit), 'minimum': false, 'maximum':maximum})
+        }
+
+
+
+        var large_amount = Math.ceil((60*60*24*14) / time_unit)
+        var maximum = false
+        if(large_amount > maximum_buy_amount){
+            large_amount = maximum_buy_amount
+            maximum = true
+        }
+        if(units_to_use[units_to_use.length-1]['units'] != large_amount){
+            units_to_use.push({'units':large_amount, 'time':(large_amount * time_unit), 'minimum': false, 'maximum':maximum})
+        }
+
+
+
+        var extreme_amount = Math.ceil((60*60*24*28) / time_unit)
+        var maximum = false
+        if(extreme_amount > maximum_buy_amount){
+            extreme_amount = maximum_buy_amount
+            maximum = true
+        }
+        if(units_to_use[units_to_use.length-1]['units'] != extreme_amount){
+            units_to_use.push({'units':extreme_amount, 'time':(extreme_amount * time_unit), 'minimum': false, 'maximum':maximum})
+        }
+
+
+
+
+        var enormous_amount = Math.ceil((60*60*24*56) / time_unit)
+        var maximum = false
+        if(enormous_amount > maximum_buy_amount){
+            enormous_amount = maximum_buy_amount
+            maximum = true
+        }
+        if(units_to_use[units_to_use.length-1]['units'] != enormous_amount){
+            units_to_use.push({'units':enormous_amount, 'time':(enormous_amount * time_unit), 'minimum': false, 'maximum':maximum})
+        }
+
+
+
+        if(units_to_use.length < 4){
+            const difference = maximum_buy_amount - minimum_buy_amount
+            for(var i=0; i<difference; i+=(Math.floor(difference/3)-1)){
+                const focused_amount = minimum_buy_amount + i
+                units_to_use.push({'units':focused_amount, 'time':(focused_amount * time_unit), 'minimum': false, 'maximum':false})
+            }
+        }
+
+        return this.sortByAttributeDescending(units_to_use, 'time').reverse()
+    }
+
+    render_subscription_fees(subscription){
+        const buy_tokens = subscription['data'][2]
+        const buy_amounts = subscription['data'][3]
+        const buy_depths = subscription['data'][4]
+        const bt = [].concat(buy_tokens)
+        const e5 = subscription['e5']
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                    {bt.map((item, index) => (
+                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':buy_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(this.calculate_final_amount(buy_amounts[index])), 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                        </li>
+                    ))}
+                </ul>
+            </div>  
+        )
+    }
+
+    calculate_final_amount(price){
+        if(this.state.selected_time_unit_item != null){
+            return bigInt(price).multiply(this.state.selected_time_unit_item['units'])
+        }else{
+            return bigInt(price).multiply(0)
+        }
+    }
+
+    begin_subscription_purchases(){
+        const selected_unit = this.state.selected_time_unit_item
+        const subscription = this.state.data['subscription']
+
+        if(selected_unit == null){
+            this.props.notify(this.props.app_state.loc['3055qz']/* You need to select some time units first. */, 5000)
+        }
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && this.state.cypher_passcode.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
+        }
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && !this.does_password_match_hash(this.state.cypher_passcode.trim())){
+            this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
+        else if(!this.can_sender_pay_for_subscription(subscription)){
+            this.props.notify(this.props.app_state.loc['879']/* 'Your token balance is insufficient for that time unit purchase.' */, 4500)
+        }
+        else{
+            const time_units = selected_unit['units']
+            const selected_gas_prices = this.get_selected_gas_price_data()
+            const post = this.state.data['post']
+            const type = this.state.data['type']
+            this.props.start_quick_purchase_subscription_action(subscription, selected_gas_prices, time_units, post, type)
+        }
+    }
+
+    can_sender_pay_for_subscription(subscription){
+        var can_pay = true;
+        var entry_tokens = subscription['data'][2]
+        var entry_fees = subscription['data'][3]
+
+        for(var i=0; i<entry_tokens.length; i++){
+            var token_id = entry_tokens[i]
+            var token_balance = this.props.calculate_actual_balance(subscription['e5'], token_id)
+            var final_amount = this.calculate_final_amount(entry_fees[i])
+
+            if(token_balance < final_amount){
+                can_pay = false
+            }
+        }
+
+        return can_pay;
+            
+    }
+
+
+
+
+
+
+
+
+
+
+
     
 
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
 
     get_all_sorted_objects(object){
         var all_objects = []

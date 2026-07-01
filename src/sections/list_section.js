@@ -4804,11 +4804,7 @@ class PostListSection extends Component {
         //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
         // });
         setTimeout(() => this.props.when_post_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object), animate_time);
-        // if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-        // }else{
-        //     setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'post'), animate_time);
-            
-        // }
+        
     }
 
     get_senders_name(sender, object){

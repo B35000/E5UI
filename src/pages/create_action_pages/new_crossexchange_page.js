@@ -125,7 +125,7 @@ class NewCrossexchangePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['e311d']/* 'exchange-targets 🎯' */, this.props.app_state.loc['e311o']/* 'configuration ⚙️' */, this.props.app_state.loc['e311c']/* 'authorities 👮' */, this.props.app_state.loc['e311b']/* 'swap-prices 💵' */, 'e.'+this.props.app_state.loc['110']/* text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */ ], [0]
+                ['or','',0], ['e', 'e.'+this.props.app_state.loc['162az']/* configuration */ , 'e.'+this.props.app_state.loc['110']/* text */, this.props.app_state.loc['112']/* images */, this.props.app_state.loc['162r']/* 'pdfs' */, this.props.app_state.loc['162q']/* 'zip-files' */, this.props.app_state.loc['a311bq']/* 'markdown' */ ], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
@@ -139,14 +139,17 @@ class NewCrossexchangePage extends Component {
         };
 
         obj[this.props.app_state.loc['115']] = [
-                ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
-            ]
+            ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
+        ]
         obj[this.props.app_state.loc['116']] = [
-                ['xor','e',1], [this.props.app_state.loc['116'],'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
-            ]
+            ['xor','e',1], [this.props.app_state.loc['116'],'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
+        ]
         obj[this.props.app_state.loc['117']] = [
-                ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
-            ]
+            ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
+        ]
+        obj[this.props.app_state.loc['162az']/* configuration */] = [
+            ['xor','e',1], [this.props.app_state.loc['162az']/* configuration */,this.props.app_state.loc['e311d']/* 'exchange-targets 🎯' */, this.props.app_state.loc['e311o']/* 'configuration ⚙️' */, this.props.app_state.loc['e311c']/* 'authorities 👮' */, this.props.app_state.loc['e311b']/* 'swap-prices 💵' */], [1],[1]
+        ]
         return obj;
     }
 

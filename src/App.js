@@ -2329,7 +2329,8 @@ class App extends Component {
       '( ˶ˆ꒳ˆ˵ )',
       '(¬`‸´¬)',
       '≽^•⩊•^≼',
-      '(ó﹏ò｡)'
+      '(ó﹏ò｡)',
+      '(≖_≖ )',
     ]
   }
 
@@ -5166,10 +5167,9 @@ class App extends Component {
       userCountry = timeZoneCityToCountry[userCity];
     }
     
-    // console.log("Time Zone:", userTimeZone);
-    // console.log("Region:", userRegion);
-    // console.log("City:", userCity);
-    // console.log("Country:", userCountry);
+    console.log('location_info',"Region:", userRegion);
+    console.log('location_info',"City:", userCity);
+    console.log('location_info',"Country:", userCountry);
 
     return { userCountry: userCountry, userRegion: userRegion, userCity: userCity }
 
@@ -18963,7 +18963,7 @@ class App extends Component {
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
 
-        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)}
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)}
         />
       </div>
     )
@@ -19079,6 +19079,7 @@ class App extends Component {
       'view_fractionalized_certificate_item_details':600,
       'confirm_quick_transfer_data':550,
       'confirm_password_before_opening_contract':430,
+      'quick_pay_for_subscription':600,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -20560,6 +20561,121 @@ class App extends Component {
 
   open_private_contract(data){
     this.homepage.current?.when_contract_item_clicked(data['index'], data['id'], data['e5'], null, data['object'])
+  }
+
+  async start_quick_purchase_subscription_action(subscription, selected_gas_prices, time_units, post, type){
+    this.prompt_top_notification(this.getLocale()['3055ra']/* 'Running your Subscription Purchase...' */, 4600);
+    this.lock_run_in_stack(true);
+    const e5 = subscription['e5']
+    const web3_url = this.get_web3_url_from_e5(e5)
+    const web3 = new Web3(web3_url);
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.get_contract_from_e5(e5)
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
+    const me = this
+
+    const now = await contractInstance.methods.f147(2).call((error, result) => {})
+    const run_expiry_time = parseInt(now) + parseInt(60*60*5)
+
+    const v5/* t_limits */ = [100000000000000, run_expiry_time];
+    var network_run_gas_price = await web3.eth.getGasPrice()
+    var run_gas_price = selected_gas_prices.run_gas_price == 0 ? network_run_gas_price : selected_gas_prices.run_gas_price
+    console.log("gasPrice: "+run_gas_price);
+    const gasLimit = this.get_gas_limit(e5) || 3_500_000;
+    const nonce = await web3.eth.getTransactionCount(me.state.accounts[e5].address, 'pending');
+
+    const adds = []
+    const ints = []
+    const strs = []
+
+    const purchase_object = [/* pay subscription */
+      [30000, 2, 0],
+      [subscription['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target subscription ids */
+      [time_units.toString().toLocaleString('fullwide', {useGrouping:false})]/* subscription buy amounts */
+    ]
+
+    strs.push([])
+    adds.push([])
+    ints.push(purchase_object)
+
+    const encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
+
+    var tx = {
+      nonce,
+      gas: gasLimit,
+      value: '0',
+      to: contractAddress,
+      data: encoded,
+      gasPrice: run_gas_price.toString(),
+    }
+
+    if(this.state.e5s[e5].type == '1559'){
+      const block = await web3.eth.getBlock('pending');
+      run_gas_price = selected_gas_prices.picked_max_priority_per_gas_amount == 0 ?  Number(block.baseFeePerGas) : selected_gas_prices.picked_max_priority_per_gas_amount
+      const maxPriorityFeePerGas = ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price);
+      const maxFeePerGas = selected_gas_prices.picked_max_fee_per_gas_amount == 0 ? (maxPriorityFeePerGas * 2) : selected_gas_prices.picked_max_fee_per_gas_amount
+
+      tx = {
+        nonce,
+        gas: gasLimit,
+        value: '0',
+        to: contractAddress,
+        data: encoded,
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        type: '0x2', // explicitly mark as EIP-1559
+      }
+    }
+    
+    web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
+      web3.eth.sendSignedTransaction(signed.rawTransaction)
+      .on('transactionHash', (hash) => {
+        console.log('TX broadcasted to mempool:', hash);
+      })
+      .on('receipt', async (receipt) => {
+        await me.set_extra_subsctiption_data(subscription)
+        me.lock_run_in_stack(false)
+        me.reload_my_balances()
+        me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
+        me.navigate_to_homepage_post(post, type)
+      })
+      .on('error', (error) => {
+        console.error('Transaction error:', error);
+        me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
+        me.lock_run_in_stack(false)
+        me.get_wallet_data_for_specific_e5(e5, true)
+      });
+    })
+  }
+
+  navigate_to_homepage_post(object, type){
+    if(this.state.dialog_bottomsheet == true) this.open_dialog_bottomsheet();
+    if(this.homepage.current?.state.post_preview_bottomsheet == true) this.homepage.current?.open_post_preview_bottomsheet();
+
+    if(type == 'channel'){
+      this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1214']/* 'channels' */})
+      this.homepage.current?.when_channel_item_clicked(0, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(type == 'post'){
+      
+    }
+    else if(type == 'audio'){
+      this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1264k']/* 'audioport' */})
+      this.homepage.current?.when_audio_item_clicked(0, object['id'], object['e5'], object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+    else if(type == 'video'){
+      this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1264p']/* 'videoport' */})
+      this.homepage.current?.when_video_item_clicked(0, object['id'], object['e5'], this.is_post_nsfw(object), object, 'ignore')
+      this.homepage.current?.reset_post_detail_object()
+    }
+  }
+
+  is_post_nsfw(object){
+    if(object['ipfs'].get_post_nsfw_option == null) return false
+    var selected_nsfw_option = this.get_selected_item2(object['ipfs'].get_post_nsfw_option, 'e')
+    if(selected_nsfw_option == 1) return true
   }
 
 
@@ -25906,7 +26022,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <BridgeEtherPage ref={this.bridge_ether_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
-      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)}
       />,
       this.state.bridge_ether_bottomsheet,
       this.open_bridge_ether_bottomsheet,
@@ -27464,9 +27580,11 @@ class App extends Component {
       }
       this.set_document_title(this.state.document_title)
  
+      await this.set_sunrise_sunset_times()
+      await this.wait(300)
       await this.load_cities_data()
       this.load_coin_and_ether_coin_prices()
-      this.set_sunrise_sunset_times()
+      
 
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
@@ -27516,7 +27634,11 @@ class App extends Component {
       this.load_coin_and_ether_coin_prices()
       this.inc_synch_progress()
 
-      this.load_cities_data()
+      await this.set_sunrise_sunset_times()
+      await this.wait(300)
+      this.inc_synch_progress()
+      await this.load_cities_data()
+      this.inc_synch_progress()
 
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
@@ -27580,10 +27702,28 @@ class App extends Component {
       const sunrise = new Date(data.results.sunrise);
       const sunset = new Date(data.results.sunset);
 
+      // const user_region = loc['region']
+      const region_code_to_names = {
+        'AF': 'Africa', 
+        'NA':'North America', 
+        'OC':'Oceania', 
+        'AN':'Antarctica', 
+        'AS':'Asia', 
+        'EU':'Europe', 
+        'SA':'South America',
+      }
+      const country = loc['country_name']
       const user_city = loc['city']
-      const user_region = loc['region']
+      const user_region = region_code_to_names[loc['continent_code']]
+
+      console.log('location_info', 'sunrise_sunset_data', 'city', user_city)
+      console.log('location_info', 'sunrise_sunset_data', 'country', country)
+      console.log('location_info', 'sunrise_sunset_data', 'user_region', user_region)
 
       this.setState({sunrise: sunrise, sunset: sunset, city: user_city, region: user_region})
+      if(this.state.device_country == null || this.state.device_country == ''){
+        this.setState({device_country: country, device_city: user_city, device_region: user_region, device_country_code: this.get_country_code(country)})
+      }
     }catch(e){
       console.log('apppage', e)
     }

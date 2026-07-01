@@ -2021,8 +2021,9 @@ class home_page extends Component {
         }, (1 * 500));
     }
 
-    when_post_preview_subscription_tapped(subscription){
-        this.props.show_pay_subscription_bottomsheet(subscription)
+    when_post_preview_subscription_tapped(subscription, post, type){
+        // this.props.show_pay_subscription_bottomsheet(subscription)
+        this.props.show_dialog_bottomsheet({'object':subscription, 'post':post, 'type':type}, 'quick_pay_for_subscription')
     }
 
 
@@ -4934,7 +4935,7 @@ class home_page extends Component {
     sort_feed_based_on_trending_metric(objects){
         const unsorted_objects = []
         const get_entry_count = (selected_item, extra_data) => {
-            if(extra_data[selected_item] == null) return 0;
+            if(extra_data == null || extra_data[selected_item] == null) return 0;
             const view_data = extra_data[selected_item]['entries']
             const sorted_view_data = this.sortByAttributeDescending(view_data, 'time')
             const filter_time = Date.now() - (1000*60*60*35)

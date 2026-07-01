@@ -326,7 +326,7 @@ class PostPreview extends Component {
 
 
     when_subscription_item_clicked(index, object){
-        this.props.when_post_preview_subscription_tapped(object)
+        this.props.when_post_preview_subscription_tapped(object, this.state.post_object, this.state.type)
     }
 
     format_subscription_item(object){
