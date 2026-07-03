@@ -232,7 +232,7 @@ class EthersDetailsSection extends Component {
         const market_cap_data = this.props.app_state.asset_price_data[item['symbol']]
         const market_cap = market_cap_data == null ? null : parseInt(market_cap_data['cap'])
 
-        const get_market_cap_in_sats = (denom_coin_name, conversion) => {
+        const get_market_cap_in_sats = (denom_coin_name, conversion, supply) => {
             const total_supply = supply == null ? 0.0 : supply
             if(this.props.app_state.asset_price_data['BTC'] == null || this.props.app_state.asset_price_data[item['symbol']] == null) return;
             const coin_price = this.props.app_state.asset_price_data[item['symbol']]['price']
@@ -240,10 +240,29 @@ class EthersDetailsSection extends Component {
             const balance_value_in_usd = coin_price * total_supply;
             const number_of_btc_for_one_usd = 1 / bitcoin_price
             const balance_value_in_btc = number_of_btc_for_one_usd * balance_value_in_usd
-            const balance_value_in_sat = parseInt(balance_value_in_btc * conversion)
-            return balance_value_in_sat
+            if(supply == 1){
+                const balance_value_in_sat = parseFloat(balance_value_in_btc * conversion).toFixed(4)
+                return balance_value_in_sat
+            }else{
+                const balance_value_in_sat = parseInt(balance_value_in_btc * conversion)
+                return balance_value_in_sat
+            }
         }
-        const market_cap_in_sats = get_market_cap_in_sats('BTC', this.props.app_state.coins['BTC']['conversion'])
+        const market_cap_in_sats = get_market_cap_in_sats('BTC', this.props.app_state.coins['BTC']['conversion'], supply)
+
+        const decimal_price = market_cap_data == null ? null : parseFloat(market_cap / supply).toFixed(2)
+        const decimal_price_in_sats = get_market_cap_in_sats('BTC', this.props.app_state.coins['BTC']['conversion'], 1)
+
+        const format_decimal_price_value = (value) => {
+            if(value < 1_000_000){
+                const split = value.toString().split('.')
+                const main = number_with_commas(split[0])
+                const deci = split[1]
+                return main+'.'+deci
+            }else{
+                return this.format_account_balance_figure(parseInt(value))
+            }
+        }
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 15px 0px 15px'}}>
                 <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
@@ -282,6 +301,21 @@ class EthersDetailsSection extends Component {
 
                                 <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481v']/* 'Ether\'s Atomic Supply.' */, 'number':atomic_supply, 'relativepower':'wei'})}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481v']/* 'Ether\'s Atomic Supply.' */, 'subtitle':this.format_power_figure(atomic_supply), 'barwidth':this.calculate_bar_width(atomic_supply), 'number':''+this.format_account_balance_figure(atomic_supply), 'barcolor':'#606060', 'relativepower':'wei', })}
+                                </div>
+                            </div>
+                            <div style={{height:10}}/>
+                        </div>
+                    )}
+
+                    {decimal_price != null && (
+                        <div>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481y']/* 'Ether\'s Decimal Price.' */, 'number':decimal_price, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481y']/* 'Ether\'s Decimal Price.' */, 'subtitle':this.format_power_figure(decimal_price), 'barwidth':this.calculate_bar_width(decimal_price), 'number':''+format_decimal_price_value(decimal_price), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */, })}
+                                </div>
+
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481z']/* 'Ether\'s Decimal Price in $' */.replace('$', 'SATs'), 'number':decimal_price_in_sats, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481z']/* 'Ether\'s Decimal Price in $' */.replace('$', 'SATs'), 'subtitle':this.format_power_figure(decimal_price_in_sats), 'barwidth':this.calculate_bar_width(decimal_price_in_sats), 'number':''+format_decimal_price_value(decimal_price_in_sats), 'barcolor':'#606060', 'relativepower':'SATs', })}
                                 </div>
                             </div>
                             <div style={{height:10}}/>
