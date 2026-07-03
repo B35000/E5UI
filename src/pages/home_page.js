@@ -6464,7 +6464,7 @@ class home_page extends Component {
 
                 load_accounts_non_fungible_token_data={this.props.load_accounts_non_fungible_token_data.bind(this)} perform_fractionalized_certificate_search={this.perform_fractionalized_certificate_search.bind(this)} get_verified_certificate_data={this.props.get_verified_certificate_data.bind(this)}
 
-                get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)}
+                get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)} show_bridge_coin_bottomsheet={this.props.show_bridge_coin_bottomsheet.bind(this)}
                 />
             </div>
         )

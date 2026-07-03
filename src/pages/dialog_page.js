@@ -745,6 +745,9 @@ class DialogPage extends Component {
         else if(option == 'quick_pay_for_subscription'){
             return this.view_quick_pay_for_subscription_ui()
         }
+        else if(option == 'confirm_bridge_coin_dialog'){
+            return this.view_confirm_bridge_coin_dialog_ui()
+        }
     }
 
 
@@ -15677,6 +15680,8 @@ return data['data']
     }
 
     render_quick_pay_for_subscription_data2(){
+        const subscription = this.state.data['object']
+        const is_running = this.props.app_state.is_running[subscription['e5']]
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qs']/* 'You may optionally set the gas price, or how quickly your transfers are to be validated. Slow is the default used.' */, 'title':this.props.app_state.loc['3055qr']/* 'Select Gas Price.' */})}
@@ -15912,6 +15917,155 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+
+    view_confirm_bridge_coin_dialog_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_bridge_coin_dialog_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_bridge_coin_dialog_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_bridge_coin_dialog_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_confirm_bridge_coin_dialog_data(){
+        const item = this.state.data['coin']
+        const parent_ether_name = item['name']
+        const data = this.props.app_state.coin_data[item['symbol']]
+        const address = data['address']
+        const balance_base_unit = this.state.data['balance_base_unit']
+        const balance_decimal = this.state.data['balance_decimal']
+        const recipient_address = this.state.data['recipient_address']
+        const picked_amount = this.state.data['picked_amount']
+        const gas_price = this.state.data['gas_price']
+        const transfer_amount = parseFloat(picked_amount) / item['conversion']
+        const gas_amount2 = parseFloat(gas_price) / item['conversion']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055oc']/* 'Confirm Bridge Action from $.' */.replace('$', parent_ether_name), 'details':this.props.app_state.loc['3055od']/* 'Confirm the details for the bridging action.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit'], 'number':balance_base_unit, 'relativepower':item['base_unit']})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['symbol'], 'subtitle':this.format_power_figure(balance_decimal), 'barwidth':this.calculate_bar_width(balance_decimal), 'number':(balance_decimal), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit'], 'subtitle':this.format_power_figure(balance_base_unit), 'barwidth':this.calculate_bar_width(balance_base_unit), 'number':this.format_account_balance_figure(balance_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':address, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3055of']/* 'Set Amount To Bridge.' */}</p>
+
+                    {this.render_detail_item('2', {
+                        'style':'s',
+                        'title':'',
+                        'subtitle':'',
+                        'barwidth':this.calculate_bar_width(picked_amount),
+                        'number':this.format_account_balance_figure(picked_amount),
+                        'barcolor':'#606060',
+                        'relativepower':item['base_unit']+'s',
+                    })}
+
+                    {this.render_detail_item('2', {
+                        'style':'s',
+                        'title':'',
+                        'subtitle':'',
+                        'barwidth':this.calculate_bar_width(transfer_amount),
+                        'number':(transfer_amount),
+                        'barcolor':'#606060',
+                        'relativepower':item['symbol'],
+                    })}
+                </div>
+
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1407j']/* Picked Transaction fee. */}</p>
+
+                    {this.render_detail_item('2', {
+                        'style':'s',
+                        'title':'',
+                        'subtitle':'',
+                        'barwidth':this.calculate_bar_width(gas_price),
+                        'number':this.format_account_balance_figure(gas_price),
+                        'barcolor':'#606060',
+                        'relativepower':item['base_unit']+'s',
+                    })}
+
+                    {this.render_detail_item('2', {
+                        'style':'s',
+                        'title':'',
+                        'subtitle':'',
+                        'barwidth':this.calculate_bar_width(gas_amount2),
+                        'number':(gas_amount2),
+                        'barcolor':'#606060',
+                        'relativepower':item['symbol'],
+                    })}
+                </div>
+                {/* <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'details':data['fee']['per'], 'title':this.props.app_state.loc['2922'] 'Per', 'size':'l'})} */}
+
+                <div style={{height:10}}/>
+                <div onClick={()=>this.confirm_bridge_coin()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2481q']/* 'Bridge' */, 'action': ''})}
+                </div>
+            </div>
+        )
+    }
+
+    confirm_bridge_coin(){
+        const item = this.state.data['coin']
+        const recipient_address = this.state.data['recipient_address']
+        const picked_amount = this.state.data['picked_amount']
+        const fee = this.state.data['gas_price']
+        this.props.begin_bridging_of_coin(item, recipient_address, picked_amount, fee)
+        this.props.open_dialog_bottomsheet()
+    }
 
 
 

@@ -756,6 +756,9 @@ class SuccessfulSend extends Component {
         else if(item['symbol'] == 'TIA'){
             return `https://celenium.io/tx/${hash}`
         }
+        else if(item['symbol'] == 'IOTA'){
+            return `https://explorer.iota.org/txblock/${hash}`
+        }
     }
 
 

@@ -267,7 +267,7 @@ class PostDetailSection extends Component {
                 return(
                     <CoinsDetailsSection
                     app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_coin_item={this.props.selected_coin_item} notify={this.props.notify.bind(this)} view_number={this.props.view_number.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)} start_send_receive_coin_bottomsheet={this.props.start_send_receive_coin_bottomsheet.bind(this)} update_coin_balances={this.props.update_coin_balances.bind(this)} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} show_dialog_bottomsheet={this.props.show_dialog_bottomsheet.bind(this)} show_successful_send_bottomsheet={this.props.show_successful_send_bottomsheet.bind(this)} get_upload_data_datapoints={this.get_upload_data_datapoints.bind(this)} render_object_view_count_message={this.render_object_view_count_message.bind(this)}
-                    render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)}
+                    render_object_metadata_if_exists={this.render_object_metadata_if_exists.bind(this)} show_bridge_coin_bottomsheet={this.props.show_bridge_coin_bottomsheet.bind(this)}
                     />
                 )
             }

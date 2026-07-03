@@ -536,6 +536,7 @@ import xrp_logo from './assets/xrp.png'
 import filecoin_logo from './assets/filecoin.png'
 import solana2_logo from './assets/solana2.png'
 import algorand2_logo from './assets/algorand2.png'
+import iota_logo from './assets/iota.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -577,6 +578,16 @@ import { getKeyFromMnemonic } from 'arweave-mnemonic-keys';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { getFullnodeUrl, SuiClient } from '@mysten/sui/client';
 import { Transaction as SuiTransaction } from '@mysten/sui/transactions';
+import * as optimismSDK from "@eth-optimism/sdk";
+import * as filecoin_wallet from 'iso-filecoin/wallet'
+import * as filecoin_address from 'iso-filecoin/address'
+import { IotaClient } from '@iota/iota-sdk/client';
+import { Ed25519Keypair as iota_Ed25519Keypair } from '@iota/iota-sdk/keypairs/ed25519';
+import { Transaction as iota_Transaction } from '@iota/iota-sdk/transactions';
+import { NANOS_PER_IOTA, isValidIotaAddress, IOTA_TYPE_ARG } from '@iota/iota-sdk/utils';
+import { AccountsContractMethod, CoreContract, getHname, IscTransaction, L2_FROM_L1_GAS_BUDGET, } from '@iota/isc-sdk';
+import { Message } from 'iso-filecoin/message'
+import { RPC } from 'iso-filecoin/rpc'
 
 /* shared component stuff */
 import SwipeableBottomSheet from './externals/SwipeableBottomSheet'; 
@@ -712,6 +723,7 @@ import ConfigureObligationsPage from './pages/configure_obligations_page'
 import BridgeEtherPage from './pages/bridge_ether_page'
 import SendPurchaseRequestPage from './pages/send_purchase_request_page'
 import ViewStorefrontRequestPage from './pages/view_storefront_purchase_request_page'
+import BridgeCoinPage from './pages/bridge_coin_page'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -724,7 +736,6 @@ import { EthBridger, getArbitrumNetwork, ParentTransactionReceipt, EthDepositMes
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
-// import { create } from 'ipfs-http-client'
 import { NFTStorage, Blob } from 'nft.storage'
 
 import Draggable from "react-draggable";
@@ -756,7 +767,7 @@ import { mainnet, optimism, base, fraxtal, ink, soneium, unichain, zircuit, zora
 import { getL2TransactionHashes, publicActionsL2, walletActionsL1 } from 'viem/op-stack'
 import { privateKeyToAccount } from 'viem/accounts'
 import { CrossChainMessenger, ETHBridgeAdapter } from "@eth-optimism/sdk";
-import * as optimismSDK from "@eth-optimism/sdk";
+import { Bridge } from '@xrplevm/xchain-sdk';
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
@@ -1283,7 +1294,7 @@ class App extends Component {
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
     fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
-    quick_send_bottomsheet:false, edit_crossexchange_bottomsheet: false, crossexchange_swap_bottomsheet:false,
+    quick_send_bottomsheet:false, edit_crossexchange_bottomsheet: false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -1463,7 +1474,7 @@ class App extends Component {
         token:'ETHT',
         e5_address:'0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82', 
         first_block:20, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:40_000, url:0, active:false, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
-        end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true
+        end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true,
       },
       'E25':{
         web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link', 'https://0xrpc.io/etc'], 
@@ -1942,7 +1953,7 @@ class App extends Component {
       },
       'E785':{
         web3:['https://json-rpc.evm.iotaledger.net'],
-        token:'IOTA',
+        token:'IOTAE',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:iotaevm_logo, iteration:400_000, url:0, active:false, e5_img:null
       },
@@ -1979,7 +1990,7 @@ class App extends Component {
 
       'E845':{
         web3:['https://rpc.xrplevm.org'],
-        token:'XRP',
+        token:'XRPE',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:xrpl_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
       },
@@ -2260,7 +2271,7 @@ class App extends Component {
       },
       'E1305':{
         web3:['https://api.node.glif.io'],
-        token:'FIL',
+        token:'FILE',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:filecoin_evm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
       },
@@ -2437,13 +2448,13 @@ class App extends Component {
       this.get_token('ETHO', 'Etho Protocol', 'E755'),
       this.get_token('OLT', 'One Ledger', 'E765'),
       this.get_token('HBAR', 'Hedera Hashgraph', 'E775'),
-      this.get_token('IOTA', 'IOTA EVM', 'E785'),
+      this.get_token('IOTAE', 'IOTA EVM', 'E785'),
       this.get_token('KAIA', 'KAIA', 'E795'),
       this.get_token('S', 'Sonic', 'E805'),
       this.get_token('BERA', 'Berachain', 'E815'),
       this.get_token('NRG', 'Energi', 'E825', true),
       this.get_token('HYPE', 'HyperEVM', 'E835'),
-      this.get_token('XRP', 'XRPL', 'E845'),
+      this.get_token('XRPE', 'XRPL EVM', 'E845'),
       this.get_token('ABETH', 'Abstract', 'E855'),
       this.get_token('APE', 'ApeChain', 'E865'),
       this.get_token('BIBTC', 'Bitlayer', 'E875'),
@@ -2489,7 +2500,7 @@ class App extends Component {
       this.get_token('ZERETH', 'ZERϴ Network', 'E1275'),
       this.get_token('SOPH', 'Sophon', 'E1285'),
       this.get_token('MAETH', 'Manta Pacific', 'E1295'),
-      this.get_token('FIL', 'Filecoin EVM', 'E1305'),
+      this.get_token('FILE', 'Filecoin EVM', 'E1305'),
       this.get_token('MON', 'Monad', 'E1315'),
       this.get_token('ZOETH', 'Zora', 'E1325'),
       this.get_token('ANETH', 'Arbitrum Nova', 'E1335'),
@@ -2509,47 +2520,49 @@ class App extends Component {
 
   get_coin_data(){
     var list = {
-        'BTC': this.get_coin_info('BTC', 'Bitcoin', bitcoin_logo, 'satoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '10 min.', this.get_time_difference(1231006505), 3, 1),
+      'BTC': this.get_coin_info('BTC', 'Bitcoin', bitcoin_logo, 'satoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '10 min.', this.get_time_difference(1231006505), 3, 1),
 
-        'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', bitcoincash_logo, 'satoshi', 8, 100_000_000, 'UTXO','Proof Of Work','10 min.', this.get_time_difference(1231006505), 60, 32),
+      'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', bitcoincash_logo, 'satoshi', 8, 100_000_000, 'UTXO','Proof Of Work','10 min.', this.get_time_difference(1231006505), 60, 32),
 
-        'LTC': this.get_coin_info('LTC', 'Litecoin', litecoin_logo, 'litoshi', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1317972665), 56, 1),
+      'LTC': this.get_coin_info('LTC', 'Litecoin', litecoin_logo, 'litoshi', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1317972665), 56, 1),
 
-        'DOGE': this.get_coin_info('DOGE', 'Dogecoin', dogecoin_logo, 'koinu', 8, 100_000_000, 'UTXO','Proof Of Work', '1 min.', this.get_time_difference(1386338512), 30, 1),
+      'DOGE': this.get_coin_info('DOGE', 'Dogecoin', dogecoin_logo, 'koinu', 8, 100_000_000, 'UTXO','Proof Of Work', '1 min.', this.get_time_difference(1386338512), 30, 1),
 
-        'DASH': this.get_coin_info('DASH', 'Dash', dash_logo, 'duff', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1390083000), 56, 2),
+      'DASH': this.get_coin_info('DASH', 'Dash', dash_logo, 'duff', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1390083000), 56, 2),
 
-        'TRX': this.get_coin_info('TRX', 'Tron', tron_logo, 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof Of Stake', '3 sec.', this.get_time_difference(1529885280), 2000, 1),
-        
-        'XRP': this.get_coin_info('XRP', 'XRP', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~'),
+      'TRX': this.get_coin_info('TRX', 'Tron', tron_logo, 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof Of Stake', '3 sec.', this.get_time_difference(1529885280), 2000, 1),
+      
+      'XRP': this.get_coin_info('XRP', 'XRP', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~'),
 
-        'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
+      'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
 
-        'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 143_000, '~~~'),
+      'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 143_000, '~~~'),
 
-        'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 143_000, '~~~'),
+      'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 143_000, '~~~'),
 
-        'ALGO': this.get_coin_info('ALGO', 'Algorand', algorand_logo, '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
+      'ALGO': this.get_coin_info('ALGO', 'Algorand', algorand_logo, '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
 
-        'XTZ': this.get_coin_info('XTZ', 'Tezos', tezos_logo, 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1),
+      'XTZ': this.get_coin_info('XTZ', 'Tezos', tezos_logo, 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1),
 
-        'ATOM': this.get_coin_info('ATOM', 'Cosmos', cosmos_logo, 'uATOM', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
+      'ATOM': this.get_coin_info('ATOM', 'Cosmos', cosmos_logo, 'uATOM', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
 
-        'FIL': this.get_coin_info('FIL', 'Filecoin', filecoin_logo, 'aFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
+      'FIL': this.get_coin_info('FIL', 'Filecoin', filecoin_logo, 'aFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
 
-        'SOL': this.get_coin_info('SOL', 'Solana',solana_logo, 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2 ),
+      'SOL': this.get_coin_info('SOL', 'Solana',solana_logo, 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2 ),
 
-        'APT': this.get_coin_info('APT', 'Aptos', aptos_logo, 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
+      'APT': this.get_coin_info('APT', 'Aptos', aptos_logo, 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
 
-        'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088),
+      'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088),
 
-        'STX': this.get_coin_info('STX', 'Stacks', stacks_logo, 'µSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~'),
+      'STX': this.get_coin_info('STX', 'Stacks', stacks_logo, 'µSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~'),
 
-        'AR': this.get_coin_info('AR', 'Arweave', arweave_logo, 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~'),
+      'AR': this.get_coin_info('AR', 'Arweave', arweave_logo, 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~'),
 
-        'SUI': this.get_coin_info('SUI', 'Sui', sui_logo, 'mist', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1683115200), 100_000, '~~~'),
+      'SUI': this.get_coin_info('SUI', 'Sui', sui_logo, 'mist', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1683115200), 100_000, '~~~'),
 
-        'TIA': this.get_coin_info('TIA', 'Celestia', celestia_logo, 'uTIA', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake', '6 sec.', this.get_time_difference(1698760800), 1300, 2),
+      'TIA': this.get_coin_info('TIA', 'Celestia', celestia_logo, 'uTIA', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake', '6 sec.', this.get_time_difference(1698760800), 1300, 2),
+
+      'IOTA': this.get_coin_info('IOTA', 'IOTA Rebased', iota_logo, 'nano', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1746446400), 53_000, 0.032768),
     }
     return list
   }
@@ -3748,6 +3761,7 @@ class App extends Component {
     this.staged_coupon_page = React.createRef();
     this.quick_send_page = React.createRef();
     this.crossexchange_swap_page = React.createRef();
+    this.bridge_coin_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -4954,7 +4968,7 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false,
       })
 
       return cached_state_obj
@@ -5650,11 +5664,17 @@ class App extends Component {
   }
 
 
+
+
+
   get_key = async () => {
     var seed = ''+process.env.REACT_APP_SEED_API_KEY
     var web3_url = this.get_web3_url_from_e5('E35')
     var account = this.get_account_from_seed(seed, web3_url)
     console.log('get_key', account.address)
+
+    const toF410 = await this.ethAddressToF410(account.address);
+    console.log('get_key', toF410)
     // console.log(toBech32(account.address))
 
     // const web3 = new Web3(web3_url);
@@ -6893,6 +6913,7 @@ class App extends Component {
           {this.render_quick_send_bottomsheet()}
           {this.render_edit_crossexchange_object_bottomsheet()}
           {this.render_crossexchange_swap_bottomsheet()}
+          {this.render_bridge_coin_bottomsheet()}
 
 
           {this.render_set_map_location_bottomsheet()}
@@ -7033,7 +7054,7 @@ class App extends Component {
 
           show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} 
 
-          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)}
+          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} show_bridge_coin_bottomsheet={this.show_bridge_coin_bottomsheet.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -8173,6 +8194,9 @@ class App extends Component {
     else if(item['symbol'] == 'TIA'){
       return this.validate_celestia_address(address)
     }
+    else if(item['symbol'] == 'IOTA'){
+      return this.validate_iota_address(address)
+    }
 
 
     return true;
@@ -8350,6 +8374,10 @@ class App extends Component {
     }
   }
 
+  validate_iota_address(address){
+    return isValidIotaAddress(address)
+  }
+
 
 
 
@@ -8411,6 +8439,12 @@ class App extends Component {
     }
     else if(item['symbol'] == 'SUI'){
       await this.create_and_broadcast_sui_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'TIA'){
+      await this.create_and_broadcast_tia_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'IOTA'){
+      await this.create_and_broadcast_iota_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
 
     var sync_time = item['symbol'] == 'AR' ? (4 * 60_000) : (1 * 30_000)
@@ -8987,24 +9021,48 @@ class App extends Component {
     const hdDerivationPath = `m/44'/461'/0'/0/0`;
     const lotusClient = new LotusClient(connector);
     const walletProvider = new MnemonicWalletProvider(lotusClient, seed, hdDerivationPath);
-    const myAddress = await walletProvider.getDefaultAddress();
+    // const myAddress = await walletProvider.getDefaultAddress();
 
-    const nonce = await lotusClient.mpool.getNonce(myAddress);
+    const entropic_mnemonic = await this.generate_mnemonic_from_seed(seed)
+    const rpc = new RPC({ api: 'https://rpc.ankr.com/filecoin', network: 'mainnet' })
+    const account = filecoin_wallet.accountFromMnemonic(entropic_mnemonic, 'SECP256K1', hdDerivationPath)
+    const myAddress = account.address.toString()
+
+    // const nonce = await lotusClient.mpool.getNonce(myAddress);
     const gasprice = parseInt(fee / 5_744_209)
-    const message = await walletProvider.createMessage({
-      From: myAddress,
-      To: recipient_address,
-      Value: transfer_amount.toString().toLocaleString('fullwide', {useGrouping:false}),
-      GasPrice: gasprice.toString().toLocaleString('fullwide', {useGrouping:false}),
-      GasLimit: 6_000_000,
+    // const message = await walletProvider.createMessage({
+    //   From: myAddress,
+    //   To: recipient_address,
+    //   Value: transfer_amount.toString().toLocaleString('fullwide', {useGrouping:false}),
+    //   GasPrice: gasprice.toString().toLocaleString('fullwide', {useGrouping:false}),
+    //   GasLimit: 6_000_000,
+    //   gasPremium: gasprice,
+    //   GasFeeCap:gasprice,
+    //   Nonce: nonce,
+    // });
+
+    let msg = new Message({
+      from: myAddress,
+      to: recipient_address,
+      value: transfer_amount.toString().toLocaleString('fullwide', {useGrouping:false}),
+      gasLimit: 6_000_000,
       gasPremium: gasprice,
-      GasFeeCap:gasprice,
-      Nonce: nonce,
-    });
+      gasFeeCap:gasprice,
+    })
+    const prepared = await msg.prepare(rpc)
 
     try{
-      const signed_message = await walletProvider.signMessage(message)
-      const cid = await walletProvider.sendSignedMessage(signed_message);
+      // const signed_message = await walletProvider.signMessage(message)
+      // const cid = await walletProvider.sendSignedMessage(signed_message);
+      const signature = Wallet.signMessage(account.privateKey, 'SECP256K1', prepared)
+      const result = await rpc.pushMessage({
+        msg: prepared,
+        signature: { data: signature.data, type: 'SECP256K1' },
+      })
+
+      if (!result.ok) throw result.error
+      const cid = result.result
+      
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':cid['/']})
     }catch(e){
       console.log('filecoin:', e)
@@ -9193,6 +9251,39 @@ class App extends Component {
     try{
       const result = await signingClient.sendTokens(wallet.celestiaAddress, recipient_address, amount_obj, fee_obj, memo_text)
       const hash = result['transactionHash']
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  create_and_broadcast_iota_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_iota_wallet(seed)
+    const client = new IotaClient({ url: 'https://api.mainnet.iota.cafe' });
+    const send_amount = Number(transfer_amount)
+
+    const tx = new iota_Transaction();
+    const [coin] = tx.splitCoins(tx.gas, [send_amount]);
+    tx.transferObjects([coin], recipient_address);
+    tx.setGasBudget(5_000_000);
+    tx.setSender(wallet.address);
+
+    try{
+      const result = await client.signAndExecuteTransaction({
+        signer: wallet.keypair,
+        transaction: tx,
+        options: {
+          showEffects: true,
+          showObjectChanges: true,
+          showBalanceChanges: true
+        }
+      });
+      if (result.digest) {
+        await client.waitForTransaction({ digest: result.digest });
+      }
+      const hash = result.digest
       this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
     }catch(e){
       console.log(e)
@@ -18963,7 +19054,7 @@ class App extends Component {
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
 
-        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)}
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)}
         />
       </div>
     )
@@ -27402,6 +27493,226 @@ class App extends Component {
 
 
 
+  render_bridge_coin_bottomsheet(){
+    if(this.state.bridge_coin_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <BridgeCoinPage ref={this.bridge_coin_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)}
+      />,
+      this.state.bridge_coin_bottomsheet,
+      this.open_bridge_coin_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_bridge_coin_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_bridge_coin_bottomsheet')
+    if(this.state.bridge_coin_bottomsheet == true){
+      //closing
+      this.bridge_coin_bottomsheet = this.bridge_coin_page.current?.state;
+
+      this.setState({bridge_coin_bottomsheet: !this.state.bridge_coin_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({bridge_coin_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({bridge_coin_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({bridge_coin_bottomsheet: !me.state.bridge_coin_bottomsheet});
+
+          if(me.bridge_coin_bottomsheet != null){
+            me.bridge_coin_page.current?.setState(me.bridge_coin_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_bridge_coin_bottomsheet(coin){
+    this.open_bridge_coin_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.bridge_coin_page.current != null){
+        me.bridge_coin_page.current.set_token(coin)
+      }
+    }, (1 * 1100));
+  }
+
+  async begin_bridging_of_coin(coin, recipient_ethereum_address, transfer_amount, fee){
+    this.prompt_top_notification(this.getLocale()['3109e']/* 'Beginning Bridging process...' */, 3000)
+    
+    if(coin['symbol'] == 'FIL'){
+      var seed = this.state.final_seed
+      const hdDerivationPath = `m/44'/461'/0'/0/0`;
+      const entropic_mnemonic = await this.generate_mnemonic_from_seed(seed)
+      const rpc = new RPC({ api: 'https://rpc.ankr.com/filecoin', network: 'mainnet' })
+      const account = filecoin_wallet.accountFromMnemonic(entropic_mnemonic, 'SECP256K1', hdDerivationPath)
+      const myAddress = account.address.toString()
+
+      const toF410 = await this.ethAddressToF410(recipient_ethereum_address);
+      // const toF410 = filecoin_address.fromEthAddress(recipient_ethereum_address, 'mainnet').toString()
+      if(toF410 == null){
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        return;
+      }
+
+      const gasprice = parseInt(fee / 8_000_000)
+      let msg = new Message({
+        from: myAddress,
+        to: toF410,
+        value: transfer_amount.toString().toLocaleString('fullwide', {useGrouping:false}),
+        GasPrice: gasprice.toString().toLocaleString('fullwide', {useGrouping:false}),
+        gasLimit: 8_000_000,
+        gasPremium: gasprice.toString().toLocaleString('fullwide', {useGrouping:false}),
+        gasFeeCap:gasprice.toString().toLocaleString('fullwide', {useGrouping:false}),
+      })
+      const prepared = await msg.prepare(rpc)
+
+      try{
+        const signature = filecoin_wallet.signMessage(account.privateKey, 'SECP256K1', prepared)
+        const result = await rpc.pushMessage({
+          msg: prepared,
+          signature: { data: signature.data, type: 'SECP256K1' },
+        })
+
+        const cid = result.result
+        
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':coin, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_ethereum_address, 'sender':myAddress, 'hash':cid['/']})
+      }
+      catch(e){
+        console.log('begin_bridging_of_coin', e)
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }
+    else if(coin['symbol'] == 'XRP'){
+      var e_seed = this.state.final_seed
+      const wallet = await this.make_xrp_wallet(e_seed)
+      const myAddress = wallet.classicAddress
+      const seed = wallet.seed;
+      const bridge = await Bridge.fromConfig('mainnet', {
+        xrpl: {
+          providerUrl: "wss://xrplcluster.com/",
+          keyOrSeed: seed,
+        },
+      });
+      const asset = {
+        chainType: 'xrpl', // or 'xrplevm'
+        currency: 'XRP', // For native XRP
+      };
+      const options = {
+        destinationAddress: recipient_ethereum_address, 
+      };
+
+      const amount = parseFloat(transfer_amount) / coin['conversion'];
+
+      try{
+        const result = await bridge.transfer(asset, amount, options);
+        const hash = result.result.hash
+        console.log('begin_bridging_of_coin', "Hash: ", hash);
+
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':coin, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_ethereum_address, 'sender':myAddress, 'hash':hash})
+      }
+      catch(e){
+        console.log('begin_bridging_of_coin', e)
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }
+    else if(coin['symbol'] == 'IOTA'){
+      var seed = this.state.final_seed
+      const wallet = await this.generate_iota_wallet(seed)
+      const client = new IotaClient({ url: 'https://api.mainnet.iota.cafe' });
+      const myAddress = wallet.address
+
+      const chain = {
+        chainId: '0x0dc448563a2c54778215b3d655b0d9f8f69f06cf80a4fc9eada72e96a49e409d',
+        packageId: '0x1b33a3cf7eb5dde04ed7ae571db1763006811ff6b7bb35b3d1c780de153af9dd',
+      };
+
+      const iscTx = new IscTransaction(chain);
+      const bag = iscTx.newBag();
+      const amountToPlace = parseInt(transfer_amount) + parseInt(L2_FROM_L1_GAS_BUDGET);
+      const iota_coin = iscTx.coinFromAmount({ amount: amountToPlace });
+      iscTx.placeCoinInBag({ iota_coin, bag });
+
+      iscTx.createAndSendToEvm({
+        bag,
+        transfers: [[IOTA_TYPE_ARG, parseInt(transfer_amount)]],
+        address: recipient_ethereum_address,
+        accountsContract: getHname(CoreContract.Accounts),
+        accountsFunction: getHname(AccountsContractMethod.TransferAllowanceTo),
+      });
+
+      const transaction = iscTx.build();
+      transaction.setSender(wallet.address);
+
+      try{
+        const result = await client.signAndExecuteTransaction({
+          signer: wallet.keypair,
+          transaction,
+          options: { showEffects: true },
+        });
+
+        if (result.digest) {
+          await client.waitForTransaction({ digest: result.digest });
+        }
+        const hash = result.digest
+        console.log('begin_bridging_of_coin','Deposit confirmed on L1:', result.digest);
+
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':coin, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_ethereum_address, 'sender':myAddress, 'hash':hash})
+      }
+      catch(e){
+        console.error('begin_bridging_of_coin', e)
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+        
+    }
+  }
+
+  async ethAddressToF410(ethAddress) {
+    try{
+      return await this._lotusCall("EthAddressToFilecoinAddress", [ethAddress]); 
+    }catch(e){
+      console.error('ethAddressToF410', e)
+    }
+  }
+
+  async _lotusCall(method, params = []) {
+    const res = await fetch('https://api.node.glif.io/rpc/v1', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: `Filecoin.${method}`,
+        params,
+      }),
+    });
+    const json = await res.json();
+    if (json.error) {
+      throw new Error(`Lotus RPC ${method} failed: ${json.error.message}`);
+    }
+    return json.result;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -28198,6 +28509,11 @@ class App extends Component {
     // await this.wait(400)
     coin_data['TIA'] = await this.get_and_set_celestia_wallet_info(seed)
 
+
+    this.setState({coin_data: coin_data})
+    // await this.wait(400)
+    coin_data['IOTA'] = await this.get_and_set_iota_wallet_info(seed)
+
     this.setState({coin_data: coin_data})
     // await this.wait(400)
     //should be last
@@ -28288,6 +28604,7 @@ class App extends Component {
     if(coin == 'STX' || should_update_all) coin_data = await this.update_stacks_balance(coin_data);
     if(coin == 'SUI' || should_update_all) coin_data = await this.update_sui_balance(coin_data);
     if(coin == 'TIA' || should_update_all) coin_data = await this.update_celestia_balance(coin_data);
+    if(coin == 'IOTA' || should_update_all) coin_data = await this.update_iota_balance(coin_data);
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
     this.setState({coin_data: coin_data})
@@ -28319,7 +28636,12 @@ class App extends Component {
     const lotusClient = new LotusClient(connector);
     const walletProvider = new MnemonicWalletProvider( lotusClient, hdWalletMnemonic, hdDerivationPath );
 
-    const myAddress = await walletProvider.getDefaultAddress();
+    const entropic_mnemonic = await this.generate_mnemonic_from_seed(seed)
+    const rpc = new RPC({ api: 'https://rpc.ankr.com/filecoin', network: 'mainnet' })
+    const account = filecoin_wallet.accountFromMnemonic(entropic_mnemonic, 'SECP256K1', hdDerivationPath)
+    const myAddress = account.address.toString()
+
+    // const myAddress = await walletProvider.getDefaultAddress();
     const balance = await this.get_filecoin_balance(myAddress, lotusClient)
 
     var fee_info = {'fee':await this.get_filecoin_transaction_fee(myAddress), 'type':'variable', 'per':'gas'}
@@ -29909,6 +30231,60 @@ class App extends Component {
     client.disconnect()
 
     clone['TIA']['balance'] = balance;
+    return clone
+  }
+
+
+
+
+
+
+
+
+
+
+
+  get_and_set_iota_wallet_info = async (seed) => {
+    const wallet = await this.generate_iota_wallet(seed)
+    const address = wallet.address
+    const client = new IotaClient({ url: 'https://api.mainnet.iota.cafe' });
+    const balance = await this.get_iota_address_balance(client, address)
+
+    var fee_info = {'fee':await this.get_iota_transaction_fees(client), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info}
+    this.fetch_specific_coin_receipts(address)
+    return data
+  }
+
+  generate_iota_wallet = async (mnemonic) => {
+    var entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic)
+    const keypair = iota_Ed25519Keypair.deriveKeypair(entropic_mnemonic);
+    const address = keypair.getPublicKey().toIotaAddress();
+
+    return {
+      address: address,
+      publicKey: keypair.getPublicKey(),
+      keypair: keypair
+    };
+  }
+
+  get_iota_address_balance = async (client, address) => {
+    const balance_object = await client.getBalance({ owner: address, });
+    // console.log('balance_object', balance_object)
+    return balance_object['totalBalance']
+  }
+
+  async get_iota_transaction_fees(client){
+    const amount = await client.getReferenceGasPrice()
+    return Number(amount) * 3_500_000
+  }
+
+  update_iota_balance = async (clone) => {
+    var address = clone['IOTA']['address']
+    const client = new IotaClient({ url: 'https://api.mainnet.iota.cafe' });
+    const balance = await this.get_iota_address_balance(client, address)
+
+    clone['IOTA']['balance'] = balance;
     return clone
   }
 
@@ -54655,6 +55031,8 @@ class App extends Component {
       const object_type = state_object.object_type
       this.notify_tagged_users_of_tag_in_new_object(tagged_addresses, tagged_account_ids, object_tag_id, object_type)
     }
+    this.new_job_page?.current.reset_state()
+    this.new_post_page?.current.reset_state()
   }
 
   async emit_new_mail_confirmed(state_object, show_job_after_broadcast, type){

@@ -355,11 +355,39 @@ class CoinsDetailsSection extends Component {
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2459']/* 'Send/Receive' */, 'action': ''})}
                     </div>
 
+
+                    {balance_base_unit > 0 && this.props.app_state.has_wallet_been_set == true && (
+                        <div>
+                            {this.render_detail_item('0')}
+                            {this.render_bridge_button_if_filecoin(item)}
+                        </div>
+                    )}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    render_bridge_button_if_filecoin(item){
+        const obj = {
+            'FIL': 'FILE',
+            'XRP':'XRPE',
+            'IOTAE': 'IOTAE',
+        }
+        if(obj[item['symbol']] != null){
+            const evm_symbol = obj[item['symbol']]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2927w']/* '𖣑 Bridge To FILE ' */.replace('FILE', evm_symbol), 'details':this.props.app_state.loc['2927x']/* 'Bridge your coin from this wallet\'s address to your FILE wallet.' */.replace('FILE', evm_symbol), 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.props.show_bridge_coin_bottomsheet(item)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2927y']/* 'Bridge Coin' */, 'action': ''})}
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_object_views(object){
@@ -877,6 +905,9 @@ class CoinsDetailsSection extends Component {
         }
         else if(item['symbol'] == 'TIA'){
             return `https://celenium.io/address/${hash}`
+        }
+        else if(item['symbol'] == 'IOTA'){
+            return `https://explorer.iota.org/address/${hash}`
         }
     }
 
