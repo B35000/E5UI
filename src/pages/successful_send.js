@@ -759,6 +759,9 @@ class SuccessfulSend extends Component {
         else if(item['symbol'] == 'IOTA'){
             return `https://explorer.iota.org/txblock/${hash}`
         }
+        else if(item['symbol'] == 'HBAR'){
+            return `https://hashscan.io/mainnet/transaction/${hash}`
+        }
     }
 
 

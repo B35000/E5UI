@@ -537,6 +537,7 @@ import filecoin_logo from './assets/filecoin.png'
 import solana2_logo from './assets/solana2.png'
 import algorand2_logo from './assets/algorand2.png'
 import iota_logo from './assets/iota.png'
+import hedera_hashgraph_logo from './assets/hedera_hashgraph.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -588,6 +589,8 @@ import { NANOS_PER_IOTA, isValidIotaAddress, IOTA_TYPE_ARG } from '@iota/iota-sd
 import { AccountsContractMethod, CoreContract, getHname, IscTransaction, L2_FROM_L1_GAS_BUDGET, } from '@iota/isc-sdk';
 import { Message } from 'iso-filecoin/message'
 import { RPC } from 'iso-filecoin/rpc'
+import { Client, Mnemonic, PrivateKey, AccountId, AccountBalanceQuery, TransferTransaction, TransactionRecordQuery, Hbar, HbarUnit, TransactionId, Status, } from "@hashgraph/sdk";
+
 
 /* shared component stuff */
 import SwipeableBottomSheet from './externals/SwipeableBottomSheet'; 
@@ -767,7 +770,7 @@ import { mainnet, optimism, base, fraxtal, ink, soneium, unichain, zircuit, zora
 import { getL2TransactionHashes, publicActionsL2, walletActionsL1 } from 'viem/op-stack'
 import { privateKeyToAccount } from 'viem/accounts'
 import { CrossChainMessenger, ETHBridgeAdapter } from "@eth-optimism/sdk";
-import { Bridge } from '@xrplevm/xchain-sdk';
+
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
@@ -1947,7 +1950,7 @@ class App extends Component {
       },
       'E775':{
         web3:['https://mainnet.hashio.io/api'],
-        token:'HBAR',
+        token:'HBARE',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:hedera_logo, iteration:400_000, url:0, active:false, e5_img:null
       },
@@ -2447,7 +2450,7 @@ class App extends Component {
       this.get_token('ELV', 'Eluv.io', 'E745'),
       this.get_token('ETHO', 'Etho Protocol', 'E755'),
       this.get_token('OLT', 'One Ledger', 'E765'),
-      this.get_token('HBAR', 'Hedera Hashgraph', 'E775'),
+      this.get_token('HBARE', 'Hedera EVM', 'E775'),
       this.get_token('IOTAE', 'IOTA EVM', 'E785'),
       this.get_token('KAIA', 'KAIA', 'E795'),
       this.get_token('S', 'Sonic', 'E805'),
@@ -2563,6 +2566,8 @@ class App extends Component {
       'TIA': this.get_coin_info('TIA', 'Celestia', celestia_logo, 'uTIA', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake', '6 sec.', this.get_time_difference(1698760800), 1300, 2),
 
       'IOTA': this.get_coin_info('IOTA', 'IOTA Rebased', iota_logo, 'nano', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1746446400), 53_000, 0.032768),
+
+      'HBAR': this.get_coin_info('HBAR', 'Hedera Hashgraph', hedera_hashgraph_logo, 'tinybar', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Hashgraph', '5 sec.', this.get_time_difference(1568592000), 10_000, '~~~'),
     }
     return list
   }
@@ -2611,7 +2616,9 @@ class App extends Component {
       'LPaDEyLV_65-koonfKiay_DU8Ti2nEZU6GU56bb1C_U',
       '0x9abd642fd75a4dfd26bbc3c3d39d38776336df5adb204355864caebd17e169d3',
       'celestia18tux8kpx82v6z0p9mgc6s6kym352486l480dkg',
-      'addr1qxxwkgscq7dlcg4pukrc4wavwdkrwux5mjuc7axsx9q83qlephez0vmahssvewkj7gt20y4240a3s2e8ech92whq2j3sw22rsy'
+      'addr1qxxwkgscq7dlcg4pukrc4wavwdkrwux5mjuc7axsx9q83qlephez0vmahssvewkj7gt20y4240a3s2e8ech92whq2j3sw22rsy',
+      '0x79636ef0c3d8ee3673c61d5c45ba7448839a27b87d79eae5d91d5a0a183e4947',
+      'fb2781ecc5b61ca732d827fbca341150d75155b1'
     ]
     return default_addresses
   }
@@ -8197,6 +8204,9 @@ class App extends Component {
     else if(item['symbol'] == 'IOTA'){
       return this.validate_iota_address(address)
     }
+    else if(item['symbol'] == 'HBAR'){
+      return this.validate_hbar_address(address)
+    }
 
 
     return true;
@@ -8378,6 +8388,34 @@ class App extends Component {
     return isValidIotaAddress(address)
   }
 
+  validate_hbar_address(address){
+    const client = Client.forMainnet();
+    let accountId;
+    
+    try {
+      accountId = AccountId.fromString(address);
+    } 
+    catch (err) {
+      return false
+    }
+ 
+    if (client) {
+      try {
+        accountId.validateChecksum(client);
+      } 
+      catch (err) {
+        // Throws if the checksum doesn't match this network, or if the
+        // id has an aliasKey (checksums don't apply to alias accounts).
+        // Only treat network-mismatch as invalid; alias ids are still valid.
+        if (!accountId.aliasKey) {
+          return false;
+        }
+      }
+    }
+    client.close();
+    return true
+  }
+
 
 
 
@@ -8445,6 +8483,9 @@ class App extends Component {
     }
     else if(item['symbol'] == 'IOTA'){
       await this.create_and_broadcast_iota_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'HBAR'){
+      await this.create_and_broadcast_hbar_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
 
     var sync_time = item['symbol'] == 'AR' ? (4 * 60_000) : (1 * 30_000)
@@ -9289,6 +9330,40 @@ class App extends Component {
       console.log(e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
+  }
+
+  create_and_broadcast_hbar_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_hbar_wallet(seed)
+    const client = Client.forMainnet();
+    client.setOperator(wallet.account_id, wallet.privateKey);
+
+    const send_amount = Number(transfer_amount) / item['conversion']
+
+    const tx = new TransferTransaction()
+      .addHbarTransfer(wallet.account_id, new Hbar(-send_amount))
+      .addHbarTransfer(AccountId.fromString(recipient_address), new Hbar(send_amount))
+      .freezeWith(client);
+
+    try{
+      const signedTx = await tx.sign(wallet.privateKey);
+      const response = await signedTx.execute(client);
+      const receipt = await response.getReceipt(client);
+
+      const status = receipt.status;
+      const transactionId = response.transactionId.toString();
+      if(status.toString() == Status.Success.toString()){
+        const hash = transactionId
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      }
+      else{
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+    client.close();
   }
 
   async send_coin_request_message(request_coin_recipient, recipient_address, picked_sat_amount, recipient_e5, ether_id, request_coin_memo){
@@ -27593,32 +27668,47 @@ class App extends Component {
       }
     }
     else if(coin['symbol'] == 'XRP'){
-      var e_seed = this.state.final_seed
+      const e_seed = this.state.final_seed
+      const GATEWAY_MAINNET = 'rfmS3zqrQrka8wVyhXifEeyTwe8AMz2Yhw';
+      const hex = (str) => {
+        return Buffer.from(str, 'utf8').toString('hex').toUpperCase();
+      }
       const wallet = await this.make_xrp_wallet(e_seed)
       const myAddress = wallet.classicAddress
       const seed = wallet.seed;
-      const bridge = await Bridge.fromConfig('mainnet', {
-        xrpl: {
-          providerUrl: "wss://xrplcluster.com/",
-          keyOrSeed: seed,
-        },
-      });
-      const asset = {
-        chainType: 'xrpl', // or 'xrplevm'
-        currency: 'XRP', // For native XRP
-      };
-      const options = {
-        destinationAddress: recipient_ethereum_address, 
-      };
 
-      const amount = parseFloat(transfer_amount) / coin['conversion'];
+      const client = new xrpl.Client("wss://xrplcluster.com/")
+      await client.connect()
+
+      const amount = parseFloat(transfer_amount);
+      const gasFeeDrops = 3500
+
+      const payment = {
+        TransactionType: 'Payment',
+        Account: wallet.classicAddress,
+        Destination: GATEWAY_MAINNET,
+        Amount: (amount+gasFeeDrops).toString(), // total drops, INCLUDING gas
+        Memos: [
+          { Memo: { MemoType: hex('type'), MemoData: hex('interchain_transfer') } },
+          { Memo: { MemoType: hex('destination_address'), MemoData: hex(recipient_ethereum_address.replace(/^0x/, '')) } },
+          { Memo: { MemoType: hex('destination_chain'), MemoData: hex('xrpl-evm') } },
+          { Memo: { MemoType: hex('gas_fee_amount'), MemoData: hex(String(gasFeeDrops)) } },
+        ],
+      };
 
       try{
-        const result = await bridge.transfer(asset, amount, options);
-        const hash = result.result.hash
-        console.log('begin_bridging_of_coin', "Hash: ", hash);
+        const prepared = await client.autofill(payment);
+        const signed = wallet.sign(prepared);
+        const tx = await client.submitAndWait(signed.tx_blob);
+        await client.disconnect();
+        const hash = tx.result.hash
+        console.log('begin_bridging_of_coin', "hash: ", hash);
 
-        this.show_successful_send_bottomsheet({'type':'coin', 'item':coin, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_ethereum_address, 'sender':myAddress, 'hash':hash})
+        if(tx['result'] != null && tx['result']['validated'] == true){
+          this.show_successful_send_bottomsheet({'type':'coin', 'item':coin, 'fee':fee, 'amount':amount, 'recipient':recipient_ethereum_address, 'sender':myAddress, 'hash':hash})
+        }else{
+          this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        }
       }
       catch(e){
         console.log('begin_bridging_of_coin', e)
@@ -27640,7 +27730,7 @@ class App extends Component {
       const bag = iscTx.newBag();
       const amountToPlace = parseInt(transfer_amount) + parseInt(L2_FROM_L1_GAS_BUDGET);
       const iota_coin = iscTx.coinFromAmount({ amount: amountToPlace });
-      iscTx.placeCoinInBag({ iota_coin, bag });
+      iscTx.placeCoinInBag({ coin: iota_coin, bag: bag });
 
       iscTx.createAndSendToEvm({
         bag,
@@ -27673,6 +27763,40 @@ class App extends Component {
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
         
+    }
+    else if(coin['symbol'] == 'HBAR'){
+      var seed = this.state.final_seed
+      const wallet = await this.generate_hbar_wallet(seed)
+      const targetAccountId = AccountId.fromEvmAddress(0, 0, recipient_ethereum_address);
+
+      const client = Client.forMainnet();
+      client.setOperator(wallet.account_id, wallet.privateKey);
+
+      const send_amount = Number(transfer_amount) / coin['conversion']
+      const tx = new TransferTransaction()
+        .addHbarTransfer(wallet.account_id, new Hbar(-send_amount))
+        .addHbarTransfer(targetAccountId, new Hbar(send_amount))
+        .freezeWith(client);
+
+      try{
+        const signedTx = await tx.sign(wallet.privateKey);
+        const response = await signedTx.execute(client);
+        const receipt = await response.getReceipt(client);
+
+        const status = receipt.status;
+        const transactionId = response.transactionId.toString();
+        if(status.toString() == Status.Success.toString()){
+          const hash = transactionId
+          this.show_successful_send_bottomsheet({'type':'coin', 'item':coin, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_ethereum_address, 'sender':wallet.address, 'hash':hash})
+        }
+        else{
+          this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        }
+      }catch(e){
+        console.log(e)
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+      client.close();
     }
   }
 
@@ -28514,6 +28638,15 @@ class App extends Component {
     // await this.wait(400)
     coin_data['IOTA'] = await this.get_and_set_iota_wallet_info(seed)
 
+
+    this.setState({coin_data: coin_data})
+    // await this.wait(400)
+    coin_data['HBAR'] = await this.get_and_set_hbar_wallet_info(seed)
+
+
+
+
+
     this.setState({coin_data: coin_data})
     // await this.wait(400)
     //should be last
@@ -28605,6 +28738,7 @@ class App extends Component {
     if(coin == 'SUI' || should_update_all) coin_data = await this.update_sui_balance(coin_data);
     if(coin == 'TIA' || should_update_all) coin_data = await this.update_celestia_balance(coin_data);
     if(coin == 'IOTA' || should_update_all) coin_data = await this.update_iota_balance(coin_data);
+    if(coin == 'HBAR' || should_update_all) coin_data = await this.update_hbar_balance(coin_data);
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
     this.setState({coin_data: coin_data})
@@ -30250,7 +30384,7 @@ class App extends Component {
     const client = new IotaClient({ url: 'https://api.mainnet.iota.cafe' });
     const balance = await this.get_iota_address_balance(client, address)
 
-    var fee_info = {'fee':await this.get_iota_transaction_fees(client), 'type':'fixed', 'per':'transaction'}
+    var fee_info = {'fee':await this.get_iota_transaction_fees(client), 'type':'fixed', 'per':'gas'}
     var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info}
     this.fetch_specific_coin_receipts(address)
     return data
@@ -30276,7 +30410,7 @@ class App extends Component {
 
   async get_iota_transaction_fees(client){
     const amount = await client.getReferenceGasPrice()
-    return Number(amount) * 3_500_000
+    return Number(amount)
   }
 
   update_iota_balance = async (clone) => {
@@ -30285,6 +30419,117 @@ class App extends Component {
     const balance = await this.get_iota_address_balance(client, address)
 
     clone['IOTA']['balance'] = balance;
+    return clone
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+  get_and_set_hbar_wallet_info = async (seed) => {
+    const wallet = await this.generate_hbar_wallet(seed)
+    const address = wallet.address
+    const client = Client.forMainnet();
+    const balance = await this.get_hbar_address_balance(client, address)
+
+    var fee_info = {'fee':await this.get_hbar_transaction_fees(client), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info, 'existing': wallet.existing}
+    client.close();
+
+    this.fetch_specific_coin_receipts(address)
+    return data
+  }
+
+  generate_hbar_wallet = async (seed) => {
+    const cleanSeed = await this.generate_mnemonic_from_seed(seed)
+    const mnemonic = await Mnemonic.fromString(cleanSeed.trim());
+    const privateKey = await mnemonic.toStandardECDSAsecp256k1PrivateKey();
+    const publicKey = privateKey.publicKey
+    let account_id = publicKey.toAccountId(0, 0)
+    const evmAddress = publicKey.toEvmAddress();
+    let account_address = await this.fetch_hbar_public_key_corresponding_account_id(evmAddress)
+    let existing = true;
+    if(account_address == null || account_address == ''){
+      existing = false;
+      account_address = publicKey.toEvmAddress();
+    }else{
+      account_id = AccountId.fromString(account_address)
+    }
+    return { account_id, publicKey, privateKey, address: account_address, existing }
+  }
+
+  async fetch_hbar_public_key_corresponding_account_id(evmAddress){
+    // const url = `https://mainnet.mirrornode.hedera.com/api/v1/accounts?account.publickey=${rawHex}`
+    const clean = evmAddress.startsWith("0x") ? evmAddress.slice(2) : evmAddress;
+    const url = `https://mainnet.mirrornode.hedera.com/api/v1/accounts/${clean}?limit=25&order=desc&transactions=false`;
+    try{
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`Mirror node account lookup failed: ${res.status}`);
+      }
+      const data = await res.json();
+      console.log('fetch_hbar_public_key_corresponding_account_id', 'data', data)
+      return data['account'] || '';
+    }
+    catch(e){
+      console.log('fetch_hbar_public_key_corresponding_account_id',e)
+      return ''
+    }
+  }
+
+  get_hbar_address_balance = async (client, account_id) => {
+    try{
+      const balance = await new AccountBalanceQuery().setAccountId(account_id).execute(client);
+      return balance.hbars.to(HbarUnit.Tinybar).toString();
+    }
+    catch(e){
+      console.log('get_hbar_address_balance', e)
+      return '0'
+    }
+    
+  }
+
+  async get_hbar_transaction_fees(client){
+    const usdBaseFee = 0.0001
+    try{
+      const url = "https://mainnet.mirrornode.hedera.com/api/v1/network/exchangerate"
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`Mirror node exchange rate lookup failed: ${res.status}`);
+      }
+      const { current_rate } = await res.json();
+      // current_rate gives cent_equivalent / hbar_equivalent (USD cents per HBAR-cent unit)
+      const usdPerHbar = current_rate.cent_equivalent / current_rate.hbar_equivalent / 100;
+      const estimatedHbar = usdBaseFee / usdPerHbar;
+      return parseInt(estimatedHbar * 100_000_000)
+    }
+    catch(e){
+      console.log(e)
+      return 0.003 * 100_000_000
+    }
+  }
+
+  update_hbar_balance = async (clone) => {
+    var address;
+    const existing = clone['HBAR']['existing']
+    if(existing == false){
+      const wallet = await this.generate_hbar_wallet(this.state.final_seed)
+      address = wallet.address
+      clone['HBAR']['address'] = wallet.address
+    }else{
+      address = clone['HBAR']['address']
+    }
+    const client = Client.forMainnet();
+    const balance = await this.get_hbar_address_balance(client, address)
+
+    clone['HBAR']['balance'] = balance;
     return clone
   }
 
@@ -30361,9 +30606,11 @@ class App extends Component {
       var json_data = JSON.parse(data)
       const supply_data = {}
       json_data.forEach(price_object => {
-        const total_supply = price_object['total_supply']
+        const circulating_supply = price_object['circulating_supply']
+        // const total_supply = price_object['total_supply']
+        // const max_supply = price_object['max_supply']
         const asset_id = price_object['symbol']
-        supply_data[asset_id] = total_supply
+        supply_data[asset_id] = circulating_supply
       });
       console.log('apppage', 'load_coin_and_ether_coin_supplies', supply_data)
       this.setState({asset_supply_data: supply_data})

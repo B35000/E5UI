@@ -264,7 +264,7 @@ class CoinsDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':item['ledger_age'], 'details':this.props.app_state.loc['2927c']/* Ledger Age. */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':item['throughput']+' TPS', 'details':this.props.app_state.loc['2927d']/* Ledger Throughput. */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':number_with_commas(item['throughput'])+' TPS', 'details':this.props.app_state.loc['2927d']/* Ledger Throughput. */, 'size':'l'})}
                     
                     {this.render_block_size_metric(item['block_size'])}
 
@@ -408,7 +408,8 @@ class CoinsDetailsSection extends Component {
         const obj = {
             'FIL': 'FILE',
             'XRP':'XRPE',
-            'IOTAE': 'IOTAE',
+            'IOTA': 'IOTAE',
+            'HBAR':'HBARE',
         }
         if(obj[item['symbol']] != null){
             const evm_symbol = obj[item['symbol']]
@@ -942,6 +943,9 @@ class CoinsDetailsSection extends Component {
         }
         else if(item['symbol'] == 'IOTA'){
             return `https://explorer.iota.org/address/${hash}`
+        }
+        else if(item['symbol'] == 'HBAR'){
+            return `https://hashscan.io/mainnet/account/${hash}`
         }
     }
 
