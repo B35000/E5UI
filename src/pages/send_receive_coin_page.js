@@ -298,7 +298,7 @@ class SendReceiveCoinPage extends Component {
 
     show_memo_textarea_if_required(){
         var item = this.state.coin
-        if(item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'|| item['symbol'] == 'STX' || item['symbol'] == 'TIA'){
+        if(item['symbol'] == 'XLM' || item['symbol'] == 'ALGO' || item['symbol'] == 'ATOM'|| item['symbol'] == 'STX' || item['symbol'] == 'TIA' || item['symbol'] == 'INJ'){
             return(
                 <div>
                     {this.render_detail_item('0')}

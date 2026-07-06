@@ -497,6 +497,8 @@ class SuccessfulSend extends Component {
             return `https://explorer.immutable.com/tx/${hash}`
         }else if(e5 == 'E1375'){
             return `https://kitescan.ai/tx/${hash}`
+        }else if(e5 == 'E1385'){
+            return `https://blockscout.injective.network/tx/${hash}`
         }
 
 
@@ -761,6 +763,9 @@ class SuccessfulSend extends Component {
         }
         else if(item['symbol'] == 'HBAR'){
             return `https://hashscan.io/mainnet/transaction/${hash}`
+        }
+        else if(item['symbol'] == 'INJ'){
+            return `https://injscan.com/transaction/${hash}/`
         }
     }
 

@@ -512,6 +512,7 @@ import arenaz_logo from './assets/arenaz.png'
 import polkadot_evm_logo from './assets/polkadot_evm.png'
 import immutable_zkevm_logo from './assets/immutable_zkevm.png'
 import kite_ai_logo from './assets/kite.png'
+import injective_evm_logo from './assets/injective_evm.png'
 
 import celestia_logo from './assets/celestia.png'
 import algorand_logo from './assets/algorand.png'
@@ -538,6 +539,7 @@ import solana2_logo from './assets/solana2.png'
 import algorand2_logo from './assets/algorand2.png'
 import iota_logo from './assets/iota.png'
 import hedera_hashgraph_logo from './assets/hedera_hashgraph.png'
+import injective_logo from './assets/injective.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -590,6 +592,9 @@ import { AccountsContractMethod, CoreContract, getHname, IscTransaction, L2_FROM
 import { Message } from 'iso-filecoin/message'
 import { RPC } from 'iso-filecoin/rpc'
 import { Client, Mnemonic, PrivateKey, AccountId, AccountBalanceQuery, TransferTransaction, TransactionRecordQuery, Hbar, HbarUnit, TransactionId, Status, } from "@hashgraph/sdk";
+import { PrivateKey as InjectivePrivateKey, PublicKey as InjectivePublicKey, MsgSend, ChainGrpcBankApi, ChainRestAuthApi, ChainRestTendermintApi, createTransaction, TxRestApi, BaseAccount} from '@injectivelabs/sdk-ts';
+import { Network, getNetworkEndpoints, getNetworkInfo } from '@injectivelabs/networks';
+import { BigNumberInBase, BigNumberInWei, DEFAULT_STD_FEE } from '@injectivelabs/utils';
 
 
 /* shared component stuff */
@@ -1469,7 +1474,7 @@ class App extends Component {
     if(this.state != null && this.state.original_e5s_data != null){
       return this.state.original_e5s_data
     }
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335', 'E1345', 'E1355', 'E1365', 'E1375']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335', 'E1345', 'E1355', 'E1365', 'E1375', 'E1385']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -2322,6 +2327,12 @@ class App extends Component {
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image: kite_ai_logo, iteration:3_000, url:0, active:false, e5_img:null,
       },
+      'E1385':{
+        web3:['https://sentry.evm-rpc.injective.network', 'https://injectiveevm-rpc.polkachu.com'],
+        token:'INJE',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image: injective_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559',
+      },
     }
   }
 
@@ -2510,7 +2521,8 @@ class App extends Component {
       this.get_token('ARETH', 'Arena-Z', 'E1345'),
       this.get_token('DOT', 'Polkadot PolkaVM', 'E1355', true),
       this.get_token('IMX', 'Immutable zkEVM', 'E1365'),
-      this.get_token('KITE', 'KiteAI', 'E1375')
+      this.get_token('KITE', 'KiteAI', 'E1375'),
+      this.get_token('INJE', 'Injective EVM', 'E1385')
     ]
 
     return list
@@ -2565,9 +2577,11 @@ class App extends Component {
 
       'TIA': this.get_coin_info('TIA', 'Celestia', celestia_logo, 'uTIA', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake', '6 sec.', this.get_time_difference(1698760800), 1300, 2),
 
-      'IOTA': this.get_coin_info('IOTA', 'IOTA Rebased', iota_logo, 'nano', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1746446400), 53_000, 0.032768),
+      'IOTA': this.get_coin_info('IOTA', 'IOTA', iota_logo, 'nano', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1746446400), 53_000, 0.032768),
 
       'HBAR': this.get_coin_info('HBAR', 'Hedera Hashgraph', hedera_hashgraph_logo, 'tinybar', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Hashgraph', '5 sec.', this.get_time_difference(1568592000), 10_000, '~~~'),
+
+      'INJ': this.get_coin_info('INJ', 'Injective', injective_logo, 'inj', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.65 sec.', this.get_time_difference(1625058000), 600_000, '~~~'),
     }
     return list
   }
@@ -2618,7 +2632,8 @@ class App extends Component {
       'celestia18tux8kpx82v6z0p9mgc6s6kym352486l480dkg',
       'addr1qxxwkgscq7dlcg4pukrc4wavwdkrwux5mjuc7axsx9q83qlephez0vmahssvewkj7gt20y4240a3s2e8ech92whq2j3sw22rsy',
       '0x79636ef0c3d8ee3673c61d5c45ba7448839a27b87d79eae5d91d5a0a183e4947',
-      'fb2781ecc5b61ca732d827fbca341150d75155b1'
+      'fb2781ecc5b61ca732d827fbca341150d75155b1',
+      'inj1e26ezaurxe0vrd4um5kts5m4l8z07vxgfp8kyz'
     ]
     return default_addresses
   }
@@ -8207,6 +8222,9 @@ class App extends Component {
     else if(item['symbol'] == 'HBAR'){
       return this.validate_hbar_address(address)
     }
+    else if(item['symbol'] == 'INJ'){
+      return this.validate_inj_address(address)
+    }
 
 
     return true;
@@ -8416,6 +8434,17 @@ class App extends Component {
     return true
   }
 
+  validate_inj_address(address){
+    try {
+      const { prefix, words } = bech32.decode(address);
+      const payloadLength = bech32.fromWords(words).length;
+      return prefix === 'inj' && payloadLength === 20;
+    } 
+    catch (e) {
+      return false;
+    }
+  }
+
 
 
 
@@ -8486,6 +8515,9 @@ class App extends Component {
     }
     else if(item['symbol'] == 'HBAR'){
       await this.create_and_broadcast_hbar_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'INJ'){
+      await this.create_and_broadcast_inj_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
     }
 
     var sync_time = item['symbol'] == 'AR' ? (4 * 60_000) : (1 * 30_000)
@@ -9364,6 +9396,45 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
     client.close();
+  }
+
+  create_and_broadcast_inj_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_inj_wallet(seed)
+    const endpoints = getNetworkEndpoints(Network.Mainnet);
+    const txApi = new TxRestApi(endpoints.rest)
+
+    const send_amount = new BigNumberInWei(transfer_amount).toBase(18).toFixed() 
+
+    const msg = this.build_send_message(recipient_address, send_amount, 'inj', wallet.address);
+    const { accountNumber, sequence, timeoutHeight } = await this.get_signer_data();
+
+    const { signBytes, txRaw } = createTransaction({
+      message: msg,
+      memo: memo_text,
+      pubKey: wallet.publicKey.toBase64(),
+      sequence,
+      accountNumber,
+      chainId: getNetworkInfo(Network.Mainnet).chainId,
+      timeoutHeight: timeoutHeight.toNumber(),
+    });
+
+    try{
+      const signature = await wallet.privateKey.sign(Buffer.from(signBytes));
+      txRaw.signatures = [signature];
+      const txResponse = await txApi.broadcast(txRaw);
+
+      if(txResponse.code == 0){
+        const hash = txResponse.txHash
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      }
+      else{
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
   }
 
   async send_coin_request_message(request_coin_recipient, recipient_address, picked_sat_amount, recipient_e5, ether_id, request_coin_memo){
@@ -28644,6 +28715,11 @@ class App extends Component {
     coin_data['HBAR'] = await this.get_and_set_hbar_wallet_info(seed)
 
 
+    this.setState({coin_data: coin_data})
+    // await this.wait(400)
+    coin_data['INJ'] = await this.get_and_set_inj_wallet_info(seed)
+
+
 
 
 
@@ -28739,6 +28815,7 @@ class App extends Component {
     if(coin == 'TIA' || should_update_all) coin_data = await this.update_celestia_balance(coin_data);
     if(coin == 'IOTA' || should_update_all) coin_data = await this.update_iota_balance(coin_data);
     if(coin == 'HBAR' || should_update_all) coin_data = await this.update_hbar_balance(coin_data);
+    if(coin == 'INJ' || should_update_all) coin_data = await this.update_inj_balance(coin_data);
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
     this.setState({coin_data: coin_data})
@@ -30530,6 +30607,138 @@ class App extends Component {
     const balance = await this.get_hbar_address_balance(client, address)
 
     clone['HBAR']['balance'] = balance;
+    return clone
+  }
+
+
+
+
+
+
+
+
+
+  get_and_set_inj_wallet_info = async (seed) => {
+    const wallet = await this.generate_inj_wallet(seed)
+    const address = wallet.address
+    const balance = await this.get_inj_address_balance(address)
+
+    var fee_info = {'fee':await this.get_inj_transaction_fees(), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info}
+    this.fetch_specific_coin_receipts(address)
+    return data
+  }
+
+  generate_inj_wallet = async (mnemonic) => {
+    const entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic)
+    const privateKey = InjectivePrivateKey.fromMnemonic(entropic_mnemonic)
+    const publicKey = privateKey.toPublicKey();
+    const address = privateKey.toBech32();
+    return { privateKey, publicKey, address }
+  }
+
+  get_inj_address_balance = async (address) => {
+    const endpoints = getNetworkEndpoints(Network.Mainnet);
+    const bankApi = new ChainGrpcBankApi(endpoints.grpc);
+    const balance = await bankApi.fetchBalance({
+      accountAddress: address,
+      denom: 'inj'
+    });
+    return balance.amount
+  }
+
+  async get_inj_transaction_fees(){
+    const wallet = await this.generate_inj_wallet('add_test_stuff')
+    const toAddress = 'inj108qpetsysu634gakenv77wffpk42nnw66yfzgy'
+    const amount = 0.001
+    const endpoints = getNetworkEndpoints(Network.Mainnet);
+    const txApi = new TxRestApi(endpoints.rest)
+
+    const msg = this.build_send_message(toAddress, amount, 'inj', toAddress);
+    const { accountNumber, sequence, timeoutHeight } = await this.get_signer_data(toAddress);
+
+    const { txRaw } = createTransaction({
+      message: msg,
+      memo: '',
+      pubKey: wallet.publicKey.toBase64(),
+      sequence,
+      accountNumber,
+      chainId: getNetworkInfo(Network.Mainnet).chainId,
+      timeoutHeight: timeoutHeight.toNumber(),
+    });
+
+    txRaw.signatures = [new Uint8Array(64)];
+    let gasWanted;
+    try{
+      const simulationResponse = await txApi.simulate(txRaw);
+      gasWanted = simulationResponse.gasInfo.gasWanted.toString();
+      const gasUsed = simulationResponse.gasInfo.gasUsed.toString();
+    }catch(e){
+      console.log(e)
+      gasWanted = 120_000;
+    }
+    
+    const GAS_PRICE = await this.get_inj_gas_price();
+    const estimatedFeeBaseUnits = new BigNumberInBase(gasWanted).times(GAS_PRICE);
+    return estimatedFeeBaseUnits.toString()
+  }
+
+  build_send_message = (toAddress, amount, denom='inj', fromAddress) => {
+    const baseAmount = new BigNumberInBase(amount).toWei(18).toFixed()
+ 
+    return MsgSend.fromJSON({
+      amount: {
+        denom,
+        amount: baseAmount,
+      },
+      srcInjectiveAddress: fromAddress,
+      dstInjectiveAddress: toAddress,
+    });
+  }
+
+  get_signer_data = async (address) => {
+    const endpoints = getNetworkEndpoints(Network.Mainnet);
+    const authApi = new ChainRestAuthApi(endpoints.rest);
+    const tendermintApi = new ChainRestTendermintApi(endpoints.rest);
+
+    const accountDetails = await authApi.fetchAccount(address);
+    const baseAccount = BaseAccount.fromRestApi(accountDetails);
+
+    const latestBlock = await tendermintApi.fetchLatestBlock();
+    const latestHeight = latestBlock.header.height;
+    const timeoutHeight = new BigNumberInBase(latestHeight).plus(20); // ~20 blocks of validity
+
+    return {
+      accountNumber: baseAccount.accountNumber,
+      sequence: baseAccount.sequence,
+      timeoutHeight,
+    };
+  }
+
+  async get_inj_gas_price() {
+    const endpoints = getNetworkEndpoints(Network.Mainnet);
+    const url = `${endpoints.rest}/injective/txfees/v1beta1/cur_eip_base_fee`
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Unexpected status ${response.status}`);
+      const data = await response.json();
+      // Response shape: { base_fee: { base_fee: "160000000.000000000000000000" } }
+      const baseFee = data?.base_fee?.base_fee;
+      if (!baseFee) throw new Error('Malformed response');
+      return baseFee;
+    } 
+    catch (err) {
+      // Fall back to the governance-set minimum gas price param.
+      console.error(err)
+      return 160_000_000;
+    }
+  }
+
+  update_inj_balance = async (clone) => {
+    var address = clone['INJ']['address']
+    const balance = await this.get_inj_address_balance(address)
+
+    clone['INJ']['balance'] = balance;
     return clone
   }
 

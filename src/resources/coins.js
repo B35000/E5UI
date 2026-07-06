@@ -230,6 +230,11 @@ const currencies = [
     "name": "Hyperliquid"
   },
   {
+    "id": "injective-protocol",
+    "symbol": "inj",
+    "name": "Injective"
+  },
+  {
     "id": "iota",
     "symbol": "iota",
     "name": "IOTA"

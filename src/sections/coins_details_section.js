@@ -947,6 +947,9 @@ class CoinsDetailsSection extends Component {
         else if(item['symbol'] == 'HBAR'){
             return `https://hashscan.io/mainnet/account/${hash}`
         }
+        else if(item['symbol'] == 'INJ'){
+            return `https://injscan.com/account/${hash}/`
+        }
     }
 
 
