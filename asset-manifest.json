@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.5176f859.css",
-    "main.js": "/static/js/main.66351abb.js",
+    "main.js": "/static/js/main.3d22d56e.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -220,6 +220,7 @@
     "static/media/pick_video_file_button.png": "/static/media/pick_video_file_button.6b6aa8d2cfbf813ffcb5.png",
     "static/media/add_icon_orange.png": "/static/media/add_icon_orange.f4ea9433df0bccb9e38b.png",
     "static/media/add_icon_darkyellow.png": "/static/media/add_icon_darkyellow.98878a255a47309ecfd5.png",
+    "static/media/near.png": "/static/media/near.f66d64559308b504b183.png",
     "static/media/tezos.png": "/static/media/tezos.dc7095b3d40ed984e9b7.png",
     "static/media/play_icon_pink.png": "/static/media/play_icon_pink.654acef38aa7edffe47f.png",
     "static/media/add_icon_darkblue.png": "/static/media/add_icon_darkblue.da9565cacd3a7d083f9d.png",
@@ -483,6 +484,6 @@
   },
   "entrypoints": [
     "static/css/main.5176f859.css",
-    "static/js/main.66351abb.js"
+    "static/js/main.3d22d56e.js"
   ]
 }
