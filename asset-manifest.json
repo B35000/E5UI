@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.5176f859.css",
-    "main.js": "/static/js/main.dabab949.js",
+    "main.js": "/static/js/main.66351abb.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -185,6 +185,7 @@
     "static/media/close_icon_blue.png": "/static/media/close_icon_blue.da004ed698454182af83.png",
     "static/media/shuffle_icon_darkgreen.png": "/static/media/shuffle_icon_darkgreen.116644b05902268e7b1b.png",
     "static/media/tutorial_image_number2.png": "/static/media/tutorial_image_number2.b7f20eb26dbc14838308.png",
+    "static/media/injective.png": "/static/media/injective.fe649b764b505fad79fb.png",
     "static/media/e5_logo_dark.png": "/static/media/e5_logo_dark.18e5cceb4cf6ac5775f2.png",
     "static/media/e5_logo_light.png": "/static/media/e5_logo_light.887769983105474c4045.png",
     "static/media/repeat_icon_green.png": "/static/media/repeat_icon_green.7fe77f49c06cba6af9fc.png",
@@ -408,6 +409,7 @@
     "static/media/katana.png": "/static/media/katana.687bbd42cb845199c182.png",
     "static/media/bsquared.png": "/static/media/bsquared.e14bd0becb0ecd9c1584.png",
     "static/media/zksync.png": "/static/media/zksync.bff57cc1cc14ed6bc029.png",
+    "static/media/injective_evm.png": "/static/media/injective_evm.c2f404d33cc7465cce18.png",
     "static/media/rei.png": "/static/media/rei.3e6c96e5860ab40d5990.png",
     "static/media/zoom_out_icon.png": "/static/media/zoom_out_icon.ad0e18aa8406d6f7c3aa.png",
     "static/media/ethereum_testnet.png": "/static/media/ethereum_testnet.078fff36c034460a41e3.png",
@@ -481,6 +483,6 @@
   },
   "entrypoints": [
     "static/css/main.5176f859.css",
-    "static/js/main.dabab949.js"
+    "static/js/main.66351abb.js"
   ]
 }
