@@ -6464,7 +6464,7 @@ class home_page extends Component {
 
                 load_accounts_non_fungible_token_data={this.props.load_accounts_non_fungible_token_data.bind(this)} perform_fractionalized_certificate_search={this.perform_fractionalized_certificate_search.bind(this)} get_verified_certificate_data={this.props.get_verified_certificate_data.bind(this)}
 
-                get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)} show_bridge_coin_bottomsheet={this.props.show_bridge_coin_bottomsheet.bind(this)}
+                get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)} show_bridge_coin_bottomsheet={this.props.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.props.refresh_wallet.bind(this)}
                 />
             </div>
         )
@@ -8177,8 +8177,8 @@ class home_page extends Component {
         if(amount < 1_000_000_000){
             return number_with_commas(amount.toString())
         }else{
-            var power = amount.toString().length - 9
-            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+            var power = amount.toLocaleString('fullwide', {useGrouping:false}).length - 9
+            return number_with_commas(amount.toLocaleString('fullwide', {useGrouping:false}).substring(0, 9)) +'e'+power
         }
         
     }
@@ -8200,7 +8200,7 @@ class home_page extends Component {
             return 'e0'
         }
         else{
-            var power = amount.toString().length - 9
+            var power = amount.toLocaleString('fullwide', {useGrouping:false}).length - 9
             return 'e'+(power+1)
         }
     }

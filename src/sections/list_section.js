@@ -3008,53 +3008,6 @@ class PostListSection extends Component {
         this.props.show_dialog_bottomsheet({'message':data}, 'enter_voice_call')
     }
 
-    render_small_empty_object(){
-        return(
-            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                <div style={{'margin':'10px 20px 10px 0px'}}>
-                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                </div>
-            </div>
-        );
-    }
-
-    render_small_skeleton_object(){
-        const styles = {
-            container: {
-                position: 'relative',
-                width: '100%',
-                height: 60,
-                borderRadius: '15px',
-                overflow: 'hidden',
-            },
-            skeletonBox: {
-                width: '100%',
-                height: '100%',
-                borderRadius: '15px',
-            },
-            centerImage: {
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 'auto',
-                height: 30,
-                objectFit: 'contain',
-                opacity: 0.9,
-            },
-        };
-        return(
-            <div>
-                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
-                    <div style={styles.container}>
-                        <Skeleton style={styles.skeletonBox} />
-                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
-                    </div>
-                </SkeletonTheme>
-            </div>
-        )
-    }
-
 
 
 
@@ -8726,6 +8679,52 @@ return data['data']
 
 
 
+    render_small_empty_object(){
+        return(
+            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 10px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                </div>
+            </div>
+        );
+    }
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
 
     render_empty_views(size){
         var items = []
@@ -8757,8 +8756,8 @@ return data['data']
         if(amount < 1_000_000_000){
             return number_with_commas(amount.toString())
         }else{
-            var power = amount.toString().length - 9
-            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+            var power = amount.toLocaleString('fullwide', {useGrouping:false}).length - 9
+            return number_with_commas(amount.toLocaleString('fullwide', {useGrouping:false}).substring(0, 9)) +'e'+power
         }
         
     }
@@ -8927,7 +8926,7 @@ return data['data']
             return 'e0'
         }
         else{
-            var power = amount.toString().length - 9
+            var power = amount.toLocaleString('fullwide', {useGrouping:false}).length - 9
             return 'e'+(power+1)
         }
     }

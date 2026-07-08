@@ -230,6 +230,11 @@ const currencies = [
     "name": "Hyperliquid"
   },
   {
+    "id": "internet-computer",
+    "symbol": "icp",
+    "name": "Internet Computer"
+  },
+  {
     "id": "injective-protocol",
     "symbol": "inj",
     "name": "Injective"
@@ -305,6 +310,11 @@ const currencies = [
     "name": "Moonriver"
   },
   {
+    "id": "near",
+    "symbol": "near",
+    "name": "Near"
+  },
+  {
     "id": "neon",
     "symbol": "neon",
     "name": "Neon"
@@ -328,6 +338,11 @@ const currencies = [
     "id": "one-ledger",
     "symbol": "olt",
     "name": "OneLedger"
+  },
+  {
+    "id": "plasma",
+    "symbol": "xpl",
+    "name": "Plasma"
   },
   {
     "id": "plume",

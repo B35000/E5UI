@@ -569,7 +569,7 @@ class NewMailPage extends Component {
             return 'e0'
         }
         else{
-            var power = amount.toString().length - 9
+            var power = amount.toLocaleString('fullwide', {useGrouping:false}).length - 9
             return 'e'+(power+1)
         }
     }

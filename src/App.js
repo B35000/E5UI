@@ -513,6 +513,7 @@ import polkadot_evm_logo from './assets/polkadot_evm.png'
 import immutable_zkevm_logo from './assets/immutable_zkevm.png'
 import kite_ai_logo from './assets/kite.png'
 import injective_evm_logo from './assets/injective_evm.png'
+import plasma_logo from './assets/plasma.png'
 
 import celestia_logo from './assets/celestia.png'
 import algorand_logo from './assets/algorand.png'
@@ -540,6 +541,8 @@ import algorand2_logo from './assets/algorand2.png'
 import iota_logo from './assets/iota.png'
 import hedera_hashgraph_logo from './assets/hedera_hashgraph.png'
 import injective_logo from './assets/injective.png'
+import near_logo from './assets/near.png'
+import icp_logo from './assets/internet_computer.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -595,6 +598,13 @@ import { Client, Mnemonic, PrivateKey, AccountId, AccountBalanceQuery, TransferT
 import { PrivateKey as InjectivePrivateKey, PublicKey as InjectivePublicKey, MsgSend, ChainGrpcBankApi, ChainRestAuthApi, ChainRestTendermintApi, createTransaction, TxRestApi, BaseAccount} from '@injectivelabs/sdk-ts';
 import { Network, getNetworkEndpoints, getNetworkInfo } from '@injectivelabs/networks';
 import { BigNumberInBase, BigNumberInWei, DEFAULT_STD_FEE } from '@injectivelabs/utils';
+import { Account, JsonRpcProvider, KeyPair, PublicKey as NearPublicKey, nearToYocto, yoctoToNear, teraToGas, } from 'near-api-js';
+import { parseSeedPhrase } from 'near-seed-phrase';
+import { NEAR } from 'near-api-js/tokens';
+import { Ed25519KeyIdentity } from '@icp-sdk/core/identity';
+import { Principal } from '@icp-sdk/core/principal';
+import { createAgent } from '@dfinity/utils';
+import { IcpLedgerCanister, AccountIdentifier } from '@dfinity/ledger-icp';
 
 
 /* shared component stuff */
@@ -1474,7 +1484,7 @@ class App extends Component {
     if(this.state != null && this.state.original_e5s_data != null){
       return this.state.original_e5s_data
     }
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335', 'E1345', 'E1355', 'E1365', 'E1375', 'E1385']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335', 'E1345', 'E1355', 'E1365', 'E1375', 'E1385', 'E1395']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -2333,6 +2343,12 @@ class App extends Component {
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image: injective_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559',
       },
+      'E1395':{
+        web3:['https://rpc.plasma.to'],
+        token:'XPL',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image: plasma_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559',
+      },
     }
   }
 
@@ -2522,7 +2538,8 @@ class App extends Component {
       this.get_token('DOT', 'Polkadot PolkaVM', 'E1355', true),
       this.get_token('IMX', 'Immutable zkEVM', 'E1365'),
       this.get_token('KITE', 'KiteAI', 'E1375'),
-      this.get_token('INJE', 'Injective EVM', 'E1385')
+      this.get_token('INJE', 'Injective EVM', 'E1385'),
+      this.get_token('XPL', 'Plasma', 'E1395'),
     ]
 
     return list
@@ -2582,6 +2599,10 @@ class App extends Component {
       'HBAR': this.get_coin_info('HBAR', 'Hedera Hashgraph', hedera_hashgraph_logo, 'tinybar', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Hashgraph', '5 sec.', this.get_time_difference(1568592000), 10_000, '~~~'),
 
       'INJ': this.get_coin_info('INJ', 'Injective', injective_logo, 'inj', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.65 sec.', this.get_time_difference(1625058000), 600_000, '~~~'),
+
+      'NEAR': this.get_coin_info('NEAR', 'Near Protocol', near_logo, 'yocto', 24, 10**24, this.getLocale()['2916']/* Accounting' */, 'Thresholded Proof of Stake', '1 sec.', this.get_time_difference(1595350551), 4100, '~~~'),
+
+      'ICP': this.get_coin_info('ICP', 'Internet Computer', icp_logo, 'e8', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Threshold Relay', '0.5 sec.', this.get_time_difference(1623283200), 3_000, '~~~'),
     }
     return list
   }
@@ -2633,7 +2654,9 @@ class App extends Component {
       'addr1qxxwkgscq7dlcg4pukrc4wavwdkrwux5mjuc7axsx9q83qlephez0vmahssvewkj7gt20y4240a3s2e8ech92whq2j3sw22rsy',
       '0x79636ef0c3d8ee3673c61d5c45ba7448839a27b87d79eae5d91d5a0a183e4947',
       'fb2781ecc5b61ca732d827fbca341150d75155b1',
-      'inj1e26ezaurxe0vrd4um5kts5m4l8z07vxgfp8kyz'
+      'inj1e26ezaurxe0vrd4um5kts5m4l8z07vxgfp8kyz',
+      'f52343e16056927fa0fda31ed17aedcd69b42624b84889542d9c8c7be6d4454f',
+      '73f37eda5e4de090c3a09df8446fbf8ad3942c8e942a9623b4f44ca4db12d1fe'
     ]
     return default_addresses
   }
@@ -7076,7 +7099,7 @@ class App extends Component {
 
           show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} 
 
-          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} show_bridge_coin_bottomsheet={this.show_bridge_coin_bottomsheet.bind(this)}
+          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} show_bridge_coin_bottomsheet={this.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.refresh_wallet.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -8225,6 +8248,12 @@ class App extends Component {
     else if(item['symbol'] == 'INJ'){
       return this.validate_inj_address(address)
     }
+    else if(item['symbol'] == 'NEAR'){
+      return this.validate_near_address(address)
+    }
+    else if(item['symbol'] == 'ICP'){
+      return this.validate_icp_address(address)
+    }
 
 
     return true;
@@ -8445,6 +8474,30 @@ class App extends Component {
     }
   }
 
+  validate_near_address(accountId){
+    if (typeof accountId !== 'string') return false;
+    if (accountId.length < 2 || accountId.length > 64) return false;
+ 
+    // Implicit account: 64 lowercase hex chars
+    const implicitRegex = /^[0-9a-f]{64}$/;
+    if (implicitRegex.test(accountId)) return true;
+ 
+    // Named account: dot-separated segments, each segment made of
+    // lowercase alphanumerics separated by single hyphens/underscores.
+    const namedRegex = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
+    return namedRegex.test(accountId);
+  }
+
+  validate_icp_address(address){
+    try {
+      AccountIdentifier.fromHex(address);
+      return true;
+    } 
+    catch (err) {
+      return false;
+    }
+  }
+
 
 
 
@@ -8518,6 +8571,12 @@ class App extends Component {
     }
     else if(item['symbol'] == 'INJ'){
       await this.create_and_broadcast_inj_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+    }
+    else if(item['symbol'] == 'NEAR'){
+      await this.create_and_broadcast_near_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'ICP'){
+      await this.create_and_broadcast_icp_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
 
     var sync_time = item['symbol'] == 'AR' ? (4 * 60_000) : (1 * 30_000)
@@ -9426,6 +9485,56 @@ class App extends Component {
 
       if(txResponse.code == 0){
         const hash = txResponse.txHash
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      }
+      else{
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  create_and_broadcast_near_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_near_wallet(seed)
+    const send_amount = yoctoToNear(transfer_amount) 
+
+    try{
+      const outcome = await wallet.account.transfer({
+        receiverId: recipient_address,
+        amount: NEAR.toUnits(send_amount.toString()),
+        token: NEAR,
+      });
+
+      const hash = outcome.transaction.hash;
+      if(hash != null && hash != ''){
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      }
+      else{
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  create_and_broadcast_icp_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_icp_wallet(seed)
+    const send_amount = Number(transfer_amount)
+
+    try{
+      const blockHeight = await wallet.ledger.transfer({
+        to: AccountIdentifier.fromHex(recipient_address),
+        amount: send_amount,
+        memo: 0n,
+      });
+
+      const hash = blockHeight;
+      if(hash != null && hash != '' && hash != 0){
         this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
       }
       else{
@@ -28662,7 +28771,6 @@ class App extends Component {
     // console.log('coin', 'kusama...')
     // console.log('coin', this.state.coin_data)
     this.setState({coin_data: coin_data})
-    await this.wait(400)
     coin_data['ALGO'] = await this.get_and_set_algorand_wallet_info(seed)
     // console.log('coin', 'algorand...')
     // console.log('coin', this.state.coin_data)
@@ -28719,6 +28827,18 @@ class App extends Component {
     // await this.wait(400)
     coin_data['INJ'] = await this.get_and_set_inj_wallet_info(seed)
 
+
+
+    this.setState({coin_data: coin_data})
+    // await this.wait(400)
+    coin_data['NEAR'] = await this.get_and_set_near_wallet_info(seed)
+
+
+
+
+    this.setState({coin_data: coin_data})
+    // await this.wait(400)
+    coin_data['ICP'] = await this.get_and_set_icp_wallet_info(seed)
 
 
 
@@ -28816,6 +28936,8 @@ class App extends Component {
     if(coin == 'IOTA' || should_update_all) coin_data = await this.update_iota_balance(coin_data);
     if(coin == 'HBAR' || should_update_all) coin_data = await this.update_hbar_balance(coin_data);
     if(coin == 'INJ' || should_update_all) coin_data = await this.update_inj_balance(coin_data);
+    if(coin == 'NEAR' || should_update_all) coin_data = await this.update_near_balance(coin_data);
+    if(coin == 'ICP' || should_update_all) coin_data = await this.update_icp_balance(coin_data);
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
     this.setState({coin_data: coin_data})
@@ -28834,6 +28956,42 @@ class App extends Component {
       return false
     }
     return true;
+  }
+
+  refresh_wallet = async (coin) => {
+    const seed = this.state.final_seed
+    this.setState({loading_individual_coin: coin})
+    const coin_data = (this.state.coin_data)
+
+    if(coin == 'BTC') coin_data[coin] = await this.get_and_set_bitcoin_wallet_info(seed);
+    if(coin == 'FIL') coin_data[coin] = await this.get_and_set_filecoin_wallet_info(seed);
+    if(coin == 'BCH') coin_data[coin] = await this.get_and_set_bitcoin_cash_wallet_info(seed);
+    if(coin == 'LTC') coin_data[coin] = await this.get_and_set_litecoin_wallet_info(seed);
+    if(coin == 'DOGE') coin_data[coin] = await this.get_and_set_dogecoin_wallet_info(seed);
+    if(coin == 'DASH') coin_data[coin] = await this.get_and_set_dash_wallet_info(seed);
+    if(coin == 'TRX') coin_data[coin] = await this.get_and_set_tron_wallet_info(seed);
+    if(coin == 'XRP') coin_data[coin] = await this.get_and_set_xrp_wallet_info(seed);
+    if(coin == 'XLM') coin_data[coin] = await this.get_and_set_xlm_wallet_info(seed);
+    if(coin == 'DOT') coin_data[coin] = await this.get_and_set_dot_wallet_info(seed);
+    if(coin == 'KSM') coin_data[coin] = await this.get_and_set_kusama_wallet_info(seed);
+    if(coin == 'ALGO') coin_data[coin] = await this.get_and_set_algorand_wallet_info(seed);
+    if(coin == 'XTZ') coin_data[coin] = await this.get_and_set_tezos_wallet_info(seed);
+    if(coin == 'ATOM') coin_data[coin] = await this.get_and_set_cosmos_wallet_info(seed);
+    if(coin == 'SOL') coin_data[coin] = await this.get_and_set_solana_wallet_info(seed);
+    if(coin == 'APT') coin_data[coin] = await this.get_and_set_aptos_wallet_info(seed);
+    if(coin == 'ADA') coin_data[coin] = await this.get_and_set_cardano_wallet_info(seed);
+    if(coin == 'STX') coin_data[coin] = await this.get_and_set_stacks_wallet_info(seed);
+
+    if(coin == 'SUI') coin_data[coin] = await this.get_and_set_sui_wallet_info(seed);
+    if(coin == 'TIA') coin_data[coin] = await this.get_and_set_celestia_wallet_info(seed);
+    if(coin == 'IOTA') coin_data[coin] = await this.get_and_set_iota_wallet_info(seed);
+    if(coin == 'HBAR') coin_data[coin] = await this.get_and_set_hbar_wallet_info(seed);
+    if(coin == 'INJ') coin_data[coin] = await this.get_and_set_inj_wallet_info(seed);
+    if(coin == 'NEAR') coin_data[coin] = await this.get_and_set_near_wallet_info(seed);
+    if(coin == 'ICP') coin_data[coin] = await this.get_and_set_icp_wallet_info(seed);
+    if(coin == 'AR') coin_data[coin] = await this.get_and_set_arweave_wallet_info(seed);
+    
+    this.setState({coin_data: coin_data, loading_individual_coin: null})
   }
 
 
@@ -30741,6 +30899,144 @@ class App extends Component {
     clone['INJ']['balance'] = balance;
     return clone
   }
+
+
+
+
+
+
+
+
+
+
+  get_and_set_near_wallet_info = async (seed) => {
+    const wallet = await this.generate_near_wallet(seed)
+    const address = wallet.address
+    const balance = await this.get_near_address_balance(wallet.account)
+
+    var fee_info = {'fee':await this.get_near_transaction_fees(), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info}
+    this.fetch_specific_coin_receipts(address)
+    return data
+  }
+
+  generate_near_wallet = async (mnemonic) => {
+    const entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic)
+    const { secretKey, publicKey } = parseSeedPhrase(entropic_mnemonic);
+    const pubKey = NearPublicKey.fromString(publicKey);
+    const accountId = Buffer.from(pubKey.data).toString('hex');
+    const provider = new JsonRpcProvider({ url: 'https://rpc.mainnet.near.org' });
+    const account = new Account(accountId, provider, secretKey);
+    return { secretKey: secretKey, publicKey: publicKey, account: account, address: accountId };
+  }
+
+  get_near_address_balance = async (account) => {
+    try{
+      const state = await account.getState(); // { balance: { total, available, locked }, storageUsage }
+      return state.balance.available
+      // return {
+      //   total: yoctoToNear(state.balance.total),
+      //   available: yoctoToNear(state.balance.available),
+      //   locked: yoctoToNear(state.balance.locked),
+      // };
+    }
+    catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+  async get_near_transaction_fees(){
+    const provider = new JsonRpcProvider({ url: 'https://rpc.mainnet.near.org' });
+    const gasPriceResult = await provider.viewGasPrice()
+    const gasPrice = bigInt(gasPriceResult.gas_price);
+ 
+    const TRANSFER_GAS = teraToGas('0.45');
+    const feeYocto = gasPrice.multiply(TRANSFER_GAS);
+    return feeYocto.toString();
+  }
+
+  update_near_balance = async (clone) => {
+    const wallet = await this.generate_near_wallet(this.state.final_seed)
+    const balance = await this.get_near_address_balance(wallet.account)
+
+    clone['NEAR']['balance'] = balance;
+    return clone
+  }
+
+
+
+
+
+
+
+
+
+
+
+  get_and_set_icp_wallet_info = async (seed) => {
+    const wallet = await this.generate_icp_wallet(seed)
+    const address = wallet.address
+    const balance = await this.get_icp_address_balance(wallet.ledger, wallet.accountIdentifier)
+
+    var fee_info = {'fee':await this.get_icp_transaction_fees(wallet.ledger), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet':wallet}
+    this.fetch_specific_coin_receipts(address)
+    return data
+  }
+
+  generate_icp_wallet = async (mnemonic) => {
+    const entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic)
+    const seedBuffer = await mnemonicToSeed(mnemonic);
+    const ICP_DERIVATION_PATH = "m/44'/223'/0'/0'/0'";
+    const { key } = derivePath(ICP_DERIVATION_PATH, seedBuffer.toString('hex'));
+    const identity = Ed25519KeyIdentity.fromSecretKey(key);
+    
+    const agent = await createAgent({
+      identity: identity,
+      host: 'https://icp-api.io',
+    });
+
+    const ICP_LEDGER_CANISTER_ID = 'ryjl3-tyaaa-aaaaa-aaaba-cai';
+    const ledger = IcpLedgerCanister.create({
+      agent: agent,
+      canisterId: Principal.fromText(ICP_LEDGER_CANISTER_ID),
+    });
+
+    const accountIdentifier = AccountIdentifier.fromPrincipal({
+      principal: identity.getPrincipal(),
+    });
+
+    const address = accountIdentifier.toHex();
+    const principal = identity.getPrincipal().toText()
+
+    return { identity, ledger, accountIdentifier, principal, address }
+  }
+
+  get_icp_address_balance = async (ledger, accountIdentifier) => {
+    const e8s = await ledger.accountBalance({
+      accountIdentifier: accountIdentifier,
+      certified: false,
+    });
+    return e8s.toString();
+  }
+
+  async get_icp_transaction_fees(ledger){
+    const e8s = await ledger.transactionFee();
+    return e8s.toString()
+  }
+
+  update_icp_balance = async (clone) => {
+    const wallet = clone['ICP']['wallet']
+    const balance = await this.get_icp_address_balance(wallet.ledger, wallet.accountIdentifier)
+
+    clone['ICP']['balance'] = balance;
+    return clone
+  }
+
+
+
+
 
 
 

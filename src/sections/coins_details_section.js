@@ -30,7 +30,7 @@ function bgN(number, power) {
 
 function number_with_commas(x) {
     if(x == null) x = '';
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return x.toLocaleString('fullwide', {useGrouping:false}).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function start_and_end(str) {
@@ -371,15 +371,32 @@ class CoinsDetailsSection extends Component {
                     {this.render_coin_blockexplorer_link(item)}
 
                     <div style={{height: 10}}/>
-                    <div onClick={()=>this.update_coin_balance(item)}>
-                        {this.props.app_state.updating_individual_coin[item['symbol']] == true && (
-                            <div>
-                                {this.render_line_loader_if_loading()}
-                                <div style={{height: 10}}/>
+                    
+                    {/* {this.props.app_state.updating_individual_coin[item['symbol']] == true && (
+                        <div>
+                            {this.render_line_loader_if_loading()}
+                            <div style={{height: 10}}/>
+                        </div>
+                    )} */}
+                    
+                    {this.props.app_state.loading_individual_coin == item['symbol'] && this.render_small_skeleton_object()}
+
+                    {this.props.app_state.loading_individual_coin != item['symbol'] && (
+                        <div style={{'padding': '10px 10px 10px 10px'}}>
+                            <div className="row">
+                                <div className="col-6" style={{}}>
+                                    <div style={{opacity: this.props.app_state.updating_individual_coin[item['symbol']] == true ? 0.5 : 1.0}} onClick={()=>this.update_coin_balance(item)}>
+                                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2927f']/* 'Refresh Balance.' */, 'action': ''})}
+                                    </div>
+                                </div>
+                                <div className="col-6" style={{}}>
+                                    <div onClick={()=>this.refresh_wallet(item)}>
+                                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2927bc']/* 'Reload Wallet.' */, 'action': ''})}
+                                    </div>
+                                </div>
                             </div>
-                        )}
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2927f']/* 'Refresh Wallet.' */, 'action': ''})}
-                    </div>
+                        </div>
+                    )}
 
                     {this.render_detail_item('0')}
 
@@ -846,9 +863,19 @@ class CoinsDetailsSection extends Component {
         }
         else{
             // this.props.notify(this.props.app_state.loc['2927n']/* Refreshing your wallet...' */, 2000)
-            this.props.update_coin_balances(item['symbol'], false)
+            if(this.props.app_state.updating_individual_coin[item['symbol']] != true) this.props.update_coin_balances(item['symbol'], false)
         }
         
+    }
+
+    refresh_wallet(item){
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify(this.props.app_state.loc['2906']/* You need to set your wallet first.' */, 2000)
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['2927bd']/* Reloading Your Wallet...' */, 2000)
+            this.props.refresh_wallet(item['symbol'])
+        }
     }
 
 
@@ -949,6 +976,12 @@ class CoinsDetailsSection extends Component {
         }
         else if(item['symbol'] == 'INJ'){
             return `https://injscan.com/account/${hash}/`
+        }
+        else if(item['symbol'] == 'NEAR'){
+            return `https://nearblocks.io/address/${hash}`
+        }
+        else if(item['symbol'] == 'ICP'){
+            return `https://dashboard.internetcomputer.org/account/${hash}`
         }
     }
 
@@ -1182,6 +1215,44 @@ class CoinsDetailsSection extends Component {
 
 
 
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
+
     get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
@@ -1272,7 +1343,7 @@ class CoinsDetailsSection extends Component {
             return 'e0'
         }
         else{
-            var power = amount.toString().length - 9
+            var power = amount.toLocaleString('fullwide', {useGrouping:false}).length - 9
             return 'e'+(power+1)
         }
     }
@@ -1295,8 +1366,9 @@ class CoinsDetailsSection extends Component {
         if(amount < 1_000_000_000){
             return number_with_commas(amount.toString())
         }else{
-            var power = amount.toString().length - 9
-            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+            //.toLocaleString('fullwide', {useGrouping:false})
+            var power = amount.toLocaleString('fullwide', {useGrouping:false}).length - 9
+            return number_with_commas(amount.toLocaleString('fullwide', {useGrouping:false}).substring(0, 9)) +'e'+power
         }
         
     }

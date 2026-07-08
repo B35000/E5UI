@@ -435,8 +435,8 @@ class DepthMintPage extends Component {
         if(amount < 1_000_000_000){
             return number_with_commas(amount.toString())
         }else{
-            var power = amount.toString().length - 9
-            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+            var power = amount.toLocaleString('fullwide', {useGrouping:false}).length - 9
+            return number_with_commas(amount.toLocaleString('fullwide', {useGrouping:false}).substring(0, 9)) +'e'+power
         }
         
     }
@@ -458,7 +458,7 @@ class DepthMintPage extends Component {
             return 'e0'
         }
         else{
-            var power = amount.toString().length - 9
+            var power = amount.toLocaleString('fullwide', {useGrouping:false}).length - 9
             return 'e'+(power+1)
         }
     }
