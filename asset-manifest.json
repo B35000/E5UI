@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.5176f859.css",
-    "main.js": "/static/js/main.3d22d56e.js",
+    "main.js": "/static/js/main.a9f2972c.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -205,6 +205,7 @@
     "static/media/pick_json_file_button.png": "/static/media/pick_json_file_button.fe4621bfeda0a171dc6d.png",
     "static/media/notification_sound_pop.mp3": "/static/media/notification_sound_pop.21092dd722c984e02975.mp3",
     "static/media/repeat_icon_darkred.png": "/static/media/repeat_icon_darkred.1ab31614eb2e58f821af.png",
+    "static/media/internet_computer.png": "/static/media/internet_computer.76f3c5ee5d774f277c4a.png",
     "static/media/wallet_icon_darkblue.png": "/static/media/wallet_icon_darkblue.00335e81cec2f265fbe2.png",
     "static/media/wallet_icon_darkpink.png": "/static/media/wallet_icon_darkpink.b78c31ca491823966f08.png",
     "static/media/repeat_icon_yellow.png": "/static/media/repeat_icon_yellow.abf8b4ba151a5c4c18ca.png",
@@ -295,6 +296,7 @@
     "static/media/masked_spend_icon.png": "/static/media/masked_spend_icon.4a1a5b80014b927702ec.png",
     "static/media/background_darkyellow.png": "/static/media/background_darkyellow.e5a34c12ffd6bd5a1e7c.png",
     "static/media/oasis.png": "/static/media/oasis.335ab4beba3d3f4a5586.png",
+    "static/media/plasma.png": "/static/media/plasma.c859cbea8bc23b1760eb.png",
     "static/media/next_icon_red.png": "/static/media/next_icon_red.dd96650bcbe6e5c00a94.png",
     "static/media/edgeware.png": "/static/media/edgeware.0946e8c30356531a1b1e.png",
     "static/media/fantom.png": "/static/media/fantom.b512e5e3e27d3bf8eb36.png",
@@ -484,6 +486,6 @@
   },
   "entrypoints": [
     "static/css/main.5176f859.css",
-    "static/js/main.3d22d56e.js"
+    "static/js/main.a9f2972c.js"
   ]
 }
