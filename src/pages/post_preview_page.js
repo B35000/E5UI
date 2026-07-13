@@ -142,10 +142,12 @@ class PostPreview extends Component {
     get_post_object_subscriptions(){
         var subscriptions = []
         var item = this.state.post_object
-        var required_subscriptions = (item['ipfs'].selected_subscriptions != null && item['ipfs'].selected_subscriptions.length > 0) ? item['ipfs'].selected_subscriptions : item['ipfs'].selected_subscriptions
+        var personal_subscriptions = item['ipfs'].selected_subscriptions || []
+        var creator_group_subscriptions = item['ipfs'].creator_group_subscriptions || []
+        const required_subscriptions = creator_group_subscriptions.length > 0 ? creator_group_subscriptions : required_subscriptions
         var all_subscriptions_available = true;
         var missing_subscriptions = []
-        // console.log('get_post_object_subscriptions', 'created_subscription_object_mapping',this.props.app_state.created_subscription_object_mapping)
+        console.log('get_post_object_subscriptions', this.props.app_state.created_subscription_object_mapping)
         required_subscriptions.forEach(subscription_e5_id => {
             var subscription_id = subscription_e5_id
             var subscription_e5 = 'E25'
@@ -308,7 +310,7 @@ class PostPreview extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_subscription_item(object)
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>

@@ -2762,6 +2762,11 @@ return data['data']
         } 
     }
 
+    get_data(item){
+        var obj = item.split(':')
+        return { e5: obj[0], id: obj[1]}
+    }
+
     get_senders_name(item){
         var data_item = this.get_data(item)
         var sender = data_item.id

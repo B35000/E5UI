@@ -477,8 +477,9 @@ class home_page extends Component {
 
     
     render(){
+        const filter = this.props.app_state.opened_bottomsheets2.length > 0 ? "blur(1px)" : "none";
         return(
-            <div>
+            <div style={{filter: filter}}>
                 {this.render_data()}
                 {this.render_page_toast_container()}
             </div>
@@ -740,7 +741,7 @@ class home_page extends Component {
             );
         }else{
             return(
-                <div className="row" style={{height:middle, width:width-10, 'margin':'0px 0px 0px 0px'}}>
+                <div className="row" style={{height:middle, width:width-10, 'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 15px'}}>
                     <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['nav_bar_color'], backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",'border-radius': '15px', height: (middle), backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['card_shadow_color']}}>
                         {this.render_post_detail_object(size, h, w)}
                     </div>
@@ -758,12 +759,14 @@ class home_page extends Component {
         var background_color = this.props.theme['send_receive_ether_background_color'];
         const padding = this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10;
         const radius = this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? '0px' : '15px';
+        const is_bottomsheet_at_top = this.props.is_function_at_complete_top_of_stack(onOpenChange.name)
+        const filter = is_bottomsheet_at_top == false ? "blur(1px)" : "none";
         return(
         <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)}>
             <Drawer.Portal>
             <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.5)" }}/>
             <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
-                <div style={{ height: height, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': radius, 'margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', }}>
+                <div style={{ height: height, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': radius, 'margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', filter: filter,}}>
                 {view}
                 </div>
             </Drawer.Content>
@@ -5751,14 +5754,14 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        this.props.fetch_uploaded_files_for_object(object)
+        await this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5, object)
         // this.props.get_channel_event_data(id, e5)
         // this.props.get_moderator_event_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
-        this.props.get_channel_creator_file_records(object)
-        this.props.get_channel_creator_payout_stagings(object)
-        this.props.get_channel_payout_records(object)
+        await this.props.get_channel_creator_file_records(object)
+        await this.props.get_channel_creator_payout_stagings(object)
+        await this.props.get_channel_payout_records(object)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -6343,8 +6346,18 @@ class home_page extends Component {
 
     show_post_item_preview_with_subscription(post, type){
         const item = post;
-        var required_subscriptions = (item['ipfs'].selected_subscriptions != null && item['ipfs'].selected_subscriptions.length > 0) ? item['ipfs'].selected_subscriptions : item['ipfs'].selected_subscriptions
+        var required_subscriptions = item['ipfs'].selected_subscriptions || []
+        var creator_group_subscriptions = item['ipfs'].creator_group_subscriptions || []
         const ids = {}
+
+        creator_group_subscriptions.forEach(subscription_e5_id => {
+            var subscription_id = subscription_e5_id.split('E')[0]
+            var subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+            if(ids[subscription_e5] == null){
+                ids[subscription_e5] = []
+            }
+            ids[subscription_e5].push(parseInt(subscription_id))
+        });
         required_subscriptions.forEach(subscription_e5_id => {
             var subscription_id = subscription_e5_id
             var subscription_e5 = 'E25'
@@ -6357,6 +6370,7 @@ class home_page extends Component {
             }
             ids[subscription_e5].push(parseInt(subscription_id))
         });
+        console.log('show_post_item_preview_with_subscription', ids)
         Object.keys(ids).forEach(e5_item => {
             this.props.load_objects(33/* subscription */, ids[e5_item], e5_item)
         });

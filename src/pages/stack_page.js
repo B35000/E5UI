@@ -5387,7 +5387,7 @@ class StackPage extends Component {
                         if(creator_group_record['e'].length > 0){
                             creator_group_updates[1].push(selected_channel_target_id)
                             creator_group_updates[2].push(23)
-                            creator_group_updates[3].push(creator_group_context)
+                            creator_group_updates[3].push(creator_group_context.toLocaleString('fullwide', {useGrouping:false}))
                             creator_group_updates[4].push(creator_group_int_data)
 
                             const creator_group_post_identifier = 'creatorgroup'+pushed_txs[i].id

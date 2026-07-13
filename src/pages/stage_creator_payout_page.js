@@ -21,6 +21,8 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 var bigInt = require("big-integer");
 
@@ -186,7 +188,8 @@ class StageCreatorPayoutPage extends Component {
 
     render_calculate_payout_button_if_ready(proportion){
         const existing_stagings = this.props.app_state.channel_payout_stagings[this.state.channel_obj['e5_id']]
-        if(proportion == 100 && this.has_all_subscriptions_loaded() && existing_stagings != null){
+        console.log('render_calculate_payout_button_if_ready', proportion, this.has_all_subscriptions_loaded(), existing_stagings)
+        if(proportion >= 100 && this.has_all_subscriptions_loaded() && existing_stagings != null){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -282,7 +285,7 @@ class StageCreatorPayoutPage extends Component {
         items.forEach(item => {
             var e5 = 'E'+item.split('E')[1]
             var id = item.split('E')[0]
-            var subscription_item = this.props.app_state.created_subscription_object_mapping[e5][id]
+            var subscription_item = this.props.app_state.created_subscription_object_mapping[e5] == null ? null : this.props.app_state.created_subscription_object_mapping[e5][id]
             if(subscription_item == null){
                 has_all_subscriptions_loaded = false;
             }
@@ -295,7 +298,7 @@ class StageCreatorPayoutPage extends Component {
         return(
             <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                    {items.reverse().map((item, index) => (
+                    {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                             {this.render_subscription_item(item)}
                         </li>
@@ -308,7 +311,7 @@ class StageCreatorPayoutPage extends Component {
     render_subscription_item(item){
         var e5 = 'E'+item.split('E')[1]
         var id = item.split('E')[0]
-        var subscription_item = this.props.app_state.created_subscription_object_mapping[e5][id]
+        var subscription_item = this.props.app_state.created_subscription_object_mapping[e5] != null ? this.props.app_state.created_subscription_object_mapping[e5][id] : null
         var opacity = 0.7
         var details = '????';
         if(subscription_item != null){
@@ -318,6 +321,43 @@ class StageCreatorPayoutPage extends Component {
         return(
             <div style={{'opacity':opacity}}>
                 {this.render_detail_item('3', {'title':' • '+id, 'details':details, 'size':'l', 'title_image':this.props.app_state.e5s[e5].e5_img})}
+            </div>
+        )
+    }
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
             </div>
         )
     }
@@ -713,7 +753,7 @@ class StageCreatorPayoutPage extends Component {
 
     render_selected_creator_payout_information(final_payment_info, valid_user_stream_data, total_data_bytes_streamed){
         const all_creators = Object.keys(final_payment_info)
-        if(all_creators.length == 0){
+        if(all_creators.length == 0 || bigInt(total_data_bytes_streamed).equals(0)){
             return(
                 <div>
                     {this.render_empty_views(3)}
@@ -1050,6 +1090,18 @@ class StageCreatorPayoutPage extends Component {
             last_two_digits = number.toString().slice(0, 2);
         }
         return last_two_digits+'%'
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
 }

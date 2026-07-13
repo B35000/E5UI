@@ -1175,10 +1175,12 @@ class ChannelDetailsSection extends Component {
 
     render_stage_creator_payout_button(object){
         var my_account = this.props.app_state.user_account_id[object['e5']]
-        var subscriptions = object['e5'].selected_creator_group_subscriptions
-        var creators = object['e5'].creators
+        var subscriptions = object['ipfs'].selected_creator_group_subscriptions
+        var creators = object['ipfs'].creators
         var object_creation_time = object['event'].returnValues.p6/* timestamp */
         var now = Date.now()/1000
+
+        console.log('render_stage_creator_payout_button', object['event'].returnValues.p5 == my_account, creators, subscriptions )
 
         if(object['event'].returnValues.p5 == my_account && creators != null && creators.length > 0 && subscriptions != null && subscriptions.length > 0 && (now-object_creation_time) > (60*60*24*32)){
             return(
@@ -1359,7 +1361,7 @@ class ChannelDetailsSection extends Component {
     }
 
     render_selected_creator_payout_information(final_payment_info, valid_user_stream_data, total_data_bytes_streamed, all_creators){
-        if(all_creators.length == 0){
+        if(all_creators.length == 0 || bigInt(total_data_bytes_streamed).equals(0)){
             return null
         }
         const selected_creator_item = this.state.selected_creator_item == null ? all_creators[0] : this.state.selected_creator_item

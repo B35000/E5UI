@@ -706,7 +706,8 @@ class SuccessfulSend extends Component {
             return `https://litecoinspace.org/tx/${hash}`
         }
         else if(item['symbol'] == 'DOGE'){
-            return `https://explorer.doged.io/tx/${hash}`
+            return `https://blockchair.com/dogecoin/transaction/${hash}`
+            // return `https://explorer.doged.io/tx/${hash}`
             // return `https://blockexplorers.nownodes.io/dogecoin/tx/${hash}`
         }
         else if(item['symbol'] == 'DASH'){

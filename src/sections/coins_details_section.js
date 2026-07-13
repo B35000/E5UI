@@ -409,7 +409,6 @@ class CoinsDetailsSection extends Component {
 
                     {balance_base_unit > 0 && this.props.app_state.has_wallet_been_set == true && (
                         <div>
-                            {this.render_detail_item('0')}
                             {this.render_bridge_button_if_filecoin(item)}
                         </div>
                     )}
@@ -432,6 +431,7 @@ class CoinsDetailsSection extends Component {
             const evm_symbol = obj[item['symbol']]
             return(
                 <div>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2927w']/* '𖣑 Bridge To FILE ' */.replace('FILE', evm_symbol), 'details':this.props.app_state.loc['2927x']/* 'Bridge your coin from this wallet\'s address to your FILE wallet.' */.replace('FILE', evm_symbol), 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.props.show_bridge_coin_bottomsheet(item)}>
@@ -914,7 +914,8 @@ class CoinsDetailsSection extends Component {
             return `https://litecoinspace.org/address/${hash}`
         }
         else if(item['symbol'] == 'DOGE'){
-            return `https://explorer.doged.io/address/${hash}`
+            return `https://blockchair.com/dogecoin/address/${hash}`
+            // return `https://explorer.doged.io/address/${hash}`
             // return `https://blockexplorers.nownodes.io/dogecoin/address/${hash}`
         }
         else if(item['symbol'] == 'DASH'){

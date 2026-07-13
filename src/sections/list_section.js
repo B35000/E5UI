@@ -1014,6 +1014,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_job_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -1056,6 +1062,7 @@ class PostListSection extends Component {
                                                     {this.render_job_object(item, index)}
                                                 </motion.div>
                                             </AnimatePresence>
+                                            {this.render_space_if_last_item(index, items.length)}
                                         </div>
                                     );
                                 }}
@@ -1094,6 +1101,16 @@ class PostListSection extends Component {
                 </div>
             );
         } 
+    }
+
+    render_space_if_last_item(index, count){
+        if(index == count-1){
+            var size = this.props.size;
+            var height = size == 's' ? 78 : 68;
+            return(
+                <div style={{height: height}}/>
+            )
+        }
     }
 
     get_viewed_item_ids(items, range, identifier, section){
@@ -1599,6 +1616,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_contract_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -1639,7 +1662,7 @@ class PostListSection extends Component {
                                             {this.render_contract_item(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {item.text}
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -1794,6 +1817,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_my_proposals()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -1836,6 +1865,7 @@ class PostListSection extends Component {
                                             {this.render_proposal_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -1963,6 +1993,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_nitro_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -2005,6 +2041,7 @@ class PostListSection extends Component {
                                             {this.render_nitro_object_if_locked(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -2108,6 +2145,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_subscription_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -2150,6 +2193,7 @@ class PostListSection extends Component {
                                             {this.render_subscription_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -2271,6 +2315,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_mail_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -2320,6 +2370,7 @@ class PostListSection extends Component {
                                             {this.render_mail_object_or_null(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -2472,6 +2523,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_contractor_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -2514,6 +2571,7 @@ class PostListSection extends Component {
                                             {this.render_contractor_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -2658,6 +2716,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var items = this.get_my_direct_message_objects()
         var x = this.props.app_state.os == 'iOS' ? 60 : 53
         if(items.length == 0){
@@ -2703,6 +2767,7 @@ class PostListSection extends Component {
                                                 {this.render_direct_message_object(item, index)}
                                             </motion.div>
                                         </AnimatePresence>
+                                        {this.render_space_if_last_item(index, items.length)}
                                     </div>
                                 );
                             }}
@@ -2945,6 +3010,7 @@ class PostListSection extends Component {
                                                 <div style={{height:4}}/>
                                             </motion.div>
                                         </AnimatePresence>
+                                        {this.render_space_if_last_item(index, items.length)}
                                     </div>
                                 );
                             }}
@@ -3038,6 +3104,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var items = this.get_e5_data()
 
         if(items.length == 0){
@@ -3070,6 +3142,7 @@ class PostListSection extends Component {
                                         {this.render_E5s_object(item['data'], index, item['id'])}
                                     </motion.div>
                                 </AnimatePresence>
+                                {this.render_space_if_last_item(index, items.length)}
                             </div>
                         );
                     }}
@@ -3250,6 +3323,12 @@ class PostListSection extends Component {
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
+        }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
         }
         var items = this.get_search_results()
         var object_data = this.props.app_state.searched_objects_data[this.state.searched_account]
@@ -3732,6 +3811,7 @@ class PostListSection extends Component {
                                                 <div style={{height:4}}/>
                                             </motion.div>
                                         </AnimatePresence>
+                                        {this.render_space_if_last_item(index, items.length)}
                                     </div>
                                 );
                             }}
@@ -4474,6 +4554,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_post_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -4515,6 +4601,7 @@ class PostListSection extends Component {
                                             {this.render_post_object_if_locked(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -4793,6 +4880,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_channel_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -4834,6 +4927,7 @@ class PostListSection extends Component {
                                             {this.render_channel_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -4995,7 +5089,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_poll_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -5037,6 +5136,7 @@ class PostListSection extends Component {
                                             {this.render_poll_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -5160,6 +5260,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_storefront_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -5201,6 +5307,7 @@ class PostListSection extends Component {
                                             {this.render_storefront_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -5422,6 +5529,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_bag_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -5463,6 +5576,7 @@ class PostListSection extends Component {
                                             {this.render_bag_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -5653,6 +5767,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_audio_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -5713,6 +5833,7 @@ class PostListSection extends Component {
                                             {this.render_audio_object_if_locked(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -6160,6 +6281,12 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
 
         if(items.length == 0){
             items = ['0','1'];
@@ -6564,6 +6691,12 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_video_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -6616,6 +6749,7 @@ return data['data']
                                             {this.render_video_object_if_locked(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -7157,6 +7291,12 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var items = this.get_coins_data()
         var x = this.props.app_state.os == 'iOS' ? 60 : 53
 
@@ -7199,6 +7339,7 @@ return data['data']
                                             {this.render_coin_item(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -7311,6 +7452,12 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var items = this.get_ethers_data()
         if(items.length == 0){
             items = ['0','1'];
@@ -7355,6 +7502,7 @@ return data['data']
                                             {this.render_ether_item(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -7538,6 +7686,12 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_end_exchange_tokens()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -7579,6 +7733,7 @@ return data['data']
                                         {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                                     </motion.div>
                                 </AnimatePresence>
+                                {this.render_space_if_last_item(index, items.length)}
                             </div>
                         );
                     }}
@@ -7812,6 +7967,12 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_spend_exchange_tokens()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -7853,6 +8014,7 @@ return data['data']
                                         {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                                     </motion.div>
                                 </AnimatePresence>
+                                {this.render_space_if_last_item(index, items.length)}
                             </div>
                         );
                     }}
@@ -7950,6 +8112,12 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.props.get_bill_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -7991,6 +8159,7 @@ return data['data']
                                             {this.render_bill_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}
@@ -8130,6 +8299,12 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_certificate_exchanges()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -8173,6 +8348,7 @@ return data['data']
                                         {this.render_certificate_object(item, index)}
                                     </motion.div>
                                 </AnimatePresence>
+                                {this.render_space_if_last_item(index, items.length)}
                             </div>
                         );
                     }}
@@ -8267,6 +8443,12 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+75
+        }
         var all_items = this.get_crossexchange_exchanges()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
 
@@ -8310,6 +8492,7 @@ return data['data']
                                         {this.render_crossexchange_object(item, index)}
                                     </motion.div>
                                 </AnimatePresence>
+                                {this.render_space_if_last_item(index, items.length)}
                             </div>
                         );
                     }}
@@ -8486,6 +8669,7 @@ return data['data']
                                             {this.render_itransfer_item(item)}
                                         </motion.div>
                                     </AnimatePresence>
+                                    {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
                         }}

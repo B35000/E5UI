@@ -3045,7 +3045,7 @@ return data['data']
         var e5 = item['e5']
         return(
             <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})}>
-                {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593fg']/* ' sent you ' */+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593mt']/* ' sent you ' */+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
             </div>
         )
     }
@@ -15672,6 +15672,8 @@ return data['data']
                 {this.render_subscription_object(subscription)}
                 {this.render_detail_item('0')}
 
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['3055rb']/* 'Pick an amount of time to purchase from the options below.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
                 {this.render_subscription_payment_amount_options(subscription)}
                 <div style={{height:10}}/>
                 {this.render_subscription_fees(subscription)}
@@ -15684,6 +15686,8 @@ return data['data']
         const is_running = this.props.app_state.is_running[subscription['e5']]
         return(
             <div>
+                {this.render_my_balances2()}
+
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qs']/* 'You may optionally set the gas price, or how quickly your transfers are to be validated. Slow is the default used.' */, 'title':this.props.app_state.loc['3055qr']/* 'Select Gas Price.' */})}
                 <div style={{height:10}}/>
 
@@ -15716,12 +15720,43 @@ return data['data']
         )
     }
 
+    render_my_balances2(){
+        const subscription = this.state.data['object']
+        const e5 = subscription['e5']
+        const price_data = subscription['data'][2]
+        const end_balance = this.props.app_state.created_token_object_mapping[e5][3]['balance']
+        const spend_balance = this.props.app_state.created_token_object_mapping[e5][5]['balance']
+        var entry_tokens = [3, 5]
+        var buy_amount_balances = [end_balance, spend_balance]
+        var entry_amount_depths = [0, 0]
+
+        for(var i=0; i<price_data.length; i++){
+            var token_id = price_data[i]
+            if(token_id != 3 && token_id != 5){
+                var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]
+                token_balance = token_balance == null ? 0 : token_balance['balance']
+                entry_tokens.push(token_balance)
+                buy_amount_balances.push(token_balance)
+                entry_amount_depths.push(0)
+            }
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055rd']/* 'The amount of money you have available to make a subscription purchase.' */, 'title':this.props.app_state.loc['3055rc']/* 'Your balances.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_buy_token_uis(entry_tokens, buy_amount_balances, entry_amount_depths)}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
     render_subscription_object(object){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_subscription_item(object)
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -15744,7 +15779,7 @@ return data['data']
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_custom_time_unit_picked(item)}>
-                            {this.render_detail_item('3', {'title': this.props.app_state.loc['3055qx']/* '$ Time-Units' */.replace('$', item['units']), 'details':this.get_time_diff(item['time']), 'size':'l'})}
+                            {this.render_detail_item('3', {'title': this.props.app_state.loc['3055qx']/* '$ Time-Units' */.replace('$', number_with_commas(item['units'])), 'details':this.get_time_diff(item['time']), 'size':'l'})}
                             {this.render_line_if_selected2(item)}
                         </li>
                     ))}
@@ -15874,7 +15909,7 @@ return data['data']
 
     begin_subscription_purchases(){
         const selected_unit = this.state.selected_time_unit_item
-        const subscription = this.state.data['subscription']
+        const subscription = this.state.data['object']
 
         if(selected_unit == null){
             this.props.notify(this.props.app_state.loc['3055qz']/* You need to select some time units first. */, 5000)

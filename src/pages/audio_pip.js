@@ -928,7 +928,7 @@ class AudioPip extends Component {
     
     is_song_available_for_adding_to_playlist(song){
         var my_songs = this.props.app_state.my_tracks
-        if(my_songs.includes(song['song_id'])){
+        if(my_songs.includes(song['song_id']) || song['price_data'].length == 0){
             return true
         }
         return false

@@ -386,10 +386,10 @@ import fuse_logo from './assets/fuse.png'
 import xdc_logo from './assets/xdc.png'
 import polygon_logo from './assets/matic.png'
 import binance_logo from './assets/bnb.png'
-import energi_logo from './assets/nrg.png'
+// import energi_logo from './assets/nrg.png'
 import thundercore_logo from './assets/tt.png'
 import viction_logo from './assets/viction.png'
-import evmos_logo from './assets/evmos.png'
+// import evmos_logo from './assets/evmos.png'
 import ethereum_logo from './assets/ethereum.png'
 import optimism_logo from './assets/optimism.png'
 import base_logo from './assets/base.png'
@@ -398,22 +398,22 @@ import astar_logo from './assets/astar.png'
 import cronos_logo from './assets/cronos.png'
 import kava_logo from './assets/kava.png'
 import neon_logo from './assets/neon.png'
-import milkomeda_logo from './assets/milkomeda.png'
-import fantom_logo from './assets/fantom.png'
-import brise_logo from './assets/brise.png'
-import syscoin_logo from './assets/syscoin.png'
+// import milkomeda_logo from './assets/milkomeda.png'
+// import fantom_logo from './assets/fantom.png'
+// import brise_logo from './assets/brise.png'
+// import syscoin_logo from './assets/syscoin.png'
 import avalanche_logo from './assets/avalanche.png'
-import findora_logo from './assets/findora.png'
-import iexec_logo from './assets/iexec.png'
-import oasis_logo from './assets/oasis.png'
+// import findora_logo from './assets/findora.png'
+// import iexec_logo from './assets/iexec.png'
+// import oasis_logo from './assets/oasis.png'
 import ozone_logo from './assets/ozone.png'
-import pixie_logo from './assets/pixie.png'
+// import pixie_logo from './assets/pixie.png'
 import rei_logo from './assets/rei.png'
-import klaytn_logo from './assets/klaytn.png'
+// import klaytn_logo from './assets/klaytn.png'
 import mantle from './assets/mantle.png'
 import pulsechain_logo from './assets/pulse.png'
 import canto_logo from './assets/canto.png'
-import eosnetwork_logo from './assets/eos.png'
+// import eosnetwork_logo from './assets/eos.png'
 import iotex_logo from './assets/iotex.png'
 import songbird_logo from './assets/songbird.png'
 import ultron_logo from './assets/ultron.png'
@@ -421,8 +421,8 @@ import coinex_logo from './assets/coinex.png'
 import tfuel_logo from './assets/tfuel.png'
 import step_logo from './assets/step.png'
 import energyweb_logo from './assets/energyweb.png'
-import callisto_logo from './assets/callisto.png'
-import shiden_logo from './assets/shiden.png'
+// import callisto_logo from './assets/callisto.png'
+// import shiden_logo from './assets/shiden.png'
 import tenet_logo from './assets/tenet.png'
 import ubiq_logo from './assets/ubiq.png'
 import gochain_logo from './assets/gochain.png'
@@ -432,20 +432,20 @@ import conflux_logo from './assets/conflux.png'
 import telos_logo from './assets/telos.png'
 import rsk_logo from './assets/rsk.png'
 import metadium_logo from './assets/metadium.png'
-import kardiachain_logo from './assets/kardiachain.png'
-import caduceus_logo from './assets/cmp.png'
-import seele_logo from './assets/seele.png'
+// import kardiachain_logo from './assets/kardiachain.png'
+// import caduceus_logo from './assets/cmp.png'
+// import seele_logo from './assets/seele.png'
 import bittorrentchain_logo from './assets/btt.png'
-import doublea_logo from './assets/doublea.png'
+// import doublea_logo from './assets/doublea.png'
 import karura_logo from './assets/karura.png'
-import acala_logo from './assets/acala.png'
-import edgeware_logo from './assets/edgeware.png'
-import bloxberg_logo from './assets/bloxberg.png'
-import phoenix_logo from './assets/phoenix.png'
+// import acala_logo from './assets/acala.png'
+// import edgeware_logo from './assets/edgeware.png'
+// import bloxberg_logo from './assets/bloxberg.png'
+// import phoenix_logo from './assets/phoenix.png'
 import omchain_logo from './assets/omchain.png'
 import om_logo from './assets/om.png'
 import mintme_logo from './assets/mintme.png'
-import ecredits_logo from './assets/ecredits.png'
+// import ecredits_logo from './assets/ecredits.png'
 import eluv_logo from './assets/eluv.png'
 import etho_logo from './assets/etho.png'
 import oneledger_logo from './assets/oneledger.png'
@@ -460,7 +460,7 @@ import bob_logo from './assets/bob.png'
 import botanix_logo from './assets/botanix.png'
 import bsquared_logo from './assets/bsquared.png'
 import core_logo from './assets/core.png'
-import corn_logo from './assets/corn.png'
+// import corn_logo from './assets/corn.png'
 import etherlink_logo from './assets/etherlink.png'
 import fraxtal_logo from './assets/fraxtal.png'
 import hashkey_logo from './assets/hashkey.png'
@@ -473,24 +473,24 @@ import merlin_logo from './assets/merlin.png'
 import metal_logo from './assets/metal.png'
 import metis_logo from './assets/metis.png'
 import mind_logo from './assets/mind.png'
-import mint_logo from './assets/mint.png'
+// import mint_logo from './assets/mint.png'
 import mode_logo from './assets/mode.png'
 import neox_logo from './assets/neox.png'
 import opbnb_logo from './assets/opbnb.png'
 import plume_logo from './assets/plume.png'
 import katana_logo from './assets/katana.png'
-import peth_logo from './assets/zkpolygon.png'/* './assets/peth.png' */
+// import peth_logo from './assets/zkpolygon.png'/* './assets/peth.png' */
 import ronin_logo from './assets/ronin.png'
 import scroll_logo from './assets/scroll.png'
 import shibarium_logo from './assets/shibarium.png'
 import soneium_logo from './assets/soneium.png'
 import superseed_logo from './assets/superseed.png'
 import taiko_logo from './assets/taiko.png'
-import treasure_logo from './assets/treasure.png'
+// import treasure_logo from './assets/treasure.png'
 import unichain_logo from './assets/unichain.png'
 import world_logo from './assets/world.png'
 import okb_logo from './assets/okb.png'
-import okt_logo from './assets/okt.png'
+// import okt_logo from './assets/okt.png'
 import zircuit_logo from './assets/zircuit.png'
 import zksync_logo from './assets/zksync.png'
 import cronoszkevm_logo from './assets/cronoszkevm.png'
@@ -1425,7 +1425,7 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[]
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -1588,10 +1588,10 @@ class App extends Component {
         first_block:73021490, end_image:'https://nftstorage.link/ipfs/bafkreifgogs44o7da3acci3uc2oqv5oxmsmegw437w2zif655ifxtkkr7a', spend_image:'https://nftstorage.link/ipfs/bafkreiht6b53kzxpwomvq7kmrqseav3rwxgrbeovw6zlqhxc4tccylav4u', ether_image:viction_logo/* 'https://nftstorage.link/ipfs/bafkreiaovtind2gl7fguqisxsdlqp2agxr7xe2t3dehietmhygwcx3dcny' */, iteration:40_000, url:0, active:false, e5_img:null
       },
       'E175':{
-        web3:['https://evmos-evm-rpc.publicnode.com'],
-        token:'EVMOS',
-        e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:17475951, end_image:'https://nftstorage.link/ipfs/bafkreibwm67vdnsbnxxm6muhoaqejctvneslseapupegh3yh2kxtarrwly', spend_image:'https://nftstorage.link/ipfs/bafkreidisjbdffry64mz2pdqf3qwsweq43sv7vgfozodxwge7ubxoggfae', ether_image:evmos_logo/* 'https://nftstorage.link/ipfs/bafkreigavsqsyulrxb3l2wyosu34zsj4r32nftdkbvtemmqcka7veudxzi' */, iteration:40_000, url:0, active:false, e5_img:null
+        web3:['https://rpc.plasma.to'],
+        token:'XPL',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image: plasma_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559',
       },
 
 
@@ -1661,25 +1661,25 @@ class App extends Component {
         web3:['https://rpc-mainnet-cardano-evm.c1.milkomeda.com'],
         token:'mADA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:milkomeda_logo/* 'https://nftstorage.link/ipfs/bafkreiauduj7d7lhlbiac2y2i6fr5mz3xky2h4jvqjgyxgco4wrfu244oi' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'milkomeda_logo'/* 'https://nftstorage.link/ipfs/bafkreiauduj7d7lhlbiac2y2i6fr5mz3xky2h4jvqjgyxgco4wrfu244oi' */, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E275':{
         web3:['https://fantom-mainnet.public.blastapi.io'],
         token:'FTM',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:fantom_logo/* 'https://nftstorage.link/ipfs/bafkreidsstxytde2mwe7u63hu54b6bcwgay7ckpgy7fgypflsyki2ntb2m' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'fantom_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E285':{
         web3:['https://flux-rpc2.brisescan.com'],
         token:'BRISE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:brise_logo/* 'https://nftstorage.link/ipfs/bafkreihqobs4apgub5767t2y5hkn5idhwmxhiwtjkwxhfu566w7l6wt2ym' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'brise_logo'/* 'https://nftstorage.link/ipfs/bafkreihqobs4apgub5767t2y5hkn5idhwmxhiwtjkwxhfu566w7l6wt2ym' */, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E295':{
         web3:['https://syscoin.public-rpc.com'],
         token:'SYS',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:syscoin_logo/* 'https://nftstorage.link/ipfs/bafkreibmwawsdkh5tgdcotewbdunarzapcb2qmh6eoo5ynbojy6kkwyaky' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'syscoin_logo'/* 'https://nftstorage.link/ipfs/bafkreibmwawsdkh5tgdcotewbdunarzapcb2qmh6eoo5ynbojy6kkwyaky' */, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E305':{
         web3:['https://avalanche.drpc.org'],
@@ -1691,19 +1691,19 @@ class App extends Component {
         web3:['https://rpc-mainnet.findora.org'],
         token:'FRA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:findora_logo/* 'https://nftstorage.link/ipfs/bafkreiahfewosrjnjrsw22p54go7d5wqu7kghzvqufnzueaxl3trvzn52u' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'findora_logo'/* 'https://nftstorage.link/ipfs/bafkreiahfewosrjnjrsw22p54go7d5wqu7kghzvqufnzueaxl3trvzn52u' */, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E325':{
         web3:['https://bellecour.iex.ec'],
         token:'xRLC',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:iexec_logo/* 'https://nftstorage.link/ipfs/bafkreiggejzqvra2hzwdtr42whtzklislx6mch6bffufumnowiusinagvm' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'iexec_logo'/* 'https://nftstorage.link/ipfs/bafkreiggejzqvra2hzwdtr42whtzklislx6mch6bffufumnowiusinagvm' */, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E335':{
         web3:['https://emerald.oasis.dev'],
         token:'ROSE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:oasis_logo/* 'https://nftstorage.link/ipfs/bafkreiavbox3rj73c4h6qezsdvbbsz52lgd7g3y6fnu62hzn6wqz73bjwm' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'oasis_logo'/* 'https://nftstorage.link/ipfs/bafkreiavbox3rj73c4h6qezsdvbbsz52lgd7g3y6fnu62hzn6wqz73bjwm' */, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E345':{
         web3:['https://node1.ozonechain.io'],
@@ -1715,7 +1715,7 @@ class App extends Component {
         web3:['https://http-mainnet.chain.pixie.xyz'],
         token:'PIX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:pixie_logo/* 'https://nftstorage.link/ipfs/bafkreifmgqxk23mp3nvsblfszv3wxziy24h7wqssycrh5gulp5tw7jkamq' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'pixie_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E365':{
         web3:['https://rpc.rei.network'],
@@ -1727,7 +1727,7 @@ class App extends Component {
         web3:['https://public-en-cypress.klaytn.net'],
         token:'KLAY',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:klaytn_logo/* 'https://nftstorage.link/ipfs/bafkreiescyzouik566qarxqeqzxoriace6j4stbdchculm5x56tjkp2sqi' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'klaytn_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E385':{
         web3:['https://rpc.mantle.xyz'],
@@ -1742,7 +1742,7 @@ class App extends Component {
         first_block:0, end_image:null, spend_image:null, ether_image:pulsechain_logo/* 'https://nftstorage.link/ipfs/bafkreibrilqmflglo7qylgt3zwbywzzbpp2x6tfz76eqnocrhhprrgir5q' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
       },
       'E405':{
-        web3:['https://jsonrpc.canto.nodestake.top'],
+        web3:['https://canto.gravitychain.io'],
         token:'CANTO',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:canto_logo/* 'https://nftstorage.link/ipfs/bafkreidpyqijpifjco2jlijkqn7lix7gej4oo5reka2gxbbin6ir6eyepy' */, iteration:3_000, url:0, active:false, e5_img:null
@@ -1751,7 +1751,7 @@ class App extends Component {
         web3:['https://api.evm.eosnetwork.com'],
         token:'EOS',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:eosnetwork_logo/* 'https://nftstorage.link/ipfs/bafkreidr7jfavw27kj64fspqcidevjyufkxq6accycnr3e6pckdqfe5lze' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'eosnetwork_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E425':{
         web3:['https://babel-api.mainnet.iotex.io'],
@@ -1760,7 +1760,7 @@ class App extends Component {
         first_block:0, end_image:null, spend_image:null, ether_image:iotex_logo/* 'https://nftstorage.link/ipfs/bafkreig7l7jsdnuesu2j6cscmwkhumvcuiqx3sumdq36hnswd4iugldqxe' */, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E435':{
-        web3:['https://sgb.ftso.com.au/ext/bc/C/rpc'],
+        web3:['https://rpc.au.cc/songbird'],
         token:'SGB',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:songbird_logo/* 'https://nftstorage.link/ipfs/bafkreiapvqa26ifxjkyldnukiqaaodkavic3xbbzdbqajgn6v5rdw3u2ni' */, iteration:3_000, url:0, active:false, e5_img:null
@@ -1793,19 +1793,19 @@ class App extends Component {
         web3:['https://rpc.energyweb.org'],
         token:'EWT',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:energyweb_logo/* 'https://nftstorage.link/ipfs/bafkreih3rxl7pdkov3yelfkbmsocwvx7gejtvuwjqltyfse5bvxj52gm7e' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:energyweb_logo, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E495':{
         web3:['https://rpc.callisto.network'],
         token:'CLO',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:callisto_logo/* 'https://nftstorage.link/ipfs/bafkreibewb5rlbvptqvovuzink4y7crot5nkxplgqd7o7ajvqp4ocjz3je' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'callisto_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E505':{
         web3:['https://shiden-rpc.dwellir.com'],
         token:'SDN',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:shiden_logo/* 'https://nftstorage.link/ipfs/bafkreidrlqfkm53twzvh5lnuzoddpv24yrzsaixgxyzfwe4qxzfyjpnmly' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'shiden_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E515':{
         web3:['https://tenet-evm.publicnode.com'],
@@ -1844,7 +1844,7 @@ class App extends Component {
         first_block:0, end_image:null, spend_image:null, ether_image:conflux_logo/* 'https://nftstorage.link/ipfs/bafkreiboh4aov7q7wzvi6be27uskvad6bzir7s5alr2dihvzznrkflhxza' */, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E575':{
-        web3:['https://rpc1.eu.telos.net/evm'],
+        web3:['https://1rpc.io/telos/evm'],
         token:'TLOS',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:telos_logo/* 'https://nftstorage.link/ipfs/bafkreihsqmpt6szoqnam4qpwcjtpn73p5hmlxu53qxnaf4ytzvvrhvqmya' */, iteration:3_000, url:0, active:false, e5_img:null
@@ -1865,70 +1865,70 @@ class App extends Component {
         web3:['https://rpc.kardiachain.io'],
         token:'KAI',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:kardiachain_logo/* 'https://nftstorage.link/ipfs/bafkreidkhcnyvp5cwi5cb3sdg4cerrgyzi3qbv7vint4esk7vabceeo54m' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'kardiachain_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E615':{
         web3:['https://mainnet.block.caduceus.foundation'],
         token:'CMP',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:caduceus_logo/* 'https://nftstorage.link/ipfs/bafkreickyon3ett5kn2lqvhhdfl37mmdnrngh6fvfetqbavyyat2gcbq2u' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'caduceus_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E625':{
         web3:['https://rpc.seelen.pro'],
         token:'SEELE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:seele_logo/* 'https://nftstorage.link/ipfs/bafkreigyvectz4cwg4mj7noyw3eo5txd3fh2feir6loi4xqrxxufu4i4ta' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'seele_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E635':{
         web3:['https://rpc.bittorrentchain.io'],
         token:'BTT',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:bittorrentchain_logo/* 'https://nftstorage.link/ipfs/bafkreigf6kxh5622gndetusjo5wci53kikq4m7j3w5ieha75eewzqg6i5y' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:bittorrentchain_logo, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E645':{
         web3:['https://rpc.acuteangle.com'],
         token:'AAC',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:doublea_logo/* 'https://nftstorage.link/ipfs/bafkreidtmpi7bagyu7vtvspkx7nx73bztl7g7raxhprlqhdzt4226gy5ne' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'doublea_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E655':{
         web3:['https://eth-rpc-karura.aca-api.network'],
         token:'KAR',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:karura_logo/* 'https://nftstorage.link/ipfs/bafkreihmmav45jddg6egaooccb7ywij3ietijnvtzep7vfyy2gjazfsdjq' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:karura_logo, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E665':{
         web3:['https://eth-rpc-acala.aca-staging.network'],
         token:'ACA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:acala_logo/* 'https://nftstorage.link/ipfs/bafkreiajrgopwvl6cpwpi25vdrafi47p27hfgm4imbs6ur5o57xku6xzzq' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'acala_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E675':{
         web3:['https://mainnet3.edgewa.re/evm'],
         token:'EDG',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:edgeware_logo/* 'https://nftstorage.link/ipfs/bafkreicpea6ke2daanmhb73ejaqht2xkpig3yicqotwkm3spkivixb5ju4' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'edgeware_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E685':{
         web3:['https://core.bloxberg.org'],
         token:'BERG',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:bloxberg_logo/* 'https://nftstorage.link/ipfs/bafkreif4dsu7lxayad6wkh2xdeplaym5llftknaluwvtxblfasik6wahvm' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'bloxberg_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E695':{
         web3:['https://rpc.phoenixplorer.com'],
         token:'PHOENIX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:phoenix_logo/* 'https://nftstorage.link/ipfs/bafkreih6ijcxbidzo2isqlu2hjm43llyv3f2kmkz72tt32li4gl25kzypq' */, iteration:3_000, url:0, active:false, e5_img:null
+        first_block:0, end_image:null, spend_image:null, ether_image:'phoenix_logo', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E705':{
-        web3:['https://seed.omlira.com'],
+        web3:['https://seed.omchain.io'],
         token:'OMC',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:omchain_logo/* 'https://nftstorage.link/ipfs/bafkreieph4yuxvzjxugw5hmdtwlsp7434dwapm65pr5b3o5pk2fb5uvosa' */, iteration:3_000, url:0, active:false, e5_img:null
       },
       'E715':{
-        web3:['https://rpc-cnx.omplatform.com'],
+        web3:['https://rpc.omplatform.com'],
         token:'OM',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:om_logo/* 'https://nftstorage.link/ipfs/bafkreicz56kvmxvnzab5eve3dq624pmptwsrmkceu27wgxzticyyjeobhu' */, iteration:3_000, url:0, active:false, e5_img:null
@@ -1943,7 +1943,7 @@ class App extends Component {
         web3:['https://rpc.ecredits.com'],
         token:'ECS',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:ecredits_logo/* 'https://nftstorage.link/ipfs/bafkreifktidofrlhlkpwnfyf5p3ftk3k2y3dbsq7cxqcjpgs2axqdvhqoi' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
+        first_block:0, end_image:null, spend_image:null, ether_image:'ecredits_logo'/* 'https://nftstorage.link/ipfs/bafkreifktidofrlhlkpwnfyf5p3ftk3k2y3dbsq7cxqcjpgs2axqdvhqoi' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
       },
       'E745':{
         web3:['https://host-154-14-192-66.contentfabric.io/eth'],
@@ -1997,7 +1997,7 @@ class App extends Component {
         web3:['https://nodeapi.energi.network'],
         token:'NRG',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:1955370, end_image:'https://nftstorage.link/ipfs/bafkreicgkrcoqradelnzgdnm3tm7x7atblgskl6uxkywv2klp7ghrv6ndu', spend_image:'https://nftstorage.link/ipfs/bafkreif35wji3e3mcuu5y67mclzb3zwzneckvqo5n4dj7ekbigjsnd2g24', ether_image:energi_logo/* 'https://nftstorage.link/ipfs/bafkreiaoiipzjii67rl6jujy25qbwiauu43ifcrhofw625x4cm34hjmz5e' */, iteration:10_000, url:0	, active:false, e5_img:null
+        first_block:1955370, end_image:null, spend_image:null, ether_image:'energi_logo', iteration:10_000, url:0	, active:false, e5_img:null
       },
       'E835':{
         web3:['https://rpc.hyperliquid.xyz/evm'],
@@ -2064,7 +2064,7 @@ class App extends Component {
         web3:['https://mainnet.corn-rpc.com'],
         token:'BTCN',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:corn_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+        first_block:0, end_image: null, spend_image: null, ether_image:'corn_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
       },
       'E945':{
         web3:['https://node.mainnet.etherlink.com'],
@@ -2142,7 +2142,7 @@ class App extends Component {
         web3:['https://rpc.mintchain.io'],
         token:'MINETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:mint_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
+        first_block:0, end_image: null, spend_image: null, ether_image:'mint_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185',
       },
       'E1075':{
         web3:['https://mainnet.mode.network/'],
@@ -2178,7 +2178,7 @@ class App extends Component {
         web3:['https://zkevm-rpc.com'],
         token:'PETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:peth_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'zk', parent: 'E185',
+        first_block:0, end_image: null, spend_image: null, ether_image:'peth_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'zk', parent: 'E185',
       },
       'E1135':{
         web3:['https://api.roninchain.com/rpc'],
@@ -2193,7 +2193,7 @@ class App extends Component {
         first_block:0, end_image: null, spend_image: null, ether_image:scroll_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'zk', parent: 'E185',
       },
       'E1155':{
-        web3:['https://www.shibrpc.com'],
+        web3:['https://rpc.shibarium.shib.io'],
         token:'BONE',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:shibarium_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559'
@@ -2220,7 +2220,7 @@ class App extends Component {
         web3:['https://rpc.treasure.lol'],
         token:'MAGIC',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:treasure_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
+        first_block:0, end_image: null, spend_image: null, ether_image:'treasure_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
       },
       'E1205':{
         web3:['https://unichain-rpc.publicnode.com'],
@@ -2245,7 +2245,7 @@ class App extends Component {
         web3:['https://exchainrpc.okex.org/'],
         token:'OKT',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:okt_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
+        first_block:0, end_image: null, spend_image: null, ether_image:'okt_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000
       },
       'E1245':{
         web3:['https://mainnet.zircuit.com'],
@@ -2344,11 +2344,12 @@ class App extends Component {
         first_block:0, end_image:null, spend_image:null, ether_image: injective_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559',
       },
       'E1395':{
-        web3:['https://rpc.plasma.to'],
-        token:'XPL',
-        e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: plasma_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559',
+        web3:['https://evmos-evm-rpc.publicnode.com'],
+        token:'EVMOS',
+        e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
+        first_block:17475951, end_image:'', spend_image:'', ether_image:'evmos_logo', iteration:40_000, url:0, active:false, e5_img:null
       },
+      
     }
   }
 
@@ -2416,7 +2417,8 @@ class App extends Component {
       this.get_token('TT', 'ThunderCore', 'E155'),
       this.get_token('SEI', 'Sei', 'E145'),
       this.get_token('VIC', 'Viction', 'E165'),
-      this.get_token('EVMOS', 'Evmos EVM', 'E175'),
+      this.get_token('XPL', 'Plasma', 'E175'),
+      
 
       this.get_token('ETH', 'Ethereum', 'E185'),
       this.get_token('OETH', 'Optimism', 'E195'),
@@ -2426,16 +2428,16 @@ class App extends Component {
       this.get_token('CRO', 'Cronos EVM', 'E235'),
       this.get_token('KAVA', 'Kava EVM', 'E245'),
       this.get_token('NEON', 'Neon EVM', 'E255'),
-      this.get_token('mADA', 'Milkomeda', 'E265'),
+      this.get_token('mADA', 'Milkomeda', 'E265', true),
       this.get_token('FTM', 'Fantom Opera', 'E275', true),
-      this.get_token('BRISE', 'Bitgert', 'E285'),
+      this.get_token('BRISE', 'Bitgert', 'E285', true),
       this.get_token('SYS', 'Syscoin EVM', 'E295', true),
       this.get_token('AVAX', 'Avalanche C-Chain', 'E305'),
-      this.get_token('FRA', 'Findora', 'E315'),
-      this.get_token('FDX', '5Dax', 'E325'),
+      this.get_token('FRA', 'Findora', 'E315', true),
+      this.get_token('FDX', '5Dax', 'E325', true),
       this.get_token('ROSE', 'Oasis Emerald', 'E335', true),
       this.get_token('OZO', 'Ozone Chain', 'E345'),
-      this.get_token('PIX', 'Pixie', 'E355'),
+      this.get_token('PIX', 'Pixie', 'E355', true),
       this.get_token('REI', 'Rei Network', 'E365'),
       this.get_token('KLAY', 'Klaytn Mainnet', 'E375', true),
       this.get_token('MNT', 'Mantle', 'E385'),
@@ -2450,7 +2452,7 @@ class App extends Component {
       this.get_token('FITFI', 'Step Network', 'E475'),
       this.get_token('EWT', 'Energy Web Chain', 'E485'),
       this.get_token('CLO', 'Callisto', 'E495', true),
-      this.get_token('SDN', 'Shiden', 'E505'),
+      this.get_token('SDN', 'Shiden', 'E505', true),
       this.get_token('TENET', 'Tenet', 'E515'),
       this.get_token('UBQ', 'Ubiq', 'E525'),
       this.get_token('GO', 'GoChain', 'E535'),
@@ -2460,20 +2462,20 @@ class App extends Component {
       this.get_token('TLOS', 'Telos EVM', 'E575'),
       this.get_token('RSK', 'RSK Mainnet', 'E585'),
       this.get_token('META', 'Metadium', 'E595'),
-      this.get_token('KAI', 'Kardiachain', 'E605'),
-      this.get_token('CMP', 'Caduceus', 'E615'),
-      this.get_token('SEELE', 'Seele', 'E625'),
+      this.get_token('KAI', 'Kardiachain', 'E605', true),
+      this.get_token('CMP', 'Caduceus', 'E615', true),
+      this.get_token('SEELE', 'Seele', 'E625', true),
       this.get_token('BTT', 'BitTorrent Chain', 'E635'),
-      this.get_token('AAC', 'Double-A Chain', 'E645'),
+      this.get_token('AAC', 'Double-A Chain', 'E645', true),
       this.get_token('KAR', 'Karura EVM', 'E655'),
       this.get_token('ACA', 'Acala EVM', 'E665', true),
       this.get_token('EDG', 'Edgeware EVM', 'E675', true),
       this.get_token('BERG', 'Bloxberg', 'E685', true),
-      this.get_token('PHOENIX', 'Phoenix', 'E695'),
+      this.get_token('PHOENIX', 'Phoenix', 'E695', true),
       this.get_token('OMC', 'Omchain', 'E705'),
       this.get_token('OM', 'Om', 'E715'),
       this.get_token('MINTME', 'MintMe.com', 'E725'),
-      this.get_token('ECS', 'eCredits', 'E735'),
+      this.get_token('ECS', 'eCredits', 'E735', true),
       this.get_token('ELV', 'Eluv.io', 'E745'),
       this.get_token('ETHO', 'Etho Protocol', 'E755'),
       this.get_token('OLT', 'One Ledger', 'E765'),
@@ -2493,7 +2495,7 @@ class App extends Component {
       this.get_token('BOBTC', 'Botanix', 'E905'),
       this.get_token('BSBTC', 'Bsquared', 'E915'),
       this.get_token('CORE', 'Core', 'E925'),
-      this.get_token('BTCN', 'Corn', 'E935'),
+      this.get_token('BTCN', 'Corn', 'E935', true),
       this.get_token('XTZ', 'Etherlink', 'E945'),
       this.get_token('FRAX', 'Fraxtal', 'E955'),
       this.get_token('HSK', 'HashKey', 'E965'),
@@ -2519,7 +2521,7 @@ class App extends Component {
       this.get_token('SONETH', 'Soneium', 'E1165'),
       this.get_token('SUETH', 'Superseed', 'E1175'),
       this.get_token('TETH', 'Taiko Alethia', 'E1185'),
-      this.get_token('MAGIC', 'Treasure', 'E1195'),
+      this.get_token('MAGIC', 'Treasure', 'E1195', true),
       this.get_token('UETH', 'Unichain', 'E1205'),
       this.get_token('WOETH', 'World Chain', 'E1215'),
       this.get_token('OKB', 'X Layer', 'E1225'),
@@ -2539,7 +2541,7 @@ class App extends Component {
       this.get_token('IMX', 'Immutable zkEVM', 'E1365'),
       this.get_token('KITE', 'KiteAI', 'E1375'),
       this.get_token('INJE', 'Injective EVM', 'E1385'),
-      this.get_token('XPL', 'Plasma', 'E1395'),
+      this.get_token('EVMOS', 'Evmos EVM', 'E1395', true),
     ]
 
     return list
@@ -7099,7 +7101,7 @@ class App extends Component {
 
           show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} 
 
-          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} show_bridge_coin_bottomsheet={this.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.refresh_wallet.bind(this)}
+          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} show_bridge_coin_bottomsheet={this.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.refresh_wallet.bind(this)} is_function_at_complete_top_of_stack={this.is_function_at_complete_top_of_stack.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -7712,12 +7714,14 @@ class App extends Component {
     const padding = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? 0 : 10;
     const radius = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? '0px' : '15px';
 
+    const is_bottomsheet_at_top = this.is_function_at_complete_top_of_stack(onOpenChange.name)
+    const filter = is_bottomsheet_at_top == false ? "blur(1px)" : "none";
     const data = () => {
       return(
         <Drawer.Portal>
           <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.5)" }}/>
           <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
-            <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: background_size, backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)"}}>
+            <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: background_size, filter: filter, }}>
               {view}
             </div>
           </Drawer.Content>
@@ -20979,7 +20983,7 @@ class App extends Component {
         console.log('TX broadcasted to mempool:', hash);
       })
       .on('receipt', async (receipt) => {
-        await me.set_extra_subsctiption_data(subscription)
+        await me.update_my_paid_subscriptions(subscription)
         me.lock_run_in_stack(false)
         me.reload_my_balances()
         me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
@@ -20992,6 +20996,36 @@ class App extends Component {
         me.get_wallet_data_for_specific_e5(e5, true)
       });
     })
+  }
+
+  async update_my_paid_subscriptions(object){
+    const id = object['id']
+    const e5 = object['e5']
+    const web3_url = this.get_web3_url_from_e5(e5)
+    const web3 = new Web3(web3_url);
+
+    var account = this.state.user_account_id[e5]
+    var contract_addresses = this.state.addresses[e5]
+
+    const F5contractArtifact = require('./contract_abis/F5.json');
+    const F5_address = contract_addresses[2];
+    const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+
+    const subscriptions_interacted_with = [id]
+    const account_as_list = [[account]]
+
+    const my_payments_for_all_subscriptions = await F5contractInstance.methods.f229(subscriptions_interacted_with, account_as_list).call((error, result) => {});
+
+    const subscription_payment_obj = this.state.my_subscription_payment_mappings[e5] == null ? {} : structuredClone(this.state.my_subscription_payment_mappings[e5]);
+
+    for(var s=0; s<subscriptions_interacted_with.length; s++){
+      var sub = subscriptions_interacted_with[s]
+      var my_payment = my_payments_for_all_subscriptions[s][0]
+      subscription_payment_obj[parseInt(sub)] = my_payment
+    }
+    const my_subscription_payment_mappings = structuredClone(this.state.my_subscription_payment_mappings)
+    my_subscription_payment_mappings[e5] = subscription_payment_obj
+    this.setState({my_subscription_payment_mappings: my_subscription_payment_mappings})
   }
 
   navigate_to_homepage_post(object, type){
@@ -25217,12 +25251,31 @@ class App extends Component {
 
   show_view_stage_creator_payout_result_bottomsheet(item){
     this.open_view_stage_creator_payout_result_bottomsheet()
+    this.load_channel_subscription_items(item)
+    this.get_channel_creator_payout_stagings(item)
     var me = this;
     setTimeout(function() {
       if(me.view_stage_creator_payout_result_page.current != null){
         me.view_stage_creator_payout_result_page.current.set_data(item)
       }
     }, (1 * 1100));
+  }
+
+  load_channel_subscription_items(object){
+    const subscriptions = object['ipfs'].selected_creator_group_subscriptions || []
+    const ids = {}
+    subscriptions.forEach(subscription_e5_id => {
+      const subscription_id = subscription_e5_id.split('E')[0]
+      const subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+      if(ids[subscription_e5] == null){
+        ids[subscription_e5] = []
+      }
+      ids[subscription_e5].push(parseInt(subscription_id))
+    });
+
+    Object.keys(ids).forEach(e5_item => {
+      this.load_objects(33/* subscription */, ids[e5_item], e5_item)
+    });
   }
 
   add_staging_result_transaction_to_stack(state_obj){
@@ -25246,7 +25299,7 @@ class App extends Component {
   calcualte_creator_payouts = async (channel_object, file_view_data, filter_value, quietly) => {
     var now = Date.now()
     var last_run_time = this.state.creator_payout_calculation_times[channel_object['e5_id']]
-    if(last_run_time != null && (now - last_run_time) > this.state.calculate_creator_payout_time_limit){
+    if(last_run_time != null && (now - last_run_time) < this.state.calculate_creator_payout_time_limit){
       if(!quietly) this.prompt_top_notification(this.getLocale()['3075i']/* 'Wait a bit.' */, 3200);
       return;
     }
@@ -25256,7 +25309,7 @@ class App extends Component {
     this.setState({creator_payout_calculation_times: query_time})
 
     const subscription_mapping = {}
-    var items = this.state.channel_object['ipfs'].selected_creator_group_subscriptions
+    var items = channel_object['ipfs'].selected_creator_group_subscriptions
     items.forEach(item => {
         var e5 = 'E'+item.split('E')[1]
         var id = item.split('E')[0]
@@ -25270,8 +25323,10 @@ class App extends Component {
       subscription_objects: subscription_mapping,
       steps: 60*60,
       filter_value: filter_value,
-      file_view_data:file_view_data,
+      file_view_data: file_view_data,
     }
+
+    console.log('calculate_payouts', 'file_view_data', file_view_data)
 
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var nitro_object_e5_id = ''
@@ -25723,15 +25778,25 @@ class App extends Component {
     }
   }
 
-  when_bottomsheet_opened_or_closed(function_name){
-    const clone = this.state.opened_bottomsheets.slice()
-    const index = clone.indexOf(function_name)
-    if(index == -1){
-      clone.push(function_name)
-    }else{
-      clone.splice(index, 1)
+  async when_bottomsheet_opened_or_closed(function_name){
+    // const clone = this.state.opened_bottomsheets.slice()
+    if(this.opened_bottomsheets_direct == null){
+      this.opened_bottomsheets_direct = []
     }
-    this.setState({opened_bottomsheets: clone})
+    const index = this.opened_bottomsheets_direct.indexOf(function_name)
+    if(index == -1){
+      this.opened_bottomsheets_direct.push(function_name)
+    }else{
+      this.opened_bottomsheets_direct.splice(index, 1)
+    }
+    this.setState({opened_bottomsheets: this.opened_bottomsheets_direct})
+
+    await this.wait(600)
+    this.setState({opened_bottomsheets2: this.opened_bottomsheets_direct})
+  }
+
+  is_function_at_complete_top_of_stack(function_name){
+    return this.state.opened_bottomsheets2.slice().reverse().indexOf(function_name) == 0
   }
 
 
@@ -42342,6 +42407,7 @@ class App extends Component {
     }
     if(page == this.getLocale()['1214']/* 'channels' */){
       // this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data)
+      this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
       this.load_channel_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1215']/* 'storefront' */){
@@ -42355,10 +42421,12 @@ class App extends Component {
     }
     if(page == this.getLocale()['1264k']/* 'audioport' */){
       // this.load_subscription_data([], null, [])
+      this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
       this.load_audio_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264p']/* videoport */){
       // this.load_subscription_data([], null, [])
+      this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
       this.load_video_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264s']/* 'nitro' */){
@@ -51574,9 +51642,9 @@ class App extends Component {
   get_channel_creator_file_records = async (object) => {
     var id = object['id']
     var e5 = object['e5']
-    var my_account = this.state.user_account_id[object['e5']]
-    var subscriptions = object['e5'].selected_creator_group_subscriptions
-    var channel_creators = object['e5'].creators
+    var my_account = this.state.user_account_id[e5]
+    var subscriptions = object['ipfs'].selected_creator_group_subscriptions
+    var channel_creators = object['ipfs'].creators
 
     if(object['author'] != my_account || channel_creators == null || channel_creators.length == 0 || subscriptions == null || subscriptions.length == 0){
       return;
@@ -51589,7 +51657,7 @@ class App extends Component {
       loaded_target = all_object_creator_file_events.slice(0, this.state.max_post_bulk_load_count).length - 1;
     }
     var messages = []
-    var is_first_time = this.state.object_creator_files[id] == null ? true: false
+    var is_first_time = this.state.object_creator_files[object['e5_id']] == null ? true: false
 
     var all_files = []
     var keys = []
@@ -51727,6 +51795,7 @@ class App extends Component {
   }
 
   get_channel_creator_payout_stagings = async (object) => {
+    console.log('get_channel_creator_payout_stagings', 'beginning...')
     const author = object['author']
     const e5_id = object['e5_id']
     const e5 = object['e5']
@@ -51737,6 +51806,8 @@ class App extends Component {
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     const created_results_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:44, p2/* sender_acc_id */:author})).reverse()
+
+    console.log('get_channel_creator_payout_stagings', 'created_results_data', created_results_data)
 
     var loaded_target = 0
     if(this.state.beacon_node_enabled == true){
@@ -51769,6 +51840,7 @@ class App extends Component {
     const channel_payout_stagings_clone = structuredClone(this.state.channel_payout_stagings)
     channel_payout_stagings_clone[e5_id] = result_objects
     this.setState({channel_payout_stagings: channel_payout_stagings_clone})
+    console.log('get_channel_creator_payout_stagings', 'result_objects', result_objects)
 
     this.get_current_channel_creator_payout_info_if_possible(object)
   }
