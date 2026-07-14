@@ -7716,12 +7716,13 @@ class App extends Component {
 
     const is_bottomsheet_at_top = this.is_function_at_complete_top_of_stack(onOpenChange.name)
     const filter = is_bottomsheet_at_top == false ? "blur(1px)" : "none";
+    const transform = is_bottomsheet_at_top == false ? "scale(0.99)" : "scale(1.0)"
     const data = () => {
       return(
         <Drawer.Portal>
           <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.5)" }}/>
           <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
-            <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: background_size, filter: filter, }}>
+            <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: background_size, filter: filter, transform: transform, transition: "transform 250ms ease, filter 250ms ease", willChange: "transform, filter",}}>
               {view}
             </div>
           </Drawer.Content>

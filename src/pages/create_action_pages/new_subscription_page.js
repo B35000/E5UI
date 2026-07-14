@@ -592,9 +592,11 @@ class NewSubscriptionPage extends Component {
         const end_mint_limit = this.get_mint_limit(3)
         const spend_mint_limit = this.get_mint_limit(5)
         
-        const end_price = bigInt(600)
-        const spend_price = bigInt(300)
-        const price = [{'id':'3', 'amount':bigInt('600')}, {'id':'5', 'amount':bigInt('300')}]
+        //72_000_000 * 0.0000005 = 36
+        //72_000_000 * 0.00005 = 3600
+        const spend_price = bigInt((Math.round(spend_mint_limit * 0.0000005)).toString())
+        const end_price = bigInt((Math.round(end_mint_limit * 0.00005)).toString())
+        const price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
         
         var set_object = {
             cancellable_tags_object:cancellable_tags_object,
@@ -637,8 +639,10 @@ class NewSubscriptionPage extends Component {
         const end_mint_limit = this.get_mint_limit(3)
         const spend_mint_limit = this.get_mint_limit(5)
         
-        const end_price = bigInt(1200)
-        const spend_price = bigInt(900)
+        //72_000_000 * 0.000001 = 72
+        //72_000_000 * 0.0001 = 7200
+        const spend_price = bigInt((Math.round(spend_mint_limit * 0.000001)).toString())
+        const end_price = bigInt((Math.round(end_mint_limit * 0.0001)).toString())
         const price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
         
         var set_object = {
@@ -682,8 +686,10 @@ class NewSubscriptionPage extends Component {
         const end_mint_limit = this.get_mint_limit(3)
         const spend_mint_limit = this.get_mint_limit(5)
         
-        const end_price = bigInt(900*24)
-        const spend_price = bigInt(700*24)
+        //72_000_000 * 0.0000018 = ????
+        //72_000_000 * 0.00009 = ???
+        const spend_price = bigInt((Math.round(spend_mint_limit * 0.0000018 * 24)).toString())
+        const end_price = bigInt((Math.round(end_mint_limit * 0.00009 * 24)).toString())
         const price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
         
         var set_object = {
@@ -727,8 +733,10 @@ class NewSubscriptionPage extends Component {
         const end_mint_limit = this.get_mint_limit(3)
         const spend_mint_limit = this.get_mint_limit(5)
         
-        const end_price = bigInt(900*24)
-        const spend_price = bigInt(700*24)
+        //72_000_000 * 0.000002 = 144
+        //72_000_000 * 0.0001 = 7200
+        const spend_price = bigInt((Math.round(spend_mint_limit * 0.000002 * 24)).toString())
+        const end_price = bigInt((Math.round(end_mint_limit * 0.0001 * 24)).toString())
         const price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
         
         var set_object = {
