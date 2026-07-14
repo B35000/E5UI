@@ -1924,7 +1924,7 @@ return data['data']
             }
             var details = `${this.format_view_count(view_count)} ${views_text}`
             return(
-                <p style={{'font-size': '10px','color': this.props.theme['secondary_text_color'],'margin': '-3px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':'left'}} >{details}</p>
+                <p style={{'font-size': '10px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'overflow-wrap':'break-word', 'text-align':'left'}} >{details}</p>
             )
         }
     }

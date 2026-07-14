@@ -1815,12 +1815,68 @@ class FullVideoPage extends Component {
     }
 
     is_video_available_for_viewing(video){
-        if(video['price_data'].length == 0) return true;
+        const object = this.state.object
+        if(object == null) return true;
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(video['price_data'].length == 0 || object['author'] == me) return true;
         var my_video = this.props.app_state.my_videos
         if(my_video.includes(video['video_id'])){
             return true
         }
+        else if(this.does_subscriptions_exist_in_object(object)){
+            return this.check_if_sender_has_paid_subscriptions(object)
+        }
         return false
+    }
+
+    does_subscriptions_exist_in_object(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        if((creator_group_subscriptions != null && creator_group_subscriptions.length > 0) || (required_subscriptions != null && required_subscriptions.length > 0)){
+            return true
+        }
+        return false
+    }
+
+    check_if_sender_has_paid_subscriptions(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        
+        if(creator_group_subscriptions != null && creator_group_subscriptions.length > 0){
+            var has_sender_paid_all_subs = false
+            creator_group_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id.split('E')[0]
+                var subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    //if at least one subscription has been paid
+                    has_sender_paid_all_subs = true
+                }
+            });
+            return has_sender_paid_all_subs
+        }
+        else if(required_subscriptions != null && required_subscriptions.length > 0){
+            var has_sender_paid_all_subs2 = false
+            required_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id
+                var subscription_e5 = 'E25'
+                if(subscription_e5_id.includes('E')){
+                    subscription_id = subscription_e5_id.split('E')[0]
+                    subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                }
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    has_sender_paid_all_subs2 =  true
+                }
+            });
+            return has_sender_paid_all_subs2
+        }else{
+            return true
+        }
+    }
+
+    has_paid_subscription(subscription_id, e5){
+        var my_payment = this.props.app_state.my_subscription_payment_mappings[e5][subscription_id]
+        if(my_payment == null || my_payment == 0) return false;
+        return true
     }
 
 

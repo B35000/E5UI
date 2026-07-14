@@ -360,6 +360,7 @@ class SubscriptionDetailsSection extends Component {
                                     {index == 2 && this.render_object_views(object)}
                                     {index == 2 && this.show_moderator_note_if_any(object)}
                                     {index == 2 && this.render_post_state(object)}
+                                    {index == 3 && this.render_subscription_type(object)}
                                     
                                     {index == 3 && (
                                         <div>
@@ -466,6 +467,26 @@ class SubscriptionDetailsSection extends Component {
                         }}
                     />
                 </div>
+            </div>
+        )
+    }
+
+    render_subscription_type(object){
+        var obj = {
+            'audioport':this.props.app_state.loc['600d']/* '🎙️ Audioport Subscription' */,
+            'videoport':this.props.app_state.loc['600f']/* '🎞️ Videoport Subscription' */,
+            'service':this.props.app_state.loc['600h']/* '💆‍♀️ Service Subscription' */,
+            'utility':this.props.app_state.loc['635']/* '🔧 Utility Token' */,
+            'access':this.props.app_state.loc['600j']/* '🔐 Access Subscription' */,
+            'custom':this.props.app_state.loc['600l']/* '🎨 Custom Subscription' */,
+        }
+        const title = this.props.app_state.loc['600m']/* 'Subscription Type' */
+        const type = object['ipfs'].token_type || 'custom'
+        const details = obj[type]
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                <div style={{height:10}}/>
             </div>
         )
     }

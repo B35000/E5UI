@@ -300,6 +300,8 @@ class NewSubscriptionPage extends Component {
                 <div>
                     {this.render_title_tags_part()}
                     {this.render_detail_item('0')}
+                    {this.render_presets_menu()}
+                    {this.render_detail_item('0')}
                     {this.render_title_tags_part2()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -315,6 +317,8 @@ class NewSubscriptionPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
+                        {this.render_presets_menu()}
+                        {this.render_detail_item('0')}
                         {this.render_title_tags_part2()}
                         <div style={{height: 10}}/>
                         {this.render_empty_views(3)}
@@ -332,9 +336,9 @@ class NewSubscriptionPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
+                        {this.render_presets_menu()}
+                        {this.render_detail_item('0')}
                         {this.render_title_tags_part2()}
-                        <div style={{height: 10}}/>
-                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -494,6 +498,272 @@ class NewSubscriptionPage extends Component {
     when_get_content_channeling_object_updated(tag_obj){
         var selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
         this.setState({get_content_channeling_object: tag_obj, content_channeling_setting: selected_item})
+    }
+
+
+
+
+
+    render_presets_menu(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['600c']/* 'Preset the new subscription settings based on common use cases.' */})}
+                <div style={{height:10}}/>
+
+                <div onClick={()=>this.preset_audioport_content_subscription()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['600d']/* '🎙️ Audioport Subscription' */, 'details':this.props.app_state.loc['600e']/* 'A subscription used to charge for consuming audio content on e.' */, 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+
+                <div onClick={()=>this.preset_videoport_content_subscription()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['600f']/* '🎞️ Videoport Subscription' */, 'details':this.props.app_state.loc['600g']/* 'A subscription used to charge for consuming your video content on e.' */, 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+
+
+                <div onClick={()=>this.preset_service_subscription()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['600h']/* '💆‍♀️ Service Subscription' */, 'details':this.props.app_state.loc['600i']/* 'A subscription used to charge for general services given outside of e.' */, 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+
+
+                <div onClick={()=>this.preset_access_subscription()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['600j']/* '🔐 Access Subscription' */, 'details':this.props.app_state.loc['600k']/* 'A subscription used to charge for access to a real world thing.' */, 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+                
+
+                {this.render_detail_item('0')}
+                {this.render_subscription_type()}                
+            </div>
+        )
+    }
+
+    render_subscription_type(){
+        var obj = {
+            'audioport':this.props.app_state.loc['600d']/* '🎙️ Audioport Subscription' */,
+            'videoport':this.props.app_state.loc['600f']/* '🎞️ Videoport Subscription' */,
+            'service':this.props.app_state.loc['600h']/* '💆‍♀️ Service Subscription' */,
+            'utility':this.props.app_state.loc['635']/* '🔧 Utility Token' */,
+            'access':this.props.app_state.loc['600j']/* '🔐 Access Subscription' */,
+            'custom':this.props.app_state.loc['600l']/* '🎨 Custom Subscription' */,
+        }
+        const title = this.props.app_state.loc['600m']/* 'Subscription Type' */
+        const details = obj[this.get_subscription_type()]
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    get_subscription_type(){
+        if(this.preset_audioport_content_subscription(true) == true){
+            return 'audioport'
+        }
+        else if(this.preset_videoport_content_subscription(true) == true){
+            return 'videoport'
+        }
+        else if(this.preset_service_subscription(true) == true){
+            return 'service'
+        }
+        else if(this.preset_access_subscription(true) == true){
+            return 'access'
+        }
+        else{
+            return 'custom'
+        }
+    }
+
+    get_mint_limit(token_id){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5] == null || this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][token_id] == null){
+            if(this.props.app_state.selected_e5 == 'E25') return bigInt('35000000')
+            else if(this.props.app_state.selected_e5 == 'E35') return bigInt('3500000')
+            else return bigInt('72000000')
+        }else{
+            return this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][token_id]['data'][1][0/* <0>default_exchange_amount_buy_limit */]
+        }
+    }
+
+    preset_audioport_content_subscription(is_checking_type){
+        const cancellable_tags_object = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['540']/* 'false' */,this.props.app_state.loc['541'] /* 'true' */], [1] ], };
+        
+        const end_mint_limit = this.get_mint_limit(3)
+        const spend_mint_limit = this.get_mint_limit(5)
+        
+        const end_price = bigInt(600)
+        const spend_price = bigInt(300)
+        const price = [{'id':'3', 'amount':bigInt('600')}, {'id':'5', 'amount':bigInt('300')}]
+        
+        var set_object = {
+            cancellable_tags_object:cancellable_tags_object,
+            time_unit:bigInt(60*60)/* 1hr */,
+            minimum_buy_amount:bigInt('6'), 
+            maximum_buy_amount:bigInt(24*7*54*3), 
+            minimum_cancellable_balance_amount:0, 
+            price_data: price,
+        }
+
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(setting == 'price_data'){
+                    this.state[setting].forEach(price_target => {
+                        if(price_target['id'] == '3' && bigInt(price_target['amount']).lesser(bigInt(end_price))){
+                            is_matching = false
+                        }
+                        else if(price_target['id'] == '5' && bigInt(price_target['amount']).lesser(bigInt(spend_price))){
+                            is_matching = false
+                        }
+                    });
+                }else
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['600n']/* 'Audioport subscription preset has been applied.' */, 2500)
+        } 
+    }
+
+    preset_videoport_content_subscription(is_checking_type){
+        const cancellable_tags_object = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['540']/* 'false' */,this.props.app_state.loc['541'] /* 'true' */], [1] ], };
+        
+        const end_mint_limit = this.get_mint_limit(3)
+        const spend_mint_limit = this.get_mint_limit(5)
+        
+        const end_price = bigInt(1200)
+        const spend_price = bigInt(900)
+        const price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
+        
+        var set_object = {
+            cancellable_tags_object:cancellable_tags_object,
+            time_unit:bigInt(60*60)/* 1hr */,
+            minimum_buy_amount:bigInt('12'), 
+            maximum_buy_amount:bigInt(24*7*54*3), 
+            minimum_cancellable_balance_amount:0, 
+            price_data: price,
+        }
+
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(setting == 'price_data'){
+                    this.state[setting].forEach(price_target => {
+                        if(price_target['id'] == '3' && bigInt(price_target['amount']).lesser(bigInt(end_price))){
+                            is_matching = false
+                        }
+                        else if(price_target['id'] == '5' && bigInt(price_target['amount']).lesser(bigInt(spend_price))){
+                            is_matching = false
+                        }
+                    });
+                }else
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['600o']/* 'Videoport subscription preset has been applied.' */, 2500)
+        }        
+    }
+
+    preset_service_subscription(is_checking_type){
+        const cancellable_tags_object = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['540']/* 'false' */,this.props.app_state.loc['541'] /* 'true' */], [2] ], };
+        
+        const end_mint_limit = this.get_mint_limit(3)
+        const spend_mint_limit = this.get_mint_limit(5)
+        
+        const end_price = bigInt(900*24)
+        const spend_price = bigInt(700*24)
+        const price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
+        
+        var set_object = {
+            cancellable_tags_object:cancellable_tags_object,
+            time_unit:bigInt(60*60*24)/* 1dy */,
+            minimum_buy_amount:bigInt('3'),
+            maximum_buy_amount:bigInt(7*54*3),
+            minimum_cancellable_balance_amount:bigInt('7'), 
+            price_data: price,
+        }
+
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(setting == 'price_data'){
+                    this.state[setting].forEach(price_target => {
+                        if(price_target['id'] == '3' && bigInt(price_target['amount']).lesser(bigInt(end_price))){
+                            is_matching = false
+                        }
+                        else if(price_target['id'] == '5' && bigInt(price_target['amount']).lesser(bigInt(spend_price))){
+                            is_matching = false
+                        }
+                    });
+                }else
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['600p']/* 'Service subscription preset has been applied.' */, 2500)
+        }        
+    }
+
+    preset_access_subscription(is_checking_type){
+        const cancellable_tags_object = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['540']/* 'false' */,this.props.app_state.loc['541'] /* 'true' */], [1] ], };
+        
+        const end_mint_limit = this.get_mint_limit(3)
+        const spend_mint_limit = this.get_mint_limit(5)
+        
+        const end_price = bigInt(900*24)
+        const spend_price = bigInt(700*24)
+        const price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
+        
+        var set_object = {
+            cancellable_tags_object:cancellable_tags_object,
+            time_unit:bigInt(60*60*24)/* 1dy */,
+            minimum_buy_amount:bigInt('7'),
+            maximum_buy_amount:bigInt(7*54*3),
+            minimum_cancellable_balance_amount:0, 
+            price_data: price,
+        }
+
+        if(is_checking_type != null && is_checking_type == true){
+            var keys = Object.keys(set_object)
+            var is_matching = true;
+            keys.forEach(setting => {
+                if(setting == 'price_data'){
+                    this.state[setting].forEach(price_target => {
+                        if(price_target['id'] == '3' && bigInt(price_target['amount']).lesser(bigInt(end_price))){
+                            is_matching = false
+                        }
+                        else if(price_target['id'] == '5' && bigInt(price_target['amount']).lesser(bigInt(spend_price))){
+                            is_matching = false
+                        }
+                    });
+                }else
+                if(JSON.stringify(this.state[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value ) != JSON.stringify(set_object[setting], (key, value) => typeof value === 'bigint' ? value.toString() : value )){
+                    is_matching = false
+                }
+            });
+            return is_matching
+        }
+        else{
+            this.setState(set_object);
+            this.props.notify(this.props.app_state.loc['600q']/* 'Access subscription preset has been applied.' */, 2500)
+        }        
     }
 
 
@@ -1996,7 +2266,7 @@ class NewSubscriptionPage extends Component {
             this.setState({content_channeling_setting: me.props.app_state.content_channeling,
                 device_language_setting :me.props.app_state.device_language,
                 device_country :me.props.app_state.device_country,
-                e5 :me.props.app_state.selected_e5,})
+                e5 :me.props.app_state.selected_e5, subscription_type:this.get_subscription_type()})
             
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)

@@ -862,8 +862,9 @@ class AudioPip extends Component {
 
     is_song_available_for_playing(){
         var song = this.state.songs[this.state.pos]
-        if(song['mock'] == true) return true;
         var song_object = song['object']
+        var me = this.props.app_state.user_account_id[song_object['e5']]
+        if(song['mock'] == true || song_object['author'] == me) return true;
         if(this.does_subscriptions_exist_in_object(song_object)){
             return this.check_if_sender_has_paid_subscriptions(song_object)
         }else{
@@ -896,7 +897,7 @@ class AudioPip extends Component {
                 var subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
                 if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
                     //if at least one subscription has been paid
-                    has_sender_paid_all_subs=  true
+                    has_sender_paid_all_subs = true
                 }
             });
             return has_sender_paid_all_subs

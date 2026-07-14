@@ -22404,6 +22404,7 @@ class App extends Component {
 
 
   async pre_load_file(ecid, data, file_type){
+    return;
     if(data['encrypted'] != true) return;
     const local_forage_keys = await localforage.keys()
     if(local_forage_keys.includes(ecid)) return;
@@ -22446,25 +22447,25 @@ class App extends Component {
         console.log('pre_load_file', e)
       }
     }
-    else if(file_type == 'audio' || file_type == 'video'){
-      const key = await this.get_key_from_password(data['password'], 'e');
-      const timestamp_keys = Object.keys(data['encrypted_file_data_info'])
-      const focused_timestamp_info = data['encrypted_file_data_info'][timestamp_keys[0]]
-      const start = focused_timestamp_info.encryptedStartByte
-      const end = start + focused_timestamp_info.encryptedSize - 1;
-      const link = await this.construct_encrypted_link_from_ecid_object(data, 'data')
-      try{
-        const response = await fetch(encodeURI(link), {
-          headers: { Range: `bytes=${start}-${end}` },
-        });
-        const value = await response.arrayBuffer()
-        const chunk = new Uint8Array(value);
-        await this.set_data_in_local_forage(chunk, ecid)
-      }
-      catch(e){
-        console.log('pre_load_file', e)
-      }
-    }
+    // else if(file_type == 'audio' || file_type == 'video'){
+    //   const key = await this.get_key_from_password(data['password'], 'e');
+    //   const timestamp_keys = Object.keys(data['encrypted_file_data_info'])
+    //   const focused_timestamp_info = data['encrypted_file_data_info'][timestamp_keys[0]]
+    //   const start = focused_timestamp_info.encryptedStartByte
+    //   const end = start + focused_timestamp_info.encryptedSize - 1;
+    //   const link = await this.construct_encrypted_link_from_ecid_object(data, 'data')
+    //   try{
+    //     const response = await fetch(encodeURI(link), {
+    //       headers: { Range: `bytes=${start}-${end}` },
+    //     });
+    //     const value = await response.arrayBuffer()
+    //     const chunk = new Uint8Array(value);
+    //     await this.set_data_in_local_forage(chunk, ecid)
+    //   }
+    //   catch(e){
+    //     console.log('pre_load_file', e)
+    //   }
+    // }
   }
 
   async set_data_in_local_forage(data, ecid){
@@ -23293,12 +23294,13 @@ class App extends Component {
       player_size = 0
       opacity = 0.0
     }
+    
     return(
-      <div style={{'opacity':opacity}}>
+      <div onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} style={{'opacity':opacity, 'z-index':'9999', pointerEvents: 'auto'}}>
         <Draggable handle="strong" bounds="body" defaultPosition={{x: x_pos, y: y_pos}}>
-          <div className={classes2.pipWindow}>
+          <div className={classes2.pipWindow} style={{ pointerEvents: 'auto' }}>
             <div className="box no-cursor" style={{'position': 'relative'}}>
-              <div style={{ width:player_size, height:player_size,'z-index':'210', 'position': 'absolute', 'padding':'6px 0px 10px 0px'}}>
+              <div style={{ width:player_size, height:player_size, 'z-index':'210', 'position': 'absolute', 'padding':'6px 0px 10px 0px', pointerEvents: 'auto'}}>
                 {this.get_audio_pip_ui(player_size)}
               </div>
             </div>

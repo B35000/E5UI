@@ -402,6 +402,12 @@ class ViewGroups extends Component {
                 const subtitle = object_data != null && object_data['subtitle'] == null ? '' : object_data['subtitle']
                 const subdetails = object_data != null && object_data['subdetails'] == null ? '' : object_data['subdetails']
 
+                const stop_propagation_if_required = (e) => {
+                    if(object_data != null && object_data['text_click'] != null && object_data['text_click'] != ''){
+                        e.stopPropagation()
+                    }
+                }
+
                 if(footer != null){
                     font_size[3] += 10; 
                     if(image_width == font_size[3]){
@@ -417,7 +423,7 @@ class ViewGroups extends Component {
                                         <div>
                                             {this.render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data)}
                                         </div>
-                                        <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_detail_eight_clicked(object_data['text_click'], object_data['object'])}>
+                                        <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_detail_eight_clicked(object_data['text_click'], object_data['object'])} onTouchStart={(e) => stop_propagation_if_required(e)} onTouchMove={(e) => stop_propagation_if_required(e)} onPointerDown={(e) => stop_propagation_if_required(e)}>
                                             <div style={{width: '99%', 'display': 'flex','flex-direction': 'row',}}>
                                                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': font_size[4],'font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': word_wrap_value2, width: text_width}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
 
@@ -1418,15 +1424,20 @@ class ViewGroups extends Component {
     }
 
     render_label_id_image(blur_image, img, title, font_size, image_width, image_border_radius, object_data){
+        const stop_propagation_if_required = (e) => {
+            if(object_data['image_click'] != null && object_data['image_click'] != ''){
+                e.stopPropagation()
+            }
+        }
         if(blur_image == true){
             return(
-                <div>
+                <div onTouchStart={(e) => stop_propagation_if_required(e)} onTouchMove={(e) => stop_propagation_if_required(e)} onPointerDown={(e) => stop_propagation_if_required(e)}>
                     <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius, 'filter': 'blur(3px)', '-webkit-filter': 'blur(3px)'}} onClick={() => this.when_detail_eight_clicked(object_data['image_click'], object_data['object'])}/>
                 </div>
             )
         }else{
             return(
-                <div>
+                <div onTouchStart={(e) => stop_propagation_if_required(e)} onTouchMove={(e) => stop_propagation_if_required(e)} onPointerDown={(e) => stop_propagation_if_required(e)}>
                     <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius}} onClick={() => this.when_detail_eight_clicked(object_data['image_click'], object_data['object'])}/>
                 </div>
             )

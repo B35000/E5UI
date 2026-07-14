@@ -541,7 +541,7 @@ class home_page extends Component {
                 <div className="row" style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'padding':'0px', 'margin':'0px'}}>
                     <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px', 'margin':'0px'}}>
                         
-                        <div style={{height:top_bar, 'width': '100%', 'padding':'9px 0px 0px 15px', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
+                        <div style={{height:top_bar, 'width': '100%', 'padding':'9px 0px 0px 15px', 'overflow-y': 'hidden', 'overflow-x': 'hidden', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                             {this.render_top_tag_bar(size)}
                         </div>
                         
@@ -562,13 +562,13 @@ class home_page extends Component {
             );
         }
         else if(size == 's'){
-            var bottom_bar = 75;
+            var bottom_bar = 80;
             return(
                 <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                     <div style={{height: this.props.height, width:'100%', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                         {this.render_small_screen_size_ui(size, top_bar, width)}
                         
-                        <div style={{height:5}}/>
+                        {/* <div style={{height:5}}/> */}
                         <div style={{height:bottom_bar, width:width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 15px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                             {this.render_navbar_button_group(size)}
                         </div>
@@ -688,10 +688,10 @@ class home_page extends Component {
         }else{
             return(
                 <div>
-                    <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}  >
+                    <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}>
                         {this.render_post_list_group(size, this.props.height-129)}
                     </div>
-                    <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px'}}>
+                    <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                         {this.render_top_tag_bar(size)}
                     </div>
                 </div>
@@ -5926,7 +5926,7 @@ class home_page extends Component {
         }
 
         await this.props.start_object_file_viewcount_fetch(object, 'audio')
-        await this.props.fetch_uploaded_files_for_object(object, false)
+        await this.props.fetch_uploaded_files_for_object(object, true)
         this.props.get_object_censored_keywords_and_accounts(object)
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
@@ -6058,7 +6058,7 @@ class home_page extends Component {
         }
 
         await this.props.start_object_file_viewcount_fetch(object, 'video')
-        await this.props.fetch_uploaded_files_for_object(object, false)
+        await this.props.fetch_uploaded_files_for_object(object, true)
         // this.props.get_objects_messages(id, e5)
         // this.props.get_post_award_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)

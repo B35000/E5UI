@@ -1019,6 +1019,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_job_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -1100,13 +1103,16 @@ class PostListSection extends Component {
                     </div>
                 </div>
             );
-        } 
+        }
     }
 
     render_space_if_last_item(index, count){
         if(index == count-1){
             var size = this.props.size;
             var height = size == 's' ? 78 : 68;
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */ && size == 's'){
+                height += 50
+            }
             return(
                 <div style={{height: height}}/>
             )
@@ -1621,6 +1627,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_contract_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -1822,6 +1831,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_my_proposals()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -1998,6 +2010,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_nitro_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -2150,6 +2165,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_subscription_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -2320,6 +2338,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_mail_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -2528,6 +2549,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_contractor_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -2721,6 +2745,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var items = this.get_my_direct_message_objects()
         var x = this.props.app_state.os == 'iOS' ? 60 : 53
@@ -3109,6 +3136,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var items = this.get_e5_data()
 
@@ -3329,6 +3359,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var items = this.get_search_results()
         var object_data = this.props.app_state.searched_objects_data[this.state.searched_account]
@@ -4559,6 +4592,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_post_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -4885,6 +4921,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_channel_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -5094,6 +5133,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_poll_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -5265,6 +5307,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_storefront_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -5534,6 +5579,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_bag_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -5772,6 +5820,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_audio_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -6286,6 +6337,9 @@ class PostListSection extends Component {
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
 
         if(items.length == 0){
@@ -6458,7 +6512,7 @@ return data['data']
         }
         if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
             return(
-                <div onClick={() => this.when_audio_item_clicked(index, object)}>
+                <div /* onClick={() => this.when_audio_item_clicked(index, object)} */>
                     {this.render_detail_item('8', item['min'])}
                 </div>
             )
@@ -6530,7 +6584,7 @@ return data['data']
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_audio_item_clicked(index, object)}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} /* onClick={() => this.when_audio_item_clicked(index, object)} */>
                         {this.render_detail_item('8', item['id'])}
                     </div>
                     <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_audio_item_clicked(index, object)} */>
@@ -6544,7 +6598,7 @@ return data['data']
 
     get_audio_files_view_counts(object){
         const views_data = this.get_object_views_text(object['e5_id'])
-        if(views_data != null && views_data != '') return `• ${views_data}`;
+        if(views_data != null && views_data != '') return ` • ${views_data}`;
         else return '';
 
         var view_count = 0
@@ -6696,6 +6750,9 @@ return data['data']
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_video_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -7041,7 +7098,7 @@ return data['data']
         }
         if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
             return(
-                <div onClick={() => this.when_video_item_clicked(index, object)}>
+                <div /* onClick={() => this.when_video_item_clicked(index, object)} */>
                     {this.render_detail_item('8', item['min'])}
                 </div>
             )
@@ -7078,7 +7135,7 @@ return data['data']
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 5px 0px 5px', width: '99%'}}>
-                        <div style={{'padding':'1px 0px 0px 0px'}}>
+                        <div style={{'padding':'1px 0px 0px 0px'}} onClick={() => this.when_video_image_clicked(object)}>
                             {this.render_video_image(image, object, blur)}
                         </div>
                         <div style={{'margin':'0px 0px 0px 10px', width: '99%'}} onClick={() => this.when_video_text_clicked(object)}>
@@ -7112,7 +7169,7 @@ return data['data']
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_video_item_clicked(index, object)}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} /* onClick={() => this.when_video_item_clicked(index, object)} */>
                         {this.render_detail_item('8', item['id'])}
                     </div>
                     <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_video_item_clicked(index, object)} */>
@@ -7126,7 +7183,7 @@ return data['data']
 
     get_video_files_view_counts(object){
         const views_data = this.get_object_views_text(object['e5_id'])
-        if(views_data != null && views_data != '') return `• ${views_data}`;
+        if(views_data != null && views_data != '') return ` • ${views_data}`;
         else return '';
         
         var view_count = 0
@@ -7222,16 +7279,10 @@ return data['data']
         var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
-
-        // this.setState({ animate_click: object['e5_id'] }, () => {
-        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        // });
         
-        if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-            
+        if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){    
             setTimeout(() => this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object), animate_time);
         }else{
-            
             setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'video'), animate_time);
         }
     }
@@ -7259,22 +7310,7 @@ return data['data']
     }
 
     when_video_text_clicked(object){
-        var post_author = object['event'].returnValues.p5
-        var me = this.props.app_state.user_account_id[object['e5']]
-        if(me == null) me = 1
-        var index = 0
-
-        // this.setState({ animate_click: object['e5_id'] }, () => {
-        //     setTimeout(() => this.setState({ animate_click: null }), animate_time); // match animation duration
-        // });
-
-        if(this.check_if_sender_has_paid_subscriptions(object) || post_author == me){
-            
-            setTimeout(() => this.props.when_video_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object), object), animate_time);
-        }else{
-            
-            setTimeout(() => this.props.show_post_item_preview_with_subscription(object, 'video'), animate_time);
-        }
+        this.when_video_item_clicked(0, object)
     }
 
 
@@ -7296,6 +7332,9 @@ return data['data']
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var items = this.get_coins_data()
         var x = this.props.app_state.os == 'iOS' ? 60 : 53
@@ -7457,6 +7496,9 @@ return data['data']
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var items = this.get_ethers_data()
         if(items.length == 0){
@@ -7691,6 +7733,9 @@ return data['data']
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_end_exchange_tokens()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -7972,6 +8017,9 @@ return data['data']
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_spend_exchange_tokens()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -8117,6 +8165,9 @@ return data['data']
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.props.get_bill_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -8304,6 +8355,9 @@ return data['data']
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_certificate_exchanges()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -8448,6 +8502,9 @@ return data['data']
         }
         else if(size == 's'){
             middle = this.props.height+75
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
         }
         var all_items = this.get_crossexchange_exchanges()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
