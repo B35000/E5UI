@@ -5795,11 +5795,17 @@ class StackPage extends Component {
 
             const data = {'my_videoposts': my_videoposts, 'my_videos':my_videos, 'time':Date.now()}
             const string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'myvideo');
-            string_obj[0].push(string_data)
 
-            strs.push(string_obj)
-            adds.push([])
-            ints.push(transaction_obj)
+            account_data_object[1].push(0)
+            account_data_object[2].push(53)
+            account_data_object[3/* context */].push(11)
+            account_data_object[4].push(0)
+            account_data_string_obj[0].push(string_data)
+
+            // string_obj[0].push(string_data)
+            // strs.push(string_obj)
+            // adds.push([])
+            // ints.push(transaction_obj)
         }
 
         if(this.props.app_state.should_update_posts_reposted_by_me == true){

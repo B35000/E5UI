@@ -478,11 +478,11 @@ class home_page extends Component {
     
     render(){
         const filter = this.props.app_state.opened_bottomsheets2.length > 0 ? "blur(1px)" : "none";
-        const transform = this.props.app_state.opened_bottomsheets2.length > 0 ? "scale(1.01)" : "scale(1.0)"
+        const transform = this.props.app_state.opened_bottomsheets2.length > 0 ? "scale(0.99)"/* "scale(1.01)" */ : "scale(1.0)"
         return(
-            <div style={{filter: filter, transform: transform, transition: "transform 250ms ease, filter 250ms ease", willChange: "transform, filter",}}>
+            <div style={{filter: filter, transform: transform, transition: "transform 250ms ease, filter 250ms ease", willChange: "transform, filter", 'background-color': this.props.theme['homepage_background_color']}}>
                 {this.render_data()}
-                {this.render_page_toast_container()}
+                {/* {this.render_page_toast_container()} */}
             </div>
         )
     }
@@ -491,7 +491,9 @@ class home_page extends Component {
         const os = getOS()
         const container_id = 'id3'
         return(
-            <ToastContainer limit={3} containerId={container_id}/>
+            <div style={{'z-index': 1000}}>
+                <ToastContainer limit={3} containerId={container_id}/>
+            </div>
         )
     }
 
@@ -499,7 +501,9 @@ class home_page extends Component {
         const os = getOS()
         const container_id = 'id3'
         return(
-            <ToastContainer limit={3} containerId={container_id}/>
+            <div style={{'z-index': 1000}}>
+                <ToastContainer limit={3} containerId={container_id}/>
+            </div>
         )
     }
 
@@ -533,6 +537,7 @@ class home_page extends Component {
                     {this.render_post_preview_bottomsheet()}
                     {this.render_nsfw_preview_bottomsheet()}
                     {this.render_dialog_ui()}
+                    {this.render_page_toast_container()}
                 </div>
             );
         }
@@ -559,6 +564,7 @@ class home_page extends Component {
                     {this.render_post_preview_bottomsheet()}
                     {this.render_nsfw_preview_bottomsheet()}
                     {this.render_dialog_ui()}
+                    {this.render_page_toast_container()}
                 </div>
             );
         }
@@ -579,6 +585,7 @@ class home_page extends Component {
                         {this.render_post_preview_bottomsheet()}
                         {this.render_nsfw_preview_bottomsheet()}
                         {this.render_dialog_ui()}
+                        {this.render_page_toast_container()}
                     </div>
                 </div>
             )
@@ -5743,6 +5750,10 @@ class home_page extends Component {
     }
 
     async when_channel_item_clicked(index, id, e5, object, ignore_set_details_data){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && object['author'] != this.props.app_state.user_account_id[object['e5']]){
+            this.show_post_item_preview_with_subscription(object, 'channel')
+            return;
+        }
         this.setState({selected_channel_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
@@ -5910,6 +5921,10 @@ class home_page extends Component {
     }
 
     async when_audio_item_clicked(index, id, e5, object, ignore_set_details_data){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && object['author'] != this.props.app_state.user_account_id[object['e5']]){
+            this.show_post_item_preview_with_subscription(object, 'audio')
+            return;
+        }
         this.setState({selected_audio_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
@@ -6046,6 +6061,10 @@ class home_page extends Component {
     }
 
     async open_video(index, id, e5, object, ignore_set_details_data){
+        if(!this.check_if_sender_has_paid_subscriptions(object) && object['author'] != this.props.app_state.user_account_id[object['e5']]){
+            this.show_post_item_preview_with_subscription(object, 'video')
+            return;
+        }
         this.setState({selected_video_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
@@ -6480,7 +6499,7 @@ class home_page extends Component {
 
                 load_accounts_non_fungible_token_data={this.props.load_accounts_non_fungible_token_data.bind(this)} perform_fractionalized_certificate_search={this.perform_fractionalized_certificate_search.bind(this)} get_verified_certificate_data={this.props.get_verified_certificate_data.bind(this)}
 
-                get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)} show_bridge_coin_bottomsheet={this.props.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.props.refresh_wallet.bind(this)}
+                get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)} show_bridge_coin_bottomsheet={this.props.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.props.refresh_wallet.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
                 />
             </div>
         )
@@ -6507,6 +6526,7 @@ class home_page extends Component {
 
     render_top_notification(data, duration){
         const time = duration == null ? 1000: duration;
+        return this.props.notify(data, time)
         const id = "id3"
         toast(this.render_toast_item(data), {
             position: "top-center",

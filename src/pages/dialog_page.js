@@ -748,6 +748,12 @@ class DialogPage extends Component {
         else if(option == 'confirm_bridge_coin_dialog'){
             return this.view_confirm_bridge_coin_dialog_ui()
         }
+        else if(option == 'quick_purchase_video'){
+            return this.view_quick_purchase_video_ui()
+        }
+        else if(option == 'quick_purchase_song'){
+            return this.view_quick_purchase_song_ui()
+        }
     }
 
 
@@ -16103,6 +16109,431 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+    view_quick_purchase_video_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_quick_purchase_video_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_quick_purchase_video_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_purchase_video_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_purchase_video_data2(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_purchase_video_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_purchase_video_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_quick_purchase_video_data(){
+        const object = this.state.data['object']
+        const video = this.state.data['video']
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055re']/* 'After the purchase, you will have access to the video to watch, as well as access through your catalogue.' */, 'title':this.props.app_state.loc['3055rf']/* 'Video Purchase.' */})}
+                <div style={{height:10}}/>
+                {this.render_video_object(object)}
+                <div style={{height:10}}/>
+                {this.render_video2(video)}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055rh']/* 'How much you will be paying for the video.' */, 'title':this.props.app_state.loc['3055rg']/* 'Video Fee.' */})}
+                <div style={{height:10}}/>
+                {this.render_video_fees(video, object)}
+                <div style={{height:10}}/>
+                {this.render_my_balances3(object, video)}
+            </div>
+        )
+    }
+
+    render_quick_purchase_video_data2(){
+        const object = this.state.data['object']
+        const is_running = this.props.app_state.is_running[object['e5']]
+        return(
+            <div>
+                {this.render_my_balances2()}
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qs']/* 'You may optionally set the gas price, or how quickly your run is to be validated. Slow is the default used.' */, 'title':this.props.app_state.loc['3055qr']/* 'Select Gas Price.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_gas_price_options()}
+
+                {this.props.app_state.locked_wallet_hashed_password != '' && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'If you locked your wallet, set the password used here.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
+
+
+                {is_running == true || (this.props.app_state.did_just_set_wallet == true && this.props.app_state.pre_launch_fetch_loading == true) ? (
+                    <div style={{'padding': '5px'}}>
+                        {this.render_small_skeleton_object()}
+                    </div>
+                ) : (
+                    <div>
+                        <div style={{'padding': '5px'}} onClick={() => this.begin_video_purchases()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055rj']/* Run Purchases.' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_video_object(object){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_video_item(object)
+
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('8', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    render_video2(item){
+        var video_file = item['video']
+        var ecid_obj = this.get_cid_split(video_file)
+        if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+            var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+            return(
+                <div>
+                    {this.render_detail_item('8', {'details':item['video_composer'],'title':item['video_title'], 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':item['video_composer'], 'title':item['video_title'], 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_video_fees(item, object){
+        const price_data = item['price_data']
+        const e5 = object['e5']
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                    {price_data.map((item, index) => (
+                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(this.calculate_final_amount(item['amount'])), 'barwidth':this.calculate_bar_width(this.calculate_final_amount(item['amount'])), 'number':this.format_account_balance_figure(this.calculate_final_amount(item['amount'])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                        </li>
+                    ))}
+                </ul>
+            </div> 
+        )
+    }
+
+    render_my_balances3(object, item){
+        const e5 = object['e5']
+        const price_data = item['price_data']
+        const end_balance = this.props.app_state.created_token_object_mapping[e5][3]['balance']
+        const spend_balance = this.props.app_state.created_token_object_mapping[e5][5]['balance']
+        var entry_tokens = [3, 5]
+        var buy_amount_balances = [end_balance, spend_balance]
+        var entry_amount_depths = [0, 0]
+
+        for(var i=0; i<price_data.length; i++){
+            var token_id = price_data[i]['id']
+            if(token_id != 3 && token_id != 5){
+                var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]
+                token_balance = token_balance == null ? 0 : token_balance['balance']
+                entry_tokens.push(token_balance)
+                buy_amount_balances.push(token_balance)
+                entry_amount_depths.push(0)
+            }
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055ri']/* 'The amount of money you have available to make the purchase.' */, 'title':this.props.app_state.loc['3055rc']/* 'Your balances.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_buy_token_uis(entry_tokens, buy_amount_balances, entry_amount_depths)}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    begin_video_purchases(){
+        const object = this.state.data['object']
+        const video = this.state.data['video']
+
+        if(this.props.app_state.locked_wallet_hashed_password != '' && this.state.cypher_passcode.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
+        }
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && !this.does_password_match_hash(this.state.cypher_passcode.trim())){
+            this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
+        else if(!this.can_sender_pay_for_video(object, video)){
+            this.props.notify(this.props.app_state.loc['879']/* 'Your token balance is insufficient for that time unit purchase.' */, 4500)
+        }
+        else{
+            const selected_gas_prices = this.get_selected_gas_price_data()
+            this.props.start_quick_video_purchase_action(object, selected_gas_prices, video)
+        }
+    }
+
+    can_sender_pay_for_video(object, video){
+        var exchange_amounts = {}
+        var exchanges_used = []
+
+        var track_price_data = video['price_data']
+        track_price_data.forEach(price => {
+            var exchange_id = price['id']
+            var amount = price['amount']
+            if(!exchanges_used.includes(exchange_id)){
+                exchanges_used.push(exchange_id)
+                exchange_amounts[exchange_id] = bigInt(0)
+            }
+            exchange_amounts[exchange_id] = bigInt(exchange_amounts[exchange_id]).add(amount)
+        });
+
+        var e5 = object['e5']
+
+        var can_pay = true;
+        for(var i=0; i<exchanges_used.length; i++){
+            var token_id = exchanges_used[i]
+            var token_balance = this.props.calculate_actual_balance(e5, token_id)
+            var final_amount = exchange_amounts[token_id]
+
+            if(bigInt(token_balance).lesser(final_amount)){
+                can_pay = false
+            }
+        }
+        return can_pay
+    }
+
+
+
+
+
+
+
+
+    view_quick_purchase_song_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_quick_purchase_song_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_quick_purchase_song_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_purchase_song_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_purchase_song_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_purchase_song_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_quick_purchase_song_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_quick_purchase_song_data(){
+        const object = this.state.data['object']
+        const song = this.state.data['song']
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055rk']/* 'After the purchase, you will have access to the audio to listen to, as well as add to your collections and playlists.' */, 'title':this.props.app_state.loc['3055rl']/* 'Audio Purchase.' */})}
+                <div style={{height:10}}/>
+                {this.render_audio_object(object)}
+                <div style={{height:10}}/>
+                {this.render_audio(song)}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055rn']/* 'How much youll be paying for the track.' */, 'title':this.props.app_state.loc['3055rm']/* 'Track Fee.' */})}
+                <div style={{height:10}}/>
+                {this.render_video_fees(song, object)}
+                <div style={{height:10}}/>
+                {this.render_my_balances3(object, song)}
+            </div>
+        )
+    }
+
+    render_quick_purchase_song_data2(){
+        const object = this.state.data['object']
+        const is_running = this.props.app_state.is_running[object['e5']]
+        return(
+            <div>
+                {this.render_my_balances2()}
+
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qs']/* 'You may optionally set the gas price, or how quickly your run is to be validated. Slow is the default used.' */, 'title':this.props.app_state.loc['3055qr']/* 'Select Gas Price.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_gas_price_options()}
+
+                {this.props.app_state.locked_wallet_hashed_password != '' && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'If you locked your wallet, set the password used here.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
+
+
+                {is_running == true || (this.props.app_state.did_just_set_wallet == true && this.props.app_state.pre_launch_fetch_loading == true) ? (
+                    <div style={{'padding': '5px'}}>
+                        {this.render_small_skeleton_object()}
+                    </div>
+                ) : (
+                    <div>
+                        <div style={{'padding': '5px'}} onClick={() => this.begin_audio_purchases()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055rj']/* Run Purchases.' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_audio_object(object){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_audio_item(object)
+
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('8', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    render_audio(item){
+        var explicit_selection = item['explicit'] == null ? 0 : this.get_selected_item2(item['explicit'], 'e')
+        var explicit_text = explicit_selection == 1 ? '🅴 ' : ''
+        var song_title = explicit_text + item['song_title']
+        var song_length = this.get_song_duration(item)
+        return(
+            <div>
+                {this.render_detail_item('3', {'details':item['song_composer'], 'title':song_title, 'size':'l', 'footer':song_length})}
+            </div>
+        )
+    }
+
+    get_song_duration(item){
+        var duration = '0:00'
+        if(item['basic_data'] != null && item['basic_data']['format'] != null){
+            var format = item['basic_data']['format']
+            if(format['duration'] != null){
+               var min = Math.floor(parseInt(format['duration']) / 60)
+               var sec = parseInt(format['duration']) % 60
+               duration = min+':'+sec
+            }
+        }
+        return duration
+    }
+
+    begin_audio_purchases(){
+        const object = this.state.data['object']
+        const song = this.state.data['song']
+
+        if(this.props.app_state.locked_wallet_hashed_password != '' && this.state.cypher_passcode.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
+        }
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && !this.does_password_match_hash(this.state.cypher_passcode.trim())){
+            this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
+        else if(!this.can_sender_pay_for_video(object, song)){
+            this.props.notify(this.props.app_state.loc['879']/* 'Your token balance is insufficient for that time unit purchase.' */, 4500)
+        }
+        else{
+            const selected_gas_prices = this.get_selected_gas_price_data()
+            const preferred_audio_items = this.state.data['preferred_audio_items']
+            const is_page_my_collection_page = this.state.data['is_page_my_collection_page']
+            
+            this.props.start_quick_audio_purchase_action(object, selected_gas_prices, song, preferred_audio_items, is_page_my_collection_page)
+        }
+    }
 
 
 

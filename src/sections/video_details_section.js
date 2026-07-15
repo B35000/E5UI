@@ -872,8 +872,16 @@ class VideoDetailsSection extends Component {
         if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }
-        else if(!this.is_video_available_for_viewing(item)){
-            this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
+        else if(!this.is_video_available_for_viewing(item) && (this.does_subscriptions_exist_in_object(object) && !this.check_if_sender_has_paid_subscriptions(object))){
+            if(this.does_subscriptions_exist_in_object(object)){
+                //show view for paying subscriptions, then play video
+                this.props.show_post_item_preview_with_subscription(object, 'video')
+            }
+            else if(!this.is_video_available_for_viewing(item)){
+                //show view for buying video, then play video
+                this.props.show_dialog_bottomsheet({'object':object, 'video':item}, 'quick_purchase_video')
+            }
+            // this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
         }
         else if(!this.has_file_loaded(item['video'])){
             this.props.notify(this.props.app_state.loc['b2527y']/* 'Wait a bit.' */, 3000)
@@ -1694,7 +1702,15 @@ class VideoDetailsSection extends Component {
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }
         else if(!this.is_video_available_for_viewing(item) && (this.does_subscriptions_exist_in_object(object) && !this.check_if_sender_has_paid_subscriptions(object))){
-            this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
+            if(this.does_subscriptions_exist_in_object(object)){
+                //show view for paying subscriptions, then play video
+                this.props.show_post_item_preview_with_subscription(object, 'video')
+            }
+            else if(!this.is_video_available_for_viewing(item)){
+                //show view for buying video, then play video
+                this.props.show_dialog_bottomsheet({'object':object, 'video':item}, 'quick_purchase_video')
+            }
+            // this.props.notify(this.props.app_state.loc['b2527f']/* 'You need to purchase access to the video first.' */, 5000)
         }
         else{
             this.props.play_video(item, object)

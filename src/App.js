@@ -578,7 +578,7 @@ import { AptosAccount, AptosClient } from 'aptos';
 // import { create as createW3UpClient } from '@web3-storage/w3up-client';
 import { from } from "@iotexproject/iotex-address-ts";
 import { STACKS_MAINNET } from '@stacks/network'
-import { makeSTXTokenTransfer, broadcastTransaction, getAddressFromPrivateKey, validateStacksAddress } from '@stacks/transactions';
+import { makeSTXTokenTransfer, broadcastTransaction, getAddressFromPrivateKey, validateStacksAddress, txidFromBytes } from '@stacks/transactions';
 import Arweave from 'arweave';
 import { getKeyFromMnemonic } from 'arweave-mnemonic-keys';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
@@ -5228,9 +5228,9 @@ class App extends Component {
       userCountry = timeZoneCityToCountry[userCity];
     }
     
-    console.log('location_info',"Region:", userRegion);
-    console.log('location_info',"City:", userCity);
-    console.log('location_info',"Country:", userCountry);
+    // console.log('location_info',"Region:", userRegion);
+    // console.log('location_info',"City:", userCity);
+    // console.log('location_info',"Country:", userCountry);
 
     return { userCountry: userCountry, userRegion: userRegion, userCity: userCity }
 
@@ -6861,8 +6861,9 @@ class App extends Component {
         </div>
       )
     }else{
+      const background = this.state.theme == null ? '#292929' : this.state.theme['homepage_background_color']
       return (
-        <div>
+        <div style={{'background-color': background}}>
           {this.render_close_button()}
           {this.render_audio_pip()}
           {this.render_page()}
@@ -6988,7 +6989,9 @@ class App extends Component {
     const os = getOS()
     const container_id = 'id'
     return(
-      <ToastContainer limit={3} containerId={container_id}/>
+      <div style={{'z-index': 1000}}>
+        <ToastContainer limit={3} containerId={container_id}/>
+      </div>
     )
   }
 
@@ -6996,13 +6999,16 @@ class App extends Component {
     const os = getOS()
     const container_id = 'id2'
     return(
-      <ToastContainer limit={3} containerId={container_id}/>
+      <div style={{'z-index': 1000}}>
+        <ToastContainer limit={3} containerId={container_id}/>
+      </div>
     )
   }
 
   render_page(){
+    const background = this.state.theme == null ? '#292929' : this.state.theme['homepage_background_color']
     return(
-      <div>
+      <div style={{'background-color': background}}>
         <Home_page ref={this.homepage}
           screensize={this.getScreenSize()} 
           width={this.state.width} height={this.state.height} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} notify={this.prompt_top_notification.bind(this)} open_send_receive_ether_bottomsheet={this.start_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
@@ -10865,10 +10871,10 @@ class App extends Component {
   }
 
   get_latest_block_data(e5){
-    if(this.props.app_state.last_blocks[e5] == null || this.props.app_state.last_blocks[e5].length  ==  0){
+    if(this.state.last_blocks[e5] == null || this.state.last_blocks[e5].length  ==  0){
       return {}
     }
-    return this.props.app_state.last_blocks[e5][0];
+    return this.state.last_blocks[e5][0];
   }
 
   get_gas_limit(e5){
@@ -19314,7 +19320,7 @@ class App extends Component {
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
 
-        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)}
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)}
         />
       </div>
     )
@@ -19431,6 +19437,8 @@ class App extends Component {
       'confirm_quick_transfer_data':550,
       'confirm_password_before_opening_contract':430,
       'quick_pay_for_subscription':600,
+      'quick_purchase_video':550,
+      'quick_purchase_song':550
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -20939,6 +20947,15 @@ class App extends Component {
     const ints = []
     const strs = []
 
+    const tx = {
+      'subscription_item': subscription,
+      'id': Date.now().toString(),
+      'type': this.getLocale()['862']/* 'pay-subscription' */
+    }
+    const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['862']/* 'pay-subscription' */, e5, false)
+    const ipfs_index = ipfs_index_data.link
+    const obligation_inclusive = ipfs_index_data.obligation_inclusive
+
     const purchase_object = [/* pay subscription */
       [30000, 2, 0],
       [subscription['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target subscription ids */
@@ -20949,9 +20966,36 @@ class App extends Component {
     adds.push([])
     ints.push(purchase_object)
 
+
+
+    const account_data_object = [ /* set data */
+      [20000, 13, 0],
+      [], [],/* target objects */
+      [], /* contexts */
+      [] /* int_data */
+    ]
+    const account_data_string_obj = [[]]
+
+    if(obligation_inclusive == true){
+      account_data_object[1].push(32)
+      account_data_object[2].push(23)
+      account_data_object[3].push(35/* context */)
+      account_data_object[4].push(0)
+      account_data_string_obj[0].push(ipfs_index)
+    }
+
+    if(account_data_object[1].length > 0){
+      strs.push(account_data_string_obj)
+      adds.push([])
+      ints.push(account_data_object)
+    }
+
+
+    ///
+
     const encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
 
-    var tx = {
+    var run_tx = {
       nonce,
       gas: gasLimit,
       value: '0',
@@ -20966,7 +21010,7 @@ class App extends Component {
       const maxPriorityFeePerGas = ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price);
       const maxFeePerGas = selected_gas_prices.picked_max_fee_per_gas_amount == 0 ? (maxPriorityFeePerGas * 2) : selected_gas_prices.picked_max_fee_per_gas_amount
 
-      tx = {
+      run_tx = {
         nonce,
         gas: gasLimit,
         value: '0',
@@ -20978,7 +21022,7 @@ class App extends Component {
       }
     }
     
-    web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
+    web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey).then(signed => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
       .on('transactionHash', (hash) => {
         console.log('TX broadcasted to mempool:', hash);
@@ -21057,6 +21101,795 @@ class App extends Component {
     if(object['ipfs'].get_post_nsfw_option == null) return false
     var selected_nsfw_option = this.get_selected_item2(object['ipfs'].get_post_nsfw_option, 'e')
     if(selected_nsfw_option == 1) return true
+  }
+
+  async start_quick_video_purchase_action(object, selected_gas_prices, video){
+    this.prompt_top_notification(this.getLocale()['3055ro']/* 'Running your purchase...' */, 4600);
+    this.lock_run_in_stack(true);
+    const e5 = object['e5']
+    const web3_url = this.get_web3_url_from_e5(e5)
+    const web3 = new Web3(web3_url);
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.get_contract_from_e5(e5)
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
+    const me = this
+
+    const now = await contractInstance.methods.f147(2).call((error, result) => {})
+    const run_expiry_time = parseInt(now) + parseInt(60*60*5)
+
+    const v5/* t_limits */ = [100000000000000, run_expiry_time];
+    var network_run_gas_price = await web3.eth.getGasPrice()
+    var run_gas_price = selected_gas_prices.run_gas_price == 0 ? network_run_gas_price : selected_gas_prices.run_gas_price
+    console.log("gasPrice: "+run_gas_price);
+    const gasLimit = this.get_gas_limit(e5) || 3_500_000;
+    const nonce = await web3.eth.getTransactionCount(me.state.accounts[e5].address, 'pending');
+
+    const adds = []
+    const ints = []
+    const strs = []
+
+    const tx = {
+      'video_id': video['video_id'], 
+      'object_id': object['id'],
+      'object': object,
+      'video': video,
+      'id': Date.now().toString(),
+      'type': this.getLocale()['a2962a']/* 'buy-video' */
+    }
+    const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['a2962a']/* 'buy-video' */, e5, false)
+    const ipfs_index = ipfs_index_data.link
+    const obligation_inclusive = ipfs_index_data.obligation_inclusive
+
+    const purchase_recipient = (object['ipfs'].purchase_recipient != null && object['ipfs'].purchase_recipient != '') ?  object['ipfs'].purchase_recipient : object['event'].returnValues.p5;
+    const post_id = object['id'];
+    const sale_type = 1
+
+    var transfers_obj = [/* send tokens to another account */
+      [30000, 1, 0],
+      [], [],/* exchanges */
+      [], [],/* receivers */
+      [],/* amounts */
+      []/* depths */
+    ]
+    var obj = [ /* add data */
+      [20000, 13, 0],
+      [21], [23],/* 21(album_sale) */
+      [post_id], /* contexts */
+      [sale_type] /* int_data */
+    ]
+    const string_obj = [[]]
+
+    const exchanges_used = video['price_data']
+    for(var i=0; i<exchanges_used.length; i++){
+      var exchange = exchanges_used[i]['id']
+      var amount = (exchanges_used[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+      if(bigInt(exchanges_used[i]['amount']).equals(0)){
+        continue;
+      }
+
+      var exchange_obj = this.state.created_token_object_mapping[e5][parseInt(exchange)]
+
+      var transfer_actions = this.get_exchange_transfer_actions(amount)
+      for(var u=0; u<transfer_actions.length; u++){
+        transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
+        transfers_obj[2].push(23)
+        transfers_obj[3].push(purchase_recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+        transfers_obj[4].push(23)
+        transfers_obj[5].push(transfer_actions[u]['amount'])
+        transfers_obj[6].push(transfer_actions[u]['depth'])
+      }
+    }
+
+    const award_object = {}
+    var string_data = await this.get_object_ipfs_index(award_object, false, ipfs_index, tx.id);
+    string_obj[0].push(string_data)
+
+    if(transfers_obj[1].length > 0){
+      strs.push([])
+      adds.push([])
+      ints.push(transfers_obj)
+    }
+    strs.push(string_obj)
+    adds.push([])
+    ints.push(obj)
+
+
+    const account_data_object = [ /* set data */
+      [20000, 13, 0],
+      [], [],/* target objects */
+      [], /* contexts */
+      [] /* int_data */
+    ]
+    const account_data_string_obj = [[]]
+    const video_data = {}
+    const my_video_string_data = await this.get_object_ipfs_index(video_data, false, ipfs_index, 'myvideo');
+
+    account_data_object[1].push(0)
+    account_data_object[2].push(53)
+    account_data_object[3/* context */].push(11)
+    account_data_object[4].push(0)
+    account_data_string_obj[0].push(my_video_string_data)
+
+    if(obligation_inclusive == true){
+      account_data_object[1].push(32)
+      account_data_object[2].push(23)
+      account_data_object[3].push(35/* context */)
+      account_data_object[4].push(0)
+      account_data_string_obj[0].push(ipfs_index)
+    }
+
+    if(account_data_object[1].length > 0){
+      strs.push(account_data_string_obj)
+      adds.push([])
+      ints.push(account_data_object)
+    }
+
+
+    ///////
+
+
+    const encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
+
+    var run_tx = {
+      nonce,
+      gas: gasLimit,
+      value: '0',
+      to: contractAddress,
+      data: encoded,
+      gasPrice: run_gas_price.toString(),
+    }
+
+    if(this.state.e5s[e5].type == '1559'){
+      const block = await web3.eth.getBlock('pending');
+      run_gas_price = selected_gas_prices.picked_max_priority_per_gas_amount == 0 ?  Number(block.baseFeePerGas) : selected_gas_prices.picked_max_priority_per_gas_amount
+      const maxPriorityFeePerGas = ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price);
+      const maxFeePerGas = selected_gas_prices.picked_max_fee_per_gas_amount == 0 ? (maxPriorityFeePerGas * 2) : selected_gas_prices.picked_max_fee_per_gas_amount
+
+      tx = {
+        nonce,
+        gas: gasLimit,
+        value: '0',
+        to: contractAddress,
+        data: encoded,
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        type: '0x2', // explicitly mark as EIP-1559
+      }
+    }
+
+    const update_my_videos = () => {
+      const my_videoposts = me.state.my_videoposts.slice()
+      const my_videos = me.state.my_videos.slice()
+      const videoposts = object['id']
+      const video = video['video_id']
+      if(my_videoposts.includes(videoposts)){
+        const index = my_videoposts.indexOf(videoposts)
+        my_videoposts.splice(index, 1)
+      }
+      my_videoposts.push(videoposts)
+
+      if(my_videos.includes(video)){
+        const index = my_videos.indexOf(video)
+        my_videos.splice(index, 1)
+      }
+      my_videos.push(video)
+
+      me.setState({my_videoposts: my_videoposts, my_videos: my_videos})
+    }
+    
+    web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey).then(signed => {
+      web3.eth.sendSignedTransaction(signed.rawTransaction)
+      .on('transactionHash', (hash) => {
+        console.log('TX broadcasted to mempool:', hash);
+      })
+      .on('receipt', async (receipt) => {
+        me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
+        me.lock_run_in_stack(false)
+        me.reload_my_balances()
+        me.update_my_videos()
+        if(me.state.dialog_bottomsheet == true) me.open_dialog_bottomsheet();
+        me.play_video(video, object)
+        me.get_wallet_data_for_specific_e5(e5, true)
+      })
+      .on('error', (error) => {
+        console.error('Transaction error:', error);
+        me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
+        me.lock_run_in_stack(false)
+        me.get_wallet_data_for_specific_e5(e5, true)
+      });
+    })
+  }
+
+  async start_quick_audio_purchase_action(object, selected_gas_prices, song, preferred_audio_items, is_page_my_collection_page){
+    this.prompt_top_notification(this.getLocale()['3055ro']/* 'Running your purchase...' */, 4600);
+    this.lock_run_in_stack(true);
+    const e5 = object['e5']
+    const web3_url = this.get_web3_url_from_e5(e5)
+    const web3 = new Web3(web3_url);
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.get_contract_from_e5(e5)
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
+    const me = this
+
+    const now = await contractInstance.methods.f147(2).call((error, result) => {})
+    const run_expiry_time = parseInt(now) + parseInt(60*60*5)
+
+    const v5/* t_limits */ = [100000000000000, run_expiry_time];
+    var network_run_gas_price = await web3.eth.getGasPrice()
+    var run_gas_price = selected_gas_prices.run_gas_price == 0 ? network_run_gas_price : selected_gas_prices.run_gas_price
+    console.log("gasPrice: "+run_gas_price);
+    const gasLimit = this.get_gas_limit(e5) || 3_500_000;
+    const nonce = await web3.eth.getTransactionCount(me.state.accounts[e5].address, 'pending');
+
+    const adds = []
+    const ints = []
+    const strs = []
+
+    const tx = {
+      'song_id': song['song_id'], 
+      'object_id': object['id'],
+      'object': object,
+      'song': song,
+      'id': Date.now().toString(),
+      'type': this.getLocale()['2962']/* 'buy-album' */
+    }
+    const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['2962']/* 'buy-album' */, e5, false)
+    const ipfs_index = ipfs_index_data.link
+    const obligation_inclusive = ipfs_index_data.obligation_inclusive
+
+    const purchase_recipient = object['ipfs'].purchase_recipient
+    const post_id = object['id'];
+    const sale_type = 1
+
+    const transfers_obj = [/* send tokens to another account */
+      [30000, 1, 0],
+      [], [],/* exchanges */
+      [], [],/* receivers */
+      [],/* amounts */
+      []/* depths */
+    ]
+    const obj = [ /* add data */
+      [20000, 13, 0],
+      [21], [23],/* 21(album_sale) */
+      [post_id], /* contexts */
+      [sale_type] /* int_data */
+    ]
+    const string_obj = [[]]
+
+    const exchanges_used = song['price_data']
+    for(var i=0; i<exchanges_used.length; i++){
+      var exchange = exchanges_used[i]['id']
+      var amount = (exchanges_used[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+      if(bigInt(exchanges_used[i]['amount']).equals(0)){
+        continue;
+      }
+
+      var exchange_obj = this.state.created_token_object_mapping[e5][parseInt(exchange)]
+
+      var transfer_actions = this.get_exchange_transfer_actions(amount)
+      for(var u=0; u<transfer_actions.length; u++){
+        transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
+        transfers_obj[2].push(23)
+        transfers_obj[3].push(purchase_recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+        transfers_obj[4].push(23)
+        transfers_obj[5].push(transfer_actions[u]['amount'])
+        transfers_obj[6].push(transfer_actions[u]['depth'])
+      }
+    }
+
+    const award_object = {}
+    const string_data = await this.get_object_ipfs_index(award_object, false, ipfs_index, tx.id);
+    string_obj[0].push(string_data)
+
+    if(transfers_obj[1].length > 0){
+      strs.push([])
+      adds.push([])
+      ints.push(transfers_obj)
+    }
+    strs.push(string_obj)
+    adds.push([])
+    ints.push(obj)
+
+    const account_data_object = [ /* set data */
+      [20000, 13, 0],
+      [], [],/* target objects */
+      [], /* contexts */
+      [] /* int_data */
+    ]
+    const account_data_string_obj = [[]]
+    const audio_data = {}
+    const my_audio_string_data = await this.get_object_ipfs_index(audio_data, false, ipfs_index, 'myaudio');
+
+    account_data_object[1].push(0)
+    account_data_object[2].push(53)
+    account_data_object[3/* context */].push(5)
+    account_data_object[4].push(0)
+    account_data_string_obj[0].push(my_audio_string_data)
+
+    if(obligation_inclusive == true){
+      account_data_object[1].push(32)
+      account_data_object[2].push(23)
+      account_data_object[3].push(35/* context */)
+      account_data_object[4].push(0)
+      account_data_string_obj[0].push(ipfs_index)
+    }
+
+    if(account_data_object[1].length > 0){
+      strs.push(account_data_string_obj)
+      adds.push([])
+      ints.push(account_data_object)
+    }
+
+
+
+    ///////
+
+
+    const encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
+
+    var run_tx = {
+      nonce,
+      gas: gasLimit,
+      value: '0',
+      to: contractAddress,
+      data: encoded,
+      gasPrice: run_gas_price.toString(),
+    }
+
+    if(this.state.e5s[e5].type == '1559'){
+      const block = await web3.eth.getBlock('pending');
+      run_gas_price = selected_gas_prices.picked_max_priority_per_gas_amount == 0 ?  Number(block.baseFeePerGas) : selected_gas_prices.picked_max_priority_per_gas_amount
+      const maxPriorityFeePerGas = ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price);
+      const maxFeePerGas = selected_gas_prices.picked_max_fee_per_gas_amount == 0 ? (maxPriorityFeePerGas * 2) : selected_gas_prices.picked_max_fee_per_gas_amount
+
+      run_tx = {
+        nonce,
+        gas: gasLimit,
+        value: '0',
+        to: contractAddress,
+        data: encoded,
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        type: '0x2', // explicitly mark as EIP-1559
+      }
+    }
+
+    const update_my_tracks_and_audio = () => {
+      const my_albums = me.state.my_albums.slice()
+      const my_tracks = me.state.my_tracks.slice()
+
+      const album = object['id']
+      const track = song['song_id']
+      if(my_albums.includes(album)){
+        const index = my_albums.indexOf(album)
+        my_albums.splice(index, 1)
+      }
+      my_albums.push(album)
+
+      if(my_tracks.includes(track)){
+        const index = my_tracks.indexOf(track)
+        my_tracks.splice(index, 1)
+      }
+      my_tracks.push(track)
+
+      me.setState({my_albums: my_albums, my_tracks: my_tracks})
+    }
+    
+    web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey).then(signed => {
+      web3.eth.sendSignedTransaction(signed.rawTransaction)
+      .on('transactionHash', (hash) => {
+        console.log('TX broadcasted to mempool:', hash);
+      })
+      .on('receipt', async (receipt) => {
+        me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
+        me.lock_run_in_stack(false)
+        me.reload_my_balances()
+        me.update_my_tracks_and_audio()
+        if(me.state.dialog_bottomsheet == true) me.open_dialog_bottomsheet();
+        me.play_song(song, object, preferred_audio_items, is_page_my_collection_page, false)
+        me.get_wallet_data_for_specific_e5(e5, true)
+      })
+      .on('error', (error) => {
+        console.error('Transaction error:', error);
+        me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
+        me.lock_run_in_stack(false)
+        me.get_wallet_data_for_specific_e5(e5, true)
+      });
+    })
+  }
+
+  async get_ipfs_index_object(tx, type, e5, calculate_gas){
+    const ipfs_index_object = {'version':this.state.version, 'color':this.get_device_color()}
+    const obj = {
+      'version':this.state.version, 
+      'author':this.hash_data_with_randomizer(this.state.accounts['E25'].address), 
+      'color':this.get_device_color(), 
+      'tags':{'color':this.get_device_color()}
+    }
+    const ipfs_index_array = []
+
+    if(type == this.getLocale()['2962']/* 'buy-album' */){
+      const t = tx
+      const sale_type = 1
+      const track = tx['song_id']
+      const award_object = {'sale_type':sale_type, 'songs_included':track}
+      ipfs_index_object[t.id] = award_object
+      ipfs_index_array.push({'id':t.id, 'data':award_object})
+
+      const my_albums = this.state.my_albums.slice()
+      const my_tracks = this.state.my_tracks.slice()
+
+      const album = tx['object_id']
+      if(my_albums.includes(album)){
+        const index = my_albums.indexOf(album)
+        my_albums.splice(index, 1)
+      }
+      my_albums.push(album)
+
+      if(my_tracks.includes(track)){
+        const index = my_tracks.indexOf(track)
+        my_tracks.splice(index, 1)
+      }
+      my_tracks.push(track)
+
+      const data = {'my_albums': my_albums, 'my_tracks':my_tracks, 'time':Date.now()}
+      ipfs_index_object['myaudio'] = data
+      ipfs_index_array.push({'id':'myaudio', 'data':data})
+    }
+    else if(type == this.getLocale()['a2962a']/* 'buy-video' */){
+      const t = tx
+      const sale_type = 1
+      const video = tx['video_id']
+      const award_object = {'sale_type':sale_type, 'videos_included':video}
+      ipfs_index_object[t.id] = award_object
+      ipfs_index_array.push({'id':t.id, 'data':award_object})
+
+      const my_videoposts = this.state.my_videoposts.slice()
+      const my_videos = this.state.my_videos.slice()
+      const videoposts = tx['object_id']
+
+      if(my_videoposts.includes(videoposts)){
+        const index = my_videoposts.indexOf(videoposts)
+        my_videoposts.splice(index, 1)
+      }
+      my_videoposts.push(videoposts)
+
+      if(my_videos.includes(video)){
+        var index = my_videos.indexOf(video)
+        my_videos.splice(index, 1)
+      }
+      my_videos.push(video)
+
+      const data = {'my_videoposts': my_videoposts, 'my_videos':my_videos, 'time':Date.now()}
+      ipfs_index_object['myvideo'] = data
+      ipfs_index_array.push({'id':'myvideo', 'data':data})
+    }
+
+    const obligation_object = { 'data':[], 'sender':this.state.user_account_id[e5], 'e5':e5 }
+    const calculate_final_progressive_obligation = (progressive_obligation_proportion, obligation_proportion, token_id, amount) => {
+      if(progressive_obligation_proportion == null || progressive_obligation_proportion == 0) return 0;
+      const token_object = this.state.created_tokens[e5][token_id]
+      const token_mint_limit = token_object['data'][1][0/* <0>default_exchange_amount_buy_limit */];
+      if(bigInt(amount).lesser(token_mint_limit)) return 0;
+      const multiplier = bigInt(amount).divide(token_mint_limit)
+      const remainder = bigInt(amount).mod(token_mint_limit)
+      const proportion_to_add = bigInt(progressive_obligation_proportion).times(multiplier)
+      const remainder_to_add = bigInt(remainder).times(progressive_obligation_proportion).divide(token_mint_limit)
+      const final_proportion = proportion_to_add.plus(remainder_to_add)
+      if(final_proportion.greater(bigInt('51e16'))) return bigInt('51e16');
+      return final_proportion
+    }
+
+    if(type == this.getLocale()['1018']/* 'transfer' */){
+      const amount_data = tx['price_data']
+      const fulfillers = []
+      amount_data.forEach(amount_item => {
+          const fulfiller = amount_item['recipient'] == '53' ? this.state.user_account_id[e5] : amount_item['recipient'];
+          if(!fulfillers.includes(fulfiller) && fulfiller != 1){
+            fulfillers.push(fulfiller)
+          }
+      });
+      await this.load_target_or_object_accounts_obligation_data(fulfillers, e5)
+
+      for(var e=0; e<amount_data.length; e++){
+          const final_object_value_transfer_data = [{'exchange':amount_data[e]['id'], 'amount':amount_data[e]['amount']}]
+          
+          const object_obligation_fulfiller = amount_data[e]['recipient'] == '53' ? this.state.user_account_id[e5] : amount_data[e]['recipient'];
+          const address_key = object_obligation_fulfiller == 1 ? this.state.accounts[e5].address :  this.state.author_address_mapping[e5][object_obligation_fulfiller]
+          const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
+          const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+          if(authors_obligation_contracts.length > 0){
+              const obligation_promise_data = { 
+                  'id': tx.type, 
+                  'identifier':tx.id+e,
+                  'city':this.state.city,
+                  'region':this.state.region,
+                  'hard_id':'transfer', 
+                  'confirm_transfers':true,
+                  'obligation_fulfiller':object_obligation_fulfiller, 
+                  'e5':e5,
+                  'obligation_fulfiller_address':address_key,
+                  'promises':{},
+              }
+              authors_obligation_contracts.forEach(contract => {
+                  const configuration = this.state.my_contract_obligation_subscription_data[contract];
+
+                  const default_obligation_proportion = configuration['ipfs'].default_direct_transfer_obligation
+
+                  const progressive_proportions = {}
+                  final_object_value_transfer_data.forEach((transfer_item, index) => {
+                      const exchange_id = transfer_item['exchange']
+                      const amount = transfer_item['amount']
+                      progressive_proportions[index] = {}
+                      progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                  });
+
+                  obligation_promise_data['promises'][contract] = {
+                      'proportions':[default_obligation_proportion],
+                      'transfers':final_object_value_transfer_data,
+                      'progressive_proportions':progressive_proportions,
+                  }
+              });
+              obligation_object['data'].push(obligation_promise_data)
+          }
+      }  
+    }
+    else if(type == this.getLocale()['3068ac']/* 'iTransfer' */){
+      const amount_data = tx['price_data']
+      const final_object_value_transfer_data = []
+      amount_data.forEach(price_item => {
+          final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
+      });
+      const object_obligation_fulfiller = tx['recipient'];
+      await this.load_target_or_object_accounts_obligation_data([object_obligation_fulfiller], e5)
+      const address_key = this.state.author_address_mapping[e5][object_obligation_fulfiller]
+      const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
+      const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+      if(authors_obligation_contracts.length > 0){
+          const obligation_promise_data = { 
+              'id': tx.type, 
+              'identifier':tx.id,
+              'city':this.state.city,
+              'region':this.state.region,
+              'hard_id':'iTransfer', 
+              'confirm_transfers':true,
+              'obligation_fulfiller':object_obligation_fulfiller, 
+              'e5':e5,
+              'obligation_fulfiller_address':address_key,
+              'promises':{},
+          }
+          authors_obligation_contracts.forEach(contract => {
+              const configuration = this.state.my_contract_obligation_subscription_data[contract];
+
+              const default_obligation_proportion = configuration['ipfs'].default_iTransfer_obligation
+
+              const progressive_proportions = {}
+              final_object_value_transfer_data.forEach((transfer_item, index) => {
+                  const exchange_id = transfer_item['exchange']
+                  const amount = transfer_item['amount']
+                  progressive_proportions[index] = {}
+                  progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+              });
+
+              obligation_promise_data['promises'][contract] = {
+                  'proportions':[default_obligation_proportion],
+                  'transfers':final_object_value_transfer_data,
+                  progressive_proportions
+              }
+          });
+          obligation_object['data'].push(obligation_promise_data)
+      }
+    }
+    else if(type == this.getLocale()['862']/* 'pay-subscription' */){
+      const object = tx['subscription_item'];
+      const exchange_data = object['data'][2]
+      const amount_data = object['data'][3]
+      const depth_data = object['data'][4]
+      const final_object_value_transfer_data = []
+      exchange_data.forEach((exchange, index) => {
+        final_object_value_transfer_data.push({'exchange':exchange, 'amount':this.get_actual_number(bigInt(amount_data[index]).multiply(tx.time_units), depth_data[index])})
+      });
+
+      const object_obligation_fulfiller = object['author'];
+      await this.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
+      const address_key = this.state.author_address_mapping[object['e5']][object_obligation_fulfiller]
+      const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
+      const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+      if(authors_obligation_contracts.length > 0){
+          const obligation_promise_data = { 
+              'id': tx.type, 
+              'identifier':tx.id,
+              'city':this.state.city,
+              'region':this.state.region,
+              'hard_id':'pay-subscription', 
+              'confirm_transfers':true,
+              'obligation_fulfiller':object_obligation_fulfiller, 
+              'e5':object['e5'],
+              'obligation_fulfiller_address':address_key,
+              'promises':{},
+          }
+          authors_obligation_contracts.forEach(contract => {
+              const configuration = this.state.my_contract_obligation_subscription_data[contract];
+
+              const default_obligation_proportion = configuration['ipfs'].default_subscription_purchase_obligation
+
+              const progressive_proportions = {}
+              final_object_value_transfer_data.forEach((transfer_item, index) => {
+                  const exchange_id = transfer_item['exchange']
+                  const amount = transfer_item['amount']
+                  progressive_proportions[index] = {}
+                  progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+              });
+
+              obligation_promise_data['promises'][contract] = {
+                  'proportions':[default_obligation_proportion],
+                  'transfers':final_object_value_transfer_data,
+                  progressive_proportions
+              }
+          });
+          obligation_object['data'].push(obligation_promise_data)
+      }
+    }
+    else if(type == this.getLocale()['2962']/* 'buy-album' */){
+        const object = tx['object']
+        const amount_data = tx['song']['price_data']
+        const final_object_value_transfer_data = []
+        amount_data.forEach(exchange => {
+          final_object_value_transfer_data.push({'exchange':exchange['id'], 'amount':exchange['amount']})
+        });
+        const object_obligation_fulfiller = object['author'];
+        await this.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
+        const address_key = this.state.author_address_mapping[object['e5']][object_obligation_fulfiller]
+        const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
+        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+        if(authors_obligation_contracts.length > 0){
+            const obligation_promise_data = { 
+                'id': tx.type, 
+                'identifier':tx.id,
+                'city':this.state.city,
+                'region':this.state.region,
+                'hard_id':'buy-album', 
+                'confirm_transfers':true,
+                'obligation_fulfiller':object_obligation_fulfiller, 
+                'e5':object['e5'],
+                'obligation_fulfiller_address':address_key,
+                'promises':{},
+            }
+            authors_obligation_contracts.forEach(contract => {
+                const configuration = this.state.my_contract_obligation_subscription_data[contract];
+
+                const default_obligation_proportion = configuration['ipfs'].default_audiopost_purchase_obligation
+
+                const progressive_proportions = {}
+                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                    const exchange_id = transfer_item['exchange']
+                    const amount = transfer_item['amount']
+                    progressive_proportions[index] = {}
+                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                });
+
+                obligation_promise_data['promises'][contract] = {
+                    'proportions':[default_obligation_proportion],
+                    'transfers':final_object_value_transfer_data,
+                    progressive_proportions
+                }
+            });
+            obligation_object['data'].push(obligation_promise_data)
+        }
+    }
+    else if(type == this.getLocale()['a2962a']/* 'buy-video' */){
+        const object = tx['object']
+        const amount_data = tx['song']['price_data']
+        const final_object_value_transfer_data = []
+        amount_data.forEach(exchange => {
+          final_object_value_transfer_data.push({'exchange':exchange['id'], 'amount':exchange['amount']})
+        });
+        const object_obligation_fulfiller = object['author'];
+        await this.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
+        const address_key = this.state.author_address_mapping[object['e5']][object_obligation_fulfiller]
+        const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
+        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+        if(authors_obligation_contracts.length > 0){
+            const obligation_promise_data = { 
+                'id': tx.type, 
+                'identifier':tx.id,
+                'city':this.state.city,
+                'region':this.state.region,
+                'hard_id':'buy-video', 
+                'confirm_transfers':true,
+                'obligation_fulfiller':object_obligation_fulfiller, 
+                'e5':object['e5'],
+                'obligation_fulfiller_address':address_key,
+                'promises':{},
+            }
+            authors_obligation_contracts.forEach(contract => {
+                const configuration = this.state.my_contract_obligation_subscription_data[contract];
+
+                const default_obligation_proportion = configuration['ipfs'].default_videopost_purchase_obligation
+
+                const progressive_proportions = {}
+                final_object_value_transfer_data.forEach((transfer_item, index) => {
+                    const exchange_id = transfer_item['exchange']
+                    const amount = transfer_item['amount']
+                    progressive_proportions[index] = {}
+                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+                });
+
+                obligation_promise_data['promises'][contract] = {
+                    'proportions':[default_obligation_proportion],
+                    'transfers':final_object_value_transfer_data,
+                    progressive_proportions
+                }
+            });
+            obligation_object['data'].push(obligation_promise_data)
+        }
+    }
+
+    let obligation_inclusive = false;
+    if(obligation_object['data'].length > 0){
+      const data_hash = this.hash_data(JSON.stringify({'o':obligation_object['data']}));
+      const time = Date.now()
+      const my_address = this.state.accounts[e5].address
+      const data_to_be_signed = `${time}:${data_hash}:${my_address}`
+      const signature_object = await this.get_signature_for_obligation_data(data_to_be_signed)
+      
+      obligation_object['signature_object'] = signature_object;
+      obligation_object['time'] = time;
+      obligation_object['data_to_be_signed'] = data_to_be_signed;
+      obj['tags']['obligation_data'] = obligation_object;
+      
+      ipfs_index_object['obligation_data'] = obligation_object
+      ipfs_index_array.push({'id':'obligation_data', 'data':obligation_object})
+      
+      obligation_inclusive = true;
+    }
+
+    ipfs_index_array.forEach(item => {
+      obj[item['id']] = item['data']
+    });
+
+    const link = await this.get_object_ipfs_index(obj, calculate_gas);
+    return {link, obligation_inclusive}
+  }
+
+  get_device_color(){
+    const my_state_code = this.state.device_country_code
+    const country_data = this.state.country_data
+
+    var selected_objs = country_data.filter(function (el) {
+      return (el['code'] === my_state_code)
+    });
+
+    var color = 'g'
+    if(selected_objs.length > 0){
+      color = selected_objs[0]['color'][0];
+    }
+    return color
+  }
+
+  get_object_ipfs_index = async (tx, calculate_gas, ipfs_index, data_index) => {
+    if(Object.keys(tx).length <= 3 && ipfs_index == null){
+      return null
+    }
+
+    if(calculate_gas != null && calculate_gas == true){
+      return 'ar.TVlfS2g5aTNWaENoSnVUem9fQ3l1NmJHNmhDdmFzcXpXR2ZvNG9uaU5uQV8xeGppQVl4Vw=='
+    }
+    if(ipfs_index != null){
+      return ipfs_index+'_'+data_index
+    }
+    var object_as_string = JSON.stringify(tx, (key, value) =>
+        typeof value === 'bigint'
+            ? value.toString()
+            : value // return everything else unchanged));
+    )
+    var obj_cid = await this.store_objects_data_in_ipfs_using_option(object_as_string, null, null, tx['tags'])
+    return obj_cid
   }
 
 
@@ -27610,6 +28443,15 @@ class App extends Component {
 
 
     if(selected_item == this.getLocale()['3106']/* 'quick-transfer' */){
+      const tx = {
+        'price_data': price_data,
+        'id': Date.now().toString(),
+        'type': this.getLocale()['1018']/* 'transfer' */
+      }
+      const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['1018']/* 'transfer' */, e5, estimate)
+      const ipfs_index = ipfs_index_data.link
+      const obligation_inclusive = ipfs_index_data.obligation_inclusive
+
       const transfers_obj = [/* send tokens to another account */
         [30000, 1, 0],
         [], [],/* exchanges */
@@ -27630,10 +28472,43 @@ class App extends Component {
       strs.push([])
       adds.push([])
       ints.push(transfers_obj)
+
+      const account_data_object = [ /* set data */
+        [20000, 13, 0],
+        [], [],/* target objects */
+        [], /* contexts */
+        [] /* int_data */
+      ]
+      const account_data_string_obj = [[]]
+
+      if(obligation_inclusive == true){
+        account_data_object[1].push(32)
+        account_data_object[2].push(23)
+        account_data_object[3].push(35/* context */)
+        account_data_object[4].push(0)
+        account_data_string_obj[0].push(ipfs_index)
+      }
+
+      if(account_data_object[1].length > 0){
+        strs.push(account_data_string_obj)
+        adds.push([])
+        ints.push(account_data_object)
+      }
     }
     else if(selected_item == this.getLocale()['3106p']/* quick-iTransfer */){
       const author = price_data[0]['recipient']
       const string_data = this.hash_data(identifier)
+
+      const tx = {
+        'price_data': price_data,
+        'id': Date.now().toString(),
+        'type': this.getLocale()['3068ac']/* 'iTransfer' */,
+        'recipient':author,
+      }
+      const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['3068ac']/* 'iTransfer' */, e5, estimate)
+      const ipfs_index = ipfs_index_data.link
+      const obligation_inclusive = ipfs_index_data.obligation_inclusive
+
       const transfers_obj = [/* send awwards */
         [30000, 7, 0],
         [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
@@ -27656,6 +28531,29 @@ class App extends Component {
       strs.push(string_obj)
       adds.push([])
       ints.push(transfers_obj)
+
+
+      const account_data_object = [ /* set data */
+        [20000, 13, 0],
+        [], [],/* target objects */
+        [], /* contexts */
+        [] /* int_data */
+      ]
+      const account_data_string_obj = [[]]
+
+      if(obligation_inclusive == true){
+        account_data_object[1].push(32)
+        account_data_object[2].push(23)
+        account_data_object[3].push(35/* context */)
+        account_data_object[4].push(0)
+        account_data_string_obj[0].push(ipfs_index)
+      }
+
+      if(account_data_object[1].length > 0){
+        strs.push(account_data_string_obj)
+        adds.push([])
+        ints.push(account_data_object)
+      }
     }
 
     if(estimate == true){
@@ -27669,7 +28567,7 @@ class App extends Component {
 
     const encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
 
-    var tx = {
+    var run_tx = {
       nonce,
       gas: gasLimit,
       value: '0',
@@ -27684,7 +28582,7 @@ class App extends Component {
       const maxPriorityFeePerGas = ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price);
       const maxFeePerGas = selected_gas_prices.picked_max_fee_per_gas_amount == 0 ? (maxPriorityFeePerGas * 2) : selected_gas_prices.picked_max_fee_per_gas_amount
 
-      tx = {
+      run_tx = {
         nonce,
         gas: gasLimit,
         value: '0',
@@ -27696,7 +28594,7 @@ class App extends Component {
       }
     }
     
-    web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
+    web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey).then(signed => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
       .on('transactionHash', (hash) => {
         console.log('TX broadcasted to mempool:', hash);
