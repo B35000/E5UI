@@ -485,6 +485,11 @@ const currencies = [
     "name": "XDAI"
   },
   {
+    "id": "zcash",
+    "symbol": "zec",
+    "name": "Zcash"
+  },
+  {
     "id": "zksync-staked-eth",
     "symbol": "zketh",
     "name": "ZKsync Staked ETH"

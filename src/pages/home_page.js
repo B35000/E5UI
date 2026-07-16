@@ -491,7 +491,7 @@ class home_page extends Component {
         const os = getOS()
         const container_id = 'id3'
         return(
-            <div style={{'z-index': 1000}}>
+            <div>
                 <ToastContainer limit={3} containerId={container_id}/>
             </div>
         )
@@ -501,7 +501,7 @@ class home_page extends Component {
         const os = getOS()
         const container_id = 'id3'
         return(
-            <div style={{'z-index': 1000}}>
+            <div>
                 <ToastContainer limit={3} containerId={container_id}/>
             </div>
         )
@@ -537,7 +537,7 @@ class home_page extends Component {
                     {this.render_post_preview_bottomsheet()}
                     {this.render_nsfw_preview_bottomsheet()}
                     {this.render_dialog_ui()}
-                    {this.render_page_toast_container()}
+                    {/* {this.render_page_toast_container()} */}
                 </div>
             );
         }
@@ -564,7 +564,7 @@ class home_page extends Component {
                     {this.render_post_preview_bottomsheet()}
                     {this.render_nsfw_preview_bottomsheet()}
                     {this.render_dialog_ui()}
-                    {this.render_page_toast_container()}
+                    {/* {this.render_page_toast_container()} */}
                 </div>
             );
         }
@@ -585,7 +585,7 @@ class home_page extends Component {
                         {this.render_post_preview_bottomsheet()}
                         {this.render_nsfw_preview_bottomsheet()}
                         {this.render_dialog_ui()}
-                        {this.render_page_toast_container()}
+                        {/* {this.render_page_toast_container()} */}
                     </div>
                 </div>
             )

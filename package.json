@@ -6,6 +6,8 @@
   "private": true,
   "dependencies": {
     "@arbitrum/sdk": "^4.0.4",
+    "@bitcoinerlab/secp256k1": "^1.2.0",
+    "@bitgo/utxo-lib": "^11.24.0",
     "@cosmjs/crypto": "^0.32.4",
     "@cosmjs/encoding": "^0.32.4",
     "@cosmjs/proto-signing": "^0.32.4",
@@ -59,6 +61,7 @@
     "bootstrap": "^5.3.3",
     "browser-image-compression": "^2.0.2",
     "browserify-zlib": "^0.2.0",
+    "bs58check": "^4.0.0",
     "buffer": "^6.0.3",
     "cardano-web3-js": "^2.3.4",
     "chart.js": "^4.5.0",

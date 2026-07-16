@@ -776,6 +776,9 @@ class SuccessfulSend extends Component {
         else if(item['symbol'] == 'ICP'){
             return `https://dashboard.internetcomputer.org/transaction/${hash}`
         }
+        else if(item['symbol'] == 'ZEC'){
+            return `https://blockchair.com/zcash/transaction/${hash}`
+        }
     }
 
 

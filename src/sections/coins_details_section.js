@@ -984,6 +984,9 @@ class CoinsDetailsSection extends Component {
         else if(item['symbol'] == 'ICP'){
             return `https://dashboard.internetcomputer.org/account/${hash}`
         }
+        else if(item['symbol'] == 'ZEC'){
+            return `https://blockchair.com/zcash/address/${hash}`
+        }
     }
 
 

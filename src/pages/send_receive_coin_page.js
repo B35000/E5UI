@@ -377,7 +377,7 @@ class SendReceiveCoinPage extends Component {
     
     render_default_fee_for_utxo_chains(){
         var item = this.state.coin
-        if(item['symbol'] == 'BTC' || item['symbol'] == 'BCH' || item['symbol'] == 'LTC' || item['symbol'] == 'DOGE' || item['symbol'] == 'DASH'){
+        if(item['symbol'] == 'BTC' || item['symbol'] == 'BCH' || item['symbol'] == 'LTC' || item['symbol'] == 'DOGE' || item['symbol'] == 'DASH' || item['symbol'] == 'ZEC'){
             var data = this.props.app_state.coin_data[item['symbol']]
             if(data == null || data['fee'] == null || data['fee']['fee'] == null) return;
             var fee = data['fee']['fee']
@@ -585,6 +585,16 @@ class SendReceiveCoinPage extends Component {
                 }
             });
         }
+        else if(item['symbol'] == 'ZEC'){
+            var should_add = true;
+            utxos.forEach(utxo => {
+                if(should_add)bal += parseInt(utxo['value']);
+                if(should_add)utxos_count++
+                if(bal >= transfer_amount){
+                    should_add = false;
+                }
+            });
+        }
         return utxos_count
     }
 
@@ -716,9 +726,6 @@ class SendReceiveCoinPage extends Component {
 
     when_send_coin_confirmation_received = async () => {
         var item = this.state.coin
-        // if(item['symbol'] != 'BTC' && item['symbol'] != 'LTC' && item['symbol'] != 'DOGE' && item['symbol'] != 'DASH'){
-        //     this.props.notify(this.props.app_state.loc['2951']/* 'Broadcasting your Transaction...' */, 1000)
-        // }
         this.props.notify(this.props.app_state.loc['2951']/* 'Broadcasting your Transaction...' */, 1000)
         var set_fee = await this.get_default_transaction_fee()
         const transfer_amount = parseInt(this.state.picked_sats_amount)

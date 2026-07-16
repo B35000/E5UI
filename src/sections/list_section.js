@@ -1109,6 +1109,7 @@ class PostListSection extends Component {
     render_space_if_last_item(index, count){
         if(index == count-1){
             var size = this.props.size;
+            if(size == 'l') return;
             var height = size == 's' ? 78 : 68;
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */ && size == 's'){
                 height += 50

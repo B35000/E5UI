@@ -543,6 +543,7 @@ import hedera_hashgraph_logo from './assets/hedera_hashgraph.png'
 import injective_logo from './assets/injective.png'
 import near_logo from './assets/near.png'
 import icp_logo from './assets/internet_computer.png'
+import zcash_logo from './assets/zcash.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -605,6 +606,10 @@ import { Ed25519KeyIdentity } from '@icp-sdk/core/identity';
 import { Principal } from '@icp-sdk/core/principal';
 import { createAgent } from '@dfinity/utils';
 import { IcpLedgerCanister, AccountIdentifier } from '@dfinity/ledger-icp';
+import * as utxolib from '@bitgo/utxo-lib';
+import bs58check from 'bs58check';
+import { BIP32Factory } from 'bip32'
+import ecc from '@bitcoinerlab/secp256k1';
 
 
 /* shared component stuff */
@@ -797,6 +802,7 @@ const xrpl = require("xrpl")
 const BITBOXSDK = require('bitbox-sdk').BITBOX;
 const pako = require('pako');
 const nacl = require("tweetnacl");
+const bip32 = BIP32Factory(ecc);
 
 const BITBOX = new BITBOXSDK();
 const arweave = Arweave.init();
@@ -2605,6 +2611,8 @@ class App extends Component {
       'NEAR': this.get_coin_info('NEAR', 'Near Protocol', near_logo, 'yocto', 24, 10**24, this.getLocale()['2916']/* Accounting' */, 'Thresholded Proof of Stake', '1 sec.', this.get_time_difference(1595350551), 4100, '~~~'),
 
       'ICP': this.get_coin_info('ICP', 'Internet Computer', icp_logo, 'e8', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Threshold Relay', '0.5 sec.', this.get_time_difference(1623283200), 3_000, '~~~'),
+
+      'ZEC': this.get_coin_info('ZEC', 'Zcash', zcash_logo, 'zatoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '1.25 min.', this.get_time_difference(1477673333), 5, 2),
     }
     return list
   }
@@ -2658,7 +2666,8 @@ class App extends Component {
       'fb2781ecc5b61ca732d827fbca341150d75155b1',
       'inj1e26ezaurxe0vrd4um5kts5m4l8z07vxgfp8kyz',
       'f52343e16056927fa0fda31ed17aedcd69b42624b84889542d9c8c7be6d4454f',
-      '73f37eda5e4de090c3a09df8446fbf8ad3942c8e942a9623b4f44ca4db12d1fe'
+      '73f37eda5e4de090c3a09df8446fbf8ad3942c8e942a9623b4f44ca4db12d1fe',
+      't1Uoup1fNWDb4KGS8tPWX1kHJJMnRG14UVZ'
     ]
     return default_addresses
   }
@@ -6989,7 +6998,7 @@ class App extends Component {
     const os = getOS()
     const container_id = 'id'
     return(
-      <div style={{'z-index': 1000}}>
+      <div>
         <ToastContainer limit={3} containerId={container_id}/>
       </div>
     )
@@ -6999,7 +7008,7 @@ class App extends Component {
     const os = getOS()
     const container_id = 'id2'
     return(
-      <div style={{'z-index': 1000}}>
+      <div>
         <ToastContainer limit={3} containerId={container_id}/>
       </div>
     )
@@ -8265,6 +8274,9 @@ class App extends Component {
     else if(item['symbol'] == 'ICP'){
       return this.validate_icp_address(address)
     }
+    else if(item['symbol'] == 'ZEC'){
+      return this.validate_zec_address(address)
+    }
 
 
     return true;
@@ -8509,6 +8521,33 @@ class App extends Component {
     }
   }
 
+  validate_zec_address(address){
+    if (!address || typeof address !== 'string') return false; 
+    // Transparent addresses: base58check with a 2-byte version prefix.
+    try {
+      const decoded = bs58check.decode(address);
+      const t1 = 't1';
+      const t3 = 't3';
+      if (address.startsWith(t1) || address.startsWith(t3)) {
+        return true;
+      }
+    } catch (e) {
+      // Not valid base58check - fall through and try bech32 (shielded).
+    }
+ 
+    // Shielded Sapling addresses: bech32 with a network-specific HRP.
+    try {
+      const decoded = bech32.decode(address, 200);
+      if (decoded.prefix === 'zs') {
+        return true;
+      }
+    } catch (e) {
+      // Not valid bech32 either.
+    }
+ 
+    return false;
+  }
+
 
 
 
@@ -8588,6 +8627,9 @@ class App extends Component {
     }
     else if(item['symbol'] == 'ICP'){
       await this.create_and_broadcast_icp_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'ZEC'){
+      await this.create_and_broadcast_zec_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
 
     var sync_time = item['symbol'] == 'AR' ? (4 * 60_000) : (1 * 30_000)
@@ -9554,6 +9596,76 @@ class App extends Component {
     }catch(e){
       console.log(e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  create_and_broadcast_zec_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_zec_wallet(seed)
+    const utxos = data['utxos']
+
+    const amount = parseInt(transfer_amount.toString())
+    const sender = wallet.address
+    const receiver = recipient_address
+
+    const selected = [];
+    let totalIn = 0;
+    for (const utxo of wallet) {
+      selected.push(utxo);
+      totalIn += utxo.value;
+      if (totalIn >= amount + fee) break;
+    }
+    const size = this.get_tx_size(selected.length, 2)
+
+    const change = totalIn - amount - fee;
+    const txBuilder = new utxolib.bitgo.ZcashTransactionBuilder(utxolib.networks.zcash);
+    txBuilder.setVersion(4); // Sapling transaction format
+    txBuilder.setVersionGroupId(0x892f2085); // Sapling version group ID
+    txBuilder.setExpiryHeight(0);
+    txBuilder.setConsensusBranchId(0xc2d6d0b4)
+
+
+    selected.forEach((utxo) => txBuilder.addInput(utxo.txid, utxo.vout));
+    txBuilder.addOutput(receiver, amount);
+    if (change > 0) {
+      txBuilder.addOutput(sender, change);
+    }
+
+    selected.forEach((utxo, index) => {
+      txBuilder.sign(index, wallet.keyPair, null, undefined, utxo.value);
+    });
+
+    const txHex = txBuilder.build().toHex();
+    const hash = await this.broadcast_zec_transaction(txHex);
+
+    if(hash != null){
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':selected.length, 'tx_size': size, 'hash':hash})
+    }else{
+      this.show_dialog_bottomsheet({'hash':txHex, 'chain':'ZEC'}, 'manual_transaction_broadcast')
+    }
+  }
+
+  async broadcast_zec_transaction(tx){
+    const baseUrl = 'https://api.mainnet.cipherscan.app/api'
+    const req_body = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'rawTx': tx
+      })
+    }
+    try{
+      const res = await fetch(`${baseUrl}/tx/broadcast`, req_body)
+      if (!res.ok) {
+        throw new Error(`Explorer API error: ${res.status} ${res.statusText}`);
+      }
+      const json = await res.json();
+      return json['txid']
+    }
+    catch(e){
+      console.log(e)
     }
   }
 
@@ -29811,6 +29923,13 @@ class App extends Component {
 
     this.setState({coin_data: coin_data})
     // await this.wait(400)
+    coin_data['ZEC'] = await this.get_and_set_zcash_wallet_info(seed)
+    
+
+
+
+    this.setState({coin_data: coin_data})
+    // await this.wait(400)
     //should be last
     coin_data['AR'] = await this.get_and_set_arweave_wallet_info(seed)
     // console.log('coin', 'arweave...')
@@ -29904,6 +30023,7 @@ class App extends Component {
     if(coin == 'INJ' || should_update_all) coin_data = await this.update_inj_balance(coin_data);
     if(coin == 'NEAR' || should_update_all) coin_data = await this.update_near_balance(coin_data);
     if(coin == 'ICP' || should_update_all) coin_data = await this.update_icp_balance(coin_data);
+    if(coin == 'ZEC' || should_update_all) coin_data = await this.update_zcash_balance(coin_data);
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
     this.setState({coin_data: coin_data})
@@ -29955,6 +30075,7 @@ class App extends Component {
     if(coin == 'INJ') coin_data[coin] = await this.get_and_set_inj_wallet_info(seed);
     if(coin == 'NEAR') coin_data[coin] = await this.get_and_set_near_wallet_info(seed);
     if(coin == 'ICP') coin_data[coin] = await this.get_and_set_icp_wallet_info(seed);
+    if(coin == 'ZEC') coin_data[coin] = await this.get_and_set_zcash_wallet_info(seed)
     if(coin == 'AR') coin_data[coin] = await this.get_and_set_arweave_wallet_info(seed);
     
     this.setState({coin_data: coin_data, loading_individual_coin: null})
@@ -31997,6 +32118,117 @@ class App extends Component {
     const balance = await this.get_icp_address_balance(wallet.ledger, wallet.accountIdentifier)
 
     clone['ICP']['balance'] = balance;
+    return clone
+  }
+
+
+
+
+
+
+
+
+
+
+  get_and_set_zcash_wallet_info = async (seed) => {
+    try{      
+      const wallet = await this.get_zcash_wallet(seed)
+      const address = wallet.address
+      const utxos = await this.get_zcash_utxos(address)
+      const balance = await this.get_zcash_balance(address)
+
+      const fee = await this.get_zcash_fees()
+      const fee_info = {'fee':fee, 'type':'variable', 'per':'byte'}
+
+      const zcash_data = {'balance':balance, 'address':address, 'utxos':utxos, 'min_deposit':0, 'fee':fee_info}
+      this.fetch_specific_coin_receipts(address)
+      return zcash_data
+    }catch(e){
+      console.log('coin', e)
+    }
+    
+  }
+
+  get_zcash_wallet = async (mnemonic) => {
+    const entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic);
+    const seed_buffer = mnemonicToSeedSync(entropic_mnemonic);
+    const root = bip32.fromSeed(seed_buffer);
+    const derivationPath = `m/44'/133'/0'/0/0`;
+    const child = root.derivePath(derivationPath)
+    const privateKey = child.privateKey;
+    const publicKey = child.publicKey;
+
+    const hash160 = utxolib.crypto.hash160(publicKey)
+    const versionBytes = Buffer.from([0x1c, 0xb8])
+    const address = bs58check.encode(Buffer.concat([versionBytes, hash160]));
+
+    return { keypair: child, privateKey, publicKey, address, wif_private_key: child.toWIF() }
+  }
+
+  get_zcash_utxos = async (address) => {
+    // const baseUrl = 'https://api.blockchair.com/zcash';
+    const baseUrl = 'https://api.zcashinfo.com'
+    try{
+      // const res = await fetch(`${baseUrl}/dashboards/address/${address}?limit=0`);
+      const res = await fetch(`${baseUrl}/api/v1/addresses/${address}/utxos`)
+      if (!res.ok) {
+        throw new Error(`Explorer API error: ${res.status} ${res.statusText}`);
+      }
+      const json = await res.json();
+      // const addrData = json?.data?.[address];
+      // const utxos = addrData?.utxo || [];
+      // return utxos.map((u) => ({
+      //   txid: u.transaction_hash,
+      //   vout: u.index,
+      //   value: u.value, // zatoshis
+      // }));
+      return json.map((u) => ({
+        txid: u.txid,
+        vout: u.output_index,
+        value: u.value_zatoshis, // zatoshis
+      }));
+    }catch(e){
+      console.log(e)
+      return []
+    }
+  }
+
+  async get_zcash_balance(address){
+    // const baseUrl = 'https://api.blockchair.com/zcash';
+    const baseUrl = 'https://api.zcashinfo.com'
+    try{
+      // const res = await fetch(`${baseUrl}/dashboards/address/${address}`);
+      const res = await fetch(`${baseUrl}/api/v1/addresses/${address}`)
+      if (!res.ok) {
+        throw new Error(`Explorer API error: ${res.status} ${res.statusText}`);
+      }
+      const json = await res.json();
+      // const addrData = json?.data?.[address];
+      // const balanceZats = addrData.address.balance;
+      // return balanceZats;
+      return json?.balance_zatoshis
+    }catch(e){
+      console.log(e)
+      return 0
+    }
+  }
+
+  get_zcash_fees = async () => {
+    const response = await fetch('https://api.blockchair.com/zcash/stats');
+    const data = await response.json();
+    return parseInt(data.data.suggested_transaction_fee_per_byte_sat)
+  }
+
+  update_zcash_balance = async (clone) => {
+    // var clone = structuredClone(this.state.coin_data)
+    var address = clone['ZEC']['address']
+    var utxos = await this.get_zcash_utxos(address)
+    var balance = await this.get_zcash_balance(address)
+    var fees = await this.get_zcash_fees()
+    clone['ZEC']['balance'] = balance
+    clone['ZEC']['utxos'] = utxos
+    clone['ZEC']['fee']['fee'] = fees
+    // this.setState({coin_data: clone})
     return clone
   }
 
