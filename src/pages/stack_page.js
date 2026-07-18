@@ -6429,7 +6429,7 @@ class StackPage extends Component {
                     txs[i].type == this.props.app_state.loc['d311bt']/* 'edit-certificate' */ ||
                     txs[i].type == this.props.app_state.loc['e311bb']/* 'edit-cross-exchange' */
                 ){
-                    const t = txs[i]
+                    var t = txs[i]
                     if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */){
                         t = await this.process_channel_object(txs[i])
                     }

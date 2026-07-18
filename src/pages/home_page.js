@@ -5750,7 +5750,7 @@ class home_page extends Component {
     }
 
     async when_channel_item_clicked(index, id, e5, object, ignore_set_details_data){
-        if(!this.check_if_sender_has_paid_subscriptions(object) && object['author'] != this.props.app_state.user_account_id[object['e5']]){
+        if(!this.check_if_sender_has_paid_subscriptions2(object) && object['author'] != this.props.app_state.user_account_id[object['e5']] && ignore_set_details_data != null){
             this.show_post_item_preview_with_subscription(object, 'channel')
             return;
         }
@@ -5766,6 +5766,9 @@ class home_page extends Component {
             this.setState({viewed_channels: viewed_channel_clone})
             this.update_cookies()
         }
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
 
         await this.props.fetch_uploaded_files_for_object(object)
         this.props.get_objects_messages(id, e5, object)
@@ -5775,9 +5778,10 @@ class home_page extends Component {
         await this.props.get_channel_creator_file_records(object)
         await this.props.get_channel_creator_payout_stagings(object)
         await this.props.get_channel_payout_records(object)
-        if(this.props.screensize == 's'){
-            this.open_view_object_bottomsheet()
+        if(object['ipfs'].voice_call_number_id != null){
+            await this.props.get_room_participant_count(object['ipfs'].voice_call_number_id)
         }
+        
         this.props.set_audio_pip_opacity_because_of_inactivity()
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
@@ -5921,7 +5925,7 @@ class home_page extends Component {
     }
 
     async when_audio_item_clicked(index, id, e5, object, ignore_set_details_data){
-        if(!this.check_if_sender_has_paid_subscriptions(object) && object['author'] != this.props.app_state.user_account_id[object['e5']]){
+        if(!this.check_if_sender_has_paid_subscriptions2(object) && object['author'] != this.props.app_state.user_account_id[object['e5']] && ignore_set_details_data != null){
             this.show_post_item_preview_with_subscription(object, 'audio')
             return;
         }
@@ -6061,7 +6065,7 @@ class home_page extends Component {
     }
 
     async open_video(index, id, e5, object, ignore_set_details_data){
-        if(!this.check_if_sender_has_paid_subscriptions(object) && object['author'] != this.props.app_state.user_account_id[object['e5']]){
+        if(!this.check_if_sender_has_paid_subscriptions2(object) && object['author'] != this.props.app_state.user_account_id[object['e5']] && ignore_set_details_data != null){
             this.show_post_item_preview_with_subscription(object, 'video')
             return;
         }
@@ -6078,14 +6082,16 @@ class home_page extends Component {
             this.update_cookies()
         }
 
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+
         await this.props.start_object_file_viewcount_fetch(object, 'video')
         await this.props.fetch_uploaded_files_for_object(object, true)
         // this.props.get_objects_messages(id, e5)
         // this.props.get_post_award_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
-        if(this.props.screensize == 's'){
-            this.open_view_object_bottomsheet()
-        }
+        
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
         this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
@@ -6400,6 +6406,47 @@ class home_page extends Component {
 
     open_object_in_homepage(target, e5, type){
         this.open_notification_link(target, e5, type)
+    }
+
+    check_if_sender_has_paid_subscriptions2(object){
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        
+        if(creator_group_subscriptions != null && creator_group_subscriptions.length > 0){
+            var has_sender_paid_all_subs = false
+            creator_group_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id.split('E')[0]
+                var subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    //if at least one subscription has been paid
+                    has_sender_paid_all_subs=  true
+                }
+            });
+            return has_sender_paid_all_subs
+        }
+        else if(required_subscriptions != null && required_subscriptions.length > 0){
+            var has_sender_paid_all_subs2 = false
+            required_subscriptions.forEach(subscription_e5_id => {
+                var subscription_id = subscription_e5_id
+                var subscription_e5 = 'E25'
+                if(subscription_e5_id.includes('E')){
+                    subscription_id = subscription_e5_id.split('E')[0]
+                    subscription_e5 = 'E'+subscription_e5_id.split('E')[1]
+                }
+                if(this.has_paid_subscription(parseInt(subscription_id), subscription_e5)){
+                    has_sender_paid_all_subs2 =  true
+                }
+            });
+            return has_sender_paid_all_subs2
+        }else{
+            return true
+        }
+    }
+
+    has_paid_subscription(subscription_id, e5){
+        var my_payment = this.props.app_state.my_subscription_payment_mappings[e5][subscription_id]
+        if(my_payment == null || my_payment == 0) return false;
+        return true
     }
 
 

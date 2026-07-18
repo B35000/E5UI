@@ -405,7 +405,7 @@ const currencies = [
     "name": "Stellar"
   },
   {
-    "id": "stacks",
+    "id": "blockstack",
     "symbol": "stx",
     "name": "Stacks"
   },

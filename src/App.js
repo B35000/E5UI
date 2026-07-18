@@ -7116,7 +7116,9 @@ class App extends Component {
 
           show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} 
 
-          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} show_bridge_coin_bottomsheet={this.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.refresh_wallet.bind(this)} is_function_at_complete_top_of_stack={this.is_function_at_complete_top_of_stack.bind(this)}
+          load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} show_bridge_coin_bottomsheet={this.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.refresh_wallet.bind(this)} is_function_at_complete_top_of_stack={this.is_function_at_complete_top_of_stack.bind(this)} 
+
+          get_room_participant_count={this.get_room_participant_count.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -26699,12 +26701,12 @@ class App extends Component {
     const resource_name = resource_object[this.state.theme['name']]
 
     return(
-      <div style={{'opacity':opacity}}>
+      <div style={{'opacity':opacity, pointerEvents: 'auto'}}>
         <Draggable handle="strong" bounds="body" defaultPosition={{x: x_pos, y: y_pos}}>
-          <div className={classes2.pipWindow}>
-            <div className="box no-cursor" style={{'position': 'relative'}}>
-              <div style={{ width:player_size, height:player_size,'z-index':'410', 'position': 'absolute', 'padding':'6px 0px 10px 0px'}}>
-                <img onClick={() => this.when_close_button_clicked()} alt="" src={this.state.static_assets[resource_name]} style={{width: player_size, height: player_size, 'border-radius': '10px'}} />
+          <div className={classes2.pipWindow} style={{pointerEvents: 'auto'}}>
+            <div className="box no-cursor" style={{'position': 'relative', pointerEvents: 'auto'}}>
+              <div style={{ width:player_size, height:player_size,'z-index':'410', 'position': 'absolute', 'padding':'6px 0px 10px 0px', pointerEvents: 'auto'}}>
+                <img onClick={() => this.when_close_button_clicked()} alt="" src={this.state.static_assets[resource_name]} style={{width: player_size, height: player_size, 'border-radius': '10px', pointerEvents: 'auto'}} />
               </div>
             </div>
           </div>

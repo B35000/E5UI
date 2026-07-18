@@ -985,7 +985,7 @@ class PostListSection extends Component {
         };
         return(
             <AnimatePresence initial={true}>
-                <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }}
+                <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }}
                 style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
                     <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
                         <Skeleton style={styles.skeletonBox}/>
@@ -1060,7 +1060,7 @@ class PostListSection extends Component {
                                     return (
                                         <div>
                                             <AnimatePresence initial={true}>
-                                                <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                                <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                                 style={{'padding': padding}}>
                                                     {this.render_job_object(item, index)}
                                                 </motion.div>
@@ -1091,7 +1091,7 @@ class PostListSection extends Component {
                                     return (
                                         <div>
                                             <AnimatePresence initial={true}>
-                                                <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                                <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                                 style={{'padding': padding}}>
                                                     {this.render_job_object(item, index)}
                                                 </motion.div>
@@ -1668,7 +1668,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'padding': padding}}>
+                                        <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'padding': padding}}>
                                             {this.render_contract_item(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
@@ -1873,7 +1873,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_proposal_object(item, index)}
                                         </motion.div>
@@ -2052,7 +2052,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_nitro_object_if_locked(item, index)}
                                         </motion.div>
@@ -2207,7 +2207,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_subscription_object(item, index)}
                                         </motion.div>
@@ -2387,7 +2387,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['convo_id']} className={this.state.animate_click == item['convo_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['convo_id']} className={this.state.animate_click == item['convo_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_mail_object_or_null(item, index)}
                                         </motion.div>
@@ -2591,7 +2591,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_contractor_object(item, index)}
                                         </motion.div>
@@ -2790,7 +2790,7 @@ class PostListSection extends Component {
                                 return (
                                     <div>
                                         <AnimatePresence initial={true}>
-                                            <motion.div key={item['convo_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                            <motion.div key={item['convo_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                             style={{'padding': padding}}>
                                                 {this.render_direct_message_object(item, index)}
                                             </motion.div>
@@ -3032,7 +3032,7 @@ class PostListSection extends Component {
                                 return (
                                     <div>
                                         <AnimatePresence initial={true}>
-                                            <motion.div key={item['call_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                            <motion.div key={item['call_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                             style={{}}>
                                                 {this.render_invite_item(item)}
                                                 <div style={{height:4}}/>
@@ -3168,7 +3168,7 @@ class PostListSection extends Component {
                         return (
                             <div>
                                 <AnimatePresence initial={true}>
-                                    <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                     style={{'padding': '1px 5px 1px 5px'}}>
                                         {this.render_E5s_object(item['data'], index, item['id'])}
                                     </motion.div>
@@ -3390,7 +3390,7 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         <AnimatePresence initial={true}>
                             {items.map((item, index) => (
-                                <motion.div key={item['address']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                <motion.div key={item['address']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                 style={{'padding': '1px'}}>
                                     {this.render_searched_account_item(item)}
                                 </motion.div>
@@ -3434,7 +3434,7 @@ class PostListSection extends Component {
                 <div style={{}}>
                     <AnimatePresence initial={true}>
                         {items.map((item, index) => (
-                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                             style={{'padding': padding}}>
                                 {this.render_link_object_item(item, index, item_types[index])}
                             </motion.div>
@@ -3839,7 +3839,7 @@ class PostListSection extends Component {
                                 return (
                                     <div>
                                         <AnimatePresence initial={true}>
-                                            <motion.div key={item.returnValues.p5.toString()}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                            <motion.div key={item.returnValues.p5.toString()}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                             style={{}}>
                                                 {this.render_notification_item2(item, index)}
                                                 <div style={{height:4}}/>
@@ -4633,7 +4633,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_post_object_if_locked(item, index)}
                                         </motion.div>
@@ -4962,7 +4962,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_channel_object(item, index)}
                                         </motion.div>
@@ -5174,7 +5174,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_poll_object(item, index)}
                                         </motion.div>
@@ -5348,7 +5348,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_storefront_object(item, index)}
                                         </motion.div>
@@ -5620,7 +5620,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding':padding}}>
                                             {this.render_bag_object(item, index)}
                                         </motion.div>
@@ -5880,7 +5880,7 @@ class PostListSection extends Component {
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_audio_object_if_locked(item, index)}
                                         </motion.div>
@@ -5924,7 +5924,7 @@ class PostListSection extends Component {
             <div>
                 <AnimatePresence initial={true}>
                     {items.map((item, index) => (
-                        <motion.div key={item['song_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                        <motion.div key={item['song_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                         style={{'padding': '2px'}}>
                             {this.render_song(item['song'], item['object'], index, 'album')} 
                             {this.render_space_if_not_last(index, items.length)}
@@ -6207,7 +6207,7 @@ class PostListSection extends Component {
                                 return (
                                     <div>
                                         <AnimatePresence initial={true}>
-                                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                             style={{}}>
                                                 <ImageListItem key={index}>
                                                     <div>
@@ -6802,7 +6802,7 @@ return data['data']
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_video_object_if_locked(item, index)}
                                         </motion.div>
@@ -6843,7 +6843,7 @@ return data['data']
             <div>
                 <AnimatePresence initial={true}>
                     {items.map((item, index) => (
-                        <motion.div key={item['video_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                        <motion.div key={item['video_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                         style={{'padding': '2px'}}>
                             {this.render_video(item['video'], item['object'], index)} 
                             {this.render_space_if_not_last(index, items.length)}
@@ -6996,7 +6996,7 @@ return data['data']
                                 return (
                                     <div>
                                         <AnimatePresence initial={true}>
-                                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                             style={{}}>
                                                 <ImageListItem key={index}>
                                                     <div onClick={() => this.when_video_item_clicked(index, item)}>
@@ -7374,7 +7374,7 @@ return data['data']
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': '1px 5px 1px 5px'}}>
                                             {this.render_coin_item(item, index)}
                                         </motion.div>
@@ -7540,7 +7540,7 @@ return data['data']
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': '1px 5px 1px 5px'}}>
                                             {this.render_ether_item(item, index)}
                                         </motion.div>
@@ -7774,7 +7774,7 @@ return data['data']
                         return (
                             <div>
                                 <AnimatePresence initial={true}>
-                                    <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                     style={{'padding': padding}}>
                                         {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                                     </motion.div>
@@ -8058,7 +8058,7 @@ return data['data']
                         return (
                             <div>
                                 <AnimatePresence initial={true}>
-                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                     style={{'padding': padding}}>
                                         {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                                     </motion.div>
@@ -8206,7 +8206,7 @@ return data['data']
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_bill_object(item, index)}
                                         </motion.div>
@@ -8398,7 +8398,7 @@ return data['data']
                         return (
                             <div>
                                 <AnimatePresence initial={true}>
-                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                     style={{'padding': padding}}>
                                         {this.render_certificate_object(item, index)}
                                     </motion.div>
@@ -8545,7 +8545,7 @@ return data['data']
                         return (
                             <div>
                                 <AnimatePresence initial={true}>
-                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                     style={{'padding': padding}}>
                                         {this.render_crossexchange_object(item, index)}
                                     </motion.div>
@@ -8722,7 +8722,7 @@ return data['data']
                             return (
                                 <div>
                                     <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                        <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{}}>
                                             {this.render_itransfer_item(item)}
                                         </motion.div>

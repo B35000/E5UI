@@ -365,6 +365,8 @@ class ChannelDetailsSection extends Component {
                     {/* <div style={{height: 10}}/> */}
                     {/* {this.render_moderator_button(object)} */}
                     {/* <div style={{height: 10}}/> */}
+                    {this.render_enter_voice_chat_button(object)}
+
                     {this.render_edit_object_button(object)}
                     {this.render_pin_channel_button(object)}
                     {this.render_stage_creator_payout_button(object)}
@@ -1201,6 +1203,45 @@ class ChannelDetailsSection extends Component {
         this.props.open_stage_creator_ui(object)
     }
 
+    render_enter_voice_chat_button(object){
+        const voice_chat_enabled = object['ipfs'].get_channel_voice_chat_enabled_object == null ? false : this.get_selected_item2(object['ipfs'].get_channel_voice_chat_enabled_object, 'e') == 1
+
+        if(voice_chat_enabled == true){
+            const participants = this.props.app_state.room_participants_count[object['ipfs'].voice_call_number_id] || 0
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2117x']/* '☎️ Voice Call' */, 'details':this.props.app_state.loc['2117y']/* 'You can enter a group call with the other online members of the group and talk with your voice.' */, 'size':'l', 'footer':this.props.app_state.loc['2117ba']/* '$ participants on call.' */.replace('$', number_with_commas(participants))})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.enter_voice_call_from_list(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2117z']/* 'Enter Voice Call' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    enter_voice_call_from_list(object){
+        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+            this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+            return;
+        }
+        else if(this.props.app_state.current_call_password != null){
+            this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
+            return;
+        }
+        const data = {
+            'call_id': object['ipfs'].voice_call_number_id,
+            'password': '',
+            'time': Date.now(),
+            'sender_account': object['author'],
+            'sender_account_e5': object['e5'],
+            'address': '',
+            'invite_id': ''
+        }
+        this.props.show_dialog_bottomsheet({ 'message':data }, 'enter_voice_call')
+    }
 
 
 

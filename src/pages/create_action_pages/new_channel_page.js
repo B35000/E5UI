@@ -58,6 +58,18 @@ function makeid(length) {
     return result;
 }
 
+function make_number_id_str(length) {
+    let result = '';
+    const characters = '0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return (result);
+}
+
 class NewChannelPage extends Component {
     
     state = {
@@ -91,7 +103,9 @@ class NewChannelPage extends Component {
 
         markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], participant_id:'', participants:[], channel_keys:[], blocked_participant_id:'', blocked_participants:[], 
         
-        creator_id:'', creators:[], selected_creator_group_subscriptions:[], subscription_search:'', nitro_search:'', selected_creator_group_nitros:[],
+        creator_id:'', creators:[], selected_creator_group_subscriptions:[], subscription_search:'', nitro_search:'', selected_creator_group_nitros:[], voice_call_number_id: make_number_id_str(15),
+
+        get_channel_voice_chat_enabled_object:this.get_channel_voice_chat_enabled_object()
     };
 
     get_new_job_page_tags_object(){
@@ -228,6 +242,17 @@ class NewChannelPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['a311bt']/* 'Editor' */, this.props.app_state.loc['a311bu']/* 'preview' */], [1]
+            ],
+        };
+    }
+
+    get_channel_voice_chat_enabled_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['162ba']/* 'enabled' */], [0]
             ],
         };
     }
@@ -426,6 +451,8 @@ class NewChannelPage extends Component {
                     {this.render_title_tags_part()}
                     {this.render_detail_item('0')}
                     {this.render_title_tags_part2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -434,6 +461,8 @@ class NewChannelPage extends Component {
                 <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
                     <div className="col-6" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6">
                         {this.render_title_tags_part2()}
@@ -447,6 +476,8 @@ class NewChannelPage extends Component {
                 <div className="row">
                     <div className="col-5" >
                         {this.render_title_tags_part()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_title_tags_part2()}
@@ -533,6 +564,14 @@ class NewChannelPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
 
 
+                {this.render_detail_item('0')}
+
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['162bb']/* 'Channel Voice Chat.' */, 'details':this.props.app_state.loc['162bc']/* 'If set to enabled, voice chat will be enabled for participants of the group chat.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_channel_voice_chat_enabled_object} tag_size={'l'} when_tags_updated={this.when_get_channel_voice_chat_enabled_object_updated.bind(this)} theme={this.props.theme}/>
+
+
                 {this.render_previous_edits_if_existing()}
 
 
@@ -542,6 +581,10 @@ class NewChannelPage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_channel_voice_chat_enabled_object_updated(tag_obj){
+        this.setState({get_channel_voice_chat_enabled_object: tag_obj})
     }
 
     when_title_text_input_field_changed(text){

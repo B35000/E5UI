@@ -266,18 +266,13 @@ class EthersDetailsSection extends Component {
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 15px 0px 15px'}}>
                 <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
-                    {this.render_detail_item('7', item['banner-icon'])}
+                    <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
+                        {this.render_detail_item('7', item['banner-icon'])}
+                    </div>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 20}}/>
                     {this.show_moderator_note_if_any(item)}
                     {this.render_object_views(item)}
-                    {this.render_wallet_status(item)}
-                    <div style={{height:10}}/>
-                    <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
-                        {/* {this.props.app_state.updating_individual_coin[item['e5']] == true && this.render_line_loader_if_loading()} */}
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
-                    </div>
-                    {this.render_detail_item('0')}
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['number_label_large'])}
                     </div>
@@ -310,11 +305,11 @@ class EthersDetailsSection extends Component {
                     {decimal_price != null && (
                         <div>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481y']/* 'Ether\'s Decimal Price.' */, 'number':decimal_price, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
+                                <div>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481y']/* 'Ether\'s Decimal Price.' */, 'subtitle':this.format_power_figure(decimal_price), 'barwidth':this.calculate_bar_width(decimal_price), 'number':''+format_decimal_price_value(decimal_price), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */, })}
                                 </div>
 
-                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481z']/* 'Ether\'s Decimal Price in $' */.replace('$', 'SATs'), 'number':decimal_price_in_sats, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
+                                <div>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481z']/* 'Ether\'s Decimal Price in $' */.replace('$', 'SATs'), 'subtitle':this.format_power_figure(decimal_price_in_sats), 'barwidth':this.calculate_bar_width(decimal_price_in_sats), 'number':''+format_decimal_price_value(decimal_price_in_sats), 'barcolor':'#606060', 'relativepower':'SATs', })}
                                 </div>
                             </div>
@@ -388,7 +383,14 @@ class EthersDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['network_utilization'])}
                     {this.render_detail_item('0')}
-                    
+
+                    {this.render_wallet_status(item)}
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
+                        {/* {this.props.app_state.updating_individual_coin[item['e5']] == true && this.render_line_loader_if_loading()} */}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
+                    </div>
+                    {this.render_detail_item('0')}
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2457']/* '💸 Send/Receive Ether' */, 'details':this.props.app_state.loc['2458']/* 'Send or receive ether from a specified account.' */, 'size':'l'})}
                     <div style={{height:10}}/>

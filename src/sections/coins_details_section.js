@@ -287,11 +287,11 @@ class CoinsDetailsSection extends Component {
                         <div>
                             <div style={{height:10}}/>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2927ba']/* 'Coin\'s Decimal Price.' */, 'number':decimal_price, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
+                                <div>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927ba']/* 'Coin\'s Decimal Price.' */, 'subtitle':this.format_power_figure(decimal_price), 'barwidth':this.calculate_bar_width(decimal_price), 'number':''+format_decimal_price_value(decimal_price), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */, })}
                                 </div>
 
-                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2927bb']/* 'Coin\'s Decimal Price in $' */.replace('$', 'SATs'), 'number':decimal_price_in_sats, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
+                                <div>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927bb']/* 'Coin\'s Decimal Price in $' */.replace('$', 'SATs'), 'subtitle':this.format_power_figure(decimal_price_in_sats), 'barwidth':this.calculate_bar_width(decimal_price_in_sats), 'number':''+format_decimal_price_value(decimal_price_in_sats), 'barcolor':'#606060', 'relativepower':'SATs', })}
                                 </div>
                             </div>

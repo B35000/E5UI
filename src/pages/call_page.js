@@ -410,8 +410,6 @@ class CallPage extends Component {
             return(
                 <div>
                     {this.render_metadata_stuff()}
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -1007,7 +1005,7 @@ class CallPage extends Component {
     }
 
     get_previous_state_messages(prevProps){
-        const socket_messages = prevProps.socket_object_messages[this.props.app_state.current_call_id] == null ? [] : prevProps.app_state.socket_object_messages[this.props.app_state.current_call_id]
+        const socket_messages = prevProps.app_state.socket_object_messages[this.props.app_state.current_call_id] == null ? [] : prevProps.app_state.socket_object_messages[this.props.app_state.current_call_id]
         const all_messages = this.sortByAttributeDescending(socket_messages, 'time').reverse()
         return this.filter_messages_for_blocked_accounts(all_messages)
     }
