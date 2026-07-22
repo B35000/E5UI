@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.5176f859.css",
-    "main.js": "/static/js/main.6d3cef8b.js",
+    "main.js": "/static/js/main.c9c23344.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -260,6 +260,7 @@
     "static/media/previous_icon_darkyellow.png": "/static/media/previous_icon_darkyellow.ae41b300ae460a0d4f24.png",
     "static/media/filecoin.png": "/static/media/filecoin.2e98cb3cedd6aff19b48.png",
     "static/media/previous_icon_darkpink.png": "/static/media/previous_icon_darkpink.90be5746a78d994b1297.png",
+    "static/media/gram.png": "/static/media/gram.68e8294fd2ac48625a09.png",
     "static/media/previous_icon_darkblue.png": "/static/media/previous_icon_darkblue.c0040cdffebf75d9c548.png",
     "static/media/add_icon_green.png": "/static/media/add_icon_green.677d4720d19b2ded1507.png",
     "static/media/wallet_icon_yellow.png": "/static/media/wallet_icon_yellow.f219a5ee36137d6b7692.png",
@@ -459,6 +460,6 @@
   },
   "entrypoints": [
     "static/css/main.5176f859.css",
-    "static/js/main.6d3cef8b.js"
+    "static/js/main.c9c23344.js"
   ]
 }
