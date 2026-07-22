@@ -544,6 +544,7 @@ import injective_logo from './assets/injective.png'
 import near_logo from './assets/near.png'
 import icp_logo from './assets/internet_computer.png'
 import zcash_logo from './assets/zcash.png'
+import gram_logo from './assets/gram.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -610,6 +611,9 @@ import * as utxolib from '@bitgo/utxo-lib';
 import bs58check from 'bs58check';
 import { BIP32Factory } from 'bip32'
 import ecc from '@bitcoinerlab/secp256k1';
+import { TonClient, WalletContractV4, internal, SendMode } from '@ton/ton';
+import { Address, toNano, fromNano } from '@ton/core';
+import { mnemonicToPrivateKey, mnemonicValidate } from '@ton/crypto';
 
 
 /* shared component stuff */
@@ -1567,7 +1571,7 @@ class App extends Component {
         web3:['https://polygon-bor-rpc.publicnode.com'],
         token:'POL',
         e5_address:'',/* 0x3D610010C43fC1Af89D8d040ED530398817A8E94 */
-        first_block:50258928, end_image:'https://nftstorage.link/ipfs/bafkreihldhuazp6fcbxqvzpl7zzr2zay4zuxnnnma44fg7u7lvydfzrv6y', spend_image:'https://nftstorage.link/ipfs/bafkreih4ctarqvngz5zjyahjlqppslmnpexfyjiso65ywyrepqnv5d7wtm', ether_image:polygon_logo/* 'https://nftstorage.link/ipfs/bafkreid3rpf2wbk4i6y6sd4zltdapek2i3dst5pxzfjy3kvn6iv56obfty' */, iteration:40_000, url:0, active:false, e5_img:null
+        first_block:50258928, end_image:'https://nftstorage.link/ipfs/bafkreihldhuazp6fcbxqvzpl7zzr2zay4zuxnnnma44fg7u7lvydfzrv6y', spend_image:'https://nftstorage.link/ipfs/bafkreih4ctarqvngz5zjyahjlqppslmnpexfyjiso65ywyrepqnv5d7wtm', ether_image:polygon_logo/* 'https://nftstorage.link/ipfs/bafkreid3rpf2wbk4i6y6sd4zltdapek2i3dst5pxzfjy3kvn6iv56obfty' */, iteration:40_000, url:0, active:false, e5_img:null, type:'1559'
       },
       'E135':{
         web3:['https://bsc-rpc.publicnode.com'],
@@ -2613,6 +2617,8 @@ class App extends Component {
       'ICP': this.get_coin_info('ICP', 'Internet Computer', icp_logo, 'e8', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Threshold Relay', '0.5 sec.', this.get_time_difference(1623283200), 3_000, '~~~'),
 
       'ZEC': this.get_coin_info('ZEC', 'Zcash', zcash_logo, 'zatoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '1.25 min.', this.get_time_difference(1477673333), 5, 2),
+
+      'GRAM': this.get_coin_info('GRAM', 'Gram', gram_logo, 'nanogram', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.4 sec.', this.get_time_difference(1573516800), 104_715, 1),
     }
     return list
   }
@@ -2667,7 +2673,8 @@ class App extends Component {
       'inj1e26ezaurxe0vrd4um5kts5m4l8z07vxgfp8kyz',
       'f52343e16056927fa0fda31ed17aedcd69b42624b84889542d9c8c7be6d4454f',
       '73f37eda5e4de090c3a09df8446fbf8ad3942c8e942a9623b4f44ca4db12d1fe',
-      't1Uoup1fNWDb4KGS8tPWX1kHJJMnRG14UVZ'
+      't1Uoup1fNWDb4KGS8tPWX1kHJJMnRG14UVZ',
+      'EQAoACQJdanybwA1e3BkMqDVABpWT1yzjPiq0hRTb18yHrBo'
     ]
     return default_addresses
   }
@@ -6027,10 +6034,22 @@ class App extends Component {
     var post_object_w = 300;
     var detail_object_w = 400;
     
-    this.setState({height: window.innerHeight, width: window.innerWidth});
-    console.log('width: ',window.innerWidth, ' height: ', window.innerHeight)
-
+    const page_height = window.innerHeight
+    const page_width = window.innerWidth
+    const visual_height = window.visualViewport.height
+    const visual_width = window.visualViewport.width
+    const obstruction_height = page_height - visual_height;
+    const obstruction_width = page_width - visual_width;
     
+    this.setState({
+      height: visual_height, 
+      width: visual_width, 
+      obstruction_height: obstruction_height, 
+      obstruction_width: obstruction_width
+    });
+    console.log('page width: ',page_width, 'page height: ', page_height)
+    console.log('visual width: ',visual_width, 'visual height: ', visual_height)
+        
     var me = this;
     setTimeout(function() {
         me.setState({size:me.getScreenSize()})
@@ -7734,11 +7753,12 @@ class App extends Component {
     const is_bottomsheet_at_top = this.is_function_at_complete_top_of_stack(onOpenChange.name)
     const filter = is_bottomsheet_at_top == false ? "blur(1px)" : "none";
     const transform = is_bottomsheet_at_top == false ? "scale(0.99)" : "scale(1.0)"
+    const obstruction_height = this.state.obstruction_height || 0
     const data = () => {
       return(
         <Drawer.Portal>
           <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.5)" }}/>
-          <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
+          <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding+obstruction_height, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
             <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: background_size, filter: filter, transform: transform, transition: "transform 250ms ease, filter 250ms ease", willChange: "transform, filter",}}>
               {view}
             </div>
@@ -7749,14 +7769,14 @@ class App extends Component {
 
     if(snap_points.length > 0){
       return(
-        <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} modal={disable_background_interaction} snapPoints={snap_points} activeSnapPoint={active_snap_point} setActiveSnapPoint={set_active_snap_point}>
+        <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} modal={disable_background_interaction} snapPoints={snap_points} activeSnapPoint={active_snap_point} setActiveSnapPoint={set_active_snap_point} repositionInputs={false}>
           {data()}
         </Drawer.Root>
       )
     }    
 
     return(
-      <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} modal={disable_background_interaction}>
+      <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} modal={disable_background_interaction} repositionInputs={false}>
         {data()}
       </Drawer.Root>
     )
@@ -8279,6 +8299,9 @@ class App extends Component {
     else if(item['symbol'] == 'ZEC'){
       return this.validate_zec_address(address)
     }
+    else if(item['symbol'] == 'GRAM'){
+      return this.validate_gram_address(address)
+    }
 
 
     return true;
@@ -8550,6 +8573,15 @@ class App extends Component {
     return false;
   }
 
+  validate_gram_address(address){
+    try {
+      Address.parse(address);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
 
 
 
@@ -8632,6 +8664,9 @@ class App extends Component {
     }
     else if(item['symbol'] == 'ZEC'){
       await this.create_and_broadcast_zec_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'GRAM'){
+      await this.create_and_broadcast_gram_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
     }
 
     var sync_time = item['symbol'] == 'AR' ? (4 * 60_000) : (1 * 30_000)
@@ -9668,6 +9703,59 @@ class App extends Component {
     }
     catch(e){
       console.log(e)
+    }
+  }
+
+  create_and_broadcast_gram_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_gram_wallet(seed)
+    const client = wallet.client
+    const contract = wallet.contract
+
+    const recipient = recipient_address;
+    const amount = fromNano(transfer_amount);
+    const body = memo_text;
+    const bounce = true;
+    const timeout = 90000;
+    const pollInterval = 3000;
+
+    const seqno = await contract.getSeqno();
+    const provider = client.provider(wallet.address);
+    const transferCell = wallet.wallet.createTransfer({
+      seqno,
+      secretKey: wallet.keyPair.secretKey,
+      messages: [
+        internal({
+          to: recipient,
+          value: toNano(amount.toString()),
+          body: body,
+          bounce: bounce,
+        }),
+      ],
+      sendMode: SendMode.PAY_GAS_SEPARATELY,
+    });
+
+    try{
+      const hash = transferCell.hash().toString('hex');
+      await provider.external(transferCell);
+
+      const startTime = Date.now();
+      let currentSeqno = seqno;
+
+      while (currentSeqno === seqno && Date.now() - startTime < timeout) {
+        await new Promise((resolve) => setTimeout(resolve, pollInterval));
+        currentSeqno = await contract.getSeqno();
+      }
+
+      if(currentSeqno != seqno){
+        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      }
+      else{
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
 
@@ -18297,10 +18385,9 @@ class App extends Component {
       this.add_video_message_to_stack_object(tx)
     }
     else if(page == 'call'){
-      this.open_add_comment_bottomsheet(tx)
+      this.emit_new_call_message(tx, 'call')
     }
     else if(page == 'direct_message'){
-      this.open_add_comment_bottomsheet()
       this.send_direct_message(tx)
     }
     else if(page == 'purchase_request'){
@@ -22235,7 +22322,7 @@ class App extends Component {
       this.edit_contractor_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_videopost_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_audiopost_page.current?.when_image_gif_files_picked(picked_files)
-      this.edit_nitro_page.current?.when_image_gif_files_picked(picked_files)
+      this.edit_nitropost_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_poll_page.current?.when_image_gif_files_picked(picked_files)
       this.edit_certificate_page.current?.when_image_gif_files_picked(picked_files)
 
@@ -22268,7 +22355,7 @@ class App extends Component {
       this.edit_contractor_page.current?.when_banner_selected(picked_files)
       this.edit_videopost_page.current?.when_banner_selected(picked_files)
       this.edit_audiopost_page.current?.when_banner_selected(picked_files)
-      this.edit_nitro_page.current?.when_banner_selected(picked_files)
+      this.edit_nitropost_page.current?.when_banner_selected(picked_files)
       this.edit_poll_page.current?.when_banner_selected(picked_files)
       this.edit_certificate_page.current?.when_banner_selected(picked_files)
 
@@ -22320,7 +22407,7 @@ class App extends Component {
       this.edit_contractor_page.current?.when_pdf_files_picked(picked_files)
       this.edit_videopost_page.current?.when_pdf_files_picked(picked_files)
       this.edit_audiopost_page.current?.when_pdf_files_picked(picked_files)
-      this.edit_nitro_page.current?.when_pdf_files_picked(picked_files)
+      this.edit_nitropost_page.current?.when_pdf_files_picked(picked_files)
       this.edit_poll_page.current?.when_pdf_files_picked(picked_files)
       this.edit_certificate_page.current?.when_pdf_files_picked(picked_files)
 
@@ -22353,7 +22440,7 @@ class App extends Component {
       this.edit_contractor_page.current?.when_zip_files_picked(picked_files)
       this.edit_videopost_page.current?.when_zip_files_picked(picked_files)
       this.edit_audiopost_page.current?.when_zip_files_picked(picked_files)
-      this.edit_nitro_page.current?.when_zip_files_picked(picked_files)
+      this.edit_nitropost_page.current?.when_zip_files_picked(picked_files)
       this.edit_poll_page.current?.when_zip_files_picked(picked_files)
       this.edit_certificate_page.current?.when_zip_files_picked(picked_files)
 
@@ -22401,7 +22488,7 @@ class App extends Component {
       this.edit_contractor_page.current?.when_markdown_image_selected(picked_files)
       this.edit_videopost_page.current?.when_markdown_image_selected(picked_files)
       this.edit_audiopost_page.current?.when_markdown_image_selected(picked_files)
-      this.edit_nitro_page.current?.when_markdown_image_selected(picked_files)
+      this.edit_nitropost_page.current?.when_markdown_image_selected(picked_files)
       this.edit_poll_page.current?.when_markdown_image_selected(picked_files)
       this.edit_certificate_page.current?.when_markdown_image_selected(picked_files)
 
@@ -29926,6 +30013,15 @@ class App extends Component {
     this.setState({coin_data: coin_data})
     // await this.wait(400)
     coin_data['ZEC'] = await this.get_and_set_zcash_wallet_info(seed)
+
+
+
+
+
+    this.setState({coin_data: coin_data})
+    // await this.wait(400)
+    coin_data['GRAM'] = await this.get_and_set_gram_wallet_info(seed)
+    
     
 
 
@@ -30026,6 +30122,7 @@ class App extends Component {
     if(coin == 'NEAR' || should_update_all) coin_data = await this.update_near_balance(coin_data);
     if(coin == 'ICP' || should_update_all) coin_data = await this.update_icp_balance(coin_data);
     if(coin == 'ZEC' || should_update_all) coin_data = await this.update_zcash_balance(coin_data);
+    if(coin == 'GRAM' || should_update_all) coin_data = await this.update_gram_balance(coin_data);
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
     this.setState({coin_data: coin_data})
@@ -30077,7 +30174,8 @@ class App extends Component {
     if(coin == 'INJ') coin_data[coin] = await this.get_and_set_inj_wallet_info(seed);
     if(coin == 'NEAR') coin_data[coin] = await this.get_and_set_near_wallet_info(seed);
     if(coin == 'ICP') coin_data[coin] = await this.get_and_set_icp_wallet_info(seed);
-    if(coin == 'ZEC') coin_data[coin] = await this.get_and_set_zcash_wallet_info(seed)
+    if(coin == 'ZEC') coin_data[coin] = await this.get_and_set_zcash_wallet_info(seed);
+    if(coin == 'GRAM') coin_data[coin] = await this.get_and_set_gram_wallet_info(seed);
     if(coin == 'AR') coin_data[coin] = await this.get_and_set_arweave_wallet_info(seed);
     
     this.setState({coin_data: coin_data, loading_individual_coin: null})
@@ -32231,6 +32329,95 @@ class App extends Component {
     clone['ZEC']['utxos'] = utxos
     clone['ZEC']['fee']['fee'] = fees
     // this.setState({coin_data: clone})
+    return clone
+  }
+
+
+
+
+
+
+
+
+
+
+
+  get_and_set_gram_wallet_info = async (seed) => {
+    const wallet = await this.generate_gram_wallet(seed)
+    const address = wallet.address
+    const balance = await this.get_gram_address_balance(wallet.contract)
+
+    var fee_info = {'fee':await this.get_gram_transaction_fees(wallet.contract, wallet, wallet.client), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet':wallet, 'contract':wallet.contract}
+    this.fetch_specific_coin_receipts(address)
+    return data
+  }
+
+  generate_gram_wallet = async (mnemonic) => {
+    const entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic);
+    const keyPair = await mnemonicToPrivateKey(entropic_mnemonic.split(/\s+/));
+    const wallet = WalletContractV4.create({
+      workchain: 0,
+      publicKey: keyPair.publicKey,
+    });
+    const address = wallet.address.toString();
+
+    const client = new TonClient({
+      endpoint: 'https://toncenter.com/api/v2/jsonRPC',
+    });
+
+    const contract = client.open(wallet);
+
+    return { keyPair, wallet, address, client, contract }
+  }
+
+  get_gram_address_balance = async (contract) => {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const balanceNano = await contract.getBalance();
+    return balanceNano.toString()
+  }
+
+  async get_gram_transaction_fees(contract, account_wallet, client){
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const toAddress = 'EQCxCqeuFksiahE3ZyYv8nNR9kX_FKMpHcxzUpWjgwJzToml'
+    const amountTon = 0.1
+    const body = 'e'
+    const bounce = true
+    const seqno = await contract.getSeqno();
+
+    // Build the transfer message (but don't send it)
+    const transfer = await contract.createTransfer({
+      seqno,
+      secretKey: account_wallet.keyPair.secretKey,
+      messages: [
+        internal({
+          to: toAddress,
+          value: toNano(amountTon.toString()),
+          body: body,
+          bounce: bounce,
+        }),
+      ],
+    });
+
+    // Ask the node to estimate the fee for this external message
+    const feeInfo = await client.estimateExternalMessageFee(
+      account_wallet.address,
+      {
+        body: transfer,
+        initCode: account_wallet.wallet.init?.code,
+        initData: account_wallet.wallet.init?.data,
+      }
+    );
+
+    const src = feeInfo.source_fees;
+    return (src.in_fwd_fee + src.storage_fee + src.gas_fee + src.fwd_fee).toString()
+  }
+
+  update_gram_balance = async (clone) => {
+    const contract = clone['GRAM']['contract']
+    const balance = await this.get_gram_address_balance(contract)
+
+    clone['GRAM']['balance'] = balance;
     return clone
   }
 

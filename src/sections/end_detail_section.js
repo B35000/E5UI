@@ -559,8 +559,8 @@ class EndDetailSection extends Component {
                                     )}
                                     
 
-                                    {index == 34 && (<div style={{height:10}}/>)}
-                                    {index == 34 && (
+                                    {index == 34 && selected_object['id'] != 3 && (<div style={{height:10}}/>)}
+                                    {index == 34 && selected_object['id'] != 3 && (
                                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                                             {this.render_detail_item('2', item['wallet_dominance'])}
                                         </div> 
@@ -1654,7 +1654,7 @@ class EndDetailSection extends Component {
         var my_balance = object['balance'];
         if(my_balance == 0 || max_supply == 0) return 0
         var percentage = (my_balance * 100) / max_supply
-        return percentage
+        return percentage.toFixed(4)
     }
 
     calculate_maximum_supply(object){

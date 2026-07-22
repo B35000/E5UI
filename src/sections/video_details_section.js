@@ -2761,7 +2761,7 @@ class VideoDetailsSection extends Component {
     render_sent_received_messages(object, he){
         // var middle = this.props.height-240;
         // if(this.get_focused_message(object) != null) middle = this.props.height-290
-        var middle = he - 135
+        var middle = he - 100
         // if(this.get_focused_message(object) != null) middle = he - 185
         var items = [].concat(this.get_convo_messages(object)).reverse()
         var stacked_items = [].concat(this.get_stacked_items(object)).reverse()

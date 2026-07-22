@@ -14176,7 +14176,7 @@ return data['data']
         if(cypher_passcode == ''){
             this.props.notify(this.props.app_state.loc['3055nw']/* type something. */, 1500);
         }
-        else if(!this.does_password_match_hash(cypher_passcode)){
+        else if(!this.does_password_match_my_hash(cypher_passcode)){
             this.props.notify(this.props.app_state.loc['3055or']/* That didnt work. */, 3500);
         }
         else{
@@ -14184,7 +14184,7 @@ return data['data']
         }
     }
     
-    does_password_match_hash(passcode){
+    does_password_match_my_hash(passcode){
         const provided_hash = this.props.hash_data_with_randomizer(passcode);
         const selected_item = this.get_selected_item(this.state.data['tag_object'], 'e')
 

@@ -779,6 +779,9 @@ class SuccessfulSend extends Component {
         else if(item['symbol'] == 'ZEC'){
             return `https://blockchair.com/zcash/transaction/${hash}`
         }
+        else if(item['symbol'] == 'GRAM'){
+            return `https://tonscan.org/tx/${hash}`
+        }
     }
 
 

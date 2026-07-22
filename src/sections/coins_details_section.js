@@ -987,6 +987,9 @@ class CoinsDetailsSection extends Component {
         else if(item['symbol'] == 'ZEC'){
             return `https://blockchair.com/zcash/address/${hash}`
         }
+        else if(item['symbol'] == 'GRAM'){
+            return `https://tonscan.org/address/${hash}`
+        }
     }
 
 

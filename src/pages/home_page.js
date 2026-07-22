@@ -770,11 +770,12 @@ class home_page extends Component {
         const is_bottomsheet_at_top = this.props.is_function_at_complete_top_of_stack(onOpenChange.name)
         const filter = is_bottomsheet_at_top == false ? "blur(1px)" : "none";
         const transform = is_bottomsheet_at_top == false ? "scale(0.99)" : "scale(1.0)"
+        const obstruction_height = this.props.app_state.obstruction_height || 0
         return(
-        <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)}>
+        <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} repositionInputs={false}>
             <Drawer.Portal>
             <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.5)" }}/>
-            <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
+            <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding+obstruction_height, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
                 <div style={{ height: height, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': radius, 'margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', filter: filter, transform: transform, transition: "transform 250ms ease, filter 250ms ease", willChange: "transform, filter",}}>
                 {view}
                 </div>

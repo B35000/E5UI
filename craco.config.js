@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const webpack = require('webpack');
 const isProd = process.env.NODE_ENV === "production";
 
@@ -87,6 +88,24 @@ module.exports = {
       webpackConfig.plugins.push(
         new webpack.ProvidePlugin({
           Buffer: ['buffer', 'Buffer'],
+        })
+      );
+
+      webpackConfig.plugins.push(new NodePolyfillPlugin());
+
+      webpackConfig.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(/^zod$/, (resource) => {
+          if (resource.context.includes(path.join('node_modules', '@ton'))) {
+            resource.request = path.resolve(__dirname, 'node_modules/@ton/ton/node_modules/zod');
+          }
+        })
+      );
+
+      webpackConfig.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(/^axios$/, (resource) => {
+          if (resource.context.includes(path.join('node_modules', '@ton'))) {
+            resource.request = path.resolve(__dirname, 'node_modules/axios/dist/browser/axios.cjs');
+          }
         })
       );
 

@@ -455,6 +455,11 @@ const currencies = [
     "name": "Viction"
   },
   {
+    "id": "the-open-network",
+    "symbol": "gram",
+    "name": "Gram"
+  },
+  {
     "id": "tron",
     "symbol": "trx",
     "name": "TRON"
@@ -483,6 +488,11 @@ const currencies = [
     "id": "xdai",
     "symbol": "xdai",
     "name": "XDAI"
+  },
+  {
+    "id": "xdce-crowd-sale",
+    "symbol": "xdc",
+    "name": "Xinfin Network"
   },
   {
     "id": "zcash",
