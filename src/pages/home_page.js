@@ -1243,7 +1243,7 @@ class home_page extends Component {
         const font_sizes = {'xs':'12px', 's':'12px', 'm':'13px', 'l':'13px', 'xl':'13px'}
         var font_size = font_sizes[icontype]
 
-        const tops = {'xs':'0px', 's':'0px', 'm':'3px', 'l':'0px', 'xl':'0px'}
+        const tops = {'xs':'3px', 's':'3px', 'm':'3px', 'l':'0px', 'xl':'0px'}
         var position_top = tops[icontype]
 
         // const rights = {'xs':'30px', 's':'30px', 'm':'50px', 'l':'-3px', 'xl':'-3px'}
@@ -1307,7 +1307,7 @@ class home_page extends Component {
         if(icontype == 's' || icontype == 'xs'){
             return(
                 <AnimatePresence initial={true}>
-                    <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{position: 'relative'}}>
+                    <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => this.vibrate_device()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{position: 'relative'}}>
                         {this.render_notification_badge(notification_count, icontype)}
                         <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
                             <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
@@ -1322,7 +1322,7 @@ class home_page extends Component {
         }else{
             return(
                 <AnimatePresence initial={true}>
-                    <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{position: 'relative'}}>
+                    <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => this.vibrate_device()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{position: 'relative'}}>
                         {this.render_notification_badge(notification_count, icontype)}
                         <div className="row" style={{ width:'100%', 'padding':'7px 0px 0px 10px', 'border-radius': '0px 0px 0px 0px'}}>
                             <div className="col-3" style={{'padding':'0px 0px 10px 0px'}}>
@@ -1345,6 +1345,12 @@ class home_page extends Component {
 
     open_view_stack_bottomsheet(){
         this.props.open_stack_bottomsheet()
+    }
+
+    vibrate_device(){
+        if ('vibrate' in navigator) {
+            navigator.vibrate(45);
+        }
     }
 
 

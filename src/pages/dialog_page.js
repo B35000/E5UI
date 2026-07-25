@@ -128,6 +128,8 @@ class DialogPage extends Component {
         out_of_stock_items:[], seed_passcode:'', passcode_expiry_time:0, passcode_entry_tries:5, cypher_passcode:'', get_remember_seed_during_initial_synch_tags_object: this.get_remember_seed_during_initial_synch_tags_object(),
 
         selected_conditions:[], get_include_exit_contract_after_finish_transaction_object:this.get_include_exit_contract_after_finish_transaction_object(),
+
+        restore_time: (Date.now()/1000) - (60*60),
     };
 
 
@@ -753,6 +755,9 @@ class DialogPage extends Component {
         }
         else if(option == 'quick_purchase_song'){
             return this.view_quick_purchase_song_ui()
+        }
+        else if(option == 'get_height_to_use_before_sync'){
+            return this.view_get_height_to_sync_xmr_ui()
         }
     }
 
@@ -16535,6 +16540,97 @@ return data['data']
         }
     }
 
+
+
+
+
+
+
+
+
+    view_get_height_to_sync_xmr_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_get_height_to_sync_xmr_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_get_height_to_sync_xmr_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_get_height_to_sync_xmr_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_get_height_to_sync_xmr_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055rq']/* 'Set the time you first created or used the wallet.' */, 'title':this.props.app_state.loc['3055rp']/* 'Sync Start Time.' */})}
+               
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff((Date.now()/1000) - this.state.restore_time), 'details':this.props.app_state.loc['3055rr']/* 'Relative Restore Time' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], primary: { main: this.props.theme['primary_text_color'] }   }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_restore_time_value_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+                <div style={{height:10}}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.begin_xmr_sync()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055rs']/* Begin Sync' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_new_restore_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        this.setState({restore_time: timeInSeconds})
+    }
+
+    begin_xmr_sync(){
+        const time = this.state.restore_time
+        const coin = this.state.data['coin']
+
+        if(time > Date.now()/1000){
+            this.props.notify(this.props.app_state.loc['3055rt']/* 'You cant set a time after now.' */, 4000)
+        }
+        else{
+            this.props.begin_xmr_sync(time, coin)
+        }
+    }
 
 
 

@@ -64,6 +64,11 @@ textarea {
   background-color: transparent !important;
 }
 
+html,
+body {
+  overscroll-behavior-y: contain;
+}
+
 /* .react-view-pager {
   touch-action: pan-x;
   overscroll-behavior: contain;

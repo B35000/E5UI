@@ -94,6 +94,7 @@
     "mediabunny": "1.25.3",
     "mime-types": "^2.1.35",
     "moment-timezone": "^0.5.45",
+    "monero-ts": "^0.11.10",
     "mp4box": "^2.1.1",
     "music-metadata": "^10.5.1",
     "naughty-words": "^1.2.0",
@@ -157,12 +158,10 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start2": "react-scripts start",
-    "build2": "react-scripts build",
-    "test2": "react-scripts test",
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test",
+    "postinstall": "node -e \"require('fs').copyFileSync('node_modules/monero-ts/dist/monero.worker.js', 'public/monero.worker.js')\""
   },
   "eslintConfig": {
     "extends": [

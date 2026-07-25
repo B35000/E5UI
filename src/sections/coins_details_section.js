@@ -192,8 +192,10 @@ class CoinsDetailsSection extends Component {
         var existential_deposit_base_unit = this.get_existential_deposit_base_unit(item)
         var tx_fee_decimal = this.get_transaction_fee_decimal(item)
         var tx_fee_base_units = this.get_transaction_fee_base_unit(item)
+        var unlocked_balance_decimal = this.get_unlocked_balance_in_decimal(item)
+        var unlocked_balance_base_unit = this.get_unlocked_balance_in_base_units(item)
 
-        var data = this.props.app_state.coin_data[item['symbol']]
+        const data = this.props.app_state.coin_data[item['symbol']]
         var per = '...'
         var type = '...'
         if(data != null){
@@ -201,7 +203,8 @@ class CoinsDetailsSection extends Component {
             type = data['fee'] == null ? '...' : data['fee']['type']
         }
 
-        const supply_data = this.props.app_state.asset_supply_data[item['symbol'].toLowerCase()]
+        const symbol = item['symbol'] == '???' ? 'XMR' : item['symbol']
+        const supply_data = this.props.app_state.asset_supply_data[symbol.toLowerCase()]
         const supply = supply_data == null ? null : parseInt(supply_data)
         const atomic_supply = supply_data == null ? null : bigInt(supply).multiply(item['conversion'])
 
@@ -365,6 +368,18 @@ class CoinsDetailsSection extends Component {
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit'], 'subtitle':this.format_power_figure(balance_base_unit), 'barwidth':this.calculate_bar_width(balance_base_unit), 'number':this.format_account_balance_figure(balance_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit'], })}
                     </div>
+
+                    {data != null && data['unlocked_balance'] != null && (
+                        <div>
+                            <div style={{height: 10}}/>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}
+                            onClick={() => this.props.view_number({'title':this.props.app_state.loc['2927bl']/* 'Your unlocked balance in ' */+item['base_unit'], 'number':unlocked_balance_base_unit, 'relativepower':item['base_unit']})}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927bl']/* 'Your unlocked balance in ' */+item['symbol'], 'subtitle':this.format_power_figure(unlocked_balance_decimal), 'barwidth':this.calculate_bar_width(unlocked_balance_decimal), 'number':(unlocked_balance_decimal), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927bl']/* 'Your unlocked balance in ' */+item['base_unit'], 'subtitle':this.format_power_figure(unlocked_balance_base_unit), 'barwidth':this.calculate_bar_width(unlocked_balance_base_unit), 'number':this.format_account_balance_figure(unlocked_balance_base_unit), 'barcolor':'#606060', 'relativepower':item['base_unit'], })}
+                            </div>
+                        </div>
+                    )}
             
                     {this.render_wallet_vaue(item, balance_decimal)}
 
@@ -372,17 +387,10 @@ class CoinsDetailsSection extends Component {
 
                     <div style={{height: 10}}/>
                     
-                    {/* {this.props.app_state.updating_individual_coin[item['symbol']] == true && (
-                        <div>
-                            {this.render_line_loader_if_loading()}
-                            <div style={{height: 10}}/>
-                        </div>
-                    )} */}
-                    
                     {this.props.app_state.loading_individual_coin == item['symbol'] && this.render_small_skeleton_object()}
 
                     {this.props.app_state.loading_individual_coin != item['symbol'] && (
-                        <div style={{'padding': '10px 10px 10px 10px'}}>
+                        <div style={{'padding': '0px 10px 0px 10px'}}>
                             <div className="row">
                                 <div className="col-6" style={{}}>
                                     <div style={{opacity: this.props.app_state.updating_individual_coin[item['symbol']] == true ? 0.5 : 1.0}} onClick={()=>this.update_coin_balance(item)}>
@@ -398,14 +406,7 @@ class CoinsDetailsSection extends Component {
                         </div>
                     )}
 
-                    {this.render_detail_item('0')}
-
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2924']/* '💵 Send/Receive ' */+item['symbol'], 'details':this.props.app_state.loc['2925']/* 'Send or receive the coin from a specified account.' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <div onClick={()=>this.open_send_receive_coin_page(item)}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2459']/* 'Send/Receive' */, 'action': ''})}
-                    </div>
-
+                    {this.render_send_receive_coin(item)}
 
                     {balance_base_unit > 0 && this.props.app_state.has_wallet_been_set == true && (
                         <div>
@@ -413,11 +414,76 @@ class CoinsDetailsSection extends Component {
                         </div>
                     )}
 
+                    {this.render_begin_sync_if_xmr(item)}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    render_send_receive_coin(item){
+        var data = this.props.app_state.coin_data[item['symbol']]
+        const is_address_set = data == null ? false : this.is_address_set(data['address'])
+        // if(item['symbol'] == '???' && this.props.app_state.xmr_wallet_set != true && is_address_set == true){
+        //     return(
+        //         <div>
+        //             {this.render_detail_item('0')}
+        //             {this.render_detail_item('3', {'title':this.props.app_state.loc['2924']/* '💵 Send/Receive ' */+item['symbol'], 'details':this.props.app_state.loc['2925']/* 'Send or receive the coin from a specified account.' */, 'size':'l'})}
+        //             <div style={{height:10}}/>
+        //             {this.render_small_empty_object()}
+        //         </div>
+        //     )
+        // }
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2924']/* '💵 Send/Receive ' */+item['symbol'], 'details':this.props.app_state.loc['2925']/* 'Send or receive the coin from a specified account.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={()=>this.open_send_receive_coin_page(item)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2459']/* 'Send/Receive' */, 'action': ''})}
+                </div>
+            </div>
+        )
+    }
+
+    render_begin_sync_if_xmr(item){
+        var data = this.props.app_state.coin_data[item['symbol']]
+        if(data == null) return;
+        if(data['address'] == null || !this.is_address_set(data['address'])) return;
+        if(item['symbol'] == '???'){
+            const percentage_done = this.props.app_state.xmr_restore_percentage || 0
+            const xmr_sync_remaining_blocks = this.props.app_state.xmr_sync_remaining_blocks || 0
+            const percentage = (percentage_done * 100).toFixed(3)
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2927be']/* '🔄 Begin ??? Synchronization.' */, 'details':this.props.app_state.loc['2927bf']/* 'Your ??? wallet need to fully sync to obtain your spendable balance before performing transactions.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {percentage > 0 && percentage < 99 && (
+                        <div>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927bg']/* 'Synchronization Process.' */, 'subtitle':this.format_power_figure(percentage), 'barwidth':percentage+'%', 'number':percentage+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* proportion */, })}
+                                
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927bj']/* 'Remaining Blocks' */, 'subtitle':this.format_power_figure(xmr_sync_remaining_blocks), 'barwidth':this.calculate_bar_width(xmr_sync_remaining_blocks), 'number':this.format_account_balance_figure(xmr_sync_remaining_blocks), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2927bk']/* 'blocks' */, })}
+                            </div>
+                            <div style={{height:10}}/>
+                        </div>
+                    )}
+                    {percentage > 99 && (
+                        <div>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2927bi']/* '⚡ Wallet Synchronized.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                            <div style={{height:10}}/>
+                        </div>
+                    )}
+                    <div onClick={()=>this.props.show_dialog_bottomsheet({'coin':item}, 'get_height_to_use_before_sync')}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2927bh']/* 'Synchronize Coin' */, 'action': ''})}
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_bridge_button_if_filecoin(item){
@@ -681,6 +747,29 @@ class CoinsDetailsSection extends Component {
         }
     }
 
+    get_unlocked_balance_in_decimal(item){
+        var data = this.props.app_state.coin_data[item['symbol']]
+        if(data != null && data['unlocked_balance'] != null){
+            var balance = data['unlocked_balance']
+            if(balance == 0){
+                return 0
+            }else{
+                return parseFloat(balance) / item['conversion']
+            }
+        }else{
+            return 0
+        }
+    }
+
+    get_unlocked_balance_in_base_units(item){
+        var data = this.props.app_state.coin_data[item['symbol']]
+        if(data != null && data['unlocked_balance'] != null){
+            return bigInt(data['unlocked_balance']).toString()
+        }else{
+            return 0
+        }
+    }
+
     get_existential_deposit_decimal(item){
         var data = this.props.app_state.coin_data[item['symbol']]
         if(data != null){
@@ -740,7 +829,7 @@ class CoinsDetailsSection extends Component {
     }
 
     render_default_fee_for_utxo_chains(item){
-        if(item['symbol'] == 'BTC' || item['symbol'] == 'BCH' || item['symbol'] == 'LTC' || item['symbol'] == 'DOGE' || item['symbol'] == 'DASH'){
+        if(item['symbol'] == 'BTC' || item['symbol'] == 'BCH' || item['symbol'] == 'LTC' || item['symbol'] == 'DOGE' || item['symbol'] == 'DASH' || item['symbol'] == 'ZEC'){
             var data = this.props.app_state.coin_data[item['symbol']]
             if(data == null || data['fee'] == null || data['fee']['fee'] == null) return;
             var fee = data['fee']['fee']
@@ -990,6 +1079,7 @@ class CoinsDetailsSection extends Component {
         else if(item['symbol'] == 'GRAM'){
             return `https://tonscan.org/address/${hash}`
         }
+
     }
 
 

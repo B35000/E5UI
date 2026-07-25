@@ -273,6 +273,13 @@ class EthersDetailsSection extends Component {
                     <div style={{height: 20}}/>
                     {this.show_moderator_note_if_any(item)}
                     {this.render_object_views(item)}
+                    
+                    {this.render_detail_item('3', item['ether_name'])}
+                    
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['ether_symbol'])}
+                    
+                    <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['number_label_large'])}
                     </div>
@@ -761,6 +768,8 @@ class EthersDetailsSection extends Component {
                 'image': this.props.app_state.e5s[e5].ether_image,
                 'label':{'title':symbol, 'details':name, 'size':'l', 'image': this.props.app_state.e5s[e5].ether_image},
                 'tags':{'active_tags':[name, 'EVM', symbol].concat(other_tags), 'index_option':'indexed'},
+                'ether_name':{'title':name, 'details':this.props.app_state.loc['2481ba']/* 'Ether Name.' */, 'size' :'l'},
+                'ether_symbol':{'title':symbol, 'details':this.props.app_state.loc['2481bb']/* 'Ether Symbol.' */, 'size' :'l'},
                 'number_label':this.get_blockchain_data('s', e5),
                 'number_label_large': this.get_blockchain_data('l', e5),
                 'banner-icon':{'header':symbol, 'subtitle':name, 'image':this.props.app_state.e5s[e5].ether_image},

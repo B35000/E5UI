@@ -310,6 +310,11 @@ const currencies = [
     "name": "Moonriver"
   },
   {
+    "id": "monero",
+    "symbol": "???",
+    "name": "??????"
+  },
+  {
     "id": "near",
     "symbol": "near",
     "name": "Near"

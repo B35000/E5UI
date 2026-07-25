@@ -1184,7 +1184,7 @@ class ViewGroups extends Component {
 
     vibrate_device(){
         if ('vibrate' in navigator) {
-            navigator.vibrate(60);
+            navigator.vibrate(45);
         }
     }
 

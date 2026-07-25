@@ -160,7 +160,7 @@ class Slider extends React.Component {
                     }
                 `}</style>
                 <AnimatePresence initial={true}>
-                    <motion.div key={'slider_button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.75, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                    <motion.div key={'slider_button'} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => this.vibrate_device()} whileTap={{ scale: 0.75, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
                         <div ref={(el) => (this.button = el)} /* className={this.state.animate ? 'button-click' : ''} */ style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px', cursor: 'pointer' }} onMouseDown={(e) => this.when_button_clicked(e)}></div>
                     </motion.div>
                 </AnimatePresence>
@@ -178,6 +178,12 @@ class Slider extends React.Component {
                 
             </div>
         )
+    }
+
+    vibrate_device(){
+        if ('vibrate' in navigator) {
+            navigator.vibrate(45);
+        }
     }
 
 

@@ -205,7 +205,7 @@ class tags extends Component {
     render_tag(index, selected, item, tag_size, active){
         return(
             <AnimatePresence initial={true}>
-                <motion.div key={'tag'+item+index} /* initial={{ opacity: 0.7, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0.7, scale:0.95 }} transition={{ duration: 0.3 }} */ onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}>
+                <motion.div key={'tag'+item+index} /* initial={{ opacity: 0.7, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0.7, scale:0.95 }} transition={{ duration: 0.3 }} */ onClick={() => this.vibrate_device()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}>
                     {this.render_tag_button(index, selected, item, tag_size, active)}
                 </motion.div>
             </AnimatePresence>
@@ -337,7 +337,6 @@ class tags extends Component {
       return ''+final;
     }
 
-
     when_any_button_tapped(index, final_text){
         // this.setState({ animate: index }, () => {
         //     setTimeout(() => this.setState({ animate: -1 }), 300); // match animation duration
@@ -345,7 +344,6 @@ class tags extends Component {
         setTimeout(() => this.when_tag_button_clicked(index, final_text), 350)
         
     }
-
 
     /* called when a tag button is tapped */
     when_tag_button_clicked(passed_pos, final_text, compute_object_only=false, compute_object){
@@ -486,6 +484,12 @@ class tags extends Component {
         return object[option][2][0]
     }
 
+
+    vibrate_device(){
+        if ('vibrate' in navigator) {
+            navigator.vibrate(45);
+        }
+    }
 
 }
 

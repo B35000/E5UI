@@ -545,6 +545,7 @@ import near_logo from './assets/near.png'
 import icp_logo from './assets/internet_computer.png'
 import zcash_logo from './assets/zcash.png'
 import gram_logo from './assets/gram.png'
+import monero_logo from './assets/monero.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -614,6 +615,7 @@ import ecc from '@bitcoinerlab/secp256k1';
 import { TonClient, WalletContractV4, internal, SendMode } from '@ton/ton';
 import { Address, toNano, fromNano } from '@ton/core';
 import { mnemonicToPrivateKey, mnemonicValidate } from '@ton/crypto';
+import { createWalletFull, MoneroNetworkType, MoneroUtils, MoneroWalletConfig, MoneroRpcConnection, LibraryUtils, connectToDaemonRpc, MoneroWalletListener, connectToWalletRpc, MoneroTxPriority, openWalletFull } from "monero-ts";
 
 
 /* shared component stuff */
@@ -834,6 +836,11 @@ function makeid(length) {
 
 function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
+}
+
+function number_with_commas(x) {
+  if(x == null) x = '';
+  return x.toLocaleString('fullwide', {useGrouping:false}).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 String.prototype.hexEncode = function(){
@@ -2619,6 +2626,8 @@ class App extends Component {
       'ZEC': this.get_coin_info('ZEC', 'Zcash', zcash_logo, 'zatoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '1.25 min.', this.get_time_difference(1477673333), 5, 2),
 
       'GRAM': this.get_coin_info('GRAM', 'Gram', gram_logo, 'nanogram', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.4 sec.', this.get_time_difference(1573516800), 104_715, 1),
+
+      '???': this.get_coin_info('???', '??????', monero_logo, '???', 12, 1_000_000_000_000, 'UTXO', 'Proof Of Work.', '2 min.', this.get_time_difference(1397818193), 7, '~~~'),
     }
     return list
   }
@@ -2674,7 +2683,8 @@ class App extends Component {
       'f52343e16056927fa0fda31ed17aedcd69b42624b84889542d9c8c7be6d4454f',
       '73f37eda5e4de090c3a09df8446fbf8ad3942c8e942a9623b4f44ca4db12d1fe',
       't1Uoup1fNWDb4KGS8tPWX1kHJJMnRG14UVZ',
-      'EQAoACQJdanybwA1e3BkMqDVABpWT1yzjPiq0hRTb18yHrBo'
+      'EQAoACQJdanybwA1e3BkMqDVABpWT1yzjPiq0hRTb18yHrBo',
+      '4BDSEqq7KBufgPubsni9sWhiBZMbsm9cz1DnHD1NsrBrVg9DpwrME5X6tP2u2sect6TadPFFzmuxyCEMbRToyaPv11UXYLf'
     ]
     return default_addresses
   }
@@ -3847,7 +3857,7 @@ class App extends Component {
 
   componentDidMount() {
     console.log("mounted", 'os version: ', iOS());
-    localforage.clear()
+    // localforage.clear()
     if (this.props.onReady) {
       this.props.onReady();
     }
@@ -4150,7 +4160,17 @@ class App extends Component {
     this.delete_data_in_db_when_app_closed()
     this.shutdown_webworkers()
     this.disconnect_socket_if_connected()
-    localforage.clear()
+    // localforage.clear()
+
+    this.close_xmr_wallet_if_any()
+  }
+
+  async close_xmr_wallet_if_any(){
+    if(this.state.coin_data['???'] != null){
+      const xmr_coin = this.state.coin_data['???']
+      const wallet = xmr_coin['wallet'].wallet
+      await wallet.close(false)
+    }
   }
 
   reset_background_sync(){
@@ -4354,6 +4374,8 @@ class App extends Component {
       account_balance: this.state.remember_account == 'e' ? {} : this.state.account_balance,
       locked_wallet_hashed_password: this.state.locked_wallet_hashed_password,
       locked_wallet: this.state.locked_wallet,
+
+      xmr_restore_height: this.state.xmr_restore_height,
     }
   }
 
@@ -4406,6 +4428,7 @@ class App extends Component {
       loaded_messages: this.state.loaded_messages,
       all_message_files: this.get_all_my_message_media_file_data(),
       preserved_state: this.get_preserved_state(),
+      xmr_wallet_info: await this.store_xmr_wallet_data_in_db(),
     }
   }
 
@@ -4438,6 +4461,7 @@ class App extends Component {
       var loaded_messages = state.loaded_messages
       var all_message_files = state.all_message_files
       var preserved_state = state.preserved_state || {}
+      var xmr_wallet_info = state.xmr_wallet_info || null
 
       // if(cached_tracks != null){
       //   this.set_cached_tracks_data(cached_tracks)
@@ -4464,6 +4488,9 @@ class App extends Component {
       }
       if(all_message_files != null){
         this.set_my_message_media_file_data(all_message_files)
+      }
+      if(xmr_wallet_info != null){
+        this.setState({xmr_wallet_info: xmr_wallet_info})
       }
       
 
@@ -4602,6 +4629,8 @@ class App extends Component {
       var locked_wallet = state.locked_wallet || this.state.locked_wallet;
       var preserve_state = state.preserve_state || this.state.preserve_state;
 
+      var xmr_restore_height = state.xmr_restore_height || null
+
       this.setState({
         theme: theme,
         stack_items: stack_items,
@@ -4695,6 +4724,7 @@ class App extends Component {
         locked_wallet_hashed_password: locked_wallet_hashed_password,
         locked_wallet: locked_wallet,
         preserve_state: preserve_state,
+        xmr_restore_height: xmr_restore_height,
       })
       var me = this;
       setTimeout(function() {
@@ -5191,6 +5221,39 @@ class App extends Component {
     });
 
     return new_state_object
+  }
+
+  async store_xmr_wallet_data_in_db(){
+    if(this.state.coin_data['???'] != null && this.state.final_seed != ''){
+      const xmr_coin = this.state.coin_data['???']
+      const wallet = xmr_coin['wallet'].wallet
+      const [keysData, cacheData] = await wallet.getData();
+
+      var hashed_seed = this.hash_data_with_randomizer(this.state.final_seed)
+      await this.set_cache_data_in_local_forage(keysData, xmr_coin['address']+'keysData')
+      await this.set_cache_data_in_local_forage(cacheData, xmr_coin['address']+'cacheData')
+      
+      return { address: xmr_coin['address'], hashed_seed, xmr_restore_height: this.state.xmr_restore_height }
+    }
+    else if(this.state.xmr_wallet_info != null && this.state.xmr_wallet_info['address'] != null){
+      return this.state.xmr_wallet_info
+    }
+  }
+
+  async set_cache_data_in_local_forage(data, identifier){
+    try{
+      await localforage.setItem(identifier, data)
+    }catch(e){
+      console.log('apppage', 'localforage', e)
+    }
+  }
+
+  async get_cache_data_in_local_forage(identifier){
+    try{
+      return await localforage.getItem(identifier);
+    }catch(e){
+      console.log('apppage', 'localforage', e)
+    }
   }
 
 
@@ -8217,7 +8280,7 @@ class App extends Component {
     
   }
 
-  check_if_recipient_address_is_valid(address, item){
+  async check_if_recipient_address_is_valid(address, item){
     if(item['symbol'] == 'BTC'){
       return this.validate_bitcoin_address(address)
     }
@@ -8301,6 +8364,9 @@ class App extends Component {
     }
     else if(item['symbol'] == 'GRAM'){
       return this.validate_gram_address(address)
+    }
+    else if(item['symbol'] == '???'){
+      return await this.validate_xmr_address(address)
     }
 
 
@@ -8582,6 +8648,18 @@ class App extends Component {
     }
   }
 
+  async validate_xmr_address(address){
+    try{
+      return await MoneroUtils.isValidAddress(address, MoneroNetworkType.MAINNET);
+    }
+    catch(e){
+      return false
+    }
+  }
+
+
+
+
 
 
 
@@ -8667,6 +8745,9 @@ class App extends Component {
     }
     else if(item['symbol'] == 'GRAM'){
       await this.create_and_broadcast_gram_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+    }
+    else if(item['symbol'] == '???'){
+      await this.create_and_broadcast_xmr_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
 
     var sync_time = item['symbol'] == 'AR' ? (4 * 60_000) : (1 * 30_000)
@@ -9756,6 +9837,51 @@ class App extends Component {
     }catch(e){
       console.log(e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  create_and_broadcast_xmr_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+    var seed = this.state.final_seed
+    const wallet = data['wallet']
+
+    const relay = true;
+    const recipient = recipient_address;
+    const amountAtomic = MoneroUtils.xmrToAtomicUnits(MoneroUtils.atomicUnitsToXmr(transfer_amount));
+    const timeout = 23*60*1000
+    const pollInterval = 6*1000
+    try{
+      const startTime = Date.now()
+      const tx = await wallet.wallet.createTx({
+        accountIndex: 0,
+        address: recipient,
+        amount: amountAtomic,
+        relay: relay,
+        priority: MoneroTxPriority.DEFAULT,
+      });
+      const hash = tx.getHash()
+      
+      while (tx.isConfirmed() == false && Date.now() - startTime < timeout) {
+        await new Promise((resolve) => setTimeout(resolve, pollInterval));
+      }
+
+      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+
+    }catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+  }
+
+  async get_confirmations(hash){
+    const data = this.state.coin_data['???']
+    const wallet = data['wallet'].wallet
+    const tx = await wallet.getTx(hash);
+    if (tx && tx.isConfirmed()) {
+      const daemonHeight = await wallet.getDaemonHeight();
+      return daemonHeight - tx.getHeight() + 1;
+    }
+    else {
+      return 0
     }
   }
 
@@ -19168,7 +19294,8 @@ class App extends Component {
     var h = 600
     
     return this.renderBottomSheet(
-      <SuccessfulSend ref={this.successful_send_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>,
+      <SuccessfulSend ref={this.successful_send_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} get_confirmations={this.get_confirmations.bind(this)}
+      />,
       this.state.successful_send_bottomsheet,
       this.open_successful_send_bottomsheet,
       h
@@ -19521,7 +19648,7 @@ class App extends Component {
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
 
-        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)}
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)}
         />
       </div>
     )
@@ -19639,7 +19766,8 @@ class App extends Component {
       'confirm_password_before_opening_contract':430,
       'quick_pay_for_subscription':600,
       'quick_purchase_video':550,
-      'quick_purchase_song':550
+      'quick_purchase_song':550,
+      'get_height_to_use_before_sync':700,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -22091,6 +22219,27 @@ class App extends Component {
     )
     var obj_cid = await this.store_objects_data_in_ipfs_using_option(object_as_string, null, null, tx['tags'])
     return obj_cid
+  }
+
+  async begin_xmr_sync(time, coin){
+    this.open_dialog_bottomsheet();
+    this.prompt_top_notification(this.getLocale()['3055ru']/* Beginning Sync, this might take a while... */, 6000)
+
+    const data = this.state.coin_data[coin['symbol']]
+    const wallet = data['wallet'].wallet
+    const date = new Date(time * 1000);
+
+    const restoreHeight = await wallet.getHeightByDate(
+      date.getUTCFullYear(),
+      date.getUTCMonth() + 1,
+      date.getUTCDate()
+    );
+
+    console.log('MoneroWalletListener', restoreHeight)
+
+    this.setState({xmr_restore_height: restoreHeight})
+    await this.wait(600)
+    await this.refresh_wallet('???')
   }
 
 
@@ -29737,7 +29886,8 @@ class App extends Component {
         my_acquired_audios:[],
         last_notification_view_time: {'?':0, 'e':0, 'w':0},
         locked_wallet: 'e', 
-        locked_wallet_hashed_password: ''
+        locked_wallet_hashed_password: '',
+        xmr_restore_height:null
       });
 
       this.get_blocked_accounts_data_e5_timestamp = 0
@@ -30023,7 +30173,10 @@ class App extends Component {
     coin_data['GRAM'] = await this.get_and_set_gram_wallet_info(seed)
     
     
-
+    this.setState({coin_data: coin_data})
+    // await this.wait(400)
+    coin_data['???'] = await this.get_and_set_xmr_wallet_info(seed)
+    
 
 
     this.setState({coin_data: coin_data})
@@ -30123,6 +30276,8 @@ class App extends Component {
     if(coin == 'ICP' || should_update_all) coin_data = await this.update_icp_balance(coin_data);
     if(coin == 'ZEC' || should_update_all) coin_data = await this.update_zcash_balance(coin_data);
     if(coin == 'GRAM' || should_update_all) coin_data = await this.update_gram_balance(coin_data);
+    if(coin == '???' || should_update_all) coin_data = await this.update_xmr_balance(coin_data);
+    
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
     this.setState({coin_data: coin_data})
@@ -30176,7 +30331,9 @@ class App extends Component {
     if(coin == 'ICP') coin_data[coin] = await this.get_and_set_icp_wallet_info(seed);
     if(coin == 'ZEC') coin_data[coin] = await this.get_and_set_zcash_wallet_info(seed);
     if(coin == 'GRAM') coin_data[coin] = await this.get_and_set_gram_wallet_info(seed);
+    if(coin == '???') coin_data[coin] = await this.get_and_set_xmr_wallet_info(seed);
     if(coin == 'AR') coin_data[coin] = await this.get_and_set_arweave_wallet_info(seed);
+    
     
     this.setState({coin_data: coin_data, loading_individual_coin: null})
   }
@@ -32418,6 +32575,143 @@ class App extends Component {
     const balance = await this.get_gram_address_balance(contract)
 
     clone['GRAM']['balance'] = balance;
+    return clone
+  }
+
+
+
+
+
+
+
+
+  get_and_set_xmr_wallet_info = async (seed) => {
+    await this.close_xmr_wallet_if_any()
+    const daemon = await connectToDaemonRpc({server: "https://xmr-node.cakewallet.com:18081", proxyToWorker: false});
+    const height_to_use = this.state.xmr_restore_height || await daemon.getHeight()
+    const wallet = await this.generate_xmr_wallet(seed, height_to_use)
+    const address = wallet.address
+    const balance = await this.get_xmr_address_balance(wallet.wallet)
+    const unlocked_balance = (await wallet.wallet.getBalance()).toString()
+    
+    if(this.state.xmr_restore_height != null && address != '4BDSEqq7KBufgPubsni9sWhiBZMbsm9cz1DnHD1NsrBrVg9DpwrME5X6tP2u2sect6TadPFFzmuxyCEMbRToyaPv11UXYLf'){
+      const begin_synch_then_reload_balance = async () => {
+        const me = this;
+        await wallet.wallet.sync(new class extends MoneroWalletListener {
+          async onSyncProgress(height, startHeight, endHeight, percentDone, message) {
+            // feed a progress bar?
+            const blocks_remaining = endHeight - height
+            me.setState({xmr_restore_percentage: percentDone, xmr_sync_remaining_blocks: blocks_remaining})
+            // console.log('MoneroWalletListener','start_height', number_with_commas(startHeight), 'end_height', number_with_commas(endHeight), 'height: ', number_with_commas(height))
+            if(endHeight % 10 == 0) me.set_cookies_after_stack_action()
+            //
+          }
+        });
+        await this.update_coin_balances('???', false, true);
+        this.set_cookies_after_stack_action()
+        this.setState({xmr_wallet_set: true})
+        await wallet.wallet.startSyncing(53000);
+      }
+      begin_synch_then_reload_balance()
+    }
+
+    const fee_info = {'fee':(await daemon.getFeeEstimate()).fee, 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':(balance.toString()), 'unlocked_balance':unlocked_balance, 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet':wallet, 'daemon':daemon}
+    this.fetch_specific_coin_receipts(address)
+    return data
+  }
+
+  generate_xmr_wallet = async (mnemonic, height) => {
+    const spendKeyHex = await this.generate_monero_mnemonic_from_seed(mnemonic);
+    const hashed_seed = this.hash_data_with_randomizer(mnemonic)
+    const xmr_wallet_info = this.state.xmr_wallet_info
+    //{ keysData, cacheData, address: xmr_coin['address'], hashed_seed }
+    
+    
+    if(xmr_wallet_info != null && xmr_wallet_info['hashed_seed'] == hashed_seed){
+      const cacheData = await this.get_cache_data_in_local_forage(xmr_wallet_info['address']+'cacheData')
+      const keysData = await this.get_cache_data_in_local_forage(xmr_wallet_info['address']+'keysData')
+      
+      // console.log('cacheData', cacheData)
+      // console.log('keysData', keysData)
+
+      const wallet = await openWalletFull({
+        path: "",
+        password: mnemonic,
+        networkType: MoneroNetworkType.MAINNET,
+        server: {
+          uri: "https://xmr-node.cakewallet.com:18081",
+        },
+        keysData: keysData,
+        cacheData: cacheData,
+      });
+      const address = await wallet.getPrimaryAddress();
+      return { wallet, address }
+    }
+    else{
+      const wallet = await createWalletFull({
+        path: "",
+        password: mnemonic,
+        networkType: MoneroNetworkType.MAINNET,
+        privateSpendKey: spendKeyHex,
+        restoreHeight: height,
+        server: {
+          uri: "https://xmr-node.cakewallet.com:18081",
+        },
+      });
+      const address = await wallet.getPrimaryAddress();
+      return { wallet, address }
+    }
+    
+  }
+
+  async generate_monero_mnemonic_from_seed(seed_to_mnemonic){
+    async function deriveBytesFromInput(input, salt = "your-app-name-v1", iterations = 210_000) {
+      const enc = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        "raw", enc.encode(input), "PBKDF2", false, ["deriveBits"]
+      );
+      const bits = await crypto.subtle.deriveBits(
+        { name: "PBKDF2", salt: enc.encode(salt), iterations, hash: "SHA-256" },
+        keyMaterial,
+        256
+      );
+      return new Uint8Array(bits);
+    }
+    const L = 2n ** 252n + 27742317777372353535851937790883648493n;
+    function leToBigInt(bytes) {
+      let n = 0n;
+      for (let i = bytes.length - 1; i >= 0; i--) n = (n << 8n) | bigInt(bytes[i]).value;
+      return n;
+    }
+    function bigIntToLeBytes(n, len) {
+      const out = new Uint8Array(len);
+      for (let i = 0; i < len; i++) { out[i] = Number(n & 0xffn); n >>= 8n; }
+      return out;
+    }
+    function toHex(bytes) {
+      return Array.from(bytes).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+    async function derivePrivateSpendKeyHex(input) {
+      const raw = await deriveBytesFromInput(input);
+      const reduced = bigIntToLeBytes(leToBigInt(raw) % L, 32);
+      return toHex(reduced);
+    }
+    return await derivePrivateSpendKeyHex(seed_to_mnemonic)
+  }
+
+  get_xmr_address_balance = async (wallet) => {
+    const unlockedAtomic = await wallet.getUnlockedBalance(0);
+    return unlockedAtomic.toString()
+  }
+
+  update_xmr_balance = async (clone) => {
+    const wallet = clone['???']['wallet']
+    const balance = await this.get_xmr_address_balance(wallet.wallet)
+    const unlocked_balance = (await wallet.wallet.getBalance()).toString()
+
+    clone['???']['balance'] = balance;
+    clone['???']['unlocked_balance'] = unlocked_balance;
     return clone
   }
 

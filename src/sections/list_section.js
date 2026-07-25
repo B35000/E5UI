@@ -7427,12 +7427,13 @@ return data['data']
         var list = []
         var coins = this.props.app_state.coins
         for (const coin in coins) {
-            if (coins.hasOwnProperty(coin)) {
+            if (coins.hasOwnProperty(coin) && coin != '???') {
                 list.push(coins[coin])
             }
         }
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')
+        sorted_list.push(coins['???'])
         var prioritized_list = []
         sorted_list.forEach(token => {
             if(this.does_coin_have_balance(token['id'])){

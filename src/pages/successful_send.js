@@ -58,6 +58,26 @@ class SuccessfulSend extends Component {
         )
     }
 
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_confirmations(), this.props.app_state.details_section_syncy_time);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    async check_for_confirmations(){
+        if(this.state.data == null) return;
+        const data = this.state.data;
+        const item = data['item']
+
+        if(item['symbol'] == '???'){
+            const hash = data['hash']
+            const confirmations = await this.props.get_confirmations(hash)
+            this.setState({confirmations: confirmations})
+        }
+    }
+
     render_everything(){
         if(this.state.data == null) return;
         var type = this.state.data['type']
@@ -226,6 +246,7 @@ class SuccessfulSend extends Component {
         }
     }
 
+    ////-------------------------------------------------------------------------
     get_blockexplorer_link(){
         var data = this.state.data
         var hash = data['hash']
@@ -660,10 +681,18 @@ class SuccessfulSend extends Component {
     }
 
     render_coin_transaction_hash_part(){
-        var data = this.state.data
+        const data = this.state.data
+        const item = data['item']
+        const confirmations = this.state.confirmations
+        const footer = confirmations != null && confirmations > 10 ? number_with_commas(confirmations) : (confirmations == null ? null : confirmations + '/10')
         return(
             <div>
-                {this.render_detail_item('3',{'details':start_and_end(data['hash']), 'title':this.props.app_state.loc['2799']/* 'Transaction Hash.' */,'size':'l'})}
+                {this.render_detail_item('3',{'details':start_and_end(data['hash']), 'title':this.props.app_state.loc['2799']/* 'Transaction Hash.' */,'size':'l', 'footer':footer})}
+                {item['symbol'] == '???' && (
+                    <div>
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['2803a']/* 'Once 10 confirmations have been made, the amount sent will be spendable.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                    </div>
+                )}
                 
                 <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={()=> this.copy_to_clipboard(data['hash'])}>
@@ -691,6 +720,7 @@ class SuccessfulSend extends Component {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     get_coin_blockexplorer_link(){
         var data = this.state.data
         var hash = data['hash']

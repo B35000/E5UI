@@ -65,6 +65,7 @@ module.exports = {
           path: require.resolve("path-browserify"),
           zlib: require.resolve("browserify-zlib"),
           util: require.resolve("util/"),
+          child_process: false,
         },
       };
 
@@ -72,6 +73,17 @@ module.exports = {
         ...(webpackConfig.resolve.extensions || []),
         ".wasm",
       ];
+
+      webpackConfig.module.rules = webpackConfig.module.rules.map((rule) => {
+        if (Array.isArray(rule.oneOf)) {
+          rule.oneOf[rule.oneOf.length - 1].exclude = [
+            /\.(js|mjs|jsx|cjs|ts|tsx)$/,
+            /\.html$/,
+            /\.json$/,
+          ];
+        }
+        return rule;
+      });
 
       const oneOfRule = webpackConfig.module.rules.find(rule => rule.oneOf);
       oneOfRule.oneOf.unshift({

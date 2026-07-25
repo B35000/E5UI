@@ -696,7 +696,7 @@ class SendReceiveCoinPage extends Component {
             console.log('open_confirm_send', set_fee, money_out, accounts_balance)
             this.props.notify(this.props.app_state.loc['2937']/* 'You don\'t have enough coin to make that transaction.' */, 4000)
         }
-        else if(!this.props.check_if_recipient_address_is_valid(recipient, item)){
+        else if(!await this.props.check_if_recipient_address_is_valid(recipient, item)){
             this.props.notify(this.props.app_state.loc['2939']/* 'That recipient address is not valid.' */, 4000)
         }
         else if(set_fee == 0){
@@ -710,6 +710,12 @@ class SendReceiveCoinPage extends Component {
         }
         else if(this.props.app_state.locked_wallet_hashed_password != '' && !this.does_password_match_hash(this.state.cypher_passcode.trim())){
             this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
+        else if(item['symbol'] == '???' && this.props.app_state.xmr_restore_percentage != null && this.props.app_state.xmr_restore_percentage != 1.0){
+            this.props.notify(this.props.app_state.loc['2954p']/* 'You need to wait for ??? to finish synchronizing.' */, 9000)
+        }
+        else if(item['symbol'] == '???' && this.props.app_state.xmr_wallet_set != true){
+            this.props.notify(this.props.app_state.loc['2954q']/* 'You need to synchronize ??? first.' */, 9000)
         }
         else{
             this.props.show_dialog_bottomsheet({'coin':item, 'fee':set_fee, 'amount':transfer_amount,'recipient':recipient, 'sender':this.get_account_address(), 'memo':memo_text, 'kill_wallet': kill_wallet}, 'confirm_send_coin_dialog')
@@ -954,7 +960,7 @@ class SendReceiveCoinPage extends Component {
         else if(!this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['1571']/* 'Please set your wallet first.' */, 3200);
         }
-        else if(!this.props.check_if_recipient_address_is_valid(recipient_address, this.state.coin)){
+        else if(!await this.props.check_if_recipient_address_is_valid(recipient_address, this.state.coin)){
             this.props.notify(this.props.app_state.loc['1407x']/* 'That recipient address is not valid.' */, 3200);
         }
         else if(request_coin_memo.length > 35){
