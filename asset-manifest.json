@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.ca0728dc.css",
-    "main.js": "/static/js/main.419bd1bb.js",
+    "main.css": "/static/css/main.4b8aee97.css",
+    "main.js": "/static/js/main.f8d1334d.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -248,6 +248,7 @@
     "static/media/iotex.png": "/static/media/iotex.033445dc5a3a732d38fe.png",
     "static/media/mintme.png": "/static/media/mintme.974739b5537a57d62fa0.png",
     "static/media/btt.png": "/static/media/btt.8bed027171fab25b0c61.png",
+    "static/media/monero.png": "/static/media/monero.40f22d04e792c5ec7863.png",
     "static/media/previous_icon_orange.png": "/static/media/previous_icon_orange.63e76ceae3ed05ee66bb.png",
     "static/media/next_icon_orange.png": "/static/media/next_icon_orange.10a93c3c09a573bf1851.png",
     "static/media/wallet_icon_darkred.png": "/static/media/wallet_icon_darkred.11fce7cdfb0b01ddffb9.png",
@@ -456,10 +457,12 @@
     "static/media/shuffle_icon_dark.png": "/static/media/shuffle_icon_dark.960d3786befb8f51dc13.png",
     "static/media/lrc_file.png": "/static/media/lrc_file.95804af8da8c97ccb507.png",
     "static/media/subtitle_file.png": "/static/media/subtitle_file.3eaa1c79e520e337be46.png",
-    "index.html": "/index.html"
+    "index.html": "/index.html",
+    "static/media/svg%3e": "/static/media/69aa1495d8439f869898.69aa1495d8439f869898.svg",
+    "static/media/javascript,__webpack_public_path__ = __webpack_base_uri__ = htmlWebpackPluginPublicPath;": "/static/media/1feff74faaf0efc6a044.1feff74faaf0efc6a044"
   },
   "entrypoints": [
-    "static/css/main.ca0728dc.css",
-    "static/js/main.419bd1bb.js"
+    "static/css/main.4b8aee97.css",
+    "static/js/main.f8d1334d.js"
   ]
 }
