@@ -3173,7 +3173,7 @@ class NewPollPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311dl']/* 'Max Voter Weight' */, 'subtitle':this.format_power_figure(this.state.max_voter_weight), 'barwidth':this.calculate_bar_width(this.state.max_voter_weight), 'number':this.format_account_balance_figure(this.state.max_voter_weight), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
                 </div>
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_voter_weight.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_voter_weight.bind(this)} theme={this.props.theme} power_limit={63} pick_with_text_area={true} text_area_hint={'5'} />
 
 
                 {this.render_detail_item('0')} 
@@ -3186,7 +3186,7 @@ class NewPollPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311do']/* 'Default Voter Weight.' */, 'subtitle':this.format_power_figure(this.state.default_voter_weight), 'barwidth':this.calculate_bar_width(this.state.default_voter_weight), 'number':this.format_account_balance_figure(this.state.default_voter_weight), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
                 </div>
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_voter_weight.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_voter_weight.bind(this)} theme={this.props.theme} power_limit={63} pick_with_text_area={true} text_area_hint={'5'} />
                 
             </div>
         )
@@ -3206,7 +3206,7 @@ class NewPollPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311du']/* 'Tag Appearance Multiplier' */, 'subtitle':this.format_power_figure(this.state.tag_appearance_multiplier_weight), 'barwidth':this.calculate_bar_width(this.state.tag_appearance_multiplier_weight), 'number':this.format_account_balance_figure(this.state.tag_appearance_multiplier_weight), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
                 </div>
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_tag_appearance_multiplier_weight.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_tag_appearance_multiplier_weight.bind(this)} theme={this.props.theme} power_limit={63} pick_with_text_area={true} text_area_hint={'5'} />
 
                 <div style={{'padding':'5px'}} onClick={() => this.when_add_tag_appearance_mutliplier_value()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['c311dv']/* Add Multiplier */, 'action':''})}
@@ -3231,10 +3231,10 @@ class NewPollPage extends Component {
                 </div>
 
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} ref={(el) => (this.amount_picker = el)} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id2)+9))} when_number_picker_value_changed={this.when_token_multiplier.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id2)}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={(el) => (this.amount_picker = el)} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id2)+9))} pick_with_text_area={true} text_area_hint={'5'} when_number_picker_value_changed={this.when_token_multiplier.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id2)}/>
 
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} ref={(el) => (this.amount_picker2 = el)} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id2)+9))} when_number_picker_value_changed={this.when_anchor_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id2)}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={(el) => (this.amount_picker2 = el)} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id2)+9))} pick_with_text_area={true} text_area_hint={'5'} when_number_picker_value_changed={this.when_anchor_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id2)}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_multiplier_tapped()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['c311ec']/* Add Multiplier' */, 'action':''})}

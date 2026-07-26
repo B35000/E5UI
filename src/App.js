@@ -4169,7 +4169,11 @@ class App extends Component {
     if(this.state.coin_data['???'] != null){
       const xmr_coin = this.state.coin_data['???']
       const wallet = xmr_coin['wallet'].wallet
-      await wallet.close(false)
+      try{
+        await wallet.close(false)
+      }catch(e){
+        console.log(e)
+      }
     }
   }
 
@@ -32707,11 +32711,14 @@ class App extends Component {
 
   update_xmr_balance = async (clone) => {
     const wallet = clone['???']['wallet']
-    const balance = await this.get_xmr_address_balance(wallet.wallet)
-    const unlocked_balance = (await wallet.wallet.getBalance()).toString()
-
-    clone['???']['balance'] = balance;
-    clone['???']['unlocked_balance'] = unlocked_balance;
+    try{
+      const balance = await this.get_xmr_address_balance(wallet.wallet)
+      const unlocked_balance = (await wallet.wallet.getBalance()).toString()
+      clone['???']['balance'] = balance;
+      clone['???']['unlocked_balance'] = unlocked_balance;
+    }catch(e){
+      console.log(e)
+    }
     return clone
   }
 
