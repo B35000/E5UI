@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/static/css/main.4b8aee97.css",
+    "main.css": "/static/css/main.99de1687.css",
     "main.js": "/static/js/main.56e98a5c.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
@@ -462,7 +462,7 @@
     "static/media/javascript,__webpack_public_path__ = __webpack_base_uri__ = htmlWebpackPluginPublicPath;": "/static/media/1feff74faaf0efc6a044.1feff74faaf0efc6a044"
   },
   "entrypoints": [
-    "static/css/main.4b8aee97.css",
+    "static/css/main.99de1687.css",
     "static/js/main.56e98a5c.js"
   ]
 }
