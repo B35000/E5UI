@@ -440,7 +440,7 @@ const english = {
     '3077':'fulfil-bids','3077a':'fulfil','3077b':'Below are the items you won.','3077c':'Below is the total amount you are to pay. The transaction is a direct purchase transaction.','3077d':'Final Payment.','3077e':'Your balance is insufficient to fulfil this transaction.','3077f':'Transaction already in stack.','3077g':'','3077h':'','3077i':'','3077jk':'','3077l':'','3077m':'','3077n':'','3077o':'','3077p':'','3077q':'','3077r':'','3077s':'','3077t':'','3077u':'','3077v':'','3077w':'','3077x':'','3077y':'','3077z':'','3077aa':'','3077ab':'','3077ac':'','3077ad':'','3077ae':'','3077af':'','3077ag':'','3077ah':'','3077ai':'','3077aj':'','3077ak':'',
     
     
-    '3078':'END','3079':'SPEND','3080':'reload','3081':'reloading page...','3082':'Copied link to Clipboard','3083':'10 second rewind ⏮','3084':'10 second forward ⏭️','3085':'e(Beta)','3086':'E5(Beta)','3087':'E5','3088':'??(Beta)','3089':'Specified Locations.','3090':'Below are the locations that were set.','3090a':'video paused ⏸️','3090b':'video resumed ▶️',
+    '3078':'END','3079':'SPEND','3080':'reload','3081':'reloading page...','3082':'Copied link to Clipboard','3083':'10 second rewind ⏮','3084':'10 second forward ⏭️','3085':'e(Beta)','3086':'E5(Beta)','3087':'E5','3088':'??(Beta)','3089':'Specified Locations.','3090':'Below are the locations that were set.','3090a':'video paused ⏸️','3090b':'video resumed ▶️','3090c':'Reload ⟳',
     
 
     /* call page stuff */

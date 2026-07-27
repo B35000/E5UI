@@ -3558,7 +3558,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'when_tapped':''},
             'id':{'details':details, 'title':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':barwidth, 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':barwidth, 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, 'number_when_tapped':number == '????' ? '????' : `${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
         }
     }
 
@@ -3995,7 +3995,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':title_space+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
         }
     }
 
@@ -4028,7 +4028,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, 'number_when_tapped': this.should_hide_contract_info_because_private(object) ? '????' : `${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
         }
     }
 
@@ -4052,7 +4052,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
         }
     }
 
@@ -4080,7 +4080,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':number_with_commas(object['id'])+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px', 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
         }
     }
 
@@ -4093,7 +4093,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
         }
     }
 
@@ -4109,7 +4109,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
         }
     }
 
@@ -4149,7 +4149,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':title_space+objectid+sender, 'details':extra+title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, 'number_when_tapped':this.is_post_anonymous(object) ? '???' : `${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
         }
     }
 
@@ -4207,7 +4207,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
         }
     }
 
@@ -4223,7 +4223,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
         }
     }
 
@@ -4244,7 +4244,7 @@ return data['data']
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'footer':this.get_object_views_text(object['e5_id'])},
             // 'id_with_image':{'title':object['id'], 'details':title, 'size':'l', 'image':image},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`},
         }
     }
 
@@ -4276,7 +4276,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
             'min':{'details': author+' • '+this.get_time_difference(time), 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px',}
         }
     }
@@ -4308,7 +4308,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_width':'auto', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
         }
     }
 
@@ -4359,7 +4359,7 @@ return data['data']
             'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
             'id':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
         }
     }
 
@@ -4372,7 +4372,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':object['e5']+' • '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
         }
     }
@@ -4386,7 +4386,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
@@ -4400,7 +4400,7 @@ return data['data']
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
-            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` },
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
             'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
         }
     }
