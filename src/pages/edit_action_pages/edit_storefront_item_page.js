@@ -308,7 +308,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [0]
             ],
         };
     }
