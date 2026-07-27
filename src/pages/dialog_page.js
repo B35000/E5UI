@@ -10748,7 +10748,7 @@ return data['data']
 
         return(
             <div>
-                {this.render_detail_item('3', {'title':storefront['ipfs'].entered_title_text, 'details':this.props.app_state.loc['2048']/* 'Store ID:' */+storefront['id'] , 'size':'l'})}
+                {this.render_storefront_item(storefront)}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':item['purchase_unit_count'], 'details':composition_type+this.props.app_state.loc['2049']/* ' ordered.' */ , 'size':'l'})}
                 <div style={{height: 10}}/>
@@ -10763,6 +10763,32 @@ return data['data']
                 {this.render_variant_image_if_any(variant_in_store)}
             </div>
         )
+    }
+
+    render_storefront_item(object){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_storefront_item(object)
+
+        return(
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_storefront_item_clicked(object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    when_storefront_item_clicked(object){
+        this.props.when_link_object_clicked(object, 27/* storefront */)
     }
 
     get_storefront(storefront_id, e5){

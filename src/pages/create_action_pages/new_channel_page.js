@@ -105,7 +105,7 @@ class NewChannelPage extends Component {
         
         creator_id:'', creators:[], selected_creator_group_subscriptions:[], subscription_search:'', nitro_search:'', selected_creator_group_nitros:[], voice_call_number_id: make_number_id_str(15),
 
-        get_channel_voice_chat_enabled_object:this.get_channel_voice_chat_enabled_object()
+        get_channel_voice_chat_enabled_object:this.get_channel_voice_chat_enabled_object(), get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
     };
 
     get_new_job_page_tags_object(){
@@ -253,6 +253,17 @@ class NewChannelPage extends Component {
             },
             'e':[
                 ['or','',0], ['e',this.props.app_state.loc['162ba']/* 'enabled' */], [0]
+            ],
+        };
+    }
+
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
             ],
         };
     }
@@ -551,6 +562,12 @@ class NewChannelPage extends Component {
                 <div style={{height:10}}/>
                 <Tags page_tags_object={this.state.get_post_preview_option} tag_size={'l'} when_tags_updated={this.when_get_post_preview_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
                 
             </div>
         )
@@ -581,6 +598,10 @@ class NewChannelPage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
     }
 
     when_get_channel_voice_chat_enabled_object_updated(tag_obj){

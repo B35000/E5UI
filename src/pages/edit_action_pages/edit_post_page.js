@@ -60,7 +60,9 @@ class EditPostPage extends Component {
         get_sort_links_tags_object:this.get_sort_links_tags_object(), 
         get_post_nsfw_option:this.get_post_nsfw_option(),
         get_masked_from_outsiders_option:this.get_masked_from_outsiders_option(),
-        get_disabled_comments_section:this.get_disabled_comments_section(), markdown:'', entered_zip_objects:[]
+        get_disabled_comments_section:this.get_disabled_comments_section(), markdown:'', entered_zip_objects:[],
+
+        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
     };
 
     get_new_job_page_tags_object(){
@@ -202,6 +204,20 @@ class EditPostPage extends Component {
         };
     }
 
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
+            ],
+        };
+    }
+
+
+
+
 
     set(){
         if(this.state.get_post_nsfw_option == null){
@@ -225,6 +241,10 @@ class EditPostPage extends Component {
         if(this.state.get_markdown_preview_or_editor_object == null){
             this.setState({get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object()})
         }
+        if(this.state.get_object_delisted_setting_tags_option == null){
+            this.setState({get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()})
+        }
+
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1,get_sort_links_tags_object:this.get_sort_links_tags_object()})
     }
 
@@ -452,6 +472,12 @@ class EditPostPage extends Component {
 
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['311h']/* Post Anonymously. */, 'details':this.props.app_state.loc['311i']/* If set to enabled, your alias and account id will be masked in your posts details and comment section. */, 'size':'l'})}
@@ -491,6 +517,10 @@ class EditPostPage extends Component {
         )
     }
 
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
+    }
+    
     when_get_disabled_comments_section_option(tag_obj){
         this.setState({get_disabled_comments_section: tag_obj})
     }

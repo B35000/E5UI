@@ -109,7 +109,9 @@ class EditVideoPage extends Component {
         album_art:null, video_type: this.props.app_state.loc['b311d']/* 'Video' */, entered_pdf_objects:[],
         markdown:'', entered_zip_objects:[],
 
-        video_availability_timestamp:(Date.now()/1000), purchase_recipient:''
+        video_availability_timestamp:(Date.now()/1000), purchase_recipient:'', 
+
+        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
     };
 
 
@@ -282,6 +284,17 @@ class EditVideoPage extends Component {
         };
     }
 
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
+            ],
+        };
+    }
+
 
 
 
@@ -321,6 +334,9 @@ class EditVideoPage extends Component {
         }
         if(this.state.purchase_recipient == null){
             this.setState({purchase_recipient: ''})
+        }
+        if(this.state.get_object_delisted_setting_tags_option == null){
+            this.setState({get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()})
         }
         
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1, edit_video_item_pos:-1, video_availability_timestamp:(Date.now()/1000), previous_videos:this.state.videos})
@@ -551,6 +567,14 @@ class EditVideoPage extends Component {
                 <div style={{height: 10}}/>
 
 
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['b311g']/* 'Set the album art for your new post. The art will be rendered in a 1:1 aspect ratio.' */})}
                 <div style={{height:10}}/>
@@ -680,6 +704,10 @@ class EditVideoPage extends Component {
     when_purchase_recipient_input_field_changed(text){
         if(isNaN(text) || text.length > 12) return;
         this.setState({purchase_recipient: text})
+    }
+
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
     }
 
     when_get_disabled_comments_section_option(tag_obj){

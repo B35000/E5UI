@@ -1015,9 +1015,10 @@ class CrossexchangeDetailsSection extends Component {
         const minimum_transactions_between_swap = selected_obj_config[2]
         const minimum_transactions_for_first_buy = selected_obj_config[17]
 
+        const id_footer = object['ipfs'].get_object_delisted_setting_tags_option != null && this.get_selected_item2(object['ipfs'].get_object_delisted_setting_tags_option, 'e') == 1 ? this.props.app_state.loc['a2527cp']/* '🔗 delisted' */ : null
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
-            'id':{'title':title_space+objectid, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
+            'id':{'title':title_space+objectid, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':id_footer },
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}`},
             'exchange_authority': {'title':is_auth_main_contract, 'details':this.props.app_state.loc['3107g']/* 'Cross-Exchange Authority' */, 'size':'l'},
 

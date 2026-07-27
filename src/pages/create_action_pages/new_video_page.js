@@ -112,7 +112,9 @@ class NewVideoPage extends Component {
         album_art:null, video_type: this.props.app_state.loc['b311d']/* 'Video' */, entered_pdf_objects:[],
         markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
 
-        video_availability_timestamp:(Date.now()/1000), channel_search:'', purchase_recipient:''
+        video_availability_timestamp:(Date.now()/1000), channel_search:'', purchase_recipient:'',
+
+        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
     };
 
 
@@ -286,6 +288,16 @@ class NewVideoPage extends Component {
         };
     }
 
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
+            ],
+        };
+    }
 
 
 
@@ -521,6 +533,13 @@ class NewVideoPage extends Component {
 
 
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bd']/* 'Purchase Recipient' */, 'details':this.props.app_state.loc['b311as']/* 'Set the recipient account ID for all the purchases of this object. If unset, the default will be your account.' */, 'size':'l'})}
 
                 <div style={{height: 10}}/>
@@ -617,6 +636,10 @@ class NewVideoPage extends Component {
         }else{
             this.setState({image_bundle: null})
         }
+    }
+
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
     }
 
     compressImageFromFile(image_url) {
@@ -3655,7 +3678,7 @@ return data['data']
     }
 
     search_channel(){
-        var search_id = this.state.channel_search
+        var search_id = this.state.channel_search.trim().replace('e', '')
         if(isNaN(search_id)){
             this.props.notify(this.props.app_state.loc['162aq']/* That search id is invalid. */, 1500)
         }else{

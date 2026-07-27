@@ -74,7 +74,9 @@ class NewNitroPage extends Component {
 
         entered_pdf_objects:[], markdown:'', entered_node_url_text:'', node_url:'', album_art:null, entered_node_key_text:'', encrypted_key:'' ,get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
 
-        spend_exchange_allowed_countries:[], typed_spend_country_name:''
+        spend_exchange_allowed_countries:[], typed_spend_country_name:'', 
+
+        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option(),
     };
 
 
@@ -164,6 +166,17 @@ class NewNitroPage extends Component {
             },
             'e':[
                 ['or','',0], ['e',this.props.app_state.loc['a311dw']/* 'bundle' */], [1]
+            ],
+        };
+    }
+
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
             ],
         };
     }
@@ -382,6 +395,12 @@ class NewNitroPage extends Component {
 
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['a273m']/* 'Set an image to identify your new node. The image will be rendered in a 1:1 aspect ratio.' */})}
@@ -421,6 +440,10 @@ class NewNitroPage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
     }
 
     async when_get_bundle_image_tags_option_updated(tag_obj){

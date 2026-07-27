@@ -83,7 +83,7 @@ class NewJobPage extends Component {
         markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], pins:[],
 
         get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
-        get_public_pins_object:this.get_public_pins_object()
+        get_public_pins_object:this.get_public_pins_object(), get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
     };
     
 
@@ -203,6 +203,17 @@ class NewJobPage extends Component {
             },
             'e':[
                 ['or','',0], ['e',this.props.app_state.loc['284bq']/* 'public' */], [1]
+            ],
+        };
+    }
+
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
             ],
         };
     }
@@ -442,6 +453,11 @@ class NewJobPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
 
                 
                 {this.render_detail_item('0')}
@@ -497,6 +513,10 @@ class NewJobPage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
     }
 
     when_title_text_input_field_changed(text){

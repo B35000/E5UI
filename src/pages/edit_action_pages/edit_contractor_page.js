@@ -66,7 +66,9 @@ class NewContractorPage extends Component {
         entered_objects:[], e5: this.props.app_state.selected_e5, exchange_id:'', price_amount:0, price_data:[], edit_text_item_pos:-1,
 
         get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:'',
-        entered_zip_objects:[], pins:[], get_public_pins_object:this.get_public_pins_object()
+        entered_zip_objects:[], pins:[], get_public_pins_object:this.get_public_pins_object(),
+
+        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
     };
 
     get_new_contractor_page_tags_object(){
@@ -174,6 +176,16 @@ class NewContractorPage extends Component {
         };
     }
 
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
+            ],
+        };
+    }
 
 
 
@@ -192,6 +204,10 @@ class NewContractorPage extends Component {
         if(this.state.pins == null){
             this.setState({pins: []})
         }
+        if(this.state.get_object_delisted_setting_tags_option == null){
+            this.setState({get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()})
+        }
+
         this.setState({edit_text_item_pos:-1, get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(), get_fee_type: fee_type, get_sort_links_tags_object: this.get_sort_links_tags_object()})
     }
 
@@ -405,6 +421,12 @@ class NewContractorPage extends Component {
 
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
@@ -434,6 +456,10 @@ class NewContractorPage extends Component {
     does_entered_text_contain_reserved_keywords(entered_text){
         const regex_to_test = this.props.get_accounts_reserved_keywords(true)
         return regex_to_test.test(entered_text.toLowerCase());
+    }
+
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
     }
 
     when_get_take_down_option(tag_group){

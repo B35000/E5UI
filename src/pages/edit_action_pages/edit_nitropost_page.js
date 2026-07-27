@@ -75,7 +75,7 @@ class EditNitroPage extends Component {
 
         entered_pdf_objects:[], markdown:'', entered_node_url_text:'', node_url:'', album_art:null, entered_node_key_text:'', encrypted_key:'', entered_zip_objects:[],
 
-        spend_exchange_allowed_countries:[], typed_spend_country_name:''
+        spend_exchange_allowed_countries:[], typed_spend_country_name:'', get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
         
     };
 
@@ -166,6 +166,17 @@ class EditNitroPage extends Component {
         };
     }
 
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
+            ],
+        };
+    }
+
 
 
     set(){
@@ -180,6 +191,10 @@ class EditNitroPage extends Component {
         }
         if(this.state.spend_exchange_allowed_countries == null){
             this.setState({spend_exchange_allowed_countries:[], typed_spend_country_name:''})
+        }
+
+        if(this.state.get_object_delisted_setting_tags_option == null){
+            this.setState({get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()})
         }
 
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1})
@@ -388,6 +403,11 @@ class EditNitroPage extends Component {
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.node_url})}
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['a273m']/* 'Set an image to identify your new node. The image will be rendered in a 1:1 aspect ratio.' */})}
@@ -579,6 +599,9 @@ class EditNitroPage extends Component {
 
 
 
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
+    }
 
     when_get_take_down_option(tag_obj){
         this.setState({get_take_down_option: tag_obj})

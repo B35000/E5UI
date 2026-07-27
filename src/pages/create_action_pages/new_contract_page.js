@@ -1716,7 +1716,7 @@ class NewContractPage extends Component {
     }
 
     when_exchange_voter_weight_id_changed(id){
-        this.setState({voter_weight_exchange_id: id})
+        this.setState({voter_weight_exchange_id: id.toString().trim().replace('e', '')})
     }
 
     

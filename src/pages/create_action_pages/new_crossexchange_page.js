@@ -114,7 +114,9 @@ class NewCrossexchangePage extends Component {
         token_target:'', exchange_transfer_amount:0, proportion_amount:0, typed_search_fractionalized_tokens:'', 
 
         custom_page:0,
-        default_exchange_amount_buy_limit:0, default_exchange_amount_sell_limit:0, minimum_time_between_swap:0, minimum_transactions_between_swap:0, minimum_transactions_for_first_buy:0, token_exchange_ratio_y:0
+        default_exchange_amount_buy_limit:0, default_exchange_amount_sell_limit:0, minimum_time_between_swap:0, minimum_transactions_between_swap:0, minimum_transactions_for_first_buy:0, token_exchange_ratio_y:0, 
+
+        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option(),
     };
 
 
@@ -217,6 +219,17 @@ class NewCrossexchangePage extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['e311h']/* 'exchange' */, this.props.app_state.loc['3103d']/* 'certificate' */], [1]
+            ],
+        };
+    }
+
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
             ],
         };
     }
@@ -451,6 +464,12 @@ class NewCrossexchangePage extends Component {
                 <div style={{height:10}}/>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.selected_device_city})}
 
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
             </div>
         )
     }
@@ -476,6 +495,10 @@ class NewCrossexchangePage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
     }
 
     when_get_new_certificate_verification_tags_object_updated(tag_obj){

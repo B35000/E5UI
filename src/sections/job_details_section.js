@@ -1310,9 +1310,11 @@ class JobDetailsSection extends Component {
 
         const title_space = is_socket_job == true ? ' • ' : '• '
 
+        const id_footer = object['ipfs'].get_object_delisted_setting_tags_option != null && this.get_selected_item2(object['ipfs'].get_object_delisted_setting_tags_option, 'e') == 1 ? this.props.app_state.loc['a2527cp']/* '🔗 delisted' */ : null
+
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags,'when_tapped':'select_deselect_tag'},
-            'id':{'title':title_space+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
+            'id':{'title':title_space+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':id_footer },
             'age':{'style':'l', 'title':this.props.app_state.loc['2493']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, 'number_when_tapped':`${(new Date(time*1000).toLocaleString())}` }
         }
     }

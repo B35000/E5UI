@@ -1738,7 +1738,7 @@ class ConfigureObligationsPage extends Component {
     }
 
     async search_contract_id(){
-        const typed_contract_account = this.state.typed_contract_account.trim()
+        const typed_contract_account = this.state.typed_contract_account.trim().replace('e', '')
         const selected_e5 = this.state.selected_e5
         const typed_contract_e5_id = typed_contract_account+selected_e5
 

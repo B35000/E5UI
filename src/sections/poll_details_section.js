@@ -785,9 +785,11 @@ class PollDetailsSection extends Component {
 
         const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
 
+        const id_footer = object['ipfs'].get_object_delisted_setting_tags_option != null && this.get_selected_item2(object['ipfs'].get_object_delisted_setting_tags_option, 'e') == 1 ? this.props.app_state.loc['a2527cp']/* '🔗 delisted' */ : null
+
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
-            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
+            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':id_footer },
             'winner_data':{'title':candidates_count, 'details':winner_count, 'size':'l'},
             'start_time':{'details':this.props.app_state.loc['3072a']/* 'Start Time' */, 'title':''+(new Date(start_time * 1000)), 'size':'l'},
             'end_time':{'details':this.props.app_state.loc['3072b']/* 'End Time.' */, 'title':''+(new Date(end_time * 1000)), 'size':'l'},

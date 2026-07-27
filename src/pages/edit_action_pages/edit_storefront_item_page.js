@@ -88,7 +88,7 @@ class NewStorefrontItemPage extends Component {
 
         auction_expiry_time: (Date.now()/1000)+(60*60*24), exchange_id3:'', price_amount3:0, price_data2:[], minimum_bidding_proportion:0, viewers:[], viewer:'', pins:[],
 
-        entered_purchase_accessible_objects:[],
+        entered_purchase_accessible_objects:[], get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
     };
 
     get_new_job_page_tags_object(is_auction){
@@ -302,6 +302,16 @@ class NewStorefrontItemPage extends Component {
     }
 
 
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
+            ],
+        };
+    }
 
 
 
@@ -339,6 +349,10 @@ class NewStorefrontItemPage extends Component {
         
         if(this.state.get_purchase_contracts_enabled_tags_object == null){
             this.setState({get_purchase_contracts_enabled_tags_object: this.get_purchase_contracts_enabled_tags_object()})
+        }
+
+        if(this.state.get_object_delisted_setting_tags_option == null){
+            this.setState({get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()})
         }
     }
 
@@ -1290,6 +1304,13 @@ class NewStorefrontItemPage extends Component {
 
 
                 {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['535g']/* 'Set a storefromt image for your item. The art will be rendered in a 1:1 aspect ratio.' */})}
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part2()}
@@ -1343,6 +1364,10 @@ class NewStorefrontItemPage extends Component {
         }else{
             this.setState({image_bundle: null})
         }
+    }
+
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
     }
 
     when_get_purchase_through_bags_tags_object_updated(tag_obj){

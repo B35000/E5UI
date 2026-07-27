@@ -96,7 +96,7 @@ class EditCrossexchangePage extends Component {
 
         edit_text_item_pos:-1,
 
-        entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
+        entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
 
     };
 
@@ -144,8 +144,23 @@ class EditCrossexchangePage extends Component {
         };
     }
 
+    get_object_delisted_setting_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [1]
+            ],
+        };
+    }
+
 
     set(){
+        if(this.state.get_object_delisted_setting_tags_option == null){
+            this.setState({get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()})
+        }
+
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1})
     }
 
@@ -336,6 +351,12 @@ class EditCrossexchangePage extends Component {
 
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bn']/* 'Channeling City (Optional)' */, 'details':this.props.app_state.loc['a311bo']/* 'If you\'ve set local channeling, you can restrict your post to a specific city.' */, 'size':'l'})}
@@ -361,6 +382,10 @@ class EditCrossexchangePage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_object_delisted_setting_tags_option_updated(tag_obj){
+        this.setState({get_object_delisted_setting_tags_option: tag_obj})
     }
 
     when_get_new_certificate_verification_tags_object_updated(tag_obj){
