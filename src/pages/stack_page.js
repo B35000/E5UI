@@ -12503,6 +12503,7 @@ class StackPage extends Component {
             obligation_count_end_time:t.obligation_count_end_time,
             public_contract_deadlines: t.public_contract_deadlines,
             accepted_obligation_types: this.process_ignored_obligation_types(t.ignored_obligation_types),
+            custom_account_weights: t.custom_account_weights,
         }/* try not to change this at all. even the order. */
         var string_data = await this.props.hash_data(JSON.stringify(hash_obj))
 

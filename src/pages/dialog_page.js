@@ -12809,6 +12809,7 @@ return data['data']
     render_view_voter_weight_information_data2(){
         const object = this.state.data['object']
         const default_voter_weight = object['ipfs'].default_voter_weight == 0 ? 1 : object['ipfs'].default_voter_weight;
+        const custom_account_weights = object['ipfs'].custom_account_weights || {}
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['c311do']/* Default Voter Weight. */, 'details':this.props.app_state.loc['3055mp']/* The default weight for each voter\'s vote in this poll. */, 'size':'l'})}
@@ -12833,6 +12834,17 @@ return data['data']
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055mt']/* 'Filter Exchanges...' */} when_text_input_field_changed={this.when_moved_exchanges_search_input_field_changed.bind(this)} text={this.state.moved_exchanges_search} theme={this.props.theme}/>
                 <div style={{ height:10 }}/>
                 {this.render_added_exchange_multiplier_values(object['ipfs'].tag_moved_token_amount_multiplier, object['ipfs'].tag_moved_token_amount_anchor_amount)}
+                {this.render_detail_item('0')} 
+
+                
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311ei']/* Custom Voter Weights. */, 'details':this.props.app_state.loc['c311en']/* The custom voter weight data is shown below. */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+                
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['c311eo']/* Filter By Account... */} when_text_input_field_changed={this.when_filter_custom_account_weight_input_field_changed.bind(this)} text={this.state.custom_account_weight} theme={this.props.theme}/>
+                <div style={{ height:10 }}/>
+
+                {this.render_custom_weights_values(custom_account_weights)}
             </div>
         )
     }
@@ -13014,6 +13026,54 @@ return data['data']
 
     when_moved_exchanges_search_input_field_changed(text){
         this.setState({moved_exchanges_search: text})
+    }
+
+    when_filter_custom_account_weight_input_field_changed(text){
+        this.setState({custom_account_weight: text})
+    }
+
+    render_custom_weights_values(custom_account_weights){
+        var items = Object.keys(custom_account_weights).filter((e5_id) => {
+            const filter_text = this.state.custom_account_weight.trim()
+            const id_data = this.get_data(e5_id)
+            return (filter_text == '' || id_data.id.startsWith(filter_text))
+        })
+        var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_custom_weight_item(item, this.state.custom_account_weights)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_custom_weight_item(item, custom_account_weights){
+        const data = this.get_data(item)
+        const title = data.id + this.get_sender_title_text2(data.id, data.e5)
+        const details = this.format_account_balance_figure(custom_account_weights[item])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'title_image': this.props.app_state.e5s[data.e5].e5_img})}
+            </div>
+        )
     }
 
 

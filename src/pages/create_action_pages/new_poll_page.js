@@ -97,7 +97,9 @@ class NewPollPage extends Component {
         obligation_count_start_time: (new Date((new Date().getFullYear() - 2), 0, 1).getTime()),
         obligation_count_end_time: (new Date((new Date().getFullYear() - 2), 11, 31, 23, 59, 59, 999).getTime()), max_voter_weight:1, default_voter_weight:1, tag_appearance:'', tag_appearance_multiplier_weight:0, tag_appearance_multiplier:{}, exchange_id2:'', token_multiplier:0, anchor_amount:0, tag_moved_token_amount_multiplier:{}, tag_moved_token_amount_anchor_amount:{}, 
 
-        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
+        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option(), 
+
+        custom_voter_weight:0, custom_account_weight:'', custom_account_weights:{}
     };
 
 
@@ -2515,6 +2517,9 @@ class NewPollPage extends Component {
         else if(target_type == 'viewer'){
             this.setState({viewer: item['id']})
         }
+        else if(target_type == 'custom_account_weight'){
+            this.setState({custom_account_weight: item['id']})
+        }
     }
 
 
@@ -3218,6 +3223,27 @@ class NewPollPage extends Component {
     render_voter_weights_parts2(){
         return(
             <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['c311ei']/* Custom Voter Weights. */, 'details':this.props.app_state.loc['c311ej']/* You may specify custom weights for votes cast by specific accounts. These weights will take precedence over all other weight settings. */, 'size':'l'})}
+                <div style={{ height:10 }}/>
+
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['c311ci']/* Alias or Account ID... */} when_text_input_field_changed={this.when_custom_account_weight_input_field_changed.bind(this)} text={this.state.custom_account_weight} theme={this.props.theme}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311em']/* You can specify multiple accounts at once separated by commas, eg ( E25:1002:30,E25:1204:44... ) */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {this.load_account_suggestions('custom_account_weight')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['c311ek']/* 'Custom Weight' */, 'subtitle':this.format_power_figure(this.state.custom_voter_weight), 'barwidth':this.calculate_bar_width(this.state.custom_voter_weight), 'number':this.format_account_balance_figure(this.state.custom_voter_weight), 'barcolor':'', 'relativepower':this.props.app_state.loc['c311dm']/* 'weight' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_custom_voter_weight.bind(this)} theme={this.props.theme} power_limit={63} pick_with_text_area={true} text_area_hint={'5'} />
+
+                <div style={{'padding':'5px'}} onClick={() => this.when_add_custom_voter_weight_data()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['c311el']/* Set Custom Weights. */, 'action':''})}
+                </div>
+
+                {this.render_custom_weights_values()}
+
+                {this.render_detail_item('0')} 
+
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['c311dq']/* Tag Appearance Multiplier. */, 'details':this.props.app_state.loc['c311dr']/* Set some multipliers that are applied to tags you\'re targeting. */, 'size':'l'})}
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['c311ds']/* Only the tags logged in the obligations under job, contractor and bag fulfiments will be applied here.*/, 'textsize':'11px', 'font':this.props.app_state.font})}
                 <div style={{ height:10 }}/>
@@ -3266,6 +3292,14 @@ class NewPollPage extends Component {
                 {this.render_added_exchange_multiplier_values()}
             </div>
         )
+    }
+
+    when_custom_account_weight_input_field_changed(text){
+        this.setState({custom_account_weight: text})
+    }
+
+    when_custom_voter_weight(number){
+        this.setState({custom_voter_weight: number})
     }
 
     when_typed_contract_account_input_field_changed(text){
@@ -3656,6 +3690,130 @@ class NewPollPage extends Component {
         else{
             return 63
         }
+    }
+
+
+    async when_add_custom_voter_weight_data(){
+        const typed_text = this.state.custom_account_weight.trim()
+        const custom_voter_weight = this.state.custom_voter_weight
+        if(typed_text.includes(',')){
+            this.add_multiple_voter_weights(typed_text)
+            return;
+        }
+        const participant_id = await this.get_typed_alias_id(typed_text)
+        const participant_e5 = isNaN(typed_text) ? await this.get_alias_e5(typed_text) : this.state.e5
+        const final_value = participant_e5+':'+participant_id
+        const custom_account_weights = structuredClone(this.state.custom_account_weights)
+        if(typed_text == ''){
+            this.props.notify(this.props.app_state.loc['c311cs']/* Type something */, 3600)
+        }
+        else if(isNaN(participant_id) || parseInt(participant_id) < 1000 || participant_id == ''){
+            this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
+        }
+        else{
+            custom_account_weights[final_value] = parseInt(custom_voter_weight)
+            this.setState({custom_account_weights: custom_account_weights, custom_account_weight:''});
+        }
+    }
+
+    add_multiple_voter_weights(data){
+        var entities = data.split(',')
+        var final_obj = []
+        var account_entries = 0
+        const custom_account_weights = structuredClone(this.state.custom_account_weights)
+        var custom_voter_weight = this.state.custom_voter_weight
+        entities.forEach(account_data => {
+            if(account_data != null && account_data != ''){
+                var data_point_array = account_data.split(':')
+                var e5 = ''
+                var account = ''
+                var weight = 0 
+                if(data_point_array.length == 3){
+                    e5 = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                    account = data_point_array[1].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                    weight = data_point_array[2].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                }
+                if(data_point_array.length == 2){
+                    e5 = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                    account = data_point_array[1].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                    weight = custom_voter_weight
+                }
+                else if(data_point_array.length == 1){
+                    e5 = this.state.e5
+                    account = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                    weight = custom_voter_weight
+                }
+                if(e5 != '' && account != '' && weight != ''){
+                    if(this.props.app_state.e5s['data'].includes(e5) && this.props.app_state.e5s[e5].active == true){
+                        if(!isNaN(account) && parseInt(account) < 10**16 && parseInt(weight) < 10**16){
+                            const final_value = e5+':'+parseInt(account)
+                            custom_account_weights[final_value] = parseInt(weight)
+                            account_entries++
+                        }
+                    }
+                }
+            }
+        });
+        if(account_entries == 0){
+            this.props.notify(this.props.app_state.loc['c311cn']/* 'No accounts added.' */, 1200)
+        }else{
+            this.setState({custom_account_weights: custom_account_weights, custom_account_weight:''});
+            this.props.notify(this.props.app_state.loc['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+        }
+    }
+
+
+
+    render_custom_weights_values(){
+        var items = Object.keys(this.state.custom_account_weights)
+        var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_custom_weight_item_clicked(item, index)}>
+                            {this.render_custom_weight_item(item, this.state.custom_account_weights)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_custom_weight_item(item, custom_account_weights){
+        const data = this.get_data(item)
+        const title = data.id + this.get_sender_title_text(data.id, data.e5)
+        const details = this.format_account_balance_figure(custom_account_weights[item])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'title_image': this.props.app_state.e5s[data.e5].e5_img})}
+            </div>
+        )
+    }
+
+    get_sender_title_text(account, e5){
+        const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[account] == null ? '' : ' • ' +bucket[account])
+        return alias
+    }
+
+    when_custom_weight_item_clicked(item){
+        const clone = structuredClone(this.state.custom_account_weights)
+        delete clone[item];
+        this.setState({custom_account_weights: clone});
     }
 
 
