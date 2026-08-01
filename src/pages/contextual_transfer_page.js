@@ -93,9 +93,7 @@ class ContextualTransferPage extends Component {
         const clone = this.state.itransfer_objects.slice()
         if(!this.does_object_exist(clone, itransfer_object)) clone.push(itransfer_object)
         const storage_object = {'transfers': clone}
-        this.props.set_local_storage_data_if_enabled("itransfer", JSON.stringify(storage_object, (key, value) =>
-            typeof value === 'bigint' ? value.toString() : value)
-        );
+        this.props.set_local_storage_data_if_enabled("itransfer", storage_object);
         this.setState({itransfer_objects: clone})
     }
 
@@ -1997,7 +1995,7 @@ class ContextualTransferPage extends Component {
 
         var trimmed = recipient_acc_ids.slice(-7)
         var obj = {'data':trimmed}
-        this.props.set_local_storage_data_if_enabled("transfer_data", JSON.stringify(obj));
+        this.props.set_local_storage_data_if_enabled("transfer_data", obj);
     }
 
     get_recipients_from_memory = async () => {

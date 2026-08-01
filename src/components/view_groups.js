@@ -963,6 +963,7 @@ class ViewGroups extends Component {
             var rowHeight = 45;
             var items = object_data == null ? [] :object_data['images'];
             var items_pos = object_data == null ? 0 : object_data['pos'];
+            var image_height = object_data == null ? 90 : object_data['height'];
 
             if(items.length == 0) return;
             return (
@@ -972,7 +973,7 @@ class ViewGroups extends Component {
                             {items.map((item, index) => (
                                 <motion.li key={'image'+index} initial={{ opacity: 0.7, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0.7, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => this.vibrate_device()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
                                     <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:'auto'}} onClick={() => this.when_image_clicked(items, index)}>
-                                        <img alt="" src={this.get_image_from_file(item)} style={{width:'auto', height:90, 'border-radius': '10px'}} />
+                                        <img alt="" src={this.get_image_from_file(item)} style={{width:'auto', height: image_height, 'border-radius': '10px'}} />
                                     </li>
                                 </motion.li>
                             ))}

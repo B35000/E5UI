@@ -757,6 +757,7 @@ class NewStorefrontItemPage extends Component {
 
     set_fulfilment_location_data = async () => {
         var fulfilment_locations = await this.props.get_local_storage_data_if_enabled("fulfilment");
+        console.log('fulfilment_locations', fulfilment_locations)
         if(fulfilment_locations != null && fulfilment_locations != ""){
             this.setState({fulfilment_locations_data: fulfilment_locations})
         }
@@ -764,13 +765,14 @@ class NewStorefrontItemPage extends Component {
 
     get_fulfilment_location_from_local_storage(){
         var fulfilment_locations = this.state.fulfilment_locations_data;
+
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
         }else{
             return []
         }
 
-        return fulfilment_locations['data']
+        return fulfilment_locations['data'] || []
     }
 
     when_suggestion_clicked = (item, pos) => {
@@ -1247,8 +1249,8 @@ class NewStorefrontItemPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                <div className="row">
+                    <div className="col-6">
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-6">
@@ -1274,7 +1276,7 @@ class NewStorefrontItemPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div ref={this.screen} style={{'padding':'0px 10px 0px 10px'}}>
+            <div ref={this.screen}>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['494']/* 'Set a title for your new Storefront Item' */})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['495']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
@@ -3310,6 +3312,8 @@ return data['data']
                     {this.render_purchase_options_parts()}
                     <div style={{height:20}}/>
                     {this.render_purchase_options_parts2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -3318,6 +3322,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6" >
                         {this.render_purchase_options_parts()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
                         {this.render_purchase_options_parts2()}
@@ -3331,7 +3337,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5" >
                         {this.render_purchase_options_parts()}
-                        
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
                         {this.render_purchase_options_parts2()}
@@ -5394,6 +5401,7 @@ return data['data']
 
 
     add_fulfilment_location_to_local_storage(){
+        // var fulfilment_locations = fulfilment_locations = {'data':[]}
         var fulfilment_locations = this.state.fulfilment_locations_data;
         if(fulfilment_locations != null && fulfilment_locations != ""){
             fulfilment_locations = JSON.parse(fulfilment_locations)
@@ -5407,7 +5415,7 @@ return data['data']
             fulfilment_locations['data'].push(obj)
         }
 
-        this.props.set_local_storage_data_if_enabled("fulfilment", JSON.stringify(fulfilment_locations));
+        this.props.set_local_storage_data_if_enabled("fulfilment", fulfilment_locations);
     }
 
     remove_fulfilment_location_from_local_storage(pos){
@@ -5419,7 +5427,7 @@ return data['data']
         }
         fulfilment_locations['data'].splice(pos, 1);
 
-        this.props.set_local_storage_data_if_enabled("fulfilment", JSON.stringify(fulfilment_locations));
+        this.props.set_local_storage_data_if_enabled("fulfilment", fulfilment_locations);
     }
 
     fulfilment_location_includes(array, item){

@@ -854,8 +854,8 @@ class NewJobPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                <div className="row">
+                    <div className="col-6">
                         {this.render_text_part()}
                         {this.render_entered_texts()}
                     </div>
@@ -908,7 +908,7 @@ class NewJobPage extends Component {
     render_text_part(){
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136'] : this.props.app_state.loc['137']
         return(
-            <div style={{'margin':'10px 0px 0px 10px'}}>
+            <div>
                 {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['278']})}
                 {this.render_detail_item('0')} */}
                 

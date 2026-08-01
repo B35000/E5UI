@@ -919,7 +919,7 @@ class QuickTransferPage extends Component {
 
         var trimmed = recipient_acc_ids.slice(-7)
         var obj = {'data':trimmed}
-        this.props.set_local_storage_data_if_enabled("transfer_data", JSON.stringify(obj));
+        this.props.set_local_storage_data_if_enabled("transfer_data", obj);
 
         const selected_item = this.get_selected_item(this.state.new_transfers_title_tags_object, 'e')
         if(selected_item == this.props.app_state.loc['3106p']/* quick-iTransfer */){
@@ -941,9 +941,7 @@ class QuickTransferPage extends Component {
         const clone = this.state.itransfer_objects.slice()
         if(!this.does_object_exist(clone, itransfer_object)) clone.push(itransfer_object)
         const storage_object = {'transfers': clone}
-        this.props.set_local_storage_data_if_enabled("itransfer", JSON.stringify(storage_object, (key, value) =>
-            typeof value === 'bigint' ? value.toString() : value)
-        );
+        this.props.set_local_storage_data_if_enabled("itransfer", storage_object);
         this.setState({itransfer_objects: clone})
     }
 

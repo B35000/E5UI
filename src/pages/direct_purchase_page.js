@@ -1119,7 +1119,7 @@ class DirectPurchasePage extends Component {
             fulfilment_locations['data'].push(obj)
         }
 
-        this.props.set_local_storage_data_if_enabled("fulfilment", JSON.stringify(fulfilment_locations));
+        this.props.set_local_storage_data_if_enabled("fulfilment", fulfilment_locations);
     }
 
     remove_fulfilment_location_from_local_storage(pos){
@@ -1131,7 +1131,7 @@ class DirectPurchasePage extends Component {
         }
         fulfilment_locations['data'].splice(pos, 1);
 
-        this.props.set_local_storage_data_if_enabled("fulfilment", JSON.stringify(fulfilment_locations));
+        this.props.set_local_storage_data_if_enabled("fulfilment", fulfilment_locations);
     }
 
     fulfilment_location_includes(array, item){

@@ -1018,7 +1018,7 @@ class TransferTokenPage extends Component {
 
         var trimmed = recipient_acc_ids.slice(-7)
         var obj = {'data':trimmed}
-        this.props.set_local_storage_data_if_enabled("transfer_data", JSON.stringify(obj));
+        this.props.set_local_storage_data_if_enabled("transfer_data", obj);
     }
 
     set_recipients_data = async () => {

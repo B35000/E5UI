@@ -3655,7 +3655,7 @@ class NewAudioPage extends Component {
             previously_used_channels['data'].push(obj)
         }
 
-        this.props.set_local_storage_data_if_enabled("creatorgroupsuggestions", JSON.stringify(previously_used_channels));
+        this.props.set_local_storage_data_if_enabled("creatorgroupsuggestions", previously_used_channels);
     }
 
     get_previously_used_channels(){
