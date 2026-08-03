@@ -5409,7 +5409,8 @@ class PostListSection extends Component {
             title = this.truncate(title, 35)
             var sender = this.get_senders_name(object['event'].returnValues.p5, object);
             
-            var variants_available = this.props.app_state.loc['2509j']/* $ variants available. */.replace('$', object['ipfs'].variants.length)
+            const object_views = this.get_object_views_text(object['e5_id'])
+            var variants_available = object_views != null ? (this.props.app_state.loc['2509j']/* $ variants */.replace('$', object['ipfs'].variants.length) +  ' • ' + object_views) : this.props.app_state.loc['2509j']/* $ variants */.replace('$', object['ipfs'].variants.length)
             var e5_img = this.props.app_state.e5s[object['e5']].e5_img
             return(
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '11px','padding':'9px 5px 9px 10px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
@@ -6540,7 +6541,9 @@ return data['data']
                 extra = extra+'🔏'
             }
             if(extra != '') extra = extra + ' '
-            var songs_available = this.props.app_state.loc['2509l']/* '$ songs available.' */.replace('$', object['ipfs'].songs.length)
+
+            const object_views = this.get_object_views_text(object['e5_id'])
+            var songs_available = /* object_views != null ? object_views :  */this.props.app_state.loc['2509l']/* '$ songs available.' */.replace('$', object['ipfs'].songs.length)
 
             var year = object['ipfs'] == null ? 'Audiopost' :object['ipfs'].entered_year_recorded_text
 
@@ -7124,7 +7127,9 @@ return data['data']
                 extra = extra+'🔏'
             }
             if(extra != '') extra = extra + ' '
-            var videos_available = this.props.app_state.loc['2509m']/* '$ videos available.' */.replace('$', object['ipfs'].videos.length)
+            
+            const object_views = this.get_object_views_text(object['e5_id'])
+            var videos_available = /* object_views != null ? object_views :  */this.props.app_state.loc['2509m']/* '$ videos available.' */.replace('$', object['ipfs'].videos.length)
 
             var listing_type = object['ipfs'] == null ? 'Videopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
 

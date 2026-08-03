@@ -874,6 +874,7 @@ class StageCreatorPayoutPage extends Component {
             payout_information: payout_information, 
             channel_obj: this.state.channel_obj,
             payout_transaction_data: payout_info,
+            batch_size
         }
 
         this.props.add_staging_result_transaction_to_stack(obj)

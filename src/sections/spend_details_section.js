@@ -1664,8 +1664,8 @@ class SpendDetailSection extends Component {
         var max_supply = this.get_circulating_supply(object) 
         var my_balance = object['balance'];
         if(my_balance == 0 || max_supply == 0) return 0
-        // var percentage = (my_balance * 100) / max_supply
-        var percentage = (bigInt(my_balance).multiply(100)).divide(max_supply)
+        var percentage = (my_balance * 100) / max_supply
+        // var percentage = (bigInt(my_balance).multiply(100)).divide(max_supply)
         return percentage.toFixed(4)
     }
 

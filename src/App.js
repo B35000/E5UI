@@ -585,7 +585,7 @@ import { makeSTXTokenTransfer, broadcastTransaction, getAddressFromPrivateKey, v
 import Arweave from 'arweave';
 import { getKeyFromMnemonic } from 'arweave-mnemonic-keys';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
-import { getFullnodeUrl, SuiClient } from '@mysten/sui/client';
+import { SuiGrpcClient } from '@mysten/sui/grpc';
 import { Transaction as SuiTransaction } from '@mysten/sui/transactions';
 import * as optimismSDK from "@eth-optimism/sdk";
 import * as filecoin_wallet from 'iso-filecoin/wallet'
@@ -9528,8 +9528,10 @@ class App extends Component {
   create_and_broadcast_sui_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
     const wallet = data['wallet']
     try{
-      const rpcUrl = getFullnodeUrl('mainnet');
-      const client = new SuiClient({ url: rpcUrl });
+      const client = new SuiGrpcClient({
+        network: 'mainnet',
+        baseUrl: 'https://fullnode.mainnet.sui.io:443',
+      })
       const tx = new SuiTransaction();
       const [coin] = tx.splitCoins(tx.gas, [parseInt(transfer_amount)]);
       tx.transferObjects([coin], recipient_address);
@@ -31877,8 +31879,10 @@ class App extends Component {
   }
 
   fetch_sui_balance = async (address) => {
-    const rpcUrl = getFullnodeUrl('mainnet');
-    const client = new SuiClient({ url: rpcUrl });
+    const client = new SuiGrpcClient({
+      network: 'mainnet',
+      baseUrl: 'https://fullnode.mainnet.sui.io:443',
+    })
     const balances = await client.getBalance({ owner: address, });
     return bigInt(balances.totalBalance)
   }

@@ -29,7 +29,7 @@
     "@iotexproject/iotex-address-ts": "^1.0.4",
     "@mui/material": "^6.4.12",
     "@mui/x-date-pickers": "^7.17.0",
-    "@mysten/sui": "^1.21.2",
+    "@mysten/sui": "^2.23.1",
     "@polkadot/api": "^15.10.2",
     "@polkadot/util-crypto": "^13.1.1",
     "@polkadot/wasm-crypto": "^7.3.2",

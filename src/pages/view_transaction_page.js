@@ -8104,14 +8104,15 @@ return data['data']
 
     render_stage_creator_payout_info(){
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var subscriptions = transaction_item.channel_obj['ipfs'].selected_creator_group_subscriptions
+        const channel_object = transaction_item.channel_obj
+        var subscriptions = channel_object['ipfs'].selected_creator_group_subscriptions
         const payout_information = transaction_item.payout_information
         const start_time = payout_information.start_time
         const end_time = payout_information.end_time
         const total_data_bytes_streamed = payout_information.total_data_bytes_streamed
         
         const total_payment_data_for_subscriptions = payout_information.total_payment_data_for_subscriptions
-
+        
         const formatted_size = this.format_data_size(total_data_bytes_streamed)
         const fs = formatted_size['size']+' '+formatted_size['unit']
         return(
@@ -8121,7 +8122,7 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1979m']/* 'Creator Payout.' */, 'details':this.props.app_state.loc['1979n']/* 'Below is the details for the stacked creator payout info to be staged.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_channel_object()}
+                {this.render_channel_object(channel_object)}
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['3075g']/* '$ subscriptions used.' */.replace('$', subscriptions.length)})}
@@ -8146,8 +8147,7 @@ return data['data']
         )
     }
 
-    render_channel_object(){
-        var object = this.state.channel_obj
+    render_channel_object(object){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_channel_item(object)
@@ -8241,9 +8241,9 @@ return data['data']
     render_subscription_item2(item, pos){
         var e5 = 'E'+item.split('E')[1]
         var id = item.split('E')[0]
-        var subscription_item = this.props.app_state.created_subscription_object_mapping[e5][id]
-        var e5_id = subscription_item['e5_id']
-        var details = this.truncate(subscription_item['ipfs'].entered_title_text, 17)
+        var subscription_item = this.props.app_state.created_subscription_object_mapping[e5] != null && this.props.app_state.created_subscription_object_mapping[e5][id] != null ? this.props.app_state.created_subscription_object_mapping[e5][id] : null
+        var e5_id = item
+        var details = subscription_item != null ? this.truncate(subscription_item['ipfs'].entered_title_text, 17) : this.props.app_state.loc['1979bb']/* Subscription. */
         if(this.state.selected_subscription_item == e5_id || (pos == 0 && this.state.selected_subscription_item == null)){
             return(
                 <div>
