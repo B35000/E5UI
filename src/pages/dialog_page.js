@@ -38,6 +38,9 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import DurationPicker from './../components/duration_picker';
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 const { getDomain } = require("tldjs");
@@ -129,7 +132,7 @@ class DialogPage extends Component {
 
         selected_conditions:[], get_include_exit_contract_after_finish_transaction_object:this.get_include_exit_contract_after_finish_transaction_object(),
 
-        restore_time: (Date.now()/1000) - (60*60),
+        restore_time: (Date.now()/1000) - (60*60), deductible_data:{}, deductible_amount:0
     };
 
 
@@ -758,6 +761,12 @@ class DialogPage extends Component {
         }
         else if(option == 'get_height_to_use_before_sync'){
             return this.view_get_height_to_sync_xmr_ui()
+        }
+        else if(option == 'show_fulfil_obligations_ui'){
+            return this.view_fulfil_obligations_ui()
+        }
+        else if(option == 'confirm_swap_ether_dialog'){
+            return this.view_confirm_swap_ether_ui()
         }
     }
 
@@ -6032,6 +6041,7 @@ return data['data']
     render_creator_payout_ui(){
         const object = this.state.data['object']
         const focused_item = this.state.data['item']
+        console.log('render_creator_payout_ui', 'focused_item', focused_item)
         const payout_information = focused_item['ipfs'].payout_information
         const payout_transaction_data = focused_item['ipfs'].payout_transaction_data
         const payout_subscriptions_used = focused_item['ipfs'].payout_subscriptions_used
@@ -6121,7 +6131,7 @@ return data['data']
     render_subscription_item2(item, pos){
         var e5 = 'E'+item.split('E')[1]
         var id = item.split('E')[0]
-        var subscription_item = this.props.app_state.created_subscription_object_mapping[e5][id]
+        var subscription_item = this.props.app_state.created_subscription_object_mapping[e5] != null && this.props.app_state.created_subscription_object_mapping[e5][id] != null ? this.props.app_state.created_subscription_object_mapping[e5][id] : null
         var e5_id = item
         var opacity = 0.7
         var details = '????';
@@ -6146,7 +6156,7 @@ return data['data']
     }
 
     render_total_subscription_payment_data_for_specific_subscription(total_payment_data_for_subscriptions, payout_subscriptions_used){
-        const default_subscription = payout_subscriptions_used.selected_creator_group_subscriptions[0]
+        const default_subscription = payout_subscriptions_used[0]
         const selected_subscription_e5_id = this.state.selected_subscription_item == null ? default_subscription : this.state.selected_subscription_item
         const specific_subscription_data = total_payment_data_for_subscriptions[selected_subscription_e5_id]
         if(specific_subscription_data == null || Object.keys(specific_subscription_data).length == 0){
@@ -6509,7 +6519,7 @@ return data['data']
     render_total_batch_transfers_and_my_balances(e5, payout_transaction_data){
         const selected_batch_id = this.state.selected_batch_item
         if(selected_batch_id != null){
-            const transfer_data = payout_transaction_data[e5][selected_batch_id]
+            const transfer_data = payout_transaction_data[selected_batch_id]
             const total_transfer_obj = {}
             transfer_data.forEach(transfer_object => {
                 if(total_transfer_obj[transfer_object['exchange']] == null){
@@ -12349,11 +12359,20 @@ return data['data']
         const time = item['time']
         const title = item['contract'] + ' • ' + this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */
         const details = ''+(new Date(time*1000).toLocaleString())
+        const year = item['year']
+        const deductible_data = item['deductible_data']
+        const fulfiler = item['fulfiler']
+        const fulfiler_text = fulfiler + this.get_sender_title_text2(fulfiler, item['e5'])
         return(
             <div>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
                 <div style={{height:10}}/>
-                {this.render_selected_payment_history_amounts(item['data'], e5)}
+                {this.render_detail_item('3', {'title':year, 'details':this.props.app_state.loc['3055rz']/* 'For the year' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':fulfiler_text, 'details':this.props.app_state.loc['3055sc']/* 'Fulfiler Account.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_selected_payment_history_amounts(item['obligation_amounts'], e5)}
+                {this.render_selected_payment_history_deductible_data(deductible_data, e5)}
             </div>
         )
     }
@@ -12373,6 +12392,28 @@ return data['data']
                 </div>
             </div>
         )
+    }
+
+    render_selected_payment_history_deductible_data(data, e5){
+        const exchanges = data != null ? Object.keys(data) : []
+        if(exchanges.length != 0){
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sa']/* 'Deductibles Applied.' */, 'details':this.props.app_state.loc['3055sb']/* 'The ammounts omitted as deductibles from the obligations.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                            {exchanges.map((item, index) => (
+                                <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(data[item]), 'barwidth':this.calculate_bar_width(data[item]), 'number':this.format_account_balance_figure(data[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )
+        }
     }
 
 
@@ -16717,6 +16758,818 @@ return data['data']
             this.props.begin_xmr_sync(time, coin)
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    view_fulfil_obligations_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div style={{}}>
+                    {this.render_object_obligations_parts()}
+                    {this.render_detail_item('0')}
+                    {this.render_object_obligations_parts2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6">
+                        {this.render_object_obligations_parts()}
+                    </div>
+                    <div className="col-6">
+                        {this.render_object_obligations_parts2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5">
+                        {this.render_object_obligations_parts()}
+                    </div>
+                    <div className="col-5">
+                        {this.render_object_obligations_parts2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_object_obligations_parts(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ll']/* 'Obligation History.' */, 'details':this.props.app_state.loc['1593lm']/* 'All the obligations you\'re set to fulfil in the preceding years.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_my_obligation_items()}
+
+                {this.render_detail_item('0')}
+
+                {this.is_object_workgroup() == true && (
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055rv']/* 'Deductible Amounts.' */, 'details':this.props.app_state.loc['3055rw']/* 'You may set deductible amounts that will be excluded in the final fulfilment amount.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+
+                        {this.render_exchanges_to_select()}
+                        
+                        {this.state.deductible_exchange != null && (
+                            <div>
+                                <div style={{height:10}}/>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':this.state.deductible_amount, 'relativepower':this.props.app_state.loc['1183']/* 'tokens' */})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1182']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.deductible_amount), 'barwidth':this.calculate_bar_width(this.state.deductible_amount), 'number':this.format_account_balance_figure(this.state.deductible_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1183']/* 'tokens' */, })}
+                                </div>
+                
+                                <NumberPicker clip_number={this.props.app_state.clip_number} ref={(el) => (this.amount_picker = el)} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_deductible_amount.bind(this)} theme={this.props.theme} power_limit={72} pick_with_text_area={true} text_area_hint={'1000'}
+                                />
+                
+                                <div style={{'padding': '5px'}} onClick={() => this.when_add_deductible_tapped()}>
+                                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055rx']/* Add Deductible' */, 'action':''})}
+                                </div>
+                            </div>
+                        )}
+                        <div style={{height:10}}/>
+                        {this.render_set_deductible_amounts_list_part()}
+                    </div>
+                )}
+                
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['1593ln']/* Fulfil preceding years obligations. */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.fulfil_obligations()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1593lo']/* Fulfil */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_deductible_amount(number){
+        this.setState({deductible_amount: number})
+    }
+
+    is_object_workgroup(){
+        const object = this.state.data['object']
+        const type = object['ipfs'].contract_type;
+        return type == 'workgroup'
+    }
+
+    render_object_obligations_parts2(){
+        const object = this.state.data['object']
+        const unsorted_fulfilment_data = this.props.app_state.accounts_fulfilled_obligation_data[object['id']] || [];
+        const fulfilment_data = this.sortByAttributeDescending(unsorted_fulfilment_data, 'time')
+        if(fulfilment_data.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593lx']/* 'Fulfilment history.' */, 'details':this.props.app_state.loc['1593lz']/* 'When you fulfil your obligations, the transactions will show here.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593lx']/* 'Fulfilment history.' */, 'details':this.props.app_state.loc['1593ly']/* 'Your fulfilment history in multiple public contracts.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {fulfilment_data.map((item, index) => (
+                    <div style={{'padding': '3px'}}>
+                        {this.render_fulfilment_data_item2(item)}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+
+    render_fulfilment_data_item2(item){
+        const time = item['time']
+        const title = item['contract'] + ' • ' + this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */
+        const details = ''+(new Date(time*1000).toLocaleString())
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_my_obligation_items(){
+        const total_amounts_handled_data = this.calculate_total_amount_handled2(this.props.app_state.user_obligation_data)
+        const each_type_number_entries = this.get_number_of_entries_for_each_type2(this.props.app_state.user_obligation_data)
+
+        return(
+            <div>
+                {this.render_years_and_entry_info2(total_amounts_handled_data)}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lk']/* 'Obligation Amounts.' */, 'details':this.props.app_state.loc['3055lm']/* 'The total amount set to be fulfilled by the account by the configured deadline.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_selected_year_paid_amounts2(total_amounts_handled_data)}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lo']/* 'Entry Distribution.' */, 'details':this.props.app_state.loc['3055lp']/* 'The distribution of the accounts obligation entries.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_each_type_entry_count2(each_type_number_entries)}
+            </div>
+        )
+    }
+
+    calculate_total_amount_handled2(user_obligation_data){
+        const object = this.state.data['object']
+        const my_account_id = object['id']
+        const totals_obj = {}
+        Object.keys(user_obligation_data).forEach(contract => {
+            if(contract.endsWith(object['e5'])){
+                const contract_data = user_obligation_data[contract] || {};
+                const accounts_data = contract_data[my_account_id.toString()] || {};
+                // console.log('calculate_total_amount_handled', 'accounts_data', accounts_data)
+                const entries = Object.keys(accounts_data)
+                entries.forEach(entry => {
+                    const entry_data = accounts_data[entry]
+                    // console.log('calculate_total_amount_handled', 'entry_data', entry_data)
+                    const contracts_promise = entry_data['contracts_promises']
+                    const time = entry_data['time']
+                    const year = new Date(time).getFullYear()
+                    if(totals_obj[year] == null){
+                        totals_obj[year] = {}
+                    }
+                    const transfers = contracts_promise['transfers']
+                    const proportions = contracts_promise['proportions']
+                    transfers.forEach(transfer => {
+                        const exchange = transfer['exchange']
+                        const amount = transfer['amount']
+                        if(totals_obj[year][exchange] == null){
+                            totals_obj[year][exchange] = bigInt(0)
+                        }
+                        let obligation_amount = bigInt(0)
+                        let active_amount = bigInt(0).plus(amount)
+                        proportions.forEach(proportion => {
+                            const obligation = bigInt(active_amount).multiply(proportion).divide('100e16')
+                            obligation_amount = bigInt(obligation_amount).plus(obligation)
+                            active_amount = bigInt(active_amount).minus(obligation)
+                        });
+                        totals_obj[year][exchange] = bigInt(totals_obj[year][exchange]).plus(obligation_amount)
+                    });
+                });
+            }
+                
+        });
+
+        return totals_obj
+    }
+
+    get_number_of_entries_for_each_type2(user_obligation_data){
+        const object = this.state.data['object']
+        const my_account_id = object['id']
+        const totals_obj = {}
+        Object.keys(user_obligation_data).forEach(contract => {
+            const contract_data = user_obligation_data[contract] || {};
+            const accounts_data = contract_data[my_account_id.toString()] || {};
+
+            const entries = Object.keys(accounts_data)
+            entries.forEach(entry => {
+                const entry_data = accounts_data[entry]
+                const time = entry_data['time']
+                const id = entry_data['id']
+                const year = new Date(time).getFullYear()
+                if(totals_obj[year] == null){
+                    totals_obj[year] = {}
+                }
+                if(totals_obj[year][id] == null){
+                    totals_obj[year][id] = 0
+                }
+                totals_obj[year][id]++;
+            })
+        })
+
+        return totals_obj;
+    }
+
+
+    render_years_and_entry_info2(total_amounts_handled_data){
+        const items = Object.keys(total_amounts_handled_data)
+        var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items2.map(() => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_year_item2(item, total_amounts_handled_data)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_year_item2(item, total_amounts_handled_data){
+        const title = item;
+        const years_entries = Object.keys(total_amounts_handled_data[item]).length
+        const details = this.props.app_state.loc['3055lj']/* '$ exchanges.' */.replace('$', years_entries)
+        return(
+            <div onClick={() => this.when_year_item_clicked2(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+                {this.render_line_if_selected4(item)}
+            </div>
+        )
+    }
+
+    render_line_if_selected4(item){
+        if(this.state.selected_obligation_year == item){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    when_year_item_clicked2(item){
+        this.setState({selected_obligation_year: item})
+    }
+
+
+    render_selected_year_paid_amounts2(total_amounts_handled_data){
+        const year = this.state.selected_obligation_year
+        const data = total_amounts_handled_data[year] || {}
+        const exchanges = Object.keys(data)
+        const e5 = this.props.app_state.selected_e5
+        if(exchanges.length == 0){
+            const item = '5';
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width(0), 'number':this.format_account_balance_figure(0), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {exchanges.map((item, index) => (
+                            <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(data[item]), 'barwidth':this.calculate_bar_width(data[item]), 'number':this.format_account_balance_figure(data[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+
+    render_each_type_entry_count2(each_type_number_entries){
+        const year = this.state.selected_obligation_year
+        const data = each_type_number_entries[year] || {}
+        const items = Object.keys(data)
+        var items2 = [0, 1]
+        if(items.length == 0){
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items2.map(() => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            ) 
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_type_entry_count_item2(item, data)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_type_entry_count_item2(item, data){
+        const title = item;
+        const details = this.props.app_state.loc['3055ln']/* '$ entries.' */.replace('$', data[item])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+
+    fulfil_obligations(){
+        const previous_year = new Date().getFullYear() - 1;
+        const total_amounts_handled_data = this.calculate_total_amount_handled_for_each_contract2(this.props.app_state.user_obligation_data, previous_year)
+        
+        if(total_amounts_handled_data.transfer_exists == false){
+            this.props.notify(this.props.app_state.loc['1593lp']/* 'Nothing to fulfil.' */, 2600);
+        }
+        else if(total_amounts_handled_data.invalid_transfer_exists == true){
+            this.props.notify(this.props.app_state.loc['3055ry']/* 'One of your deductibles exceeds its obligation.' */, 5600);
+        }
+        else{
+            const object = this.state.data['object']
+            const obj = {
+                id:makeid(8), type: this.props.app_state.loc['1593lq']/* 'fulfil-obligations' */,
+                entered_indexing_tags:[this.props.app_state.loc['1593lr']/* 'fulfil' */, this.props.app_state.loc['1593ls']/* 'obligation' */, this.props.app_state.loc['3068ah']/* 'payment' */],
+                e5:object['e5'], fulfilment_data: total_amounts_handled_data.totals_obj, year: previous_year, deductible_data: this.state.deductible_data, obligation_amounts: total_amounts_handled_data.obligation_amounts
+            }
+
+            this.props.add_fulfil_obligations_transaction_to_stack(obj)
+            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+        }
+    }
+
+    calculate_total_amount_handled_for_each_contract2(user_obligation_data, previous_year){
+        const object = this.state.data['object']
+        const my_account_id = object['id']
+        const totals_obj = {}
+        var transfer_exists = false;
+        Object.keys(user_obligation_data).forEach(contract => {
+            if(contract.endsWith(object['e5'])){
+                const contract_data = user_obligation_data[contract] || {};
+                const accounts_data = contract_data[my_account_id.toString()] || {};
+                const entries = Object.keys(accounts_data)
+                entries.forEach(entry => {
+                    const entry_data = accounts_data[entry]
+                    const contracts_promise = entry_data['contracts_promises']
+                    const time = entry_data['time']
+                    const year = new Date(time).getFullYear()
+                    if(year == previous_year){
+                        if(totals_obj[contract] == null){
+                            totals_obj[contract] = {}
+                        }
+                        const transfers = contracts_promise['transfers']
+                        const proportions = contracts_promise['proportions']
+                        transfers.forEach((transfer, index) => {
+                            const exchange = transfer['exchange']
+                            const amount = transfer['amount']
+                            if(totals_obj[contract][exchange] == null){
+                                totals_obj[contract][exchange] = bigInt(0)
+                            }
+                            let obligation_amount = bigInt(0)
+                            let active_amount = bigInt(0).plus(amount)
+                            proportions.forEach(proportion => {
+                                const extra_obligation_proportion = contracts_promise['progressive_proportions'] == null ? 0 : contracts_promise['progressive_proportions'][index][proportion]
+                                const final_proportion = bigInt(proportion).plus(extra_obligation_proportion)
+                                const obligation = bigInt(active_amount).multiply(final_proportion).divide('100e16')
+                                obligation_amount = bigInt(obligation_amount).plus(obligation)
+                                active_amount = bigInt(active_amount).minus(obligation)
+                            });
+                            totals_obj[contract][exchange] = bigInt(totals_obj[contract][exchange]).plus(obligation_amount)
+                            transfer_exists = true;
+                        });
+                    } 
+                });
+            } 
+        });
+
+        const obligation_amounts = structuredClone(totals_obj)
+        var invalid_transfer_exists = false
+        if(transfer_exists == true && Object.keys(this.state.deductible_data).length > 0){
+            //deductibles have been defined.
+            const keys = Object.keys(totals_obj)
+            const contract = keys[0]
+            const deductible_exchanges = Object.keys(this.state.deductible_data)
+            deductible_exchanges.forEach(exchange => {
+                totals_obj[contract][exchange] = bigInt(totals_obj[contract][exchange]).minus(deductible_exchanges[exchange])
+                if(bigInt(totals_obj[contract][exchange]).isNegative()){
+                    invalid_transfer_exists = true
+                }
+            });
+        }
+
+        return { totals_obj, transfer_exists, invalid_transfer_exists, obligation_amounts }
+    }
+
+
+
+    render_exchanges_to_select(){
+        const previous_year = new Date().getFullYear() - 1;
+        const total_amounts_handled_data = this.calculate_total_amount_handled_for_each_contract2(this.props.app_state.user_obligation_data, previous_year)
+        const totals_obj = total_amounts_handled_data.transfer_exists == true ? total_amounts_handled_data.totals_obj : {}
+        const keys = Object.keys(totals_obj)
+        if(keys.length == 0 || Object.keys(totals_obj[keys[0]]).length == 0){
+            const items2 = [1, 2, 3]
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items2.map(() => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        else{
+            const contract = keys[0]
+            const exchanges = Object.keys(totals_obj[keys[0]])
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {exchanges.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_exchange_item(item)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_exchange_item(item){
+        const object = this.state.data['object']
+        const e5 = this.state.data['e5']
+        const token_name = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item]
+        const token_symbol = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]
+        const token_image = this.props.app_state.token_name_thumbnail_directory[token_name]
+
+        return(
+            <div onClick={() => this.when_exchange_item_clicked(item)}>
+                {this.render_detail_item('14', {'title':token_symbol, 'details':token_name, 'size':'s', 'image':token_image, 'img_size':30})}
+                {this.render_line_if_selected3(item)}
+            </div>
+        )
+    }
+
+    render_line_if_selected3(item){
+        if(this.state.deductible_exchange == item){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    when_exchange_item_clicked(item){
+        this.setState({deductible_exchange: item})
+    }
+
+    when_add_deductible_tapped(){
+        const amount = this.state.deductible_amount
+        const deductible_exchange = this.state.deductible_exchange
+
+        if(amount == 0){
+            this.props.notify(this.props.app_state.loc['1186']/* 'Please put a valid amount.' */, 3600)
+        }else{
+            const clone = structuredClone(this.state.deductible_data)
+            clone[deductible_exchange] = amount
+            this.setState({deductible_data: clone})
+        }
+    }
+
+    render_set_deductible_amounts_list_part(){
+        var items = [].concat(Object.keys(this.state.deductible_data))
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(2)}    
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_deductible_amount_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%'}}>
+                                        <li style={{'padding': '5px'}}>
+                                            {this.render_transfer_item2(item)}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    render_transfer_item2(item){
+        const title = this.state.deductible_data[item] + ' '+ this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':title, 'textsize':'13px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+    when_deductible_amount_clicked(item){
+        const clone = structuredClone(this.state.deductible_data)
+        delete clone[item]
+        this.setState({deductible_data: clone})
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    view_confirm_swap_ether_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_swap_ether_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_swap_ether_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_swap_ether_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_confirm_swap_ether_data(){
+        const item = this.state.data['item']
+        const picked_amount = this.state.data['picked_amount']
+        const recipient_address = this.state.data['recipient_address']
+        const sender_address = this.state.data['sender_address']
+        const gas_price = this.state.data['gas_price']
+        const my_balance = this.state.data['my_balance']
+
+        const swap_target = this.state.data['swap_target']
+        const state_list = this.props.app_state.ether_data
+        const target_ether_object = state_list.filter((list_item) => {
+            return list_item['e5'] == swap_target
+        })[0]
+        const target_ether_name = target_ether_object['name']
+        const target_ether_symbol = target_ether_object['symbol']
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110g']/* 'Confirm Swap Action from $ to %' */.replace('$', item['name']).replace('%', target_ether_name), 'details':this.props.app_state.loc['3110h']/* 'Confirm the details for the swap action.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095d']/* 'Balance in $' */.replace('$', item['symbol'])}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance/10**18),
+                    'number':(my_balance/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':sender_address, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110i']/* 'Set amount to Swap.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount), 'number':this.format_account_balance_figure(picked_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount/10**18),
+                    'number':(picked_amount/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                </div>
+                
+                {this.render_detail_item('0')}
+
+                {this.props.app_state.checking_if_swap_pair_exists != true && this.render_swap_details_if_swap_is_available()}
+
+                {this.props.app_state.checking_if_swap_pair_exists == true && this.render_small_skeleton_object()}
+                
+                {this.props.app_state.checking_if_swap_pair_exists != true && this.state.swap_object != null && (
+                    <div onClick={()=>this.confirm_swap_ether()}>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3110j']/* 'Begin Swap.' */, 'action': ''})}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_swap_details_if_swap_is_available(){
+        const swap_object = this.state.swap_object;
+        if(swap_object == null){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3110m']/* '⚠️ Swap Unavailable.' */, 'details':this.props.app_state.loc['3110n']/* 'The pair you\'ve selected isnt available to swap right now.' */, 'size':'l'})}
+                </div>
+            )
+        }
+
+        const { requested_slippage, tool_name, tool_logo_link, amount_to_receive, approval_address, time_to_completion, fees, gas_estimate, gas_price } = swap_object;
+        
+        const swap_target = this.state.data['swap_target']
+        const state_list = this.props.app_state.ether_data
+        const target_ether_object = state_list.filter((list_item) => {
+            return list_item['e5'] == swap_target
+        })[0]
+        const target_ether_name = target_ether_object['name']
+        const target_ether_symbol = target_ether_object['symbol']
+        const slippage_text = (requested_slippage * 100)+'%'
+        const time_to_completion_text = this.get_time_diff(time_to_completion * 60)
+        const ether_item = this.state.data['item']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110x']/* 'Swap Quote.' */, 'details':this.props.app_state.loc['3110y']/* 'Confirm the quoted details below are acceptable for your swap action.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110o']/* 'Amount to Receive' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount_to_receive), 'number':this.format_account_balance_figure(amount_to_receive), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount_to_receive/10**18),
+                    'number':(amount_to_receive/10**18), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
+                </div>
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':slippage_text, 'details':this.props.app_state.loc['3110p']/* 'Swap Slippage' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':time_to_completion_text, 'details':this.props.app_state.loc['3110r']/* 'Time to Completion' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110q']/* 'Approval Address' */, 'details':approval_address, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110s']/* 'Swap Fees' */, 'details':this.props.app_state.loc['3110t']/* 'Below is a breakdown of the fees for the swap action.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {fees.map((item, index) => (
+                    <div>
+                        <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{item.name}</p>
+
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.amount), 'number':this.format_account_balance_figure(item.amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.amount/10**18),
+                            'number':(item.amount/10**18), 'barcolor':'#606060', 'relativepower':ether_item['symbol'], })}
+
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(item.percentage*100)+'%', 'number':(item.percentage*100)+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* proportion */, })}
+                        </div>
+                        {index <= fees.length-1 && (
+                            <div style={{height:10}}/>
+                        )}
+                    </div>
+                ))}
+
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110v']/* 'Gas Estimate and price in Gwei.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_estimate), 'number':this.format_account_balance_figure(gas_estimate), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1085']/* gas */, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_price/10**9),
+                    'number':(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                </div>
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('8', {'title':tool_name, 'details':this.props.app_state.loc['3110w']/* 'Swap Tool' */, 'image':tool_logo_link, 'size':'s'})}
+            </div>
+        )
+    }
+
+    confirm_swap_ether(){
+        const item = this.state.data['item']
+        const picked_amount = this.state.data['picked_amount']
+        const recipient_address = this.state.data['recipient_address']
+        const sender_address = this.state.data['sender_address']
+        const gas_price = this.state.data['gas_price']
+        const my_balance = this.state.data['my_balance']
+        const swap_target = this.state.data['swap_target']
+        const quote = this.state.quote
+        const client = this.state.client
+        const swap_object = this.state.swap_object
+        this.props.swap_ether_to_specified_target(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, quote, client, swap_object)
+    }
+
+
 
 
 

@@ -82,7 +82,7 @@ class ContractDetailsSection extends Component {
                 active: 'e',
             },
             'e': [
-                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2214d']/* 'participants' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */, this.props.app_state.loc['2214n']/* 'pre-purchases' */, this.props.app_state.loc['2214bj']/* 'prepurchase-requests 💳' */, this.props.app_state.loc['2214bq']/* 'obligation-configurations 🏛️' */], [1]
+                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2214d']/* 'participants' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */, this.props.app_state.loc['2214n']/* 'pre-purchases' */, this.props.app_state.loc['2214bj']/* 'prepurchase-requests 💳' */, this.props.app_state.loc['2214bq']/* 'obligation-configurations 🏛️' */, this.props.app_state.loc['2695n']/* 'obligations 🛡️' */], [1]
             ],
             'events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
@@ -295,6 +295,13 @@ class ContractDetailsSection extends Component {
                 return(
                     <div key={selected_item}>
                         {this.render_obligation_configuration_history_section(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == this.props.app_state.loc['2695n']/* 'obligations 🛡️' */){
+                return (
+                    <div key={selected_item}>
+                        {this.render_object_fulfilled_obligations_section(object)}
                     </div>
                 )
             }
@@ -576,6 +583,8 @@ class ContractDetailsSection extends Component {
                                     {index == 39 && this.render_force_exit_button(object)}
 
                                     {index == 40 && this.render_moderator_button(object)}
+
+                                    {index == 40 && this.render_fulfil_obligations(object)}
 
                                     {index == 41 && this.render_pin_contract_button(object)}
 
@@ -1053,6 +1062,28 @@ class ContractDetailsSection extends Component {
             )
         }
 
+    }
+
+    render_fulfil_obligations(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+
+        if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2695l']/* '🛡️ Fulfill Obligations.' */, 'details':this.props.app_state.loc['2695m']/* 'Fulfill any and all obligations made with this object for the preceding years.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_fulfil_obligations_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2665']/* 'Perform Action' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_fulfil_obligations_ui(object){
+        this.props.show_dialog_bottomsheet({'object':object}, 'show_fulfil_obligations_ui')
     }
 
     show_add_stake_button(object){
@@ -4010,6 +4041,73 @@ class ContractDetailsSection extends Component {
 
 
 
+
+
+
+    render_object_fulfilled_obligations_section(object){
+        var he = this.props.height-45
+        
+
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_object_fulfilment_history(object)}                    
+                </div>
+            </div>
+        )
+    }
+
+    render_object_fulfilment_history(object){
+        const fulfilment_data = this.get_fulfillment_data(object)
+        if(fulfilment_data.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593lx']/* 'Fulfilment history.' */, 'details':this.props.app_state.loc['1593lz']/* 'When you fulfil your obligations, the transactions will show here.' */, 'size':'l'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593lx']/* 'Fulfilment history.' */, 'details':this.props.app_state.loc['1593ly']/* 'Your fulfilment history in multiple public contracts.' */, 'size':'l'})}
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                {fulfilment_data.map((item, index) => (
+                    <div style={{'padding': '3px'}} onClick={() => this.when_fufilled_item_clicked(item)}>
+                        {this.render_fulfilment_data_item(item)}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    get_fulfillment_data(object){
+        const unsorted_fulfilment_data = this.props.app_state.accounts_fulfilled_obligation_data[object['id']] || [];
+        const fulfilment_data = this.sortByAttributeDescending(unsorted_fulfilment_data, 'time')
+        
+        const my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
+            return fulfilment_data
+        }
+        else{
+            return []
+        }
+    }
+
+    render_fulfilment_data_item(item){
+        const time = item['time']
+        const title = item['contract'] + ' • ' + this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */
+        const details = ''+(new Date(time*1000).toLocaleString())
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_fufilled_item_clicked(item){
+        this.props.show_dialog_bottomsheet({'item':item}, 'show_my_obligation_fulfilment_item')
+    }
 
 
 

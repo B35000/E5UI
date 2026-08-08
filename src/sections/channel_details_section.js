@@ -131,6 +131,8 @@ class ChannelDetailsSection extends Component {
             this.props.get_objects_messages(object['id'], object['e5'], object)
             this.props.get_channel_event_data(object['id'], object['e5'])
             this.props.get_current_channel_creator_payout_info_if_possible(object)
+            this.props.get_channel_creator_payout_stagings(object)
+            this.props.get_channel_payout_records(object)
             // this.props.get_moderator_event_data(object['id'], object['e5'])
         }
     }
@@ -1505,7 +1507,7 @@ class ChannelDetailsSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}}>
-                                <div key={index}>
+                                <div key={index} onClick={() => this.when_payout_item_clicked(item, object)}>
                                     {this.render_payout_result_item(item, object)}
                                 </div>
                             </li> 

@@ -1194,9 +1194,9 @@ class ViewGroups extends Component {
     }
 
     extract_leading_trailing_spaces(clean_text){
+        if(clean_text == null) return ['', ''];
         const letters = clean_text.split('')
         const leading_trailing_spaces = ['', '']
-        if(clean_text == null) return leading_trailing_spaces;
         
         var letter_hit = false
         letters.forEach(letter => {

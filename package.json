@@ -27,6 +27,8 @@
     "@iota/iota-sdk": "^1.15.0",
     "@iota/isc-sdk": "^0.2.8",
     "@iotexproject/iotex-address-ts": "^1.0.4",
+    "@lifi/sdk": "^4.3.0",
+    "@lifi/sdk-provider-ethereum": "^4.0.8",
     "@mui/material": "^6.4.12",
     "@mui/x-date-pickers": "^7.17.0",
     "@mysten/sui": "^2.23.1",

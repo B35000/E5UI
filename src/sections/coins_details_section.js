@@ -203,8 +203,8 @@ class CoinsDetailsSection extends Component {
             type = data['fee'] == null ? '...' : data['fee']['type']
         }
 
-        const symbol = item['symbol'] == '???' ? 'XMR' : item['symbol']
-        const supply_data = this.props.app_state.asset_supply_data[symbol.toLowerCase()]
+        const symbol = item['symbol']
+        const supply_data = this.props.app_state.asset_supply_data[symbol]
         const supply = supply_data == null ? null : parseInt(supply_data)
         const atomic_supply = supply_data == null ? null : bigInt(supply).multiply(item['conversion'])
 

@@ -106,7 +106,7 @@ class NewAudioPage extends Component {
         
         songs:[], edit_song_item_pos:-1,
 
-        entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', purchase_recipient:''+(this.props.app_state.user_account_id[this.props.app_state.selected_e5]),
+        entered_genre_text:'', entered_year_recorded_text:'',entered_author_text:'', entered_copyright_text:'',entered_comment_text:'', purchase_recipient:''+(this.props.app_state.user_account_id[this.props.app_state.selected_e5] != 1 ? (this.props.app_state.user_account_id[this.props.app_state.selected_e5]) : ''),
 
         album_art:null, audio_type: this.props.app_state.loc['a311ar']/* 'Album' */, entered_pdf_objects:[],
         markdown:'', get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), song_credits:'', entered_zip_objects:[],

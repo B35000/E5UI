@@ -5459,7 +5459,7 @@ class StackPage extends Component {
                 index_data_in_tags[1].push(new_transaction_index_obj[pushed_txs[i].id])
                 index_data_in_tags[2].push(35)
                 index_data_strings[0].push(identifier)
-                index_data_strings[1].push('')
+                index_data_strings[1].push(this.props.app_state.device_country)
             }
         }
 
@@ -6804,7 +6804,13 @@ class StackPage extends Component {
                     const contracts = Object.keys(fulfilment_data)
                     contracts.forEach(contract => {
                         const transaction_id = txs[i].id+contract
-                        ipfs_index_object[transaction_id] = fulfilment_data[contract]
+                        ipfs_index_object[transaction_id] = {
+                            'transactions': fulfilment_data[contract],
+                            'obligation_amounts': txs[i].obligation_amounts[contract] || fulfilment_data[contract],
+                            'year':txs[i].year,
+                            'deductible_data': txs[i].deductible_data,
+                            'fulfiller': this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+                        }
                         ipfs_index_array.push({'id':transaction_id, 'data':fulfilment_data[contract]})
                     });
                 }
@@ -7375,7 +7381,7 @@ class StackPage extends Component {
                         })
                     });
 
-                    const object_obligation_fulfiller = object['author'];
+                    const object_obligation_fulfiller = object['id'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -7436,7 +7442,7 @@ class StackPage extends Component {
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
                         if(authors_obligation_contracts.length > 0){
-                            const obligation_promise_data = { 
+                            const obligation_promise_data = {
                                 'id': this.props.app_state.loc['1']/* 'enter-contract' */, 
                                 'identifier':tx.id,
                                 'city':this.props.app_state.city,
@@ -7519,7 +7525,7 @@ class StackPage extends Component {
                         obligation_object['data'].push(obligation_promise_data)
                     }
                 }
-                else if(tx.type == this.props.app_state.loc['783']/* 'submit' */){   
+                else if(tx.type == this.props.app_state.loc['783']/* 'submit' */){
                     const object = tx.proposal_item
                     const proposal_config = object['data'][1]
                     if(proposal_config[0] == 0/* spend */){
@@ -7638,7 +7644,7 @@ class StackPage extends Component {
                         final_object_value_transfer_data.push({'exchange':exchange, 'amount':this.get_actual_number(bigInt(amount_data[index]).multiply(tx.time_units), depth_data[index])})
                     });
 
-                    const object_obligation_fulfiller = object['author'];
+                    const object_obligation_fulfiller = object['data'][1][2/* <2>can_cancel_subscription */] == 1 ? object['id'] : object['data'][1][6/* <6>subscription_beneficiary */]
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -7889,7 +7895,7 @@ class StackPage extends Component {
                             final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
                         });
                     }
-                    const object_obligation_fulfiller = object['author'];
+                    const object_obligation_fulfiller = object['ipfs'].target_receiver || object['author']
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -8082,8 +8088,7 @@ class StackPage extends Component {
                             final_object_value_transfer_data.push({'exchange':exchange, 'amount':this.get_actual_number(bigInt(amount_data[index]).multiply(time_unit), depth_data[index])})
                         });
 
-                        const object_obligation_fulfiller = object['author'];
-                        // await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
+                        const object_obligation_fulfiller = object['data'][1][2/* <2>can_cancel_subscription */] == 1 ? object['id'] : object['data'][1][6/* <6>subscription_beneficiary */];
                         const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
@@ -8132,7 +8137,7 @@ class StackPage extends Component {
                     amount_data.forEach(exchange => {
                         final_object_value_transfer_data.push({'exchange':exchange, 'amount':tx.exchange_amounts[exchange]})
                     });
-                    const object_obligation_fulfiller = object['author'];
+                    const object_obligation_fulfiller = object['ipfs'].purchase_recipient;
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -8181,7 +8186,7 @@ class StackPage extends Component {
                     amount_data.forEach(exchange => {
                         final_object_value_transfer_data.push({'exchange':exchange, 'amount':tx.exchange_amounts[exchange]})
                     });
-                    const object_obligation_fulfiller = object['author'];
+                    const object_obligation_fulfiller = object['ipfs'].purchase_recipient;
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -8230,7 +8235,9 @@ class StackPage extends Component {
                     amount_data.forEach(price_item => {
                         final_object_value_transfer_data.push({'exchange':price_item['exchange'], 'amount':price_item['amount']})
                     });
-                    const object_obligation_fulfiller = object['author'];
+                    const node_details = this.props.app_state.nitro_node_details[object['e5_id']]
+                    const purchase_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][this.props.app_state.selected_e5]
+                    const object_obligation_fulfiller = purchase_recipient;
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -8369,7 +8376,7 @@ class StackPage extends Component {
                 }
                 else if(tx.type == this.props.app_state.loc['2117p']/* 'creator-payout' */){
                     
-                    const object = tx.channel_obj
+                    const object = tx.channel_object
                     const amount_data = tx.payout_transfers_array
                     const isEthereumAddress = (input) => /^0x[a-fA-F0-9]{40}$/.test(input);
                     const receiver_accounts = []
@@ -8456,7 +8463,9 @@ class StackPage extends Component {
                             final_object_value_transfer_data.push({'exchange':tx.total_payments_with_recepients[item][exchange_item]['exchange'], 'amount':tx.total_payments_with_recepients[item][exchange_item]['amount']})
                         });
 
-                        const object_obligation_fulfiller = object['author'];
+                        const node_details = this.props.app_state.nitro_node_details[object['e5_id']]
+                        const purchase_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][this.props.app_state.selected_e5]
+                        const object_obligation_fulfiller = purchase_recipient || object['author'];
                         // await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                         const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -8515,7 +8524,7 @@ class StackPage extends Component {
                         });
                     }
                    
-                    const object_obligation_fulfiller = object['author'];
+                    const object_obligation_fulfiller = object['ipfs'].target_receiver ||object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -8568,7 +8577,7 @@ class StackPage extends Component {
                     shipping_price_data.forEach(price_item => {
                         final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
                     });
-                    const object_obligation_fulfiller = object['author'];
+                    const object_obligation_fulfiller = object['ipfs'].target_receiver ||object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -8613,7 +8622,7 @@ class StackPage extends Component {
                     
                     const object = tx.contract_object
                     const final_object_value_transfer_data = [{'exchange':'5', 'amount':tx.amount}]
-                    const object_obligation_fulfiller = object['author'];
+                    const object_obligation_fulfiller = object['id'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
@@ -23385,224 +23394,179 @@ class StackPage extends Component {
 
 
 
-    render_group_calls_ui(){
-        var size = this.props.size
-        if(size == 's'){
-            return(
-                <div style={{'width':'97%'}}>
-                    {this.render_group_calls_parts()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'width':'99%'}}>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_group_calls_parts()}
-                    </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
-                    </div>
-                </div>
+    // render_group_calls_ui(){
+    //     var size = this.props.size
+    //     if(size == 's'){
+    //         return(
+    //             <div style={{'width':'97%'}}>
+    //                 {this.render_group_calls_parts()}
+    //             </div>
+    //         )
+    //     }
+    //     else if(size == 'm'){
+    //         return(
+    //             <div className="row" style={{'width':'99%'}}>
+    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                     {this.render_group_calls_parts()}
+    //                 </div>
+    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                     {this.render_empty_views(3)}
+    //                 </div>
+    //             </div>
                 
-            )
-        }
-        else if(size == 'l'){
-            return(
-                <div className="row" style={{'width':'99%'}}>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_group_calls_parts()}
-                    </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
-                    </div>
-                </div>
+    //         )
+    //     }
+    //     else if(size == 'l'){
+    //         return(
+    //             <div className="row" style={{'width':'99%'}}>
+    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                     {this.render_group_calls_parts()}
+    //                 </div>
+    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                     {this.render_empty_views(3)}
+    //                 </div>
+    //             </div>
                 
-            )
-        }
-    }
+    //         )
+    //     }
+    // }
 
-    render_group_calls_parts(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ko']/* 'Enter Indexer Voice Calls' */, 'details':this.props.app_state.loc['1593kp']/* 'Start or enter an online voice call with someone or some people on E5. */, 'size':'l'})}
-                <div style={{height:10}}/>
-                {this.render_now_calling_message_if_any()}
-                <div className="row">
-                    <div className="col-6" style={{'padding': '0px 10px 0px 10px'}}>
-                        <div onClick={() => this.start_voice_call()}>
-                            {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kt']/* 'Start Call' */, 'action':''})}
-                        </div>
-                    </div>
-                    <div className="col-6" style={{'padding': '0px 10px 0px 10px'}}>
-                        <div onClick={() => this.enter_voice_call()}>
-                            {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kq']/* 'Enter Call' */, 'action':''})}
-                        </div>
-                    </div>
-                </div>
+    // render_group_calls_parts(){
+    //     return(
+    //         <div>
+    //             {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ko']/* 'Enter Indexer Voice Calls' */, 'details':this.props.app_state.loc['1593kp']/* 'Start or enter an online voice call with someone or some people on E5. */, 'size':'l'})}
+    //             <div style={{height:10}}/>
+    //             {this.render_now_calling_message_if_any()}
+    //             <div className="row">
+    //                 <div className="col-6" style={{'padding': '0px 10px 0px 10px'}}>
+    //                     <div onClick={() => this.start_voice_call()}>
+    //                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kt']/* 'Start Call' */, 'action':''})}
+    //                     </div>
+    //                 </div>
+    //                 <div className="col-6" style={{'padding': '0px 10px 0px 10px'}}>
+    //                     <div onClick={() => this.enter_voice_call()}>
+    //                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kq']/* 'Enter Call' */, 'action':''})}
+    //                     </div>
+    //                 </div>
+    //             </div>
 
-                {this.render_detail_item('0')}
-                {this.render_call_history()}
+    //             {this.render_detail_item('0')}
+    //             {this.render_call_history()}
                 
-            </div>
-        )
-    }
+    //         </div>
+    //     )
+    // }
 
-    start_voice_call(){
-        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
-            this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
-            return;
-        }
-        else if(this.props.app_state.current_call_password != null){
-            this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
-            return;
-        }
-        this.props.show_dialog_bottomsheet({}, 'start_voice_call')
-    }
+    // start_voice_call(){
+    //     if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+    //         this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+    //         return;
+    //     }
+    //     else if(this.props.app_state.current_call_password != null){
+    //         this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
+    //         return;
+    //     }
+    //     this.props.show_dialog_bottomsheet({}, 'start_voice_call')
+    // }
 
-    enter_voice_call(){
-        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
-            this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
-            return;
-        }
-        else if(this.props.app_state.current_call_password != null){
-            this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
-            return;
-        }
-        this.props.show_dialog_bottomsheet({}, 'enter_voice_call')
-    }
+    // enter_voice_call(){
+    //     if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+    //         this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+    //         return;
+    //     }
+    //     else if(this.props.app_state.current_call_password != null){
+    //         this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
+    //         return;
+    //     }
+    //     this.props.show_dialog_bottomsheet({}, 'enter_voice_call')
+    // }
 
-    render_call_history(){
-        var items = this.get_call_invites()
-        if(items.length == 0){
-            items = [0,1,2]
-            return(
-                <div style={{}}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ku']/* 'Invite History.' */, 'details':this.props.app_state.loc['1593kw']/* 'When someone invites you to a call, it will show here. */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    {items.map((item, index) => (
-                        <div style={{'padding': '2px 5px 2px 5px'}}>
-                            {this.props.app_state.pre_launch_fetch_loading == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
-                        </div>
-                    ))}
-                </div>
-            )
-        }else{
-            return(
-                <div style={{}}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ku']/* 'Invite History.' */, 'details':this.props.app_state.loc['1593kv']/* 'Youre call invites are shown below. */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <div style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <div>
-                                {this.render_invite_item(item)}
-                                <div style={{height:4}}/>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )
-        }
-    }
+    // render_call_history(){
+    //     var items = this.get_call_invites()
+    //     if(items.length == 0){
+    //         items = [0,1,2]
+    //         return(
+    //             <div style={{}}>
+    //                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ku']/* 'Invite History.' */, 'details':this.props.app_state.loc['1593kw']/* 'When someone invites you to a call, it will show here. */, 'size':'l'})}
+    //                 <div style={{height:10}}/>
+    //                 {items.map((item, index) => (
+    //                     <div style={{'padding': '2px 5px 2px 5px'}}>
+    //                         {this.props.app_state.pre_launch_fetch_loading == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+    //                     </div>
+    //                 ))}
+    //             </div>
+    //         )
+    //     }else{
+    //         return(
+    //             <div style={{}}>
+    //                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ku']/* 'Invite History.' */, 'details':this.props.app_state.loc['1593kv']/* 'Youre call invites are shown below. */, 'size':'l'})}
+    //                 <div style={{height:10}}/>
+    //                 <div style={{ 'padding': '0px 0px 0px 0px'}}>
+    //                     {items.map((item, index) => (
+    //                         <div>
+    //                             {this.render_invite_item(item)}
+    //                             <div style={{height:4}}/>
+    //                         </div>
+    //                     ))}
+    //                 </div>
+    //             </div>
+    //         )
+    //     }
+    // }
 
-    get_call_invites(){
-        const invites = Object.keys(this.props.app_state.call_invites)
-        const invite_objects = []
-        invites.forEach(item => {
-            invite_objects.push(this.props.app_state.call_invites[item])
-        });
-        return this.sortByAttributeDescending(invite_objects, 'time')
-    }
+    // get_call_invites(){
+    //     const invites = Object.keys(this.props.app_state.call_invites)
+    //     const invite_objects = []
+    //     invites.forEach(item => {
+    //         invite_objects.push(this.props.app_state.call_invites[item])
+    //     });
+    //     return this.sortByAttributeDescending(invite_objects, 'time')
+    // }
 
-    render_invite_item(item){
-        const formatted_call_id = (str) => {
-            if(str.startsWith('e')){
-                return str.slice(0, 4) + " " + str.slice(4, 8) + " " + str.slice(8, 12)+ " " + str.slice(12);
-            }else{
-                return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7, 11)+ " " + str.slice(11);
-            }
-        }
-        const data = item;
-        const participants_count = this.props.app_state.room_participants_count[data['call_id']] || 0
-        const footer = formatted_call_id(data['call_id']) + ' • ' + this.props.app_state.loc['1593kx']/* '$ participants' */.replace('$', number_with_commas(participants_count))
-        const title_image = this.props.app_state.e5s[data['sender_account_e5']].e5_img
-        const title = data['sender_account'] + this.get_sender_title_text2(data['sender_account'], data['sender_account_e5'])
-        const details = ''+(new Date(data['time']).toLocaleString()) + ', '+this.get_time_diff((Date.now()/1000) - (parseInt(data['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */
-        return(
-            <div onClick={() => this.enter_voice_call_from_list(data)}>
-                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'footer':footer, 'title_image':title_image})}
-            </div>
-        )
-    }
+    // render_invite_item(item){
+    //     const formatted_call_id = (str) => {
+    //         if(str.startsWith('e')){
+    //             return str.slice(0, 4) + " " + str.slice(4, 8) + " " + str.slice(8, 12)+ " " + str.slice(12);
+    //         }else{
+    //             return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7, 11)+ " " + str.slice(11);
+    //         }
+    //     }
+    //     const data = item;
+    //     const participants_count = this.props.app_state.room_participants_count[data['call_id']] || 0
+    //     const footer = formatted_call_id(data['call_id']) + ' • ' + this.props.app_state.loc['1593kx']/* '$ participants' */.replace('$', number_with_commas(participants_count))
+    //     const title_image = this.props.app_state.e5s[data['sender_account_e5']].e5_img
+    //     const title = data['sender_account'] + this.get_sender_title_text2(data['sender_account'], data['sender_account_e5'])
+    //     const details = ''+(new Date(data['time']).toLocaleString()) + ', '+this.get_time_diff((Date.now()/1000) - (parseInt(data['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */
+    //     return(
+    //         <div onClick={() => this.enter_voice_call_from_list(data)}>
+    //             {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'footer':footer, 'title_image':title_image})}
+    //         </div>
+    //     )
+    // }
 
-    get_sender_title_text2(account, e5){
-        if(account == this.props.app_state.user_account_id[e5]){
-            return ' • ' +this.props.app_state.loc['1694']/* 'You' */
-        }else{
-            const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
-            var alias = (bucket[account] == null ? ' • '+this.props.app_state.loc['2871']/* Alias Unknown. */ : ' • ' +bucket[account])
-            return alias
-        }
-    }
+    // get_sender_title_text2(account, e5){
+    //     if(account == this.props.app_state.user_account_id[e5]){
+    //         return ' • ' +this.props.app_state.loc['1694']/* 'You' */
+    //     }else{
+    //         const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+    //         var alias = (bucket[account] == null ? ' • '+this.props.app_state.loc['2871']/* Alias Unknown. */ : ' • ' +bucket[account])
+    //         return alias
+    //     }
+    // }
 
-    enter_voice_call_from_list(data){
-        if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
-            this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
-            return;
-        }
-        else if(this.props.app_state.current_call_password != null){
-            this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
-            return;
-        }
-        this.props.show_dialog_bottomsheet({'message':data}, 'enter_voice_call')
-    }
+    // enter_voice_call_from_list(data){
+    //     if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
+    //         this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
+    //         return;
+    //     }
+    //     else if(this.props.app_state.current_call_password != null){
+    //         this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
+    //         return;
+    //     }
+    //     this.props.show_dialog_bottomsheet({'message':data}, 'enter_voice_call')
+    // }
 
-    render_small_empty_object(){
-        return(
-            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                <div style={{'margin':'10px 20px 10px 0px'}}>
-                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                </div>
-            </div>
-        );
-    }
-
-    render_small_skeleton_object(){
-        const styles = {
-            container: {
-                position: 'relative',
-                width: '100%',
-                height: 60,
-                borderRadius: '15px',
-                overflow: 'hidden',
-            },
-            skeletonBox: {
-                width: '100%',
-                height: '100%',
-                borderRadius: '15px',
-            },
-            centerImage: {
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 'auto',
-                height: 30,
-                objectFit: 'contain',
-                opacity: 0.9,
-            },
-        };
-        return(
-            <div>
-                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
-                    <div style={styles.container}>
-                        <Skeleton style={styles.skeletonBox} />
-                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
-                    </div>
-                </SkeletonTheme>
-            </div>
-        )
-    }
+    
 
 
 
@@ -23697,7 +23661,7 @@ class StackPage extends Component {
     }
 
     when_fufilled_item_clicked(item){
-        this.show_dialog_bottomsheet({'item':item}, 'show_my_obligation_fulfilment_item')
+        this.props.show_dialog_bottomsheet({'item':item}, 'show_my_obligation_fulfilment_item')
     }
 
     render_fulfilment_data_item(item){
@@ -24014,6 +23978,52 @@ class StackPage extends Component {
 
 
 
+    render_small_empty_object(){
+        return(
+            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{'margin':'10px 20px 10px 0px'}}>
+                    <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
+                </div>
+            </div>
+        );
+    }
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
 
     get_all_sorted_objects(object){
         var all_objects = []

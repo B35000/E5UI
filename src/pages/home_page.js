@@ -5506,6 +5506,8 @@ class home_page extends Component {
             current_load_time={this.state.current_load_time} show_view_call_interface={this.props.show_view_call_interface.bind(this)} set_watched_account_id={this.props.set_watched_account_id.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} set_contextual_transfer_identifier={this.props.set_contextual_transfer_identifier.bind(this)}
 
             get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} viewed_items_data={this.state.viewed_items_data} page_search_data={this.state.page_search_data} set_page_objects_that_should_be_in_focus={this.props.set_page_objects_that_should_be_in_focus.bind(this)} perform_itransfer_search={this.props.perform_itransfer_search.bind(this)}
+
+            
             />
         )
     }
@@ -6560,6 +6562,12 @@ class home_page extends Component {
                 load_accounts_non_fungible_token_data={this.props.load_accounts_non_fungible_token_data.bind(this)} perform_fractionalized_certificate_search={this.perform_fractionalized_certificate_search.bind(this)} get_verified_certificate_data={this.props.get_verified_certificate_data.bind(this)}
 
                 get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)} show_bridge_coin_bottomsheet={this.props.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.props.refresh_wallet.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
+
+                get_channel_creator_payout_stagings={this.props.get_channel_creator_payout_stagings.bind(this)} get_channel_payout_records={this.props.get_channel_payout_records.bind(this)}
+                show_swap_ether_bottomsheet={this.props.show_swap_ether_bottomsheet.bind(this)}
+
+
+
                 />
             </div>
         )

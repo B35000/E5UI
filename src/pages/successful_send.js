@@ -107,6 +107,9 @@ class SuccessfulSend extends Component {
         else if(type == 'op2_bridge'){
             return this.op2_bridge_data()
         }
+        else if(type == 'lifi_swap'){
+            return this.lifi_swap_data()
+        }
     }
 
 
@@ -1333,7 +1336,7 @@ class SuccessfulSend extends Component {
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
                     'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
                 </div>
-                {this.render_detail_item('0')}
+                <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', parent_symbol)}</p>
@@ -1379,6 +1382,185 @@ class SuccessfulSend extends Component {
                     {this.render_detail_item('3',{'details':start_and_end(l1Hash), 'title':this.props.app_state.loc['3095o']/* 'Hash' */,'size':'l'})}
                 </div>
                 <div style={{height: 10}}/>
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+    lifi_swap_data(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_lifi_swap_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_lifi_swap_transaction_hash_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_lifi_swap_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_lifi_swap_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_lifi_swap_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_lifi_swap_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_lifi_swap_content(){
+        const data = this.state.data
+        const ether_item = data['source_item'] || data['item']
+        const e5 = ether_item['e5']
+
+        const swap_target = data['swap_target']
+        const state_list = this.props.app_state.ether_data
+        const target_ether_object = state_list.filter((list_item) => {
+            return list_item['e5'] == swap_target
+        })[0]
+        const target_ether_name = target_ether_object['name']
+        const target_ether_symbol = target_ether_object['symbol']
+
+        const amount = data['amount']
+        const final_amount = data['final_amount'] || 0
+        const recipient = data['recipient']
+        const sender = data['sender']
+        const target_balance = data['target_balance']
+        const source_balance = data['source_balance']
+
+        const { requested_slippage, tool_name, tool_logo_link, amount_to_receive, approval_address, time_to_completion, fees, gas_estimate, gas_price } = data['swap_object'];
+        const slippage_text = (requested_slippage * 100)+'%'
+        const time_to_completion_text = (new Date(data['completion_time'])).toLocaleString()
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110bb']/* Successful Swap Transaction.*/,'details':this.props.app_state.loc['3110bc']/* Your ether was successfully swapped from $ to % */.replace('$', ether_item['name']).replace('%', target_ether_name), 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':sender, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':recipient, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110bd']/* 'Swapped Amount.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
+                    'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':ether_item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110bi']/* 'Amount Received.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(final_amount), 'number':this.format_account_balance_figure(final_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(final_amount/10**18),
+                    'number':(final_amount/10**18), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
+                </div>
+                {this.render_detail_item('0')}
+
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', ether_item['symbol'])}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(source_balance), 'number':this.format_account_balance_figure(source_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(source_balance/10**18),
+                    'number':(source_balance/10**18), 'barcolor':'#606060', 'relativepower':ether_item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', target_ether_symbol)}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(target_balance), 'number':this.format_account_balance_figure(target_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(target_balance/10**18),
+                    'number':(target_balance/10**18), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('0')}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110q']/* 'Approval Address' */, 'details':approval_address, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':time_to_completion_text, 'details':this.props.app_state.loc['3110be']/* 'Completion Time.' */, 'size':'l'})}
+                
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110s']/* 'Swap Fees' */, 'details':this.props.app_state.loc['3110t']/* 'Below is a breakdown of the fees for the swap action.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {fees.map((item, index) => (
+                    <div>
+                        <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{item.name}</p>
+
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.amount), 'number':this.format_account_balance_figure(item.amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.amount/10**18),
+                            'number':(item.amount/10**18), 'barcolor':'#606060', 'relativepower':ether_item['symbol'], })}
+
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(item.percentage*100)+'%', 'number':(item.percentage*100)+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1881']/* proportion */, })}
+                        </div>
+                        {index <= fees.length-1 && (
+                            <div style={{height:10}}/>
+                        )}
+                    </div>
+                ))}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('8', {'title':tool_name, 'details':this.props.app_state.loc['3110w']/* 'Swap Tool' */, 'image':tool_logo_link, 'size':'s'})}
+            </div>
+        )
+    }
+
+    render_lifi_swap_transaction_hash_part(){
+        const data = this.state.data
+        const hash_data = data['hash_data']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110bf']/* 'Swap Action Hash Data' */, 'details':this.props.app_state.loc['3110bg']/* 'Below is the actions taken by lifi, as well as the generated hashes from the swap.' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                {hash_data.map((item, index) => (
+                    <div onClick={() => this.copy_to_clipboard(item.process_hash)}>
+                        {this.render_detail_item('3', {'title':item.process_type.toString(), 'details':item.process_hash, 'size':'l', 'footer':this.props.app_state.loc['3110bh']/* 'Status: $' */.replace('$', item.process_status.toString())})}
+                        <div style={{height:5}}/>
+                    </div>
+                ))}
             </div>
         )
     }

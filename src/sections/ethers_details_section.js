@@ -225,7 +225,7 @@ class EthersDetailsSection extends Component {
         var e5_transactions_per_ether = bigInt('1e18').divide(gas_price).divide(2_300_000)
         var gas_transactions_per_ether =  bigInt('1e18').divide(gas_price).divide(23_000)
 
-        const supply_data = this.props.app_state.asset_supply_data[item['symbol'].toLowerCase()]
+        const supply_data = this.props.app_state.asset_supply_data[item['symbol']]
         const supply = supply_data == null ? null : parseInt(supply_data)
         const atomic_supply = supply_data == null ? null : bigInt(supply).multiply('1e18')
 
@@ -414,6 +414,8 @@ class EthersDetailsSection extends Component {
 
                     {this.show_bridge_button(item)}
 
+                    {this.show_swap_ether_button(item)}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -538,6 +540,31 @@ class EthersDetailsSection extends Component {
 
 
 
+
+    show_swap_ether_button(item){
+        const external_swappers = this.props.app_state.e5s[item['e5']].external_swappers
+        if(external_swappers != null && external_swappers.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bc']/* '💱 Swap Ether' */, 'details':this.props.app_state.loc['2481bd']/* 'Convert your ether at current market exchange rates to another ether.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_swap_ether_page(item)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2481bh']/* 'Begin Swap' */, 'action': ''})}
+                    </div>
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    open_swap_ether_page(item){
+        if(!this.props.app_state.has_wallet_been_set){
+            this.props.open_wallet_guide_bottomsheet('action')
+        }else{
+            this.props.show_swap_ether_bottomsheet(item)
+        }
+    }
 
     show_bridge_button(item){
         if(this.props.app_state.e5s[item['e5']].bridge_enabled == true){
@@ -1517,6 +1544,9 @@ class EthersDetailsSection extends Component {
     }
 
     render_send_receipts_item(ipfs, ether_item){
+        if(ipfs['hash']['type'] == 'lifi_swap'){
+            return this.render_swap_item(ipfs, ether_item)
+        }
         const time = ipfs['time']/1000
         const my_address = this.props.app_state.accounts[ether_item['e5']].address
         const sender_or_recipient_account = ipfs['sender_address'] == my_address ? ipfs['recipient_address'] : ipfs['sender_address'];
@@ -1530,6 +1560,29 @@ class EthersDetailsSection extends Component {
         const base_unit_amount = ipfs['hash']['type'] == 'ether' ? convert_to_bigint(ipfs['hash']['tx'].value) : bigInt(ipfs['hash']['amount'])
         const decimal_amount = base_unit_amount / 10**18
         const sender_or_receiver = ipfs['recipient_address'] == my_address ? this.props.app_state.loc['2481c']/* 'From $, % ago.' */ : this.props.app_state.loc['2481e']/* 'To $, % ago.' */
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':sender_or_receiver.replace('$', start_and_end2(sender_or_recipient_account)).replace('%', this.get_time_diff((Date.now()/1000) - (parseInt(time)))), 'details':''+(new Date(time*1000).toLocaleString())+' • '+decimal_amount+' '+ipfs['ether_id']+' • '+this.format_account_balance_figure(base_unit_amount)+' wei', 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_swap_item(ipfs, ether_item){
+        const time = ipfs['time']/1000
+        const my_address = this.props.app_state.accounts[ether_item['e5']].address
+        const sender_or_recipient_account = ipfs['sender_address'] == my_address ? ipfs['recipient_address'] : ipfs['sender_address'];
+        const convert_to_bigint = (value) => {
+            if(value.includes('x')){
+                return bigInt(value.slice(2), 16)
+            }else{
+                return bigInt(value)
+            }
+        }
+        const amount = ipfs['hash']['final_amount'] || 0
+        const base_unit_amount = bigInt(amount)
+        const decimal_amount = base_unit_amount / 10**18
+        const sender_or_receiver = this.props.app_state.loc['2481bi']/* 'From $, % ago.' */
 
         return(
             <div>

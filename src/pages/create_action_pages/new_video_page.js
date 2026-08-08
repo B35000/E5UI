@@ -112,7 +112,7 @@ class NewVideoPage extends Component {
         album_art:null, video_type: this.props.app_state.loc['b311d']/* 'Video' */, entered_pdf_objects:[],
         markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
 
-        video_availability_timestamp:(Date.now()/1000), channel_search:'', purchase_recipient:'',
+        video_availability_timestamp:(Date.now()/1000), channel_search:'', purchase_recipient:''+(this.props.app_state.user_account_id[this.props.app_state.selected_e5] != 1 ? (this.props.app_state.user_account_id[this.props.app_state.selected_e5]) : ''),
 
         get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
     };
