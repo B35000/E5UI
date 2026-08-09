@@ -547,7 +547,9 @@ class EthersDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bc']/* '💱 Swap Ether' */, 'details':this.props.app_state.loc['2481bd']/* 'Convert your ether at current market exchange rates to another ether.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bc']/* '💱 Swap Ether' */, 'details':this.props.app_state.loc['2481bd']/* 'Convert your ether at current market exchange rates to another ether or coin.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_external_swappers(external_swappers)}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_swap_ether_page(item)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2481bh']/* 'Begin Swap' */, 'action': ''})}
@@ -558,11 +560,29 @@ class EthersDetailsSection extends Component {
         }
     }
 
+    render_external_swappers(external_swappers){
+        const swappers = {
+            'lifi': 'Li.Fi',
+            'changenow': 'ChangeNOW'
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {external_swappers.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('4', {'text':swappers[item], 'textsize':'12px', 'font':this.props.app_state.font})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
     open_swap_ether_page(item){
         if(!this.props.app_state.has_wallet_been_set){
             this.props.open_wallet_guide_bottomsheet('action')
         }else{
-            this.props.show_swap_ether_bottomsheet(item)
+            this.props.show_swap_ether_bottomsheet(item, 'ether')
         }
     }
 
@@ -1544,7 +1564,7 @@ class EthersDetailsSection extends Component {
     }
 
     render_send_receipts_item(ipfs, ether_item){
-        if(ipfs['hash']['type'] == 'lifi_swap'){
+        if(ipfs['hash']['type'] == 'lifi_swap' || ipfs['hash']['type'] == 'changenow_swap'){
             return this.render_swap_item(ipfs, ether_item)
         }
         const time = ipfs['time']/1000
@@ -1571,22 +1591,23 @@ class EthersDetailsSection extends Component {
     render_swap_item(ipfs, ether_item){
         const time = ipfs['time']/1000
         const my_address = this.props.app_state.accounts[ether_item['e5']].address
-        const sender_or_recipient_account = ipfs['sender_address'] == my_address ? ipfs['recipient_address'] : ipfs['sender_address'];
-        const convert_to_bigint = (value) => {
-            if(value.includes('x')){
-                return bigInt(value.slice(2), 16)
-            }else{
-                return bigInt(value)
-            }
-        }
+        const sender_or_recipient_account = ipfs['sender_address']
+
         const amount = ipfs['hash']['final_amount'] || 0
         const base_unit_amount = bigInt(amount)
-        const decimal_amount = base_unit_amount / 10**18
-        const sender_or_receiver = this.props.app_state.loc['2481bi']/* 'From $, % ago.' */
+        const received_amount_decimals = ipfs['hash']['received_amount_decimals'] || 18
+        const decimal_amount = base_unit_amount / 10**received_amount_decimals
 
+        const sender_or_receiver = this.props.app_state.loc['2481bi']/* 'From $, % ago.' */
+        const type = ipfs['hash']['type']
+        const message_object = {
+            'lifi_swap': this.props.app_state.loc['2927bo']/* 'exchanged via Li.Fi' */,
+            'changenow_swap': this.props.app_state.loc['2927bp']/* 'exchanged via ChangeNOW' */
+        }
+        const footer = message_object[ipfs['hash']['type']]
         return(
             <div>
-                {this.render_detail_item('3', {'title':sender_or_receiver.replace('$', start_and_end2(sender_or_recipient_account)).replace('%', this.get_time_diff((Date.now()/1000) - (parseInt(time)))), 'details':''+(new Date(time*1000).toLocaleString())+' • '+decimal_amount+' '+ipfs['ether_id']+' • '+this.format_account_balance_figure(base_unit_amount)+' wei', 'size':'l'})}
+                {this.render_detail_item('3', {'title':sender_or_receiver.replace('$', start_and_end2(sender_or_recipient_account)).replace('%', this.get_time_diff((Date.now()/1000) - (parseInt(time)))), 'details':''+(new Date(time*1000).toLocaleString())+' • '+decimal_amount+' '+ipfs['ether_id']+' • '+this.format_account_balance_figure(base_unit_amount)+' wei', 'size':'l', 'footer':footer})}
             </div>
         )
     }

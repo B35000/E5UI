@@ -110,6 +110,9 @@ class SuccessfulSend extends Component {
         else if(type == 'lifi_swap'){
             return this.lifi_swap_data()
         }
+        else if(type == 'changenow_swap'){
+            return this.changenow_swap_data()
+        }
     }
 
 
@@ -1566,6 +1569,171 @@ class SuccessfulSend extends Component {
     }
 
 
+
+
+
+
+
+
+    changenow_swap_data(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_changenow_swap_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_changenow_swap_transaction_hash_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_changenow_swap_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_changenow_swap_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_changenow_swap_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_changenow_swap_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_changenow_swap_content(){
+        const data = this.state.data
+        const source_item = data['source_item']
+        const target_item = data['item']
+        const source_type = data['source_type']
+        const source_base_unit_name = source_type == 'ether' ? 'wei' : source_item['base_units']
+
+        const target_ether_name = target_item['name']
+        const target_ether_symbol = target_item['symbol']
+        const target_base_units = data['target_base_units']
+
+        const amount = data['amount']
+        const final_amount = data['final_amount']
+        const recipient = data['recipient']
+        const sender = data['sender']
+        const target_balance = data['target_balance']
+        const source_balance = data['source_balance']
+
+        const source_decimal_count = data['source_decimal_count']
+        const received_amount_decimals = data['received_amount_decimals']
+
+        const time_to_completion_text = (new Date(data['completion_time'])).toLocaleString()
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110bb']/* Successful Swap Transaction.*/,'details':this.props.app_state.loc['3110cl']/* Your coin/ether was successfully swapped from $ to % */.replace('$', source_item['name']).replace('%', target_ether_name), 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':sender, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':recipient, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110i']/* 'Set amount to Swap.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':source_item['base_units'], })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**source_decimal_count),
+                    'number':(amount/10**source_decimal_count), 'barcolor':'#606060', 'relativepower':source_item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110bi']/* 'Amount Received.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(final_amount), 'number':this.format_account_balance_figure(final_amount), 'barcolor':'#606060', 'relativepower':target_base_units, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(final_amount/10**received_amount_decimals),
+                    'number':(final_amount/10**received_amount_decimals), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
+                </div>
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', source_item['symbol'])}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(source_balance), 'number':this.format_account_balance_figure(source_balance), 'barcolor':'#606060', 'relativepower':source_base_unit_name, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(source_balance/10**source_decimal_count),
+                    'number':(source_balance/10**source_decimal_count), 'barcolor':'#606060', 'relativepower':source_item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', target_ether_symbol)}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(target_balance), 'number':this.format_account_balance_figure(target_balance), 'barcolor':'#606060', 'relativepower':target_base_units, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(target_balance/10**received_amount_decimals),
+                    'number':(target_balance/10**received_amount_decimals), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('0')}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':time_to_completion_text, 'details':this.props.app_state.loc['3110be']/* 'Completion Time.' */, 'size':'l'})}
+            </div>
+        )
+    }
+
+    render_changenow_swap_transaction_hash_part(){
+        const data = this.state.data
+        const transaction_status = data['transaction_status']
+        const changenow_swap_object = data['changenow_swap_object']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110bf']/* 'Swap Action Hash Data' */, 'details':this.props.app_state.loc['3110co']/* 'The transaction Id, hashes and other information generated by ChangeNOW for the swap.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+
+                <div onClick={() => this.copy_to_clipboard(transaction_status.id)}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3110bu']/* 'ChangeNOW Transaction ID' */, 'details':transaction_status.id, 'size':'l'})}
+                </div>
+                <div style={{height:10}}/>
+                <div onClick={() => this.copy_to_clipboard(transaction_status.payinHash)}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3110cm']/* 'Payin Hash' */, 'details':transaction_status.payinHash, 'size':'l'})}
+                </div>
+                <div style={{height:10}}/>
+                <div onClick={() => this.copy_to_clipboard(transaction_status.payoutHash)}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3110cn']/* 'Payout Hash' */, 'details':transaction_status.payoutHash, 'size':'l'})}
+                </div>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':changenow_swap_object.flow, 'details':this.props.app_state.loc['3110bv']/* 'Flow' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':changenow_swap_object.type, 'details':this.props.app_state.loc['3110bx']/* 'Type' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':changenow_swap_object.payinAddress, 'details':this.props.app_state.loc['3110bw']/* 'Payin Address' */, 'size':'l'})}
+            </div>
+        )
+    }
 
 
 

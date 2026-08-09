@@ -763,6 +763,7 @@ import myWorker from './resources/encryptor_decryptor_worker';
 import notificationSound from './sounds/notification_sound_pop.mp3';
 import { Wallet, Provider, utils } from "zksync-ethers";
 import { EthBridger, getArbitrumNetwork, ParentTransactionReceipt, EthDepositMessageStatus } from "@arbitrum/sdk";
+import changenow_currencies from './resources/changenow_coins_trimmed';
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -1507,6 +1508,14 @@ class App extends Component {
     if(this.state != null && this.state.original_e5s_data != null){
       return this.state.original_e5s_data
     }
+    const get_changenow_object = (ether_name) => {
+      const filtered = changenow_currencies.filter((filter_item) => {
+        return filter_item['name'] == ether_name
+      })
+      if(filtered.length > 0){
+        return filtered[0]
+      }
+    }
     var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335', 'E1345', 'E1355', 'E1365', 'E1375', 'E1385', 'E1395']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
@@ -1515,7 +1524,7 @@ class App extends Component {
         token:'ETHT',
         e5_address:'0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82', 
         first_block:20, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:40_000, url:0, active:false, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
-        end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true, id: null,
+        end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true, id: null, changenow_object:null, external_swappers:[]
       },
       'E25':{
         web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link', 'https://0xrpc.io/etc'], 
@@ -1523,98 +1532,98 @@ class App extends Component {
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
         first_block:19151130, end_image:end25_image/* 'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4' */, spend_image:spend25_image/* 'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, 
         iteration:400_000, url:0, active:true, e5_img:E5_E25_image/* 'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu' */,
-        end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, masked_image:true, id: null, external_swappers:[]
+        end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, masked_image:true, id: null, external_swappers:['changenow'], changenow_object: get_changenow_object("Ethereum Classic")
       },
       'E35':{
         web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link', 'https://0xrpc.io/etc'],
         token:'ETC',
         e5_address:'0xEBDDD02c5106143B0DfB10513DeEc546F90c2152',
         first_block:24411397, end_image:end35_image, spend_image:spend35_image, ether_image:ethereum_classic_logo, iteration:400_000, url:0, active:true, e5_img:E5_E35_image,
-        end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, masked_image:false, id: null, external_swappers:[],
+        end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, masked_image:false, id: null, external_swappers:['changenow'],changenow_object: get_changenow_object("Ethereum Classic")
       },
       'E45':{
         web3:['https://api.harmony.one'],
         token:'ONE',
         e5_address:'', /* 0xC621A0305D1826AB1E24C7d78792035cD9204eD4 */
-        first_block:50166065, end_image:'https://nftstorage.link/ipfs/bafkreiehe7jgkkhkb6rwh6o3eirbi4hr6rvm256gxuxnpltbcjiymsnaji', spend_image:'https://nftstorage.link/ipfs/bafkreihyjmhty3kqxvicghsh2apwd4n2grvmhcadwuzfuqtpcm4c2h7jwm', ether_image:harmony_logo/* 'https://nftstorage.link/ipfs/bafkreidqivbjiabs2zcyj2qljx5u4wytvhoctjkq4kjrleuyxjrhz3xjl4' */, iteration:1_024/* this limit is horrible. bad blockchain. */, url:0, active:false, e5_img:null, id: ChainId.ONE, external_swappers:['lifi'],
+        first_block:50166065, end_image:'https://nftstorage.link/ipfs/bafkreiehe7jgkkhkb6rwh6o3eirbi4hr6rvm256gxuxnpltbcjiymsnaji', spend_image:'https://nftstorage.link/ipfs/bafkreihyjmhty3kqxvicghsh2apwd4n2grvmhcadwuzfuqtpcm4c2h7jwm', ether_image:harmony_logo/* 'https://nftstorage.link/ipfs/bafkreidqivbjiabs2zcyj2qljx5u4wytvhoctjkq4kjrleuyxjrhz3xjl4' */, iteration:1_024/* this limit is horrible. bad blockchain. */, url:0, active:false, e5_img:null, id: ChainId.ONE, external_swappers:['lifi', 'changenow'], changenow_object: get_changenow_object("Harmony")
       },
       'E55':{
         web3:['https://1rpc.io/celo', 'https://forno.celo.org'],
         token:'CELO',
         e5_address:'', /* 0xdfaE4E1a8447E560a0064fdB89D1919bF7cC0902 */
-        first_block:22528756, end_image:'https://nftstorage.link/ipfs/bafkreihciglctxpprbcf3xx7ykrzfxacfblvdtjnld7p4hfczsyy67aajy', spend_image:'https://nftstorage.link/ipfs/bafkreianjrpyl6xi7vz3aahnvqy6r3liysoc4sg5z742xlawip7if4qjsi', ether_image:celo_logo/* 'https://nftstorage.link/ipfs/bafkreidcfqahs3qwnte4do6di6gvcczfwu4bikwvkqlcrmaekheevohvce' */, iteration:40_000, url:1, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:22528756, end_image:'https://nftstorage.link/ipfs/bafkreihciglctxpprbcf3xx7ykrzfxacfblvdtjnld7p4hfczsyy67aajy', spend_image:'https://nftstorage.link/ipfs/bafkreianjrpyl6xi7vz3aahnvqy6r3liysoc4sg5z742xlawip7if4qjsi', ether_image:celo_logo/* 'https://nftstorage.link/ipfs/bafkreidcfqahs3qwnte4do6di6gvcczfwu4bikwvkqlcrmaekheevohvce' */, iteration:40_000, url:1, active:false, e5_img:null, id: null, external_swappers:['changenow'], changenow_object: get_changenow_object("Celo")
       },
       'E65':{
         web3:['https://rpc.au.cc/flare'],
         token:'FLR',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:15492557, end_image:'https://nftstorage.link/ipfs/bafkreibxgvjqeewxnpvlhbr7fdffjqpdlm46jgq46n4ph5ycntc4gkg3iu', spend_image:'https://nftstorage.link/ipfs/bafkreibi6jb4mv3lukllruf5byelbq2hbtnzksefixsf34dozga33urv34', ether_image:flare_logo/* 'https://nftstorage.link/ipfs/bafkreibcju2icekhorub6nhkvuwidz52s3kt5wxq5pivowqkchodczvsru' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.FLR, external_swappers:['lifi'],
+        first_block:15492557, end_image:'https://nftstorage.link/ipfs/bafkreibxgvjqeewxnpvlhbr7fdffjqpdlm46jgq46n4ph5ycntc4gkg3iu', spend_image:'https://nftstorage.link/ipfs/bafkreibi6jb4mv3lukllruf5byelbq2hbtnzksefixsf34dozga33urv34', ether_image:flare_logo/* 'https://nftstorage.link/ipfs/bafkreibcju2icekhorub6nhkvuwidz52s3kt5wxq5pivowqkchodczvsru' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.FLR, external_swappers:['lifi', 'changenow'], changenow_object: get_changenow_object("Flare")
       },
       'E75':{
         web3:['https://rpc.gnosischain.com'],
         token:'XDAI',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:31015240, end_image:'https://nftstorage.link/ipfs/bafkreibgr7powl4htuxigjxl6noyew6taomrmztiwnyo5kvytwxwvrg7xq', spend_image:'https://nftstorage.link/ipfs/bafkreifuqbzibz4efhnbkwllwo5qepsnacyhbcpmuxcfcacbyddyniocsm', ether_image:xdai_logo/* 'https://nftstorage.link/ipfs/bafkreiezzy66goly3tmsbxoknk43372eqnc5y6252n5jkxsyurp5ktfmhe' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.DAI, external_swappers:['lifi'],
+        first_block:31015240, end_image:'https://nftstorage.link/ipfs/bafkreibgr7powl4htuxigjxl6noyew6taomrmztiwnyo5kvytwxwvrg7xq', spend_image:'https://nftstorage.link/ipfs/bafkreifuqbzibz4efhnbkwllwo5qepsnacyhbcpmuxcfcacbyddyniocsm', ether_image:xdai_logo/* 'https://nftstorage.link/ipfs/bafkreiezzy66goly3tmsbxoknk43372eqnc5y6252n5jkxsyurp5ktfmhe' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.DAI, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E85':{
         web3:['https://rpc.fuse.io'],
         token:'FUSE',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:26508302, end_image:'https://nftstorage.link/ipfs/bafkreifokwa2355i6iaawawx2z2puyhpgi6o75ytayxbqqjoygj3xjb7pa', spend_image:'https://nftstorage.link/ipfs/bafkreictaiv2g4yfnuc4yfshi7ddtukcz7zbmqamii7eqptzre5edwiibi', ether_image:fuse_logo/* 'https://nftstorage.link/ipfs/bafkreibuk5w63v62cd34reirc4xm7ryvz56vlytls2gp5b3bkowhevsbxq' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.FUS, external_swappers:['lifi'],
+        first_block:26508302, end_image:'https://nftstorage.link/ipfs/bafkreifokwa2355i6iaawawx2z2puyhpgi6o75ytayxbqqjoygj3xjb7pa', spend_image:'https://nftstorage.link/ipfs/bafkreictaiv2g4yfnuc4yfshi7ddtukcz7zbmqamii7eqptzre5edwiibi', ether_image:fuse_logo/* 'https://nftstorage.link/ipfs/bafkreibuk5w63v62cd34reirc4xm7ryvz56vlytls2gp5b3bkowhevsbxq' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.FUS, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E95':{
         web3:['https://rpc.api.moonbeam.network'],
         token:'GLMR',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:4910897, end_image:'https://nftstorage.link/ipfs/bafkreie6krbxayljpkyl4tdyz554us6i4razp2a5b3wuu77h4prq2n7xju', spend_image:'https://nftstorage.link/ipfs/bafkreibf3jqav6igwprq4wzgf24xbzl6eq44lfjv7anbsd2ufirjjbwu5m', ether_image:moonbeam_logo, iteration:10_000, url:0, active:false, e5_img:null, id: ChainId.MOO, external_swappers:['lifi'],
+        first_block:4910897, end_image:'https://nftstorage.link/ipfs/bafkreie6krbxayljpkyl4tdyz554us6i4razp2a5b3wuu77h4prq2n7xju', spend_image:'https://nftstorage.link/ipfs/bafkreibf3jqav6igwprq4wzgf24xbzl6eq44lfjv7anbsd2ufirjjbwu5m', ether_image:moonbeam_logo, iteration:10_000, url:0, active:false, e5_img:null, id: ChainId.MOO, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E105':{
         web3:['https://rpc.api.moonriver.moonbeam.network', 'https://moonriver.unitedbloc.com:2000'],
         token:'MOVR',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:5587390, end_image:'https://nftstorage.link/ipfs/bafkreicfqe6oih24rzjc4vkqv6rmamoia6jshilwqhoc7b6qwvoxaftg74', spend_image:'https://nftstorage.link/ipfs/bafkreibhweqzoh2ntnfexepezpt2ktat3wemkc2egjcrliwasz3v2tzyga', ether_image:moonriver_logo, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.MOR, external_swappers:['lifi'],
+        first_block:5587390, end_image:'https://nftstorage.link/ipfs/bafkreicfqe6oih24rzjc4vkqv6rmamoia6jshilwqhoc7b6qwvoxaftg74', spend_image:'https://nftstorage.link/ipfs/bafkreibhweqzoh2ntnfexepezpt2ktat3wemkc2egjcrliwasz3v2tzyga', ether_image:moonriver_logo, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.MOR, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E115':{
         web3:['https://xdc.public-rpc.com'],
         token:'XDC',
         e5_address:'',/* 0xAf7e201B3424D0Cc43392C8Eae71FBdc983932Fb */
-        first_block:68418980, end_image:'https://nftstorage.link/ipfs/bafkreia4rnmraomzhv5ofx4bzp4l2chi4toderqyqkvct6q2vzpxgdtpai', spend_image:'https://nftstorage.link/ipfs/bafkreidxjjqn3muqycclxfddeqzaeboepw6yu3f424a3rwhiedt4tlga5a', ether_image:xdc_logo/* 'https://nftstorage.link/ipfs/bafkreidextl3x3rq4c26vxqwh7q5jjpv6bgcmutad257qyabe6zslxpevi' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.XDC, external_swappers:['lifi'],
+        first_block:68418980, end_image:'https://nftstorage.link/ipfs/bafkreia4rnmraomzhv5ofx4bzp4l2chi4toderqyqkvct6q2vzpxgdtpai', spend_image:'https://nftstorage.link/ipfs/bafkreidxjjqn3muqycclxfddeqzaeboepw6yu3f424a3rwhiedt4tlga5a', ether_image:xdc_logo/* 'https://nftstorage.link/ipfs/bafkreidextl3x3rq4c26vxqwh7q5jjpv6bgcmutad257qyabe6zslxpevi' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.XDC, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("XDC Network")
       },
       'E125':{
         web3:['https://polygon-bor-rpc.publicnode.com'],
         token:'POL',
         e5_address:'',/* 0x3D610010C43fC1Af89D8d040ED530398817A8E94 */
-        first_block:50258928, end_image:'https://nftstorage.link/ipfs/bafkreihldhuazp6fcbxqvzpl7zzr2zay4zuxnnnma44fg7u7lvydfzrv6y', spend_image:'https://nftstorage.link/ipfs/bafkreih4ctarqvngz5zjyahjlqppslmnpexfyjiso65ywyrepqnv5d7wtm', ether_image:polygon_logo/* 'https://nftstorage.link/ipfs/bafkreid3rpf2wbk4i6y6sd4zltdapek2i3dst5pxzfjy3kvn6iv56obfty' */, iteration:40_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.POL, external_swappers:['lifi'],
+        first_block:50258928, end_image:'https://nftstorage.link/ipfs/bafkreihldhuazp6fcbxqvzpl7zzr2zay4zuxnnnma44fg7u7lvydfzrv6y', spend_image:'https://nftstorage.link/ipfs/bafkreih4ctarqvngz5zjyahjlqppslmnpexfyjiso65ywyrepqnv5d7wtm', ether_image:polygon_logo/* 'https://nftstorage.link/ipfs/bafkreid3rpf2wbk4i6y6sd4zltdapek2i3dst5pxzfjy3kvn6iv56obfty' */, iteration:40_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.POL, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Polygon (Matic Mainnet)")
       },
       'E135':{
         web3:['https://bsc-rpc.publicnode.com'],
         token:'BNB',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:33723227, end_image:'https://nftstorage.link/ipfs/bafkreif4lbsuzzhu23piwbdv3p47ha46g6egmoh7pddrex6f3tbl76ycii', spend_image:'https://nftstorage.link/ipfs/bafkreigvlzjjujid2f3n7zzfw4jzmwowaq2mvd35d32rauedberpnjl6vq', ether_image:binance_logo/* 'https://nftstorage.link/ipfs/bafkreibsa7mds2mc75oyalixvrycvcn6grk625paucy7ol3sifdz42ew5e' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.BSC, external_swappers:['lifi'],
+        first_block:33723227, end_image:'https://nftstorage.link/ipfs/bafkreif4lbsuzzhu23piwbdv3p47ha46g6egmoh7pddrex6f3tbl76ycii', spend_image:'https://nftstorage.link/ipfs/bafkreigvlzjjujid2f3n7zzfw4jzmwowaq2mvd35d32rauedberpnjl6vq', ether_image:binance_logo/* 'https://nftstorage.link/ipfs/bafkreibsa7mds2mc75oyalixvrycvcn6grk625paucy7ol3sifdz42ew5e' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.BSC, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("BNB Smart Chain")
       },
       'E145':{
         web3:['https://evm-rpc.sei-apis.com'],
         token:'SEI',
         e5_address:'',/*  */
-        first_block:0, end_image:null, spend_image:null, ether_image:sei_logo, iteration:10_000, url:0	, active:false, e5_img:null, id: ChainId.SEI, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:sei_logo, iteration:10_000, url:0	, active:false, e5_img:null, id: ChainId.SEI, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Sei")
       },
       'E155':{
         web3:['https://mainnet-rpc.thundercore.io'],
         token:'TT',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:148816985, end_image:'https://nftstorage.link/ipfs/bafkreihcc4bnygb42rlpib2uev7cbduintrvf72jqf4yzosfoz65s6x7bq', spend_image:'https://nftstorage.link/ipfs/bafkreicxhgrbre7cta2jn5i7sm4lzdige3wiqa3pdpegu7kla5v6g66c74', ether_image:thundercore_logo/* 'https://nftstorage.link/ipfs/bafkreidw4ngkifzyei6dekjjfnpkhwodubkwe2eodrq3yvijeai3sqk74i' */, iteration:40_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:148816985, end_image:'https://nftstorage.link/ipfs/bafkreihcc4bnygb42rlpib2uev7cbduintrvf72jqf4yzosfoz65s6x7bq', spend_image:'https://nftstorage.link/ipfs/bafkreicxhgrbre7cta2jn5i7sm4lzdige3wiqa3pdpegu7kla5v6g66c74', ether_image:thundercore_logo/* 'https://nftstorage.link/ipfs/bafkreidw4ngkifzyei6dekjjfnpkhwodubkwe2eodrq3yvijeai3sqk74i' */, iteration:40_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E165':{
         web3:['https://viction.drpc.org'],
         token:'VIC',
         e5_address:'',/* 0xd3B4c06c7514a72284fCe95DCAD911c8EaD9Be3F */
-        first_block:73021490, end_image:'https://nftstorage.link/ipfs/bafkreifgogs44o7da3acci3uc2oqv5oxmsmegw437w2zif655ifxtkkr7a', spend_image:'https://nftstorage.link/ipfs/bafkreiht6b53kzxpwomvq7kmrqseav3rwxgrbeovw6zlqhxc4tccylav4u', ether_image:viction_logo/* 'https://nftstorage.link/ipfs/bafkreiaovtind2gl7fguqisxsdlqp2agxr7xe2t3dehietmhygwcx3dcny' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.VIC, external_swappers:['lifi'],
+        first_block:73021490, end_image:'https://nftstorage.link/ipfs/bafkreifgogs44o7da3acci3uc2oqv5oxmsmegw437w2zif655ifxtkkr7a', spend_image:'https://nftstorage.link/ipfs/bafkreiht6b53kzxpwomvq7kmrqseav3rwxgrbeovw6zlqhxc4tccylav4u', ether_image:viction_logo/* 'https://nftstorage.link/ipfs/bafkreiaovtind2gl7fguqisxsdlqp2agxr7xe2t3dehietmhygwcx3dcny' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.VIC, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E175':{
         web3:['https://rpc.plasma.to'],
         token:'XPL',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: plasma_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.PLA, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image: plasma_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.PLA, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
 
 
@@ -1625,752 +1634,746 @@ class App extends Component {
 
 
       
-      'E5':{
-        web3:[''],
-        token:'',
-        e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreibsa7mds2mc75oyalixvrycvcn6grk625paucy7ol3sifdz42ew5e', iteration:3_000, url:0, active:false, e5_img:null
-      },
 
       'E185':{
         web3:['https://ethereum-rpc.publicnode.com'],
         token:'ETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:ethereum_logo/* 'https://nftstorage.link/ipfs/bafkreifhlwgbspcfrn2kbu25nevksegskhbns7aesdr6kwy6ikqct7lp7e' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.ETH,external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:ethereum_logo/* 'https://nftstorage.link/ipfs/bafkreifhlwgbspcfrn2kbu25nevksegskhbns7aesdr6kwy6ikqct7lp7e' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.ETH,external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum")
       },
       'E195':{
         web3:['https://optimism-rpc.publicnode.com'],
         token:'OETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:optimism_logo/* 'https://nftstorage.link/ipfs/bafkreies5rawvabvmzovxqesuor3a43wqmgnec7y7yzlberkwqvicehdse' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185', id: ChainId.OPT, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:optimism_logo/* 'https://nftstorage.link/ipfs/bafkreies5rawvabvmzovxqesuor3a43wqmgnec7y7yzlberkwqvicehdse' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185', id: ChainId.OPT, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum (Optimism)")
       },
       'E205':{
         web3:['https://base-rpc.publicnode.com'],
         token:'BETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:base_logo/* 'https://nftstorage.link/ipfs/bafkreicwdtpk4fjjh6zmbrreafp7yuuehagxc5iso5iaggezwu2edsrmj4' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185', id: ChainId.BAS, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:base_logo/* 'https://nftstorage.link/ipfs/bafkreicwdtpk4fjjh6zmbrreafp7yuuehagxc5iso5iaggezwu2edsrmj4' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185', id: ChainId.BAS, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum (Base)")
       },
       'E215':{
         web3:['https://arbitrum-one-rpc.publicnode.com'],
         token:'AETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:arbitrum_logo/* 'https://nftstorage.link/ipfs/bafkreia5kfqglxtwiyrm7fw4ydrr4dwyrwftxrs6gvksxss7s5wjvc2ndm' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'ar', bridge_enabled: true, parent: 'E185', id: ChainId.ARB, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:arbitrum_logo/* 'https://nftstorage.link/ipfs/bafkreia5kfqglxtwiyrm7fw4ydrr4dwyrwftxrs6gvksxss7s5wjvc2ndm' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'ar', bridge_enabled: true, parent: 'E185', id: ChainId.ARB, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum (Arbitrum)")
       },
       'E225':{
         web3:['https://astar-rpc.dwellir.com'],
         token:'ASTR',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:astar_logo/* 'https://nftstorage.link/ipfs/bafkreihq22vobhmkdlrrxv3nei6b757u6acklwsnjcmn6pwpwkh76s7azy' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:astar_logo/* 'https://nftstorage.link/ipfs/bafkreihq22vobhmkdlrrxv3nei6b757u6acklwsnjcmn6pwpwkh76s7azy' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E235':{
         web3:['https://cronos-evm.publicnode.com'],
         token:'CRO',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:cronos_logo/* 'https://nftstorage.link/ipfs/bafkreib7cta7pbzjgd6ys2rxxt7plf6ool4n7xxrndqd5zw6bkqmecablq' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.CRO, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:cronos_logo/* 'https://nftstorage.link/ipfs/bafkreib7cta7pbzjgd6ys2rxxt7plf6ool4n7xxrndqd5zw6bkqmecablq' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.CRO, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Cronos (EVM)")
       },
       'E245':{
         web3:['https://evm.kava.io'],
         token:'KAVA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:kava_logo/* 'https://nftstorage.link/ipfs/bafkreieeiyg42q6sb2jk5qz47alefcfc72wyxtkhdhzxqycqroixbt6kke' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:kava_logo/* 'https://nftstorage.link/ipfs/bafkreieeiyg42q6sb2jk5qz47alefcfc72wyxtkhdhzxqycqroixbt6kke' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:['changenow'],changenow_object: get_changenow_object("Kava")
       },
       'E255':{
         web3:['https://neon-proxy-mainnet.solana.p2p.org'],
         token:'NEON',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:neon_logo/* 'https://nftstorage.link/ipfs/bafkreicezjbxf47t7n6welb63atcx4v7jnl36tfbddmpxiu4ajzi2vmad4' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:neon_logo/* 'https://nftstorage.link/ipfs/bafkreicezjbxf47t7n6welb63atcx4v7jnl36tfbddmpxiu4ajzi2vmad4' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E265':{
         web3:['https://rpc-mainnet-cardano-evm.c1.milkomeda.com'],
         token:'mADA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'milkomeda_logo'/* 'https://nftstorage.link/ipfs/bafkreiauduj7d7lhlbiac2y2i6fr5mz3xky2h4jvqjgyxgco4wrfu244oi' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'milkomeda_logo'/* 'https://nftstorage.link/ipfs/bafkreiauduj7d7lhlbiac2y2i6fr5mz3xky2h4jvqjgyxgco4wrfu244oi' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E275':{
         web3:['https://fantom-mainnet.public.blastapi.io'],
         token:'FTM',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'fantom_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'fantom_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E285':{
         web3:['https://flux-rpc2.brisescan.com'],
         token:'BRISE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'brise_logo'/* 'https://nftstorage.link/ipfs/bafkreihqobs4apgub5767t2y5hkn5idhwmxhiwtjkwxhfu566w7l6wt2ym' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'brise_logo'/* 'https://nftstorage.link/ipfs/bafkreihqobs4apgub5767t2y5hkn5idhwmxhiwtjkwxhfu566w7l6wt2ym' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E295':{
         web3:['https://syscoin.public-rpc.com'],
         token:'SYS',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'syscoin_logo'/* 'https://nftstorage.link/ipfs/bafkreibmwawsdkh5tgdcotewbdunarzapcb2qmh6eoo5ynbojy6kkwyaky' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'syscoin_logo'/* 'https://nftstorage.link/ipfs/bafkreibmwawsdkh5tgdcotewbdunarzapcb2qmh6eoo5ynbojy6kkwyaky' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E305':{
         web3:['https://avalanche.drpc.org'],
         token:'AVAX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:avalanche_logo/* 'https://nftstorage.link/ipfs/bafkreiazy7wgqjb3w6owts3xixp527kxdb6mohcrt3rkvvomsvk3rqep4e' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.AVA, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:avalanche_logo/* 'https://nftstorage.link/ipfs/bafkreiazy7wgqjb3w6owts3xixp527kxdb6mohcrt3rkvvomsvk3rqep4e' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.AVA, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Avalanche (C-Chain)")
       },
       'E315':{
         web3:['https://rpc-mainnet.findora.org'],
         token:'FRA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'findora_logo'/* 'https://nftstorage.link/ipfs/bafkreiahfewosrjnjrsw22p54go7d5wqu7kghzvqufnzueaxl3trvzn52u' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'findora_logo'/* 'https://nftstorage.link/ipfs/bafkreiahfewosrjnjrsw22p54go7d5wqu7kghzvqufnzueaxl3trvzn52u' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E325':{
         web3:['https://bellecour.iex.ec'],
         token:'xRLC',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'iexec_logo'/* 'https://nftstorage.link/ipfs/bafkreiggejzqvra2hzwdtr42whtzklislx6mch6bffufumnowiusinagvm' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'iexec_logo'/* 'https://nftstorage.link/ipfs/bafkreiggejzqvra2hzwdtr42whtzklislx6mch6bffufumnowiusinagvm' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E335':{
         web3:['https://emerald.oasis.dev'],
         token:'ROSE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'oasis_logo'/* 'https://nftstorage.link/ipfs/bafkreiavbox3rj73c4h6qezsdvbbsz52lgd7g3y6fnu62hzn6wqz73bjwm' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'oasis_logo'/* 'https://nftstorage.link/ipfs/bafkreiavbox3rj73c4h6qezsdvbbsz52lgd7g3y6fnu62hzn6wqz73bjwm' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E345':{
         web3:['https://node1.ozonechain.io'],
         token:'OZO',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:ozone_logo/* 'https://nftstorage.link/ipfs/bafkreifpugp4hawkzc7ouvanhzk33jhxjqhdg63kq2waswq64wip54kfiy' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:ozone_logo/* 'https://nftstorage.link/ipfs/bafkreifpugp4hawkzc7ouvanhzk33jhxjqhdg63kq2waswq64wip54kfiy' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E355':{
         web3:['https://http-mainnet.chain.pixie.xyz'],
         token:'PIX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'pixie_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'pixie_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E365':{
         web3:['https://rpc.rei.network'],
         token:'REI',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:rei_logo/* 'https://nftstorage.link/ipfs/bafkreibpmldmytfxkvz2yprozcfr57hdlcjngcrv4oia6jqqb75wmmxgzq' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:rei_logo/* 'https://nftstorage.link/ipfs/bafkreibpmldmytfxkvz2yprozcfr57hdlcjngcrv4oia6jqqb75wmmxgzq' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E375':{
         web3:['https://public-en-cypress.klaytn.net'],
         token:'KLAY',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'klaytn_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'klaytn_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E385':{
         web3:['https://rpc.mantle.xyz'],
         token:'MNT',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:mantle_logo/* 'https://nftstorage.link/ipfs/bafkreihsbilx43a554olrkmfhsse7rxyhtg7i4hlshd5kqnydgpihwbi5m' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.MNT, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:mantle_logo/* 'https://nftstorage.link/ipfs/bafkreihsbilx43a554olrkmfhsse7rxyhtg7i4hlshd5kqnydgpihwbi5m' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.MNT, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Mantle")
       },
       'E395':{
         web3:['https://rpc.pulsechain.com'],
         token:'PLS',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:pulsechain_logo/* 'https://nftstorage.link/ipfs/bafkreibrilqmflglo7qylgt3zwbywzzbpp2x6tfz76eqnocrhhprrgir5q' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:pulsechain_logo/* 'https://nftstorage.link/ipfs/bafkreibrilqmflglo7qylgt3zwbywzzbpp2x6tfz76eqnocrhhprrgir5q' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: null, external_swappers:['changenow'],changenow_object: get_changenow_object("Pulsechain (PLS)")
       },
       'E405':{
         web3:['https://canto.gravitychain.io'],
         token:'CANTO',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:canto_logo/* 'https://nftstorage.link/ipfs/bafkreidpyqijpifjco2jlijkqn7lix7gej4oo5reka2gxbbin6ir6eyepy' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.ETH, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:canto_logo/* 'https://nftstorage.link/ipfs/bafkreidpyqijpifjco2jlijkqn7lix7gej4oo5reka2gxbbin6ir6eyepy' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.ETH, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E415':{
         web3:['https://api.evm.eosnetwork.com'],
         token:'EOS',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'eosnetwork_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'eosnetwork_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E425':{
         web3:['https://babel-api.mainnet.iotex.io'],
         token:'IOTX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:iotex_logo/* 'https://nftstorage.link/ipfs/bafkreig7l7jsdnuesu2j6cscmwkhumvcuiqx3sumdq36hnswd4iugldqxe' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:iotex_logo/* 'https://nftstorage.link/ipfs/bafkreig7l7jsdnuesu2j6cscmwkhumvcuiqx3sumdq36hnswd4iugldqxe' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:['changenow'],changenow_object: get_changenow_object("IoTeX")
       },
       'E435':{
         web3:['https://rpc.au.cc/songbird'],
         token:'SGB',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:songbird_logo/* 'https://nftstorage.link/ipfs/bafkreiapvqa26ifxjkyldnukiqaaodkavic3xbbzdbqajgn6v5rdw3u2ni' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:songbird_logo/* 'https://nftstorage.link/ipfs/bafkreiapvqa26ifxjkyldnukiqaaodkavic3xbbzdbqajgn6v5rdw3u2ni' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E445':{
         web3:['https://ultron-rpc.net'],
         token:'ULX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:ultron_logo/* 'https://nftstorage.link/ipfs/bafkreieswovobb76mebl4hl5amisqsyh4wuaw6vdkdf5iflx4pufeghida' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:ultron_logo/* 'https://nftstorage.link/ipfs/bafkreieswovobb76mebl4hl5amisqsyh4wuaw6vdkdf5iflx4pufeghida' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E455':{
         web3:['https://rpc.coinex.net'],
         token:'CET',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:coinex_logo/* 'https://nftstorage.link/ipfs/bafkreib6gldtkg2yh4oklnznn4zjt6xclqvmurut3s23zai3fuaarqazk4' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:coinex_logo/* 'https://nftstorage.link/ipfs/bafkreib6gldtkg2yh4oklnznn4zjt6xclqvmurut3s23zai3fuaarqazk4' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E465':{
         web3:['https://eth-rpc-api.thetatoken.org/rpc'],
         token:'TFUEL',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:tfuel_logo/* 'https://nftstorage.link/ipfs/bafkreigg23q3fyi6okevwhrieevuvb3ellj26s3pdhoq4e7tv2qp725dnm' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:tfuel_logo/* 'https://nftstorage.link/ipfs/bafkreigg23q3fyi6okevwhrieevuvb3ellj26s3pdhoq4e7tv2qp725dnm' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E475':{
         web3:['https://rpc.step.network'],
         token:'FITFI',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:step_logo/* 'https://nftstorage.link/ipfs/bafkreigqzgwcqib66uivlcmh6c5jr56xfge3cxyc7jb23vghlmiqvkvrky' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: null, external_swappers:[], 
+        first_block:0, end_image:null, spend_image:null, ether_image:step_logo/* 'https://nftstorage.link/ipfs/bafkreigqzgwcqib66uivlcmh6c5jr56xfge3cxyc7jb23vghlmiqvkvrky' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: null, external_swappers:[], changenow_object: get_changenow_object()
       },
       'E485':{
         web3:['https://rpc.energyweb.org'],
         token:'EWT',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:energyweb_logo, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:energyweb_logo, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E495':{
         web3:['https://rpc.callisto.network'],
         token:'CLO',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'callisto_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'callisto_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E505':{
         web3:['https://shiden-rpc.dwellir.com'],
         token:'SDN',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'shiden_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'shiden_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E515':{
         web3:['https://tenet-evm.publicnode.com'],
         token:'TENET',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:tenet_logo/* 'https://nftstorage.link/ipfs/bafkreifxl5uapxvm47vc4hec4bbvvsnazedn36zjiwsw2s4v7dzqn6s74m' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:tenet_logo/* 'https://nftstorage.link/ipfs/bafkreifxl5uapxvm47vc4hec4bbvvsnazedn36zjiwsw2s4v7dzqn6s74m' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E525':{
         web3:['https://pyrus2.ubiqscan.io'],
         token:'UBQ',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:ubiq_logo/* 'https://nftstorage.link/ipfs/bafkreidh2cvl7y2njzpfuc6z2rdiocdbw2sbczz4rtod3c7pzw3pckob5u' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:ubiq_logo/* 'https://nftstorage.link/ipfs/bafkreidh2cvl7y2njzpfuc6z2rdiocdbw2sbczz4rtod3c7pzw3pckob5u' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E535':{
         web3:['https://rpc.gochain.io'],
         token:'GO',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:gochain_logo/* 'https://nftstorage.link/ipfs/bafkreihnhyg4dyvptbvh5ykq2wzyraj74n6wcyxxwsb4eepkcds74r46kq' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:gochain_logo/* 'https://nftstorage.link/ipfs/bafkreihnhyg4dyvptbvh5ykq2wzyraj74n6wcyxxwsb4eepkcds74r46kq' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E545':{
         web3:['https://mainapi.omaxray.com'],
         token:'OMAX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:omax_logo/* 'https://nftstorage.link/ipfs/bafkreicf546yuctqunrcfdb73vwdl7bq645f26zkfjodj2rymcqcwicliu' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:omax_logo/* 'https://nftstorage.link/ipfs/bafkreicf546yuctqunrcfdb73vwdl7bq645f26zkfjodj2rymcqcwicliu' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E555':{
         web3:['https://api.wemix.com'],
         token:'WEMIX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:wemix_logo/* 'https://nftstorage.link/ipfs/bafkreibu5gf53hzlth6qafuaxozwytw2qdtnofoxjvusxpne4pqc3yntju' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:wemix_logo/* 'https://nftstorage.link/ipfs/bafkreibu5gf53hzlth6qafuaxozwytw2qdtnofoxjvusxpne4pqc3yntju' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E565':{
         web3:['https://evm.confluxrpc.com'],
         token:'CFX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:conflux_logo/* 'https://nftstorage.link/ipfs/bafkreiboh4aov7q7wzvi6be27uskvad6bzir7s5alr2dihvzznrkflhxza' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:conflux_logo/* 'https://nftstorage.link/ipfs/bafkreiboh4aov7q7wzvi6be27uskvad6bzir7s5alr2dihvzznrkflhxza' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E575':{
         web3:['https://1rpc.io/telos/evm'],
         token:'TLOS',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:telos_logo/* 'https://nftstorage.link/ipfs/bafkreihsqmpt6szoqnam4qpwcjtpn73p5hmlxu53qxnaf4ytzvvrhvqmya' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.TLO, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:telos_logo/* 'https://nftstorage.link/ipfs/bafkreihsqmpt6szoqnam4qpwcjtpn73p5hmlxu53qxnaf4ytzvvrhvqmya' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.TLO, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E585':{
         web3:['https://mycrypto.rsk.co'],
         token:'RSK',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:rsk_logo/* 'https://nftstorage.link/ipfs/bafkreiegatpac6ycp23meknqhihmlxrsb7asnl22yksh44swopk4nluv7a' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:rsk_logo/* 'https://nftstorage.link/ipfs/bafkreiegatpac6ycp23meknqhihmlxrsb7asnl22yksh44swopk4nluv7a' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E595':{
         web3:['https://api.metadium.com/prod'],
         token:'META',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:metadium_logo/* 'https://nftstorage.link/ipfs/bafkreiem6fmyfzpix5dmokefc7dakf5hd5ouckwtuzo2yxh6yn7g45iioe' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[], 
+        first_block:0, end_image:null, spend_image:null, ether_image:metadium_logo/* 'https://nftstorage.link/ipfs/bafkreiem6fmyfzpix5dmokefc7dakf5hd5ouckwtuzo2yxh6yn7g45iioe' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[], changenow_object: get_changenow_object()
       },
       'E605':{
         web3:['https://rpc.kardiachain.io'],
         token:'KAI',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'kardiachain_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'kardiachain_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E615':{
         web3:['https://mainnet.block.caduceus.foundation'],
         token:'CMP',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'caduceus_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'caduceus_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E625':{
         web3:['https://rpc.seelen.pro'],
         token:'SEELE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'seele_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'seele_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E635':{
         web3:['https://rpc.bittorrentchain.io'],
         token:'BTT',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:bittorrentchain_logo, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:bittorrentchain_logo, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E645':{
         web3:['https://rpc.acuteangle.com'],
         token:'AAC',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'doublea_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'doublea_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E655':{
         web3:['https://eth-rpc-karura.aca-api.network'],
         token:'KAR',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:karura_logo, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:karura_logo, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E665':{
         web3:['https://eth-rpc-acala.aca-staging.network'],
         token:'ACA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'acala_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'acala_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E675':{
         web3:['https://mainnet3.edgewa.re/evm'],
         token:'EDG',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'edgeware_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'edgeware_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E685':{
         web3:['https://core.bloxberg.org'],
         token:'BERG',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'bloxberg_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'bloxberg_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E695':{
         web3:['https://rpc.phoenixplorer.com'],
         token:'PHOENIX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'phoenix_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'phoenix_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E705':{
         web3:['https://seed.omchain.io'],
         token:'OMC',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:omchain_logo/* 'https://nftstorage.link/ipfs/bafkreieph4yuxvzjxugw5hmdtwlsp7434dwapm65pr5b3o5pk2fb5uvosa' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:omchain_logo/* 'https://nftstorage.link/ipfs/bafkreieph4yuxvzjxugw5hmdtwlsp7434dwapm65pr5b3o5pk2fb5uvosa' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E715':{
         web3:['https://rpc.omplatform.com'],
         token:'OM',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:om_logo/* 'https://nftstorage.link/ipfs/bafkreicz56kvmxvnzab5eve3dq624pmptwsrmkceu27wgxzticyyjeobhu' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:om_logo/* 'https://nftstorage.link/ipfs/bafkreicz56kvmxvnzab5eve3dq624pmptwsrmkceu27wgxzticyyjeobhu' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E725':{
         web3:['https://node1.mintme.com'],
         token:'MINTME',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:mintme_logo/* 'https://nftstorage.link/ipfs/bafkreicpvjaago2uqrvid4x5cq27grwuxapcxs4l2tfwgqcocwbxxq7edq' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:mintme_logo/* 'https://nftstorage.link/ipfs/bafkreicpvjaago2uqrvid4x5cq27grwuxapcxs4l2tfwgqcocwbxxq7edq' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E735':{
         web3:['https://rpc.ecredits.com'],
         token:'ECS',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:'ecredits_logo'/* 'https://nftstorage.link/ipfs/bafkreifktidofrlhlkpwnfyf5p3ftk3k2y3dbsq7cxqcjpgs2axqdvhqoi' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:'ecredits_logo'/* 'https://nftstorage.link/ipfs/bafkreifktidofrlhlkpwnfyf5p3ftk3k2y3dbsq7cxqcjpgs2axqdvhqoi' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E745':{
         web3:['https://host-154-14-192-66.contentfabric.io/eth'],
         token:'ELV',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:eluv_logo/* 'https://nftstorage.link/ipfs/bafkreicchvnsegzclfaz2xnfzlnpjey4ahxnoxzpyhudb524ezstp5cc5u' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:eluv_logo/* 'https://nftstorage.link/ipfs/bafkreicchvnsegzclfaz2xnfzlnpjey4ahxnoxzpyhudb524ezstp5cc5u' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E755':{
         web3:['https://rpc.ethoprotocol.com'],
         token:'ETHO',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:etho_logo/* 'https://nftstorage.link/ipfs/bafkreihxyf4fksj7bajilfz2m66v455goeushb2w36kn5h63p7f2gvllgq' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:etho_logo/* 'https://nftstorage.link/ipfs/bafkreihxyf4fksj7bajilfz2m66v455goeushb2w36kn5h63p7f2gvllgq' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E765':{
         web3:['https://mainnet-rpc.oneledger.network'],
         token:'OLT',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:oneledger_logo/* 'https://nftstorage.link/ipfs/bafkreifn4sbeosn63ogew4z7gm4dw2t5l2xhmtauxwgh4wakaqmxjuuwwm' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:oneledger_logo/* 'https://nftstorage.link/ipfs/bafkreifn4sbeosn63ogew4z7gm4dw2t5l2xhmtauxwgh4wakaqmxjuuwwm' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E775':{
         web3:['https://mainnet.hashio.io/api'],
         token:'HBARE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:hedera_logo, iteration:400_000, url:0, active:false, e5_img:null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:hedera_logo, iteration:400_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E785':{
         web3:['https://json-rpc.evm.iotaledger.net'],
         token:'IOTAE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:iotaevm_logo, iteration:400_000, url:0, active:false, e5_img:null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image:iotaevm_logo, iteration:400_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E795':{
         web3:['https://public-en.node.kaia.io'],
         token:'KAIA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:kaia_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.KAI, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:kaia_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.KAI, external_swappers:['lifi','changenow'],changenow_object: get_changenow_object("Kaia")
       },
       'E805':{
         web3:['https://rpc.soniclabs.com'],
         token:'S',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:sonic_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.SON, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:sonic_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.SON, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Sonic (ex. FTM)")
       },
       'E815':{
         web3:['https://rpc.berachain.com/'],
         token:'BERA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:berachain_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.BER, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image:berachain_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.BER, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Berachain",)
       },
       'E825':{
         web3:['https://nodeapi.energi.network'],
         token:'NRG',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:1955370, end_image:null, spend_image:null, ether_image:'energi_logo', iteration:10_000, url:0	, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:1955370, end_image:null, spend_image:null, ether_image:'energi_logo', iteration:10_000, url:0	, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E835':{
         web3:['https://rpc.hyperliquid.xyz/evm'],
         token:'HYPE',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:hyperliquid_logo, iteration:10_000, url:0	, active:false, e5_img:null, id: ChainId.HYP, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:hyperliquid_logo, iteration:10_000, url:0	, active:false, e5_img:null, id: ChainId.HYP, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
 
       'E845':{
         web3:['https://rpc.xrplevm.org'],
         token:'XRPE',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:xrpl_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:xrpl_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E855':{
         web3:['https://api.mainnet.abs.xyz'],
         token:'ABETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:abstract_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.ABS, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:abstract_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.ABS, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E865':{
         web3:['https://apechain.drpc.org'],
         token:'APE',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:apechain_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.APE, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:apechain_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.APE, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E875':{
         web3:['https://rpc.bitlayer.org'],
         token:'BIBTC',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:bitlayer_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:bitlayer_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E885':{
         web3:['https://rpc.blast.io'],
         token:'BLETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:blast_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.BLS, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:blast_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.BLS, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E895':{
         web3:['https://rpc.gobob.xyz/'],
         token:'BOETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:bob_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.BOC, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:bob_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.BOC, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E905':{
         web3:['https://rpc.botanixlabs.com'],
         token:'BOBTC',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:botanix_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:botanix_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E915':{
         web3:['https://rpc.bsquared.network'],
         token:'BSBTC',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:bsquared_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:bsquared_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E925':{
         web3:['https://core.drpc.org', 'https://rpc.coredao.org'],
         token:'CORE',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:core_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:core_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E935':{
         web3:['https://mainnet.corn-rpc.com'],
         token:'BTCN',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:'corn_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.CRN, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:'corn_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.CRN, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E945':{
         web3:['https://node.mainnet.etherlink.com'],
         token:'XTZ',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:etherlink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.ETL, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:etherlink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.ETL, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E955':{
         web3:['https://rpc.frax.com'],
         token:'FRAX',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:fraxtal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.FRA, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:fraxtal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.FRA, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E965':{
         web3:['https://mainnet.hsk.xyz'],
         token:'HSK',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:hashkey_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:hashkey_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E975':{
         web3:['https://rpc.hemi.network/rpc'],
         token:'HETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:hemi_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.HMI, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:hemi_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.HMI, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E985':{
         web3:['https://rpc-qnd.inkonchain.com'],
         token:'IETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:ink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', bridge_enabled: true, parent: 'E185', id: ChainId.INK, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:ink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', bridge_enabled: true, parent: 'E185', id: ChainId.INK, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E995':{
         web3:['https://rpc.lens.xyz'],
         token:'GHO',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:lens_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.LNS, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:lens_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.LNS, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1005':{
         web3:['https://rpc.linea.build '],
         token:'LETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:linea_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'zk', parent: 'E185', id: ChainId.LNA, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:linea_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'zk', parent: 'E185', id: ChainId.LNA, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum (Linea)")
       },
       'E1015':{
         web3:['https://rpc.api.lisk.com'],
         token:'LIETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:lisk_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.LSK, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:lisk_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.LSK, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1025':{
         web3:['https://merlin.drpc.org'],
         token:'MBTC',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:merlin_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:merlin_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1035':{
         web3:['https://rpc.metall2.com'],
         token:'METH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:metal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185', bridge_enabled:true, id: null, external_swappers:[], 
+        first_block:0, end_image: null, spend_image: null, ether_image:metal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E185', bridge_enabled:true, id: null, external_swappers:[],changenow_object: get_changenow_object() 
       },
       'E1045':{
         web3:['https://metis-rpc.publicnode.com'],
         token:'METIS',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:metis_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.MAM, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:metis_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.MAM, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1055':{
         web3:['https://rpc-mainnet.mindnetwork.xyz'],
         token:'MIETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:mind_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:mind_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1065':{
         web3:['https://rpc.mintchain.io'],
         token:'MINETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:'mint_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:'mint_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1075':{
         web3:['https://mainnet.mode.network/'],
         token:'MOETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:mode_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.MOD, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:mode_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.MOD, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1085':{
         web3:['https://mainnet-1.rpc.banelabs.org', 'https://mainnet-2.rpc.banelabs.org', 'https://mainnet-3.rpc.banelabs.org'],
         token:'GAS',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:neox_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:neox_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1095':{
         web3:['https://opbnb-rpc.publicnode.com'],
         token:'OBNB',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:opbnb_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E135', bridge_enabled: true, id: ChainId.OPB, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:opbnb_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'op', parent: 'E135', bridge_enabled: true, id: ChainId.OPB, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("opBNB (Optimistic Rollup)")
       },
       'E1105':{
         web3:['https://rpc.plume.org'],
         token:'PLUME',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:plume_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.PLU, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:plume_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.PLU, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1115':{
         web3:['https://rpc.katana.network/'],
         token:'KETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:katana_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.KAT, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:katana_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.KAT, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1125':{
         web3:['https://zkevm-rpc.com'],
         token:'PETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:'peth_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'zk', parent: 'E185', id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:'peth_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'zk', parent: 'E185', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1135':{
         web3:['https://api.roninchain.com/rpc'],
         token:'RON',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:ronin_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.RON, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:ronin_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.RON, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1145':{
         web3:['https://scroll-rpc.publicnode.com'],
         token:'SETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:scroll_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'zk', parent: 'E185', id: ChainId.SCL, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:scroll_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'zk', parent: 'E185', id: ChainId.SCL, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1155':{
         web3:['https://rpc.shibarium.shib.io'],
         token:'BONE',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:shibarium_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:shibarium_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1165':{
         web3:['https://rpc.soneium.org/'],
         token:'SONETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:soneium_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', bridge_enabled: true, id: ChainId.SOE, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:soneium_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', bridge_enabled: true, id: ChainId.SOE, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1175':{
         web3:['https://mainnet.superseed.xyz'],
         token:'SUETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:superseed_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:superseed_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1185':{
         web3:['https://rpc.taiko.xyz'],
         token:'TETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:taiko_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.TAI, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:taiko_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.TAI, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1195':{
         web3:['https://rpc.treasure.lol'],
         token:'MAGIC',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:'treasure_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:'treasure_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1205':{
         web3:['https://unichain-rpc.publicnode.com'],
         token:'UETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:unichain_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', bridge_enabled: true, parent: 'E185', id: ChainId.UNI, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:unichain_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', bridge_enabled: true, parent: 'E185', id: ChainId.UNI, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1215':{
         web3:['https://worldchain-mainnet.g.alchemy.com/public'],
         token:'WOETH',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:world_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
-        class:'L2', rollup_type:'op', parent: 'E185', bridge_enabled:true, id: ChainId.WCC, external_swappers:['lifi'],
+        class:'L2', rollup_type:'op', parent: 'E185', bridge_enabled:true, id: ChainId.WCC, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1225':{
         web3:['https://rpc.xlayer.tech'],
         token:'OKB',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:okb_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.XLY, external_swappers:['lifi'],
+        first_block:0, end_image: null, spend_image: null, ether_image:okb_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.XLY, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1235':{
         web3:['https://exchainrpc.okex.org/'],
         token:'OKT',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:'okt_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:'okt_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1245':{
         web3:['https://mainnet.zircuit.com'],
         token:'ZETH',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:zircuit_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
-        class:'L2', rollup_type:'op', bridge_enabled: true, parent: 'E185', id: null, external_swappers:[],
+        class:'L2', rollup_type:'op', bridge_enabled: true, parent: 'E185', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1255':{
         web3:['https://mainnet.era.zksync.io'],
         token:'ZKETH',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:zksync_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000,
-        class:'L2', rollup_type:'zk', bridge_enabled: true, parent: 'E185', id: ChainId.ERA, external_swappers:['lifi'], external_swappers:[],
+        class:'L2', rollup_type:'zk', bridge_enabled: true, parent: 'E185', id: ChainId.ERA, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum (ZkSync Era)")
       },
       'E1265':{
         web3:['https://mainnet.zkevm.cronos.org/'],
         token:'zkCRO',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:cronoszkevm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'zk', parent: 'E235', id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:cronoszkevm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'zk', parent: 'E235', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1275':{
         web3:['https://rpc.zerion.io/v1/zero'],
         token:'ZERETH',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:zero_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
-        class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:[],
+        class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1285':{
         web3:['https://rpc.sophon.xyz'],
         token:'SOPH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:sophon_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.SOP, external_swappers:['lifi'], external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:sophon_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.SOP, external_swappers:['lifi'], external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1295':{
         web3:['https://pacific-rpc.manta.network/http'],
         token:'MAETH',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:manta_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559',
-        class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:[],
+        class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:['changenow'],changenow_object: get_changenow_object("Ethereum (Manta)")
       },
       'E1305':{
         web3:['https://api.node.glif.io'],
         token:'FILE',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:filecoin_evm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],
+        first_block:0, end_image: null, spend_image: null, ether_image:filecoin_evm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1315':{
         web3:['https://rpc3.monad.xyz', 'https://rpc1.monad.xyz', 'https://monad-mainnet.drpc.org'],
         token:'MON',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:monad_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.MON, external_swappers:['lifi'], 
+        first_block:0, end_image: null, spend_image: null, ether_image:monad_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.MON, external_swappers:['lifi'], changenow_object: get_changenow_object()
       },
       'E1325':{
         web3:['https://zora.drpc.org'],
         token:'ZOETH',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:zora_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, 
-        class:'L2', rollup_type:'op', type:'1559', bridge_enabled: true, parent: 'E185', id: null, external_swappers:[], 
+        class:'L2', rollup_type:'op', type:'1559', bridge_enabled: true, parent: 'E185', id: null, external_swappers:[], changenow_object: get_changenow_object()
       },
       'E1335':{
         web3:['https://arbitrum-nova-rpc.publicnode.com', 'https://nova.arbitrum.io/rpc'],
         token:'ANETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: nova_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'ar', bridge_enabled:true, parent: 'E185', id: ChainId.ARN, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image: nova_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'ar', bridge_enabled:true, parent: 'E185', id: ChainId.ARN, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1345':{
         web3:['https://rpc.arena-z.gg'],
         token:'ARETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: 'arenaz_logo', iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185', id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image: 'arenaz_logo', iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1355':{
         web3:['https://eth-rpc.polkadot.io', 'https://services.polkadothub-rpc.com/mainnet'],
         token:'DOT',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: polkadot_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image: polkadot_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
 
       'E1365':{
         web3:['https://rpc.immutable.com'],
         token:'IMX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: immutable_zkevm_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.IMX, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image: immutable_zkevm_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.IMX, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1375':{
         web3:['https://rpc.gokite.ai/', 'https://rpc-virginia.gokite.ai', 'https://rpc-tokyo.gokite.ai', 'https://rpc-ireland.gokite.ai'],
         token:'KITE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: kite_ai_logo, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:0, end_image:null, spend_image:null, ether_image: kite_ai_logo, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1385':{
         web3:['https://sentry.evm-rpc.injective.network', 'https://injectiveevm-rpc.polkachu.com'],
         token:'INJE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: injective_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.INJ, external_swappers:['lifi'],
+        first_block:0, end_image:null, spend_image:null, ether_image: injective_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.INJ, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E1395':{
         web3:['https://evmos-evm-rpc.publicnode.com'],
         token:'EVMOS',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:17475951, end_image:'', spend_image:'', ether_image:'evmos_logo', iteration:40_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],
+        first_block:17475951, end_image:'', spend_image:'', ether_image:'evmos_logo', iteration:40_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       
     }
@@ -2577,68 +2580,77 @@ class App extends Component {
 
   get_coin_data(){
     var list = {
-      'BTC': this.get_coin_info('BTC', 'Bitcoin', bitcoin_logo, 'satoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '10 min.', this.get_time_difference(1231006505), 3, 1),
+      'BTC': this.get_coin_info('BTC', 'Bitcoin', bitcoin_logo, 'satoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '10 min.', this.get_time_difference(1231006505), 3, 1, "Bitcoin", ['changenow']),
 
-      'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', bitcoincash_logo, 'satoshi', 8, 100_000_000, 'UTXO','Proof Of Work','10 min.', this.get_time_difference(1231006505), 60, 32),
+      'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', bitcoincash_logo, 'satoshi', 8, 100_000_000, 'UTXO','Proof Of Work','10 min.', this.get_time_difference(1231006505), 60, 32, "Bitcoin Cash",['changenow']),
 
-      'LTC': this.get_coin_info('LTC', 'Litecoin', litecoin_logo, 'litoshi', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1317972665), 56, 1),
+      'LTC': this.get_coin_info('LTC', 'Litecoin', litecoin_logo, 'litoshi', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1317972665), 56, 1, "Litecoin", ['changenow']),
 
-      'DOGE': this.get_coin_info('DOGE', 'Dogecoin', dogecoin_logo, 'koinu', 8, 100_000_000, 'UTXO','Proof Of Work', '1 min.', this.get_time_difference(1386338512), 30, 1),
+      'DOGE': this.get_coin_info('DOGE', 'Dogecoin', dogecoin_logo, 'koinu', 8, 100_000_000, 'UTXO','Proof Of Work', '1 min.', this.get_time_difference(1386338512), 30, 1, "Dogecoin", ['changenow']),
 
-      'DASH': this.get_coin_info('DASH', 'Dash', dash_logo, 'duff', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1390083000), 56, 2),
+      'DASH': this.get_coin_info('DASH', 'Dash', dash_logo, 'duff', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1390083000), 56, 2, "Dash", ['changenow']),
 
-      'TRX': this.get_coin_info('TRX', 'Tron', tron_logo, 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof Of Stake', '3 sec.', this.get_time_difference(1529885280), 2000, 1),
+      'TRX': this.get_coin_info('TRX', 'Tron', tron_logo, 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof Of Stake', '3 sec.', this.get_time_difference(1529885280), 2000, 1, "TRON", ['changenow']),
       
-      'XRP': this.get_coin_info('XRP', 'XRP', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~'),
+      'XRP': this.get_coin_info('XRP', 'XRP', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~', "Ripple", ['changenow']),
 
-      'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~'),
+      'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~', "Stellar", ['changenow']),
 
-      'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 143_000, '~~~'),
+      'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 143_000, '~~~', "Polkadot", ['changenow']),
 
-      'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 143_000, '~~~'),
+      'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 143_000, '~~~', null, []),
 
-      'ALGO': this.get_coin_info('ALGO', 'Algorand', algorand_logo, '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5),
+      'ALGO': this.get_coin_info('ALGO', 'Algorand', algorand_logo, '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5, "Algorand", ['changenow']),
 
-      'XTZ': this.get_coin_info('XTZ', 'Tezos', tezos_logo, 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1),
+      'XTZ': this.get_coin_info('XTZ', 'Tezos', tezos_logo, 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1, "Tezos", ['changenow']),
 
-      'ATOM': this.get_coin_info('ATOM', 'Cosmos', cosmos_logo, 'uATOM', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~'),
+      'ATOM': this.get_coin_info('ATOM', 'Cosmos', cosmos_logo, 'uATOM', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~', "Cosmos", ['changenow']),
 
-      'FIL': this.get_coin_info('FIL', 'Filecoin', filecoin_logo, 'aFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~'),
+      'FIL': this.get_coin_info('FIL', 'Filecoin', filecoin_logo, 'aFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~', "Filecoin", ['changenow']),
 
-      'SOL': this.get_coin_info('SOL', 'Solana',solana_logo, 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2 ),
+      'SOL': this.get_coin_info('SOL', 'Solana',solana_logo, 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2, "Solana", ['changenow']),
 
-      'APT': this.get_coin_info('APT', 'Aptos', aptos_logo, 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~'),
+      'APT': this.get_coin_info('APT', 'Aptos', aptos_logo, 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~', "Aptos", ['changenow']),
 
-      'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088),
+      'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088, "Cardano", ['changenow']),
 
-      'STX': this.get_coin_info('STX', 'Stacks', stacks_logo, 'µSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~'),
+      'STX': this.get_coin_info('STX', 'Stacks', stacks_logo, 'µSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~', "Stacks", ['changenow']),
 
-      'AR': this.get_coin_info('AR', 'Arweave', arweave_logo, 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~'),
+      'AR': this.get_coin_info('AR', 'Arweave', arweave_logo, 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~', null, []),
 
-      'SUI': this.get_coin_info('SUI', 'Sui', sui_logo, 'mist', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1683115200), 100_000, '~~~'),
+      'SUI': this.get_coin_info('SUI', 'Sui', sui_logo, 'mist', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1683115200), 100_000, '~~~', "Sui", ['changenow']),
 
-      'TIA': this.get_coin_info('TIA', 'Celestia', celestia_logo, 'uTIA', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake', '6 sec.', this.get_time_difference(1698760800), 1300, 2),
+      'TIA': this.get_coin_info('TIA', 'Celestia', celestia_logo, 'uTIA', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake', '6 sec.', this.get_time_difference(1698760800), 1300, 2, "Celestia", ['changenow']),
 
-      'IOTA': this.get_coin_info('IOTA', 'IOTA', iota_logo, 'nano', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1746446400), 53_000, 0.032768),
+      'IOTA': this.get_coin_info('IOTA', 'IOTA', iota_logo, 'nano', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1746446400), 53_000, 0.032768, "IOTA", ['changenow']),
 
-      'HBAR': this.get_coin_info('HBAR', 'Hedera Hashgraph', hedera_hashgraph_logo, 'tinybar', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Hashgraph', '5 sec.', this.get_time_difference(1568592000), 10_000, '~~~'),
+      'HBAR': this.get_coin_info('HBAR', 'Hedera Hashgraph', hedera_hashgraph_logo, 'tinybar', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Hashgraph', '5 sec.', this.get_time_difference(1568592000), 10_000, '~~~', "Hedera Hashgraph", ['changenow']),
 
-      'INJ': this.get_coin_info('INJ', 'Injective', injective_logo, 'inj', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.65 sec.', this.get_time_difference(1625058000), 600_000, '~~~'),
+      'INJ': this.get_coin_info('INJ', 'Injective', injective_logo, 'inj', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.65 sec.', this.get_time_difference(1625058000), 600_000, '~~~', "Injective (Mainnet)", ['changenow']),
 
-      'NEAR': this.get_coin_info('NEAR', 'Near Protocol', near_logo, 'yocto', 24, 10**24, this.getLocale()['2916']/* Accounting' */, 'Thresholded Proof of Stake', '1 sec.', this.get_time_difference(1595350551), 4100, '~~~'),
+      'NEAR': this.get_coin_info('NEAR', 'Near Protocol', near_logo, 'yocto', 24, 10**24, this.getLocale()['2916']/* Accounting' */, 'Thresholded Proof of Stake', '1 sec.', this.get_time_difference(1595350551), 4100, '~~~', "NEAR Protocol", ['changenow']),
 
-      'ICP': this.get_coin_info('ICP', 'Internet Computer', icp_logo, 'e8', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Threshold Relay', '0.5 sec.', this.get_time_difference(1623283200), 3_000, '~~~'),
+      'ICP': this.get_coin_info('ICP', 'Internet Computer', icp_logo, 'e8', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Threshold Relay', '0.5 sec.', this.get_time_difference(1623283200), 3_000, '~~~', null, []),
 
-      'ZEC': this.get_coin_info('ZEC', 'Zcash', zcash_logo, 'zatoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '1.25 min.', this.get_time_difference(1477673333), 5, 2),
+      'ZEC': this.get_coin_info('ZEC', 'Zcash', zcash_logo, 'zatoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '1.25 min.', this.get_time_difference(1477673333), 5, 2, "Zcash", ['changenow']),
 
-      'GRAM': this.get_coin_info('GRAM', 'Gram', gram_logo, 'nanogram', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.4 sec.', this.get_time_difference(1573516800), 104_715, 1),
+      'GRAM': this.get_coin_info('GRAM', 'Gram', gram_logo, 'nanogram', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.4 sec.', this.get_time_difference(1573516800), 104_715, 1, "Toncoin", ['changenow']),
 
-      '???': this.get_coin_info('???', '??????', monero_logo, '???', 12, 1_000_000_000_000, 'UTXO', 'Proof Of Work.', '2 min.', this.get_time_difference(1397818193), 7, '~~~'),
+      '???': this.get_coin_info('???', '??????', monero_logo, '???', 12, 1_000_000_000_000, 'UTXO', 'Proof Of Work.', '2 min.', this.get_time_difference(1397818193), 7, '~~~', "Monero", ['changenow']),
     }
     return list
   }
 
-  get_coin_info(symbol, name, image_url, base_unit, decimals, conversion, account_type, consensus_mechanism, block_time, ledger_age, throughput, block_size){
+  get_coin_info(symbol, name, image_url, base_unit, decimals, conversion, account_type, consensus_mechanism, block_time, ledger_age, throughput, block_size, changenow_name, supported_exchanges){
+    let changenow_object = null
+    if(changenow_name != null){
+      const filtered = changenow_currencies.filter((filter_item) => {
+        return filter_item['name'] == changenow_name
+      })
+      if(filtered.length > 0){
+        changenow_object = filtered[0]
+      }
+    }
     return{
       'name':name,
       'id':symbol,
@@ -2655,7 +2667,10 @@ class App extends Component {
       'block_time':block_time,
       'ledger_age':ledger_age,
       'throughput':throughput,
-      'block_size':block_size
+      'block_size':block_size,
+      'changenow_name': changenow_name,
+      'external_swappers':supported_exchanges,
+      'changenow_object':changenow_object
     }
   }
 
@@ -8194,7 +8209,7 @@ class App extends Component {
       from: state.accounts[e5].address,
       to: recipientAddress,
       value: amount.toString(),
-      gas: 23000,
+      gas: 53000,
       gasPrice: gas_price.toString()
     }
 
@@ -8208,7 +8223,7 @@ class App extends Component {
         from: state.accounts[e5].address,
         to: recipientAddress,
         value: amount.toString(),
-        gas: 23000,
+        gas: 53000,
         maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
         maxFeePerGas: maxFeePerGas.toString(),
         type: '0x2', // explicitly mark as EIP-1559
@@ -8819,7 +8834,7 @@ class App extends Component {
     }, sync_time);
   }
 
-  create_and_broadcast_bitcoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_bitcoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const path = "m/44'/0'/0'/0/0" // bitcoin mainnet
     const network = bitcoin.networks.bitcoin;
@@ -8857,9 +8872,10 @@ class App extends Component {
     // return;
     const hash = await this.broadcast_block_cypher_transaction(raw, 'btc')
     if(hash != null){
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+      if(for_swap == false) this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash});
+      else return hash
     }else{
-      this.show_dialog_bottomsheet({'hash':raw, 'chain':'BTC'}, 'manual_transaction_broadcast')
+      if(for_swap == false) this.show_dialog_bottomsheet({'hash':raw, 'chain':'BTC'}, 'manual_transaction_broadcast')
     }
   }
 
@@ -8904,7 +8920,7 @@ class App extends Component {
     }
   }
 
-  create_and_broadcast_bitcoin_cash_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_bitcoin_cash_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const network = bitcoin.networks.bitcoin;
     const path = "m/44'/145'/0'/0/0" // bitcoin cash mainnet
@@ -8951,7 +8967,8 @@ class App extends Component {
     const hash = await this.broadcast_bitcoin_cash_transaction(txHex)
 
     if(hash != null && hash != ""){
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+      if(for_swap == false) this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash});
+      else return hash
     }
   }
 
@@ -8981,7 +8998,7 @@ class App extends Component {
     }
   }
 
-  create_and_broadcast_litecoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_litecoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const network = bitcoin.networks.litecoin;
     const path = "m/44'/2'/0'/0/0" // litecoin mainnet
@@ -9018,13 +9035,14 @@ class App extends Component {
 
     const hash = await this.broadcast_block_cypher_transaction(raw, 'ltc')
     if(hash != null){
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+      if(for_swap == false) this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash});
+      else return hash
     }else{
-      this.show_dialog_bottomsheet({'hash':raw, 'chain':'LTC'}, 'manual_transaction_broadcast')
+      if(for_swap == false) this.show_dialog_bottomsheet({'hash':raw, 'chain':'LTC'}, 'manual_transaction_broadcast')
     }
   }
 
-  create_and_broadcast_dogecoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_dogecoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const network = {
       messagePrefix: '\x19Dogecoin Signed Message:\n',
@@ -9073,13 +9091,14 @@ class App extends Component {
     const hash = await this.broadcast_block_cypher_transaction(raw, 'doge')
 
     if(hash != null){
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash});
+      else return hash
     }else{
-      this.show_dialog_bottomsheet({'hash':raw, 'chain':'DOGE'}, 'manual_transaction_broadcast')
+      if(for_swap == false) this.show_dialog_bottomsheet({'hash':raw, 'chain':'DOGE'}, 'manual_transaction_broadcast')
     }
   }
 
-  create_and_broadcast_dash_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_dash_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const network = {
       messagePrefix: '\x19Dash Signed Message:\n',
@@ -9125,13 +9144,14 @@ class App extends Component {
     // return;
     const hash = await this.broadcast_block_cypher_transaction(raw, 'dash')
     if(hash != null){
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':input_count, 'tx_size': size, 'hash':hash});
+      else return hash
     }else{
-      this.show_dialog_bottomsheet({'hash':raw, 'chain':'DASH'}, 'manual_transaction_broadcast')
+      if(for_swap == false)this.show_dialog_bottomsheet({'hash':raw, 'chain':'DASH'}, 'manual_transaction_broadcast')
     }
   }
 
-  create_and_broadcast_tron_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_tron_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.make_tron_wallet(seed)
     const transaction = await wallet.tronWeb.transactionBuilder.sendTrx(
@@ -9145,7 +9165,8 @@ class App extends Component {
       const broadcast = await wallet.tronWeb.trx.sendRawTransaction(signedTransaction);
       if(broadcast != null && broadcast['txid'] != null){
         const hash = broadcast['txid']
-        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+        if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+        else return hash
       }else{
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
@@ -9155,7 +9176,7 @@ class App extends Component {
     }
   }
 
-  create_and_broadcast_xrp_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet) => {
+  create_and_broadcast_xrp_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet, for_swap=false) => {
     var seed = this.state.final_seed
     const client = new xrpl.Client("wss://xrplcluster.com/")
     await client.connect()
@@ -9184,7 +9205,8 @@ class App extends Component {
       const tx = await client.submitAndWait(signed.tx_blob)
       
       if(tx['result'] != null && tx['result']['validated'] == true){
-        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+        if(for_swap == false) this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+        else return hash
       }else{
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
@@ -9197,7 +9219,7 @@ class App extends Component {
     await client.disconnect()
   }
 
-  create_and_broadcast_xlm_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, kill_wallet) => {
+  create_and_broadcast_xlm_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, kill_wallet, for_swap=false) => {
     var seed = this.state.final_seed
     const server = new StellarSdk.Horizon.Server("https://horizon.stellar.org/")
     const wallet = await this.make_xlm_wallet(seed)
@@ -9246,7 +9268,8 @@ class App extends Component {
       var response = await server.submitTransaction(t);
       const paging_token = response['paging_token']
       const hash = response['hash']
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash, 'paging_token':paging_token})
+      if(for_swap == false) this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash, 'paging_token':paging_token});
+      else return hash
     }
     catch(e){
       console.log(e)
@@ -9259,7 +9282,7 @@ class App extends Component {
     return x.toString()
   }
 
-  create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet) => {
+  create_and_broadcast_dot_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_dot_wallet(seed)
     const wsProvider = new WsProvider('wss://polkadot-asset-hub-rpc.polkadot.io');
@@ -9269,7 +9292,8 @@ class App extends Component {
     try{
       const hash = kill_wallet != 'e' ? await api.tx.balances.transferAll(recipient_address, false).signAndSend(wallet.keys) : await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
 
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+      else return hash;
     }catch(e){
       console.log(e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -9278,7 +9302,7 @@ class App extends Component {
     await api.disconnect()
   }
 
-  create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet) => {
+  create_and_broadcast_kusama_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_ksm_wallet(seed)
     const wsProvider = new WsProvider('wss://kusama-asset-hub-rpc.polkadot.io');
@@ -9287,7 +9311,9 @@ class App extends Component {
 
     try{
       const hash = kill_wallet != 'e' ? await api.tx.balances.transferAll(recipient_address, false).signAndSend(wallet.keys) : await api.tx.balances.transferKeepAlive(recipient_address, transfer_amount).signAndSend(wallet.keys);
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+      else return hash
     }catch(e){
       console.log(e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -9296,7 +9322,7 @@ class App extends Component {
     await api.disconnect()
   }
 
-  create_and_broadcast_algorand_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+  create_and_broadcast_algorand_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_algo_wallet(seed)
     const algodServer = 'https://mainnet-api.4160.nodely.dev';
@@ -9321,7 +9347,8 @@ class App extends Component {
 
       if(result != null){
         const hash = txId
-        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+        if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+        else return hash
       }else{
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
@@ -9332,7 +9359,7 @@ class App extends Component {
     
   }
 
-  create_and_broadcast_tezos_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_tezos_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_tezos_wallet(seed)
     // const wallet = data['wallet']
@@ -9345,7 +9372,8 @@ class App extends Component {
       await tx.confirmation(1)
       
       const hash = tx.opHash
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+      else return hash
     }
     catch(e){
       console.log(e)
@@ -9358,7 +9386,7 @@ class App extends Component {
     return parseFloat(amount) / 1_000_000
   }
 
-  create_and_broadcast_atom_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+  create_and_broadcast_atom_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_atom_wallet(seed)
     const rpc = "https://cosmos-rpc.publicnode.com:443"
@@ -9372,14 +9400,15 @@ class App extends Component {
     try{
       const result = await signingClient.sendTokens(wallet.cosmosAddress, recipient_address, amount_obj, fee_obj, memo_text)
       const hash = result['transactionHash']
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+      else return hash
     }catch(e){
       console.log(e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
 
-  create_and_broadcast_filecoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_filecoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const connector = new HttpJsonRpcConnector({ url: 'https://rpc.ankr.com/filecoin', token: '' });
     const hdDerivationPath = `m/44'/461'/0'/0/0`;
@@ -9427,14 +9456,15 @@ class App extends Component {
       if (!result.ok) throw result.error
       const cid = result.result
       
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':cid['/']})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':cid['/']});
+      else return cid['/']
     }catch(e){
       console.log('filecoin:', e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
 
-  create_and_broadcast_solana_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_solana_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_sol_wallet(seed)
     // var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
@@ -9452,7 +9482,8 @@ class App extends Component {
 
     try{
       const signature = await sendAndConfirmTransaction(connection, transaction, [wallet.keypair]);
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':signature})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':signature});
+      else return signature;
     }catch(e){
       console.log('solana',e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -9460,7 +9491,7 @@ class App extends Component {
     
   }
 
-  create_and_broadcast_aptos_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_aptos_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_aptos_wallet(seed)
     const NODE_URL = 'https://fullnode.mainnet.aptoslabs.com/v1'; 
@@ -9479,7 +9510,8 @@ class App extends Component {
       const transactionHash = await client.submitTransaction(signedTxn);
       await client.waitForTransaction(transactionHash);
 
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transactionHash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transactionHash});
+      else return transactionHash
     }catch(e){
       console.log('aptos', e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -9487,7 +9519,7 @@ class App extends Component {
     
   }
 
-  create_and_broadcast_cardano_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_cardano_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     // var seed = this.state.final_seed
     // var wallet = await this.generate_cardano_wallet(seed)
     // var amount = bigInt(transfer_amount).value
@@ -9518,7 +9550,8 @@ class App extends Component {
         .applyAndBuild();
       const txHash = await tx_build.signWithAccount(wallet.account).applyAndSubmit() 
       
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':txHash});
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':txHash});
+      else return txHash
     }
     catch(e){
       console.log('cardano', e)
@@ -9527,7 +9560,7 @@ class App extends Component {
     }
   }
 
-  create_and_broadcast_stacks_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+  create_and_broadcast_stacks_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_stacks_wallet(seed)
     
@@ -9548,7 +9581,8 @@ class App extends Component {
       const response = await broadcastTransaction({ transaction: transaction, attachment: '', network: 'mainnet' });
       var transaction_hash = response.txid
 
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transaction_hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transaction_hash});
+      else return transaction_hash
     }catch(e){
       console.log('stacks', e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -9556,7 +9590,7 @@ class App extends Component {
     
   }
 
-  create_and_broadcast_arweave_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_arweave_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     const wallet = data['wallet']
     try{
       var transaction = await arweave.createTransaction({
@@ -9574,15 +9608,18 @@ class App extends Component {
       var sync_time = (3 * 60_000)
       var me = this;
       setTimeout(function() {
-        me.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':transaction.reward, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transaction_hash})
+        if(for_swap == false)me.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':transaction.reward, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transaction_hash})
       }, sync_time);
+      if(for_swap == true){
+        return transaction_hash
+      }
     }catch(e){
       console.log('arweave', e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
 
-  create_and_broadcast_sui_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_sui_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     const wallet = data['wallet']
     try{
       const client = new SuiGrpcClient({
@@ -9596,14 +9633,15 @@ class App extends Component {
       var result = await client.signAndExecuteTransaction({ signer: wallet.keypair, transaction: tx });
       var hash = await client.waitForTransaction({ digest: result.digest });
       const transaction_hash = hash.digest
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transaction_hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transaction_hash});
+      else return transaction_hash
     }catch(e){
       console.log('sui', e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
 
-  create_and_broadcast_tia_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+  create_and_broadcast_tia_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_tia_wallet(seed)
     const rpc = "https://celestia-rpc.publicnode.com:443"
@@ -9617,14 +9655,15 @@ class App extends Component {
     try{
       const result = await signingClient.sendTokens(wallet.celestiaAddress, recipient_address, amount_obj, fee_obj, memo_text)
       const hash = result['transactionHash']
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+      else return hash
     }catch(e){
       console.log(e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
 
-  create_and_broadcast_iota_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_iota_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_iota_wallet(seed)
     const client = new IotaClient({ url: 'https://api.mainnet.iota.cafe' });
@@ -9650,14 +9689,15 @@ class App extends Component {
         await client.waitForTransaction({ digest: result.digest });
       }
       const hash = result.digest
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+      else return hash
     }catch(e){
       console.log(e)
       this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
     }
   }
 
-  create_and_broadcast_hbar_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_hbar_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_hbar_wallet(seed)
     const client = Client.forMainnet();
@@ -9679,7 +9719,8 @@ class App extends Component {
       const transactionId = response.transactionId.toString();
       if(status.toString() == Status.Success.toString()){
         const hash = transactionId
-        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+        if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+        else return hash
       }
       else{
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -9691,7 +9732,7 @@ class App extends Component {
     client.close();
   }
 
-  create_and_broadcast_inj_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+  create_and_broadcast_inj_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_inj_wallet(seed)
     const endpoints = getNetworkEndpoints(Network.Mainnet);
@@ -9719,7 +9760,8 @@ class App extends Component {
 
       if(txResponse.code == 0){
         const hash = txResponse.txHash
-        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+        if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+        else return hash
       }
       else{
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -9730,7 +9772,7 @@ class App extends Component {
     }
   }
 
-  create_and_broadcast_near_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+  create_and_broadcast_near_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_near_wallet(seed)
     const send_amount = yoctoToNear(transfer_amount) 
@@ -9744,7 +9786,8 @@ class App extends Component {
 
       const hash = outcome.transaction.hash;
       if(hash != null && hash != ''){
-        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+        if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+        else return hash
       }
       else{
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -9755,7 +9798,7 @@ class App extends Component {
     }
   }
 
-  create_and_broadcast_icp_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+  create_and_broadcast_icp_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_icp_wallet(seed)
     const send_amount = Number(transfer_amount)
@@ -9769,7 +9812,8 @@ class App extends Component {
 
       const hash = blockHeight;
       if(hash != null && hash != '' && hash != 0){
-        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+       if(for_swap == false) this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+       else return hash
       }
       else{
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -9780,7 +9824,7 @@ class App extends Component {
     }
   }
 
-  create_and_broadcast_zec_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_zec_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_zec_wallet(seed)
     const utxos = data['utxos']
@@ -9820,7 +9864,8 @@ class App extends Component {
     const hash = await this.broadcast_zec_transaction(txHex);
 
     if(hash != null){
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':selected.length, 'tx_size': size, 'hash':hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'utxos_consumed':selected.length, 'tx_size': size, 'hash':hash});
+      else return hash
     }else{
       this.show_dialog_bottomsheet({'hash':txHex, 'chain':'ZEC'}, 'manual_transaction_broadcast')
     }
@@ -9850,7 +9895,7 @@ class App extends Component {
     }
   }
 
-  create_and_broadcast_gram_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text) => {
+  create_and_broadcast_gram_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_gram_wallet(seed)
     const client = wallet.client
@@ -9892,7 +9937,8 @@ class App extends Component {
       }
 
       if(currentSeqno != seqno){
-        this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+        if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+        else return hash
       }
       else{
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
@@ -9903,7 +9949,7 @@ class App extends Component {
     }
   }
 
-  create_and_broadcast_xmr_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data) => {
+  create_and_broadcast_xmr_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = data['wallet']
 
@@ -9927,7 +9973,8 @@ class App extends Component {
         await new Promise((resolve) => setTimeout(resolve, pollInterval));
       }
 
-      this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash})
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+      else return hash
 
     }catch(e){
       console.log(e)
@@ -19754,7 +19801,7 @@ class App extends Component {
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
 
-        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)}
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)}
         />
       </div>
     )
@@ -29518,7 +29565,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <SwapEtherPage ref={this.swap_ether_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
-      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} check_if_ether_swap_pair_exists={this.check_if_ether_swap_pair_exists.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} check_if_ether_swap_pair_exists={this.check_if_ether_swap_pair_exists.bind(this)} validate_arweave_address={this.validate_arweave_address.bind(this)} estimate_arweave_network_fees={this.estimate_arweave_network_fees.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} get_minimum_amount_for_exchange_pair={this.get_minimum_amount_for_exchange_pair.bind(this)} get_changenow_transaction_object_from_pair={this.get_changenow_transaction_object_from_pair.bind(this)}
       />,
       this.state.swap_ether_bottomsheet,
       this.open_swap_ether_bottomsheet,
@@ -29553,12 +29600,12 @@ class App extends Component {
     }
   }
 
-  show_swap_ether_bottomsheet(ether){
+  show_swap_ether_bottomsheet(ether, type){
     this.open_swap_ether_bottomsheet()
     var me = this;
     setTimeout(function() {
       if(me.swap_ether_page.current != null){
-        me.swap_ether_page.current.set_ether(ether)
+        me.swap_ether_page.current.set_ether_or_coin(ether, type)
       }
     }, (1 * 1100));
   }
@@ -29736,8 +29783,9 @@ class App extends Component {
     const target_ether_name = target_ether_object['name']
     const target_ether_symbol = target_ether_object['symbol']
     const target_item = this.get_token_display_data(target_ether_symbol, target_ether_name, swap_target)
+    const received_amount_decimals = 18
 
-    this.show_successful_send_bottomsheet({'type':'lifi_swap', 'item':target_item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash_data':step_hash_data, 'swap_object':swap_object, 'swap_target':swap_target, 'target_balance': target_balance, 'source_balance':source_balance, 'completion_time':Date.now(), 'final_amount':status?.receiving?.amount, 'source_item':item}, true)
+    this.show_successful_send_bottomsheet({'type':'lifi_swap', 'item':target_item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash_data':step_hash_data, 'swap_object':swap_object, 'swap_target':swap_target, 'target_balance': target_balance, 'source_balance':source_balance, 'completion_time':Date.now(), 'final_amount':status?.receiving?.amount, 'source_item':item, 'received_amount_decimals':received_amount_decimals}, true)
   }
 
   get_token_display_data(symbol, name, e5){
@@ -29752,6 +29800,443 @@ class App extends Component {
       'ether_name':{'title':name, 'details':this.getLocale()['2481ba']/* 'Ether Name.' */, 'size' :'l'},
       'ether_symbol':{'title':symbol, 'details':this.getLocale()['2481bb']/* 'Ether Symbol.' */, 'size' :'l'},
       'banner-icon':{'header':symbol, 'subtitle':name, 'image':this.state.e5s[e5].ether_image},
+    }
+  }
+
+  async swap_ether_to_specified_target_via_changenow(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, type, swap_target_data, changenow_swap_object){
+    this.open_dialog_bottomsheet()
+    this.setState({swapping_tokens_via_changenow: true})
+    this.prompt_top_notification(this.getLocale()['3110k']/* Beginning the swap action... */, 5000)
+    
+    const refresh_balance = async (focused_e5_or_symbol) => {
+      if(type == 'ether'){
+        const web3_url = this.get_web3_url_from_e5(focused_e5)
+        const account_for_e5 = this.state.accounts[focused_e5]
+        await this.get_wallet_data2(account_for_e5, false, web3_url, '', focused_e5)
+      }else{
+        await this.update_coin_balances(focused_e5_or_symbol, false)
+      }
+    }
+
+    if(type == 'ether'){
+      const e5 = item['e5']
+      const { transaction_hash, success } = await this.send_ether_to_target_for_changenow_swap(changenow_swap_object.payinAddress, e5, picked_amount, gas_price, sender_address);
+      if(success == false){
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        this.setState({swapping_tokens_via_changenow: null})
+        return;
+      }
+      await this.check_if_changenow_swap_has_finalized(changenow_swap_object)
+      
+      await this.refresh_balance(e5)
+      await this.refresh_balance(swap_target_data['e5'])
+      await this.wait(900)
+
+      const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id)
+      const status = transaction_status.status
+      if(status == 'finished'){
+        this.prompt_top_notification(this.getLocale()['3110ba']/* Swap complete. */, 5000)
+        this.setState({swapping_tokens_via_changenow: null})
+
+        const source_balance = this.state.account_balance[e5]
+        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.props.app_state.coin_data[swap_target_data['e5']]['balance']
+
+        const target_ether_name = swap_target_data['name']
+        const target_ether_symbol = swap_target_data['symbol']
+        const target_item = swap_target_data['type'] == 'ether' ? this.get_token_display_data(target_ether_symbol, target_ether_name, swap_target) : swap_target_data['item']
+        const received_amount_decimals = swap_target_data['decimals']
+        const target_base_units = swap_targget_data['base_units']
+
+        const final_amount = transaction_status.amountTo * 10**received_amount_decimals
+
+        this.show_successful_send_bottomsheet({'type':'changenow_swap', 'item':target_item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash_data':transaction_hash, 'transaction_status':transaction_status, 'target_balance': target_balance, 'source_balance':source_balance, 'completion_time':Date.now(), 'final_amount':final_amount, 'source_item':item, 'received_amount_decimals':received_amount_decimals, 'source_type': type, 'source_decimal_count': 18, 'target_base_units': target_base_units, 'changenow_swap_object':changenow_swap_object}, true)
+      }
+      else if(status == 'failed'){
+        this.prompt_top_notification(this.getLocale()['3110bz']/* Something went wrong, so your funds will be refunded. */, 17000)
+        this.setState({swapping_tokens_via_changenow: null})
+      }
+      else if(status == 'refunded'){
+        this.prompt_top_notification(this.getLocale()['3110ca']/* Something went wrong, so your funds were refunded. */, 19000)
+        this.setState({swapping_tokens_via_changenow: null})
+      }
+    }
+    else{
+      const transaction_hash = await this.send_coin_to_target_for_changenow_swap(changenow_swap_object.payinAddress, item, picked_amount, gas_price, sender_address)
+
+      if(transaction_hash == null){
+        this.setState({swapping_tokens_via_changenow: null})
+        return;
+      }
+      await this.check_if_changenow_swap_has_finalized(changenow_swap_object)
+
+      await this.refresh_balance(item['symbol'])
+      await this.refresh_balance(swap_target_data['e5'])
+      await this.wait(900)
+
+      const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id)
+      const status = transaction_status.status
+
+      if(status == 'finished'){
+        this.prompt_top_notification(this.getLocale()['3110ba']/* Swap complete. */, 5000)
+        this.setState({swapping_tokens_via_changenow: null})
+
+        const source_balance = this.props.app_state.coin_data[item['symbol']]['balance']
+        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.props.app_state.coin_data[swap_target_data['e5']]['balance']
+
+        const target_ether_name = swap_target_data['name']
+        const target_ether_symbol = swap_target_data['symbol']
+        const target_item = swap_target_data['item']
+        const received_amount_decimals = swap_target_data['decimals']
+        const target_base_units = swap_targget_data['base_units']
+
+        const final_amount = transaction_status.amountTo * 10**received_amount_decimals
+
+        this.show_successful_send_bottomsheet({'type':'changenow_swap', 'item':target_item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash_data':transaction_hash, 'transaction_status':transaction_status, 'target_balance': target_balance, 'source_balance':source_balance, 'completion_time':Date.now(), 'final_amount':final_amount, 'source_item':item,'received_amount_decimals':received_amount_decimals, 'source_type': type, 'source_decimal_count': item['decimals'], 'target_base_units':target_base_units, 'changenow_swap_object':changenow_swap_object}, true)
+
+      }
+      else if(status == 'failed'){
+        this.prompt_top_notification(this.getLocale()['3110bz']/* Something went wrong, so your funds will be refunded. */, 17000)
+        this.setState({swapping_tokens_via_changenow: null})
+      }
+      else if(status == 'refunded'){
+        this.prompt_top_notification(this.getLocale()['3110ca']/* Something went wrong, so your funds were refunded. */, 19000)
+        this.setState({swapping_tokens_via_changenow: null})
+      }
+    }
+  }
+
+  async get_changenow_transaction_status(id){
+    const myHeaders = new Headers();
+    myHeaders.append("x-changenow-api-key", process.env.REACT_APP_CHANGENOW_API_KEY);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    const request = `https://api.changenow.io/v2/exchange/by-id?id=${id}`
+    try{
+      const response = fetch(request, requestOptions)
+      if (!response.ok) {
+        console.log('changenow_request', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      const data = await response.json();
+      return data
+    }
+    catch(e){
+      console.log('changenow_request', 'something went wrong', e)
+    }
+  }
+
+  async get_minimum_amount_for_exchange_pair(item, swap_target, swap_target_data, type){
+    const fromCurrency = type == 'ether' ? this.state.e5s[item['e5']].changenow_object['ticker'] : item['changenow_object']['ticker'];
+    const fromNetwork = type == 'ether' ? this.state.e5s[item['e5']].changenow_object['network'] : item['changenow_object']['network'];
+
+    const toCurrency = swap_target_data['type'] == 'ether' ? this.state.e5s[swap_target_data['e5']].changenow_object['ticker'] : swap_target_data['item']['changenow_object']['ticker']
+    const toNetwork = swap_target_data['type'] == 'ether' ? this.state.e5s[swap_target_data['e5']].changenow_object['network'] : swap_target_data['item']['changenow_object']['network']
+    
+    const myHeaders = new Headers();
+    myHeaders.append("x-changenow-api-key", process.env.REACT_APP_CHANGENOW_API_KEY);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    const request = `https://api.changenow.io/v2/exchange/min-amount?fromCurrency=${fromCurrency}&toCurrency=${toCurrency}&fromNetwork=${fromNetwork}&toNetwork=${toNetwork}&flow=standard`
+    try{
+      const response = await fetch(request, requestOptions)
+      if (!response.ok) {
+        console.log('changenow_request', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      const data = await response.json();
+      const minAmount = data.minAmount;
+      const min_amount_as_base_units = type == 'ether' ? bigInt(minAmount * 10**18) : bigInt(minAmount * 10**item['decimals']);
+
+      return min_amount_as_base_units
+    }
+    catch(e){
+      console.log('changenow_request', 'something went wrong', e)
+      return 0
+    }
+  }
+
+  async get_changenow_transaction_object_from_pair(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, type, swap_target_data){
+    this.setState({generating_changenow_transaction: true})
+    const fromCurrency = type == 'ether' ? this.state.e5s[item['e5']].changenow_object['ticker'] : item['changenow_object']['ticker'];
+    const fromNetwork = type == 'ether' ? this.state.e5s[item['e5']].changenow_object['network'] : item['changenow_object']['network'];
+
+    const toCurrency = swap_target_data['type'] == 'ether' ? this.state.e5s[swap_target_data['e5']].changenow_object['ticker'] : swap_target_data['item']['changenow_object']['ticker']
+    const toNetwork = swap_target_data['type'] == 'ether' ? this.state.e5s[swap_target_data['e5']].changenow_object['network'] : swap_target_data['item']['changenow_object']['network']
+
+    const fromAmount = type == 'ether' ? (picked_amount/10**18).toString() : (picked_amount/10**item['decimals']).toString()
+
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("x-changenow-api-key", process.env.REACT_APP_CHANGENOW_API_KEY);
+
+    const raw = JSON.stringify({
+      "fromCurrency": fromCurrency,
+      "toCurrency": toCurrency,
+      "fromNetwork": fromNetwork,
+      "toNetwork": toNetwork,
+      "fromAmount": fromAmount,
+      "toAmount": "",
+      "address": recipient_address,
+      "extraId": "",
+      "refundAddress": sender_address,
+      "refundExtraId": "",
+      "userId": "",
+      "payload": "",
+      "contactEmail": "",
+      "source": "",
+      "flow": "standard",
+      "type": "direct",
+      "rateId": ""
+    });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    const request = `https://api.changenow.io/v2/exchange`
+    try{
+      const response = await fetch(request, requestOptions)
+      if (!response.ok) {
+        console.log('changenow_request', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+
+      const data = await response.json();
+      if(this.dialog_page.current != null && this.dialog_page.current?.state.id == 'confirm_swap_coin_ether_via_changenow_dialog'){
+        this.dialog_page.current?.setState({ changenow_swap_object: data})
+      }
+      if(this.swap_ether_page.current != null){
+        this.swap_ether_page.current?.setState({ changenow_swap_object: data })
+      }
+      this.setState({generating_changenow_transaction: null})
+    }
+    catch(e){
+      console.log('changenow_request', 'something went wrong', e)
+      this.setState({generating_changenow_transaction: null})
+    }
+  }
+
+  async send_ether_to_target_for_changenow_swap(recipient_address, e5, picked_amount, gas_price, sender_address){
+    const private_key = this.state.accounts[e5].privateKey
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const me = this;
+
+    web3.eth.accounts.wallet.add(private_key);
+    var gas_price = (gas_price == null || gas_price == 0 || gas_price > 1e20) ? 10**9 : gas_price
+
+    var tx = {
+      from: sender_address,
+      to: recipient_address,
+      value: picked_amount.toString(),
+      gas: 53000,
+      gasPrice: gas_price.toString()
+    }
+
+    if(this.state.e5s[e5].type == '1559'){
+      const block = await web3.eth.getBlock('pending');
+      gas_price = Number(block.baseFeePerGas);
+      const maxPriorityFeePerGas = set_max_priority_per_gas == 0 ? ((gas_price == null || gas_price == 0) ? 10**9 : gas_price) : set_max_priority_per_gas;
+      const maxFeePerGas = set_max_fee_per_gas == 0 ? (maxPriorityFeePerGas * 2) : set_max_fee_per_gas
+
+      tx = {
+        from: sender_address,
+        to: recipient_address,
+        value: picked_amount.toString(),
+        gas: 53000,
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        type: '0x2', // explicitly mark as EIP-1559
+      };
+    }
+
+    let transaction_hash = null
+    let success = false
+    let finished = false
+
+    web3.eth.sendTransaction(tx)
+    .on('transactionHash', function (hash) {
+      console.log('send_ether_to_target_for_changenow_swap','send_result: ',hash)
+      transaction_hash = hash
+    })
+    .on('receipt', (receipt) => {
+      console.log('send_ether_to_target_for_changenow_swap', 'Transaction mined:', receipt);
+      me.start_get_accounts_data(false, false, true/* should_skip_pre_launch */)
+      success = true
+      finished = true
+    })
+    .on('error', function (error) {
+      console.error('Failed to send transaction:', error);
+      if(error == 'Error: Invalid JSON RPC response: {}'){
+        me.start_get_accounts_data(false, false, true/* should_skip_pre_launch */)
+        success = true
+      }else{
+        me.prompt_top_notification(me.getLocale()['2729']/* 'send failed, ' */+error, 16000)
+      }
+      finished = true
+    });
+
+    await new Promise(resolve => {
+      const checkReady = () => {
+        if (finished == true) {
+          resolve();
+        } else {
+          setTimeout(checkReady, 100);
+        }
+      };
+      checkReady();
+    });
+
+    return { transaction_hash, success }
+  }
+
+  async check_if_changenow_swap_has_finalized(changenow_swap_object){
+    return new Promise(resolve => {
+      const checkReady = () => {
+        const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id)
+        if(this.swap_ether_page.current != null && this.swap_ether_page.current.state.changenow_swap_object?.id == changenow_swap_object.id){
+          this.swap_ether_page.current?.setState({ transaction_status: transaction_status})
+        }
+        const status = transaction_status.status
+        if (status == 'finished' || status == 'failed' || status == 'refunded') {
+          await this.wait(3000)
+          resolve();
+        } else {
+          setTimeout(checkReady, 1000*15);
+        }
+      };
+      checkReady();
+    });
+  }
+
+  async send_coin_to_target_for_changenow_swap(recipient_address, item, transfer_amount, fee, sender_address){
+    const data = this.state.coin_data[item['symbol']]
+    const kill_wallet = 'e'
+    const memo_text = ''
+    if(item['symbol'] == 'BTC'){
+      const hash = await this.create_and_broadcast_bitcoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'BCH'){
+      const hash = await this.create_and_broadcast_bitcoin_cash_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'LTC'){
+      const hash = await this.create_and_broadcast_litecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'DOGE'){
+      const hash = await this.create_and_broadcast_dogecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'DASH'){
+      const hash = await this.create_and_broadcast_dash_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'TRX'){
+      const hash = await this.create_and_broadcast_tron_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'XRP'){
+      const hash = await this.create_and_broadcast_xrp_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'XLM'){
+      const hash = await this.create_and_broadcast_xlm_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, kill_wallet, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'DOT'){
+      const hash = await this.create_and_broadcast_dot_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'KSM'){
+      const hash = await this.create_and_broadcast_kusama_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, kill_wallet, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'ALGO'){
+      const hash = await this.create_and_broadcast_algorand_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'XTZ'){
+      const hash = await this.create_and_broadcast_tezos_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'ATOM'){
+      const hash = await this.create_and_broadcast_atom_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'FIL'){
+      const hash = await this.create_and_broadcast_filecoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'SOL'){
+      const hash = await this.create_and_broadcast_solana_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'ADA'){
+      const hash = await this.create_and_broadcast_cardano_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'STX'){
+      const hash = await this.create_and_broadcast_stacks_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'AR'){
+      const hash = await this.create_and_broadcast_arweave_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'SUI'){
+      const hash = await this.create_and_broadcast_sui_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'TIA'){
+      const hash = await this.create_and_broadcast_tia_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'IOTA'){
+      const hash = await this.create_and_broadcast_iota_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'HBAR'){
+      const hash = await this.create_and_broadcast_hbar_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'INJ'){
+      const hash = await this.create_and_broadcast_inj_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text)
+      return hash;
+    }
+    else if(item['symbol'] == 'NEAR'){
+      const hash = await this.create_and_broadcast_near_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+      return hash;
+    }
+    else if(item['symbol'] == 'ICP'){
+      const hash = await this.create_and_broadcast_icp_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'ZEC'){
+      const hash = await this.create_and_broadcast_zec_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
+    }
+    else if(item['symbol'] == 'GRAM'){
+      const hash = await this.create_and_broadcast_gram_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, memo_text, true)
+      return hash;
+    }
+    else if(item['symbol'] == '???'){
+      const hash = await this.create_and_broadcast_xmr_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
+      return hash;
     }
   }
 
