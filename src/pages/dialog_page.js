@@ -17676,7 +17676,7 @@ return data['data']
 
                 {this.render_changenow_details_if_loaded()}
 
-                {this.state.changenow_swap_object == null && (
+                {this.state.changenow_swap_object != null && (
                     <div>
                         <div style={{height: 10}}/>
                         <div onClick={()=>this.confirm_swap_coin_ether_via_changenow()}>
@@ -17717,7 +17717,7 @@ return data['data']
             const target_decimals = swap_target_data['decimals']
             const target_base_units = swap_target_data['base_units']
 
-            const receive_amount_as_base_units = bigInt(receive_amount * 10**target_decimals);
+            const receive_amount_as_base_units = bigInt(Math.round(receive_amount * 10**target_decimals));
 
             return(
                 <div>
@@ -17730,7 +17730,7 @@ return data['data']
                     {this.render_detail_item('3', {'title':changenow_swap_object.type, 'details':this.props.app_state.loc['3110bx']/* 'Type' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':changenow_swap_object.payinAddress, 'details':this.props.app_state.loc['3110bw']/* 'Payin Address' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'details':changenow_swap_object.payinAddress, 'title':this.props.app_state.loc['3110bw']/* 'Payin Address' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
@@ -17738,10 +17738,10 @@ return data['data']
 
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(receive_amount_as_base_units), 'number':this.format_account_balance_figure(receive_amount_as_base_units), 'barcolor':'#606060', 'relativepower':target_base_unit_name, })}
 
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(receive_amount_as_base_units/10**target_base_units),
-                        'number':(receive_amount_as_base_units/10**target_base_units), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(receive_amount_as_base_units/10**target_decimals),
+                        'number':(receive_amount_as_base_units/10**target_decimals), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
                     </div>
-
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['3110cp']/* '🤔 Clarification: The amount you\'ll receive may be more or less than this depending on the exchange time.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                 </div>
             )
         }

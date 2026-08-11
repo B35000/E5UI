@@ -8834,7 +8834,7 @@ class App extends Component {
     }, sync_time);
   }
 
-  create_and_broadcast_bitcoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
+  create_and_broadcast_bitcoin_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false, memo=null) => {
     var seed = this.state.final_seed
     const path = "m/44'/0'/0'/0/0" // bitcoin mainnet
     const network = bitcoin.networks.bitcoin;
@@ -8855,13 +8855,24 @@ class App extends Component {
     const change = input - (transfer_amount + fee);
     var size = this.get_tx_size(input_count, 2)
 
-    var scriptPubKey = bitcoin.address.toOutputScript(recipient_address, network)
+    /* recipient output */
+    const scriptPubKey = bitcoin.address.toOutputScript(recipient_address, network)
     txb.addOutput(scriptPubKey, transfer_amount)
 
+    /* my change output */
     if(change > 0){
-      txb.addOutput(sender_address, change);
+      const changeScript = bitcoin.address.toOutputScript(sender_address, network);
+      txb.addOutput(changeScript, change);
     }
 
+    if(memo != null){
+      const memoBuffer = Buffer.from(memo, 'utf8');
+      const memoScript = bitcoin.script.compile([ bitcoin.opcodes.OP_RETURN, memoBuffer ]);
+      txb.addOutput(memoScript, 0);
+      size = this.get_tx_size(input_count, 3)
+    }
+
+    /* signature stuff */
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
     for (let i = 0; i < input_count; i++) {
       txb.sign(i, key);
@@ -9022,8 +9033,11 @@ class App extends Component {
     txb.addOutput(scriptPubKey, transfer_amount)
 
     if(change > 0){
-      txb.addOutput(wallet.address, change);
+      const changeScript = bitcoin.address.toOutputScript(sender_address, network);
+      txb.addOutput(changeScript, change);
     }
+
+
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
     for (let i = 0; i < input_count; i++) {
       txb.sign(i, key);
@@ -9076,7 +9090,8 @@ class App extends Component {
     txb.addOutput(scriptPubKey, transfer_amount)
 
     if(change > 0){
-      txb.addOutput(wallet.address, change);
+      const changeScript = bitcoin.address.toOutputScript(sender_address, network);
+      txb.addOutput(changeScript, change);
     }
 
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
@@ -9131,7 +9146,8 @@ class App extends Component {
     txb.addOutput(scriptPubKey, transfer_amount)
 
     if(change > 0){
-      txb.addOutput(wallet.address, change);
+      const changeScript = bitcoin.address.toOutputScript(sender_address, network);
+      txb.addOutput(changeScript, change);
     }
 
     const key = bitcoin.ECPair.fromWIF(wallet.privateKey, network);
@@ -9826,7 +9842,8 @@ class App extends Component {
 
   create_and_broadcast_zec_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
-    const wallet = await this.generate_zec_wallet(seed)
+    const wallet = await this.get_zcash_wallet(seed)
+    const network = utxolib.networks.zcash
     const utxos = data['utxos']
 
     const amount = parseInt(transfer_amount.toString())
@@ -9840,9 +9857,9 @@ class App extends Component {
       totalIn += utxo.value;
       if (totalIn >= amount + fee) break;
     }
-    const size = this.get_tx_size(selected.length, 2)
-
+    var size = this.get_tx_size(selected.length, 2)
     const change = totalIn - amount - fee;
+
     const txBuilder = new utxolib.bitgo.ZcashTransactionBuilder(utxolib.networks.zcash);
     txBuilder.setVersion(4); // Sapling transaction format
     txBuilder.setVersionGroupId(0x892f2085); // Sapling version group ID
@@ -9850,10 +9867,17 @@ class App extends Component {
     txBuilder.setConsensusBranchId(0xc2d6d0b4)
 
 
+    /* add the required inupts to the tx builder */
     selected.forEach((utxo) => txBuilder.addInput(utxo.txid, utxo.vout));
-    txBuilder.addOutput(receiver, amount);
+    
+    /* specify the output for the receiver */
+    const outputScript = utxolib.address.toOutputScript(receiver, network)
+    txBuilder.addOutput(outputScript, amount);
+    
+    /* specify my change. */
     if (change > 0) {
-      txBuilder.addOutput(sender, change);
+      const changeScript = utxolib.address.toOutputScript(sender, network)
+      txBuilder.addOutput(changeScript, change);
     }
 
     selected.forEach((utxo, index) => {
@@ -29809,10 +29833,10 @@ class App extends Component {
     this.prompt_top_notification(this.getLocale()['3110k']/* Beginning the swap action... */, 5000)
     
     const refresh_balance = async (focused_e5_or_symbol) => {
-      if(type == 'ether'){
-        const web3_url = this.get_web3_url_from_e5(focused_e5)
-        const account_for_e5 = this.state.accounts[focused_e5]
-        await this.get_wallet_data2(account_for_e5, false, web3_url, '', focused_e5)
+      if(this.state.e5s[focused_e5_or_symbol] != null){
+        const web3_url = this.get_web3_url_from_e5(focused_e5_or_symbol)
+        const account_for_e5 = this.state.accounts[focused_e5_or_symbol]
+        await this.get_wallet_data2(account_for_e5, false, web3_url, '', focused_e5_or_symbol)
       }else{
         await this.update_coin_balances(focused_e5_or_symbol, false)
       }
@@ -29828,24 +29852,24 @@ class App extends Component {
       }
       await this.check_if_changenow_swap_has_finalized(changenow_swap_object)
       
-      await this.refresh_balance(e5)
-      await this.refresh_balance(swap_target_data['e5'])
+      await refresh_balance(e5)
+      await refresh_balance(swap_target_data['e5']/* should be the target e5 or symbol */)
       await this.wait(900)
 
       const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id)
-      const status = transaction_status.status
+      const status = transaction_status.status.toLowerCase()
       if(status == 'finished'){
         this.prompt_top_notification(this.getLocale()['3110ba']/* Swap complete. */, 5000)
         this.setState({swapping_tokens_via_changenow: null})
 
         const source_balance = this.state.account_balance[e5]
-        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.props.app_state.coin_data[swap_target_data['e5']]['balance']
+        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.state.coin_data[swap_target_data['e5']]['balance']
 
         const target_ether_name = swap_target_data['name']
         const target_ether_symbol = swap_target_data['symbol']
         const target_item = swap_target_data['type'] == 'ether' ? this.get_token_display_data(target_ether_symbol, target_ether_name, swap_target) : swap_target_data['item']
         const received_amount_decimals = swap_target_data['decimals']
-        const target_base_units = swap_targget_data['base_units']
+        const target_base_units = swap_target_data['base_units']
 
         const final_amount = transaction_status.amountTo * 10**received_amount_decimals
 
@@ -29861,7 +29885,7 @@ class App extends Component {
       }
     }
     else{
-      const transaction_hash = await this.send_coin_to_target_for_changenow_swap(changenow_swap_object.payinAddress, item, picked_amount, gas_price, sender_address)
+      const transaction_hash = await this.send_coin_to_target_for_changenow_swap(changenow_swap_object.payinAddress, item, picked_amount, gas_price, sender_address, changenow_swap_object.payinExtraId)
 
       if(transaction_hash == null){
         this.setState({swapping_tokens_via_changenow: null})
@@ -29869,25 +29893,25 @@ class App extends Component {
       }
       await this.check_if_changenow_swap_has_finalized(changenow_swap_object)
 
-      await this.refresh_balance(item['symbol'])
-      await this.refresh_balance(swap_target_data['e5'])
+      await refresh_balance(item['symbol'])
+      await refresh_balance(swap_target_data['e5']/* should be the e5 if an ether or symbol */)
       await this.wait(900)
 
       const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id)
-      const status = transaction_status.status
+      const status = transaction_status.status.toLowerCase()
 
       if(status == 'finished'){
         this.prompt_top_notification(this.getLocale()['3110ba']/* Swap complete. */, 5000)
         this.setState({swapping_tokens_via_changenow: null})
 
-        const source_balance = this.props.app_state.coin_data[item['symbol']]['balance']
-        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.props.app_state.coin_data[swap_target_data['e5']]['balance']
+        const source_balance = this.state.coin_data[item['symbol']]['balance']
+        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.state.coin_data[swap_target_data['e5']]['balance']
 
         const target_ether_name = swap_target_data['name']
         const target_ether_symbol = swap_target_data['symbol']
-        const target_item = swap_target_data['item']
+        const target_item = swap_target_data['type'] == 'ether' ? this.get_token_display_data(target_ether_symbol, target_ether_name, swap_target) : swap_target_data['item']
         const received_amount_decimals = swap_target_data['decimals']
-        const target_base_units = swap_targget_data['base_units']
+        const target_base_units = swap_target_data['base_units']
 
         const final_amount = transaction_status.amountTo * 10**received_amount_decimals
 
@@ -29917,7 +29941,7 @@ class App extends Component {
 
     const request = `https://api.changenow.io/v2/exchange/by-id?id=${id}`
     try{
-      const response = fetch(request, requestOptions)
+      const response = await fetch(request, requestOptions)
       if (!response.ok) {
         console.log('changenow_request', response)
         throw new Error(`Failed to retrieve data. Status: ${response}`);
@@ -29955,7 +29979,7 @@ class App extends Component {
       }
       const data = await response.json();
       const minAmount = data.minAmount;
-      const min_amount_as_base_units = type == 'ether' ? bigInt(minAmount * 10**18) : bigInt(minAmount * 10**item['decimals']);
+      const min_amount_as_base_units = type == 'ether' ? bigInt(Math.round(minAmount * 10**18)) : bigInt(Math.round(minAmount * 10**item['decimals']));
 
       return min_amount_as_base_units
     }
@@ -29967,6 +29991,7 @@ class App extends Component {
 
   async get_changenow_transaction_object_from_pair(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, type, swap_target_data){
     this.setState({generating_changenow_transaction: true})
+    await this.wait(5000)
     const fromCurrency = type == 'ether' ? this.state.e5s[item['e5']].changenow_object['ticker'] : item['changenow_object']['ticker'];
     const fromNetwork = type == 'ether' ? this.state.e5s[item['e5']].changenow_object['network'] : item['changenow_object']['network'];
 
@@ -29977,7 +30002,7 @@ class App extends Component {
 
 
     const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("content-type", "application/json");
     myHeaders.append("x-changenow-api-key", process.env.REACT_APP_CHANGENOW_API_KEY);
 
     const raw = JSON.stringify({
@@ -30000,12 +30025,14 @@ class App extends Component {
       "rateId": ""
     });
 
-    var requestOptions = {
+    const requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: raw,
       redirect: 'follow'
     };
+
+    console.log('changenow_request', 'requestOptions', requestOptions)
 
     const request = `https://api.changenow.io/v2/exchange`
     try{
@@ -30016,10 +30043,12 @@ class App extends Component {
       }
 
       const data = await response.json();
-      if(this.dialog_page.current != null && this.dialog_page.current?.state.id == 'confirm_swap_coin_ether_via_changenow_dialog'){
+      console.log('changenow_request', 'data', data)
+
+      if(this.dialog_page.current != null && this.dialog_page.current?.state.id == 'confirm_swap_coin_ether_via_changenow_dialog' && data.id != null){
         this.dialog_page.current?.setState({ changenow_swap_object: data})
       }
-      if(this.swap_ether_page.current != null){
+      if(this.swap_ether_page.current != null && data.id != null){
         this.swap_ether_page.current?.setState({ changenow_swap_object: data })
       }
       this.setState({generating_changenow_transaction: null})
@@ -30049,8 +30078,8 @@ class App extends Component {
     if(this.state.e5s[e5].type == '1559'){
       const block = await web3.eth.getBlock('pending');
       gas_price = Number(block.baseFeePerGas);
-      const maxPriorityFeePerGas = set_max_priority_per_gas == 0 ? ((gas_price == null || gas_price == 0) ? 10**9 : gas_price) : set_max_priority_per_gas;
-      const maxFeePerGas = set_max_fee_per_gas == 0 ? (maxPriorityFeePerGas * 2) : set_max_fee_per_gas
+      const maxPriorityFeePerGas = (gas_price == null || gas_price == 0) ? 10**9 : gas_price
+      const maxFeePerGas = maxPriorityFeePerGas * 2
 
       tx = {
         from: sender_address,
@@ -30103,29 +30132,37 @@ class App extends Component {
     return { transaction_hash, success }
   }
 
-  async check_if_changenow_swap_has_finalized(changenow_swap_object){
-    return new Promise(resolve => {
-      const checkReady = () => {
-        const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id)
-        if(this.swap_ether_page.current != null && this.swap_ether_page.current.state.changenow_swap_object?.id == changenow_swap_object.id){
-          this.swap_ether_page.current?.setState({ transaction_status: transaction_status})
-        }
-        const status = transaction_status.status
-        if (status == 'finished' || status == 'failed' || status == 'refunded') {
-          await this.wait(3000)
-          resolve();
-        } else {
-          setTimeout(checkReady, 1000*15);
+  check_if_changenow_swap_has_finalized(changenow_swap_object) {
+    return new Promise((resolve, reject) => {
+      const checkReady = async () => {
+        try {
+          const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id);
+          if (this.swap_ether_page.current != null && this.swap_ether_page.current.state.changenow_swap_object?.id == changenow_swap_object.id ) {
+            this.swap_ether_page.current.setState({ transaction_status: transaction_status });
+          }
+          const status = transaction_status.status;
+          if (
+            status.toLowerCase() === 'finished' ||
+            status.toLowerCase() === 'failed' ||
+            status.toLowerCase() === 'refunded'
+          ) {
+            await this.wait(3000);
+            resolve(transaction_status);
+            return;
+          }
+          setTimeout(checkReady, 15_000);
+        } 
+        catch (error) {
+          reject(error);
         }
       };
       checkReady();
     });
   }
 
-  async send_coin_to_target_for_changenow_swap(recipient_address, item, transfer_amount, fee, sender_address){
+  async send_coin_to_target_for_changenow_swap(recipient_address, item, transfer_amount, fee, sender_address, memo_text){
     const data = this.state.coin_data[item['symbol']]
     const kill_wallet = 'e'
-    const memo_text = ''
     if(item['symbol'] == 'BTC'){
       const hash = await this.create_and_broadcast_bitcoin_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
       return hash;

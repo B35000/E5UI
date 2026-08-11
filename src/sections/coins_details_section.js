@@ -1319,7 +1319,7 @@ class CoinsDetailsSection extends Component {
 
     render_send_receipts_item(ipfs, coin_item){
         if(ipfs['hash']['type'] == 'lifi_swap' || ipfs['hash']['type'] == 'changenow_swap'){
-            return this.render_swap_item(ipfs, ether_item)
+            return this.render_swap_item(ipfs, coin_item)
         }
         const time = ipfs['time']/1000
         const data = this.props.app_state.coin_data[coin_item['symbol']]

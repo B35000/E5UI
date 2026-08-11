@@ -54,7 +54,7 @@ class SwapEtherPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['3110']/* 'lifi-swap' */, this.props.app_state.loc['3110bj']/* 'changeNow-swap' */], [1]
+                ['xor','',0], ['e',], [0]
             ],
         };
     }
@@ -66,19 +66,19 @@ class SwapEtherPage extends Component {
         const available = ['e',]
         external_swappers.forEach(swap_option => {
             if(swap_option == 'lifi'){
-                available.push(this.props.app_state.loc['3110']/* 'lifi-swap' */);
+                available.push(this.props.app_state.loc['3110']/* 'Li.Fi' */);
             }
             else if(swap_option == 'changenow'){
-                available.push(this.props.app_state.loc['3110bj']/* 'changeNow-swap' */)
+                available.push(this.props.app_state.loc['3110bj']/* 'changeNOW' */)
             }
         });
         var selection = null;
         external_swappers.forEach(swap_option => {
             if(swap_option == 'lifi'){
-                if(selection == null) selection = available.indexOf(this.props.app_state.loc['3110']/* 'lifi-swap' */);
+                if(selection == null) selection = available.indexOf(this.props.app_state.loc['3110']/* 'Li.Fi' */);
             }
             else if(swap_option == 'changenow'){
-                if(selection == null) selection = available.indexOf(this.props.app_state.loc['3110bj']/* 'changeNow-swap' */);
+                if(selection == null) selection = available.indexOf(this.props.app_state.loc['3110bj']/* 'changeNOW' */);
             }
         });
         const clone = structuredClone(this.state.get_swap_ether_tags_object)
@@ -136,10 +136,10 @@ class SwapEtherPage extends Component {
         if(this.state.item == null) return;
         const selected_item = this.get_selected_item(this.state.get_swap_ether_tags_object, 'e')
 
-        if(selected_item == this.props.app_state.loc['3110']/* 'lifi-swap' */){
+        if(selected_item == this.props.app_state.loc['3110']/* 'Li.Fi' */){
             return this.render_lifi_swap_data()
         }
-        else if(selected_item == this.props.app_state.loc['3110bj']/* 'changeNow-swap' */){
+        else if(selected_item == this.props.app_state.loc['3110bj']/* 'changeNOW' */){
             return this.render_changenow_swap_data()
         }
     }
@@ -245,9 +245,11 @@ class SwapEtherPage extends Component {
 
                     {this.render_detail_item('2', { 'style':'s', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
+
+                {this.render_input_vaue(item, (this.state.picked_wei_amount/10**18))}
                 
                 {this.render_amount_number_picker()}
-
+                <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.set_maximum(gas_price, e5)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1384']/* 'Set Maximum' */, 'action':''})}
                 </div>
@@ -262,7 +264,7 @@ class SwapEtherPage extends Component {
                     </div>
                 )}
 
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
                 {this.props.app_state.checking_if_swap_pair_exists != true &&  this.props.app_state.swapping_tokens_via_lifi != true && (
                     <div onClick={()=>this.finish_lifi_swap()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3110z']/* 'Proceed.' */, 'action': ''})}
@@ -271,6 +273,44 @@ class SwapEtherPage extends Component {
                 {(this.props.app_state.checking_if_swap_pair_exists == true || this.props.app_state.swapping_tokens_via_lifi == true) && this.render_small_skeleton_object()}
             </div>
         )
+    }
+
+    render_input_vaue(item, balance_decimal){
+        var final_balance = balance_decimal == null ? 0.0 : balance_decimal
+        const used_symbol = item['symbol'].endsWith('ETH') ? 'ETH' : item['symbol']
+        if(this.props.app_state.asset_price_data['BTC'] == null || this.props.app_state.asset_price_data[used_symbol] == null) return;
+        var coin_price = this.props.app_state.asset_price_data[used_symbol]['price']
+        var bitcoin_price = this.props.app_state.asset_price_data['BTC']['price']
+        var selected_preferred_currency = this.props.app_state.preferred_currency
+        if(coin_price != null){
+            var balance_value_in_usd = coin_price * final_balance
+            if(selected_preferred_currency == this.props.app_state.loc['1593eg']/* 'SAT' */){
+                var number_of_btc_for_one_usd = 1 / bitcoin_price
+                var balance_value_in_btc = number_of_btc_for_one_usd * balance_value_in_usd
+                var balance_value_in_sat = parseInt(balance_value_in_btc * this.props.app_state.coins['BTC']['conversion'])
+                return(
+                    <div>
+                        <div style={{height: 10}}/>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3110cq']/* 'Input Value' */, 'subtitle':this.format_power_figure(balance_value_in_sat), 'barwidth':this.calculate_bar_width(balance_value_in_sat), 'number':(balance_value_in_sat), 'barcolor':'#606060', 'relativepower':'SATs', })}
+                        </div>
+                    </div>
+                )
+            }else{
+                return(
+                    <div>
+                        <div style={{height: 10}}/>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3110cq']/* 'Input Value' */, 'subtitle':this.format_power_figure(this.round_off(balance_value_in_usd)), 'barwidth':this.calculate_bar_width(this.round_off(balance_value_in_usd)), 'number':this.format_account_balance_figure(this.round_off(balance_value_in_usd)), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */, })}
+                        </div>
+                    </div>
+                )
+            }
+        }
+    }
+
+    round_off(float_number){
+        return (Math.round(float_number * 100) / 100)
     }
 
 
@@ -333,7 +373,7 @@ class SwapEtherPage extends Component {
     }
 
     get_account_address(){
-        var e5 = this.state.item['e5']
+        var e5 = this.state.type == 'ether' ?  this.state.item['e5'] : 'E35';
         if(this.props.app_state.accounts[e5] != null){
             return this.format_address(this.props.app_state.accounts[e5].address, e5);
         }
@@ -592,14 +632,23 @@ class SwapEtherPage extends Component {
                     {this.render_detail_item('2', { 'style':'s', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
 
+                {this.render_input_vaue(item, (this.state.picked_wei_amount/10**18))}
+
                 {this.render_amount_number_picker()}
-
-                <div style={{'padding': '5px'}} onClick={()=>this.set_minimum_amount2()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3110bt']/* 'Set Minimum' */, 'action':''})}
-                </div>
-
-                <div style={{'padding': '5px'}} onClick={()=>this.set_maximum(gas_price, e5)}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1384']/* 'Set Maximum' */, 'action':''})}
+                <div style={{height: 10}}/>
+                <div style={{'padding': '0px 10px 0px 10px'}}>
+                    <div className="row">
+                        <div className="col-6" style={{}}>
+                            <div onClick={()=>this.set_minimum_amount2()}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3110bt']/* 'Set Minimum' */, 'action':''})}
+                            </div>
+                        </div>
+                        <div className="col-6" style={{}}>
+                            <div onClick={()=>this.set_maximum(gas_price, e5)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['1384']/* 'Set Maximum' */, 'action':''})}
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {this.props.app_state.locked_wallet_hashed_password != '' && (
@@ -612,7 +661,7 @@ class SwapEtherPage extends Component {
                     </div>
                 )}
 
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
                 {this.props.app_state.swapping_tokens_via_changenow != true && (
                     <div onClick={()=>this.finish_changenow_swap()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3110z']/* 'Proceed.' */, 'action': ''})}
@@ -735,6 +784,7 @@ class SwapEtherPage extends Component {
                         </div>
                     </div>
                 )}
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':data['address'], 'size':'l'})}
                 <div style={{height: 10}}/>
@@ -785,14 +835,24 @@ class SwapEtherPage extends Component {
                     {this.render_detail_item('2', this.get_picked_amount_in_decimal())}
                 </div>
 
-                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23} decimal_count={this.get_coin_decimal_count()} pick_with_text_area={true}/>
+                {this.render_input_vaue(item, this.state.picked_sats_amount / item['conversion'])}
 
-                <div style={{'padding': '5px'}} onClick={()=>this.set_minimum_amount()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3110bt']/* 'Set Minimum' */, 'action':''})}
-                </div>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed2.bind(this)} theme={this.props.theme} power_limit={23} decimal_count={this.get_coin_decimal_count()} pick_with_text_area={true}/>
 
-                <div style={{'padding': '5px'}} onClick={()=>this.set_maximum()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1384']/* 'Set Maximum' */, 'action':''})}
+                <div style={{height: 10}}/>
+                <div style={{'padding': '0px 10px 0px 10px'}}>
+                    <div className="row">
+                        <div className="col-6" style={{}}>
+                            <div onClick={()=>this.set_minimum_amount()}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3110bt']/* 'Set Minimum' */, 'action':''})}
+                            </div>
+                        </div>
+                        <div className="col-6" style={{}}>
+                            <div onClick={()=>this.set_maximum()}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['1384']/* 'Set Maximum' */, 'action':''})}
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {this.props.app_state.locked_wallet_hashed_password != '' && (
@@ -805,7 +865,8 @@ class SwapEtherPage extends Component {
                     </div>
                 )}
 
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
+
                 {this.props.app_state.swapping_tokens_via_changenow != true && (
                     <div onClick={()=>this.finish_changenow_swap()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3110z']/* 'Proceed.' */, 'action': ''})}
@@ -1068,7 +1129,7 @@ class SwapEtherPage extends Component {
                 if(external_swappers.includes(external_exchange)){
                     const filter_name = coin_object['name']
                     const filter_symbol = coin_object['symbol']
-                    if(filter_symbol != source_symbol){
+                    if(filter_symbol != source_symbol && this.props.app_state.coin_data[coin_object['symbol']] != null){
                         all_data.push({
                             'e5': filter_symbol,
                             'name':filter_name,
@@ -1085,9 +1146,7 @@ class SwapEtherPage extends Component {
             }
         }
 
-
-
-        return this.sortByAttributeDescending(all_data, 'name')
+        return this.sortByAttributeDescending(all_data, 'name').reverse()
     }
 
     render_swap_targets_to_select2(){
@@ -1253,7 +1312,7 @@ class SwapEtherPage extends Component {
                 gas_price = this.get_gas_price_from_runs(e5)
             }
 
-            if(!await this.validate_recipient(recipient_address)){
+            if(!await this.validate_recipient(recipient_address, swap_target)){
                 this.props.notify(this.props.app_state.loc['1407']/* 'Please set a valid recipient.' */, 4500)
             }
             else if(picked_amount == 0){
@@ -1282,7 +1341,7 @@ class SwapEtherPage extends Component {
 
                 this.props.show_dialog_bottomsheet({'picked_amount':picked_amount, 'item':item, 'recipient_address':recipient_address, 'gas_price':gas_price, 'my_balance':my_balance, 'sender_address':this.get_account_address(), 'swap_target':swap_target, 'swap_target_data': swap_target_data, 'type': type}, 'confirm_swap_coin_ether_via_changenow_dialog')
                 
-                this.props.get_changenow_transaction_object_from_pair(item, picked_amount, recipient_address, gas_price, my_balance, this.get_account_address(), swap_target, type, swap_target_data)
+                await this.props.get_changenow_transaction_object_from_pair(item, picked_amount, recipient_address, gas_price, my_balance, this.get_account_address(), swap_target, type, swap_target_data)
             }
         }
         else{
@@ -1297,10 +1356,10 @@ class SwapEtherPage extends Component {
             const money_out = bigInt(set_fee).plus(picked_amount)
             const accounts_balance = data['balance']
 
-            if(transfer_amount == 0){
+            if(picked_amount == 0){
                 this.props.notify(this.props.app_state.loc['1406']/* 'Please set a valid amount.' */, 4500)
             }
-            else if(!await this.validate_recipient(recipient_address)){
+            else if(!await this.validate_recipient(recipient_address, swap_target)){
                 this.props.notify(this.props.app_state.loc['1407']/* 'Please set a valid recipient.' */, 4500)
             }
             else if(money_out > (accounts_balance - data['min_deposit'])){
@@ -1323,10 +1382,11 @@ class SwapEtherPage extends Component {
             }
             else{
                 const swap_target_data = this.get_swap_target_data(swap_target)
-                
-                this.props.show_dialog_bottomsheet({'picked_amount':picked_amount, 'item':item, 'recipient_address':recipient_address, 'gas_price':set_fee, 'my_balance':accounts_balance, 'sender_address':this.get_account_address(), 'swap_target':swap_target, 'swap_target_data': this.get_swap_target_data(swap_target), 'type': type}, 'confirm_swap_coin_ether_via_changenow_dialog')
+                const sender_address = this.props.app_state.coin_data[item['symbol']]['address']
 
-                this.props.get_changenow_transaction_object_from_pair(item, picked_amount, recipient_address, set_fee, accounts_balance, this.get_account_address(), swap_target, type, swap_target_data)
+                this.props.show_dialog_bottomsheet({'picked_amount':picked_amount, 'item':item, 'recipient_address':recipient_address, 'gas_price':set_fee, 'my_balance':accounts_balance, 'sender_address':sender_address, 'swap_target':swap_target, 'swap_target_data': this.get_swap_target_data(swap_target), 'type': type}, 'confirm_swap_coin_ether_via_changenow_dialog')
+
+                await this.props.get_changenow_transaction_object_from_pair(item, picked_amount, recipient_address, set_fee, accounts_balance, sender_address, swap_target, type, swap_target_data)
             }
         }
     }
@@ -1346,6 +1406,7 @@ class SwapEtherPage extends Component {
         const filtered_data = available_swap_targets.filter((target) => {
             return target['e5'] == swap_target
         })
+        // console.log('get_swap_target_data','filtered_data', filtered_data, swap_target)
         if(filtered_data.length > 0){
             return filtered_data[0]
         }

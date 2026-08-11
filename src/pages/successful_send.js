@@ -1730,7 +1730,7 @@ class SuccessfulSend extends Component {
                 {this.render_detail_item('3', {'title':changenow_swap_object.type, 'details':this.props.app_state.loc['3110bx']/* 'Type' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':changenow_swap_object.payinAddress, 'details':this.props.app_state.loc['3110bw']/* 'Payin Address' */, 'size':'l'})}
+                {this.render_detail_item('3', {'details':changenow_swap_object.payinAddress, 'title':this.props.app_state.loc['3110bw']/* 'Payin Address' */, 'size':'l'})}
             </div>
         )
     }
