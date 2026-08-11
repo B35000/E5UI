@@ -563,7 +563,7 @@ class SwapEtherPage extends Component {
         const minimum_amount = this.state.swap_target2 != null ? this.state.minimum_changenow_swap_amount[this.state.swap_target2] : 0
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110bk']/* '💱 Swap Coin/Ether' */, 'details':this.props.app_state.loc['3110bl']/* 'Convert your $ coin or ether at current market exchange rates to another coin or ether via ChangeNOW.' */.replace('$', item['name']), 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110bk']/* '💱 Swap Coin/Ether' */, 'details':this.props.app_state.loc['3110bl']/* 'Convert your $ ether at current market exchange rates to another coin or ether via ChangeNOW.' */.replace('$', item['name']), 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095d']/* 'Balance in $' */.replace('$', parent_symbol)}</p>
@@ -764,7 +764,7 @@ class SwapEtherPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110bk']/* '💱 Swap Coin/Ether' */, 'details':this.props.app_state.loc['3110bl']/* 'Convert your $ coin or ether at current market exchange rates to another coin or ether via ChangeNOW.' */.replace('$', item['name']), 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110bk']/* '💱 Swap Coin/Ether' */, 'details':this.props.app_state.loc['3110cr']/* 'Convert your $ coin at current market exchange rates to another coin or ether via ChangeNOW.' */.replace('$', item['name']), 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}
                 onClick={() => this.props.view_number({'title':this.props.app_state.loc['2919']/* 'Your balance in ' */+item['base_unit'], 'number':balance_base_unit, 'relativepower':item['base_unit']})}>

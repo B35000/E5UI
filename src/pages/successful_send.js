@@ -1691,9 +1691,6 @@ class SuccessfulSend extends Component {
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(target_balance/10**received_amount_decimals),
                     'number':(target_balance/10**received_amount_decimals), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
                 </div>
-                <div style={{height: 10}}/>
-
-                {this.render_detail_item('0')}
 
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':time_to_completion_text, 'details':this.props.app_state.loc['3110be']/* 'Completion Time.' */, 'size':'l'})}

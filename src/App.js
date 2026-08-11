@@ -575,9 +575,12 @@ import { Secp256k1, sha256 } from '@cosmjs/crypto';
 import { SigningStargateClient, StargateClient } from "@cosmjs/stargate"
 import bchaddr from 'bchaddrjs';
 import { isValidClassicAddress } from 'ripple-address-codec';
-import { Keypair, Connection, PublicKey, Transaction, SystemProgram, sendAndConfirmTransaction } from '@solana/web3.js';
+// import { Keypair, Connection, PublicKey, Transaction, SystemProgram, sendAndConfirmTransaction } from '@solana/web3.js';
+import { createSolanaRpc, createSolanaRpcSubscriptions, createKeyPairSignerFromPrivateKeyBytes, createTransactionMessage, pipe, setTransactionMessageFeePayer, setTransactionMessageLifetimeUsingBlockhash, appendTransactionMessageInstruction, compileTransaction, signTransactionMessageWithSigners, sendAndConfirmTransactionFactory, getSignatureFromTransaction, getBase64Decoder, address as SolanaAddress, isAddress, isOffCurveAddress, lamports, } from '@solana/kit';
+import { getTransferSolInstruction } from '@solana-program/system';
 import { derivePath } from 'ed25519-hd-key';
-import { AptosAccount, AptosClient } from 'aptos';
+// import { AptosAccount, AptosClient } from 'aptos';
+import { Aptos, AptosConfig, Network as AptosNetwork, Account as AptosAccount, AccountAddress } from "@aptos-labs/ts-sdk";
 // import { create as createW3UpClient } from '@web3-storage/w3up-client';
 import { from } from "@iotexproject/iotex-address-ts";
 import { STACKS_MAINNET } from '@stacks/network'
@@ -2705,7 +2708,9 @@ class App extends Component {
       '73f37eda5e4de090c3a09df8446fbf8ad3942c8e942a9623b4f44ca4db12d1fe',
       't1Uoup1fNWDb4KGS8tPWX1kHJJMnRG14UVZ',
       'EQAoACQJdanybwA1e3BkMqDVABpWT1yzjPiq0hRTb18yHrBo',
-      '4BDSEqq7KBufgPubsni9sWhiBZMbsm9cz1DnHD1NsrBrVg9DpwrME5X6tP2u2sect6TadPFFzmuxyCEMbRToyaPv11UXYLf'
+      '4BDSEqq7KBufgPubsni9sWhiBZMbsm9cz1DnHD1NsrBrVg9DpwrME5X6tP2u2sect6TadPFFzmuxyCEMbRToyaPv11UXYLf',
+      '0xb41ddb764ae6e1ba964768e855f9e19f13d98eaebc04a463fdb8205bdf63f0e0',
+      'Hbo45L26rrK4RyvejanPmGQ95h7bsp3XBYBKjPHmtC19'
     ]
     return default_addresses
   }
@@ -5827,54 +5832,8 @@ class App extends Component {
 
     const toF410 = await this.ethAddressToF410(account.address);
     console.log('get_key', toF410)
-
-
-    return;
-
-
     const wallet_key = account.privateKey
-    const wallet_account = privateKeyToAccount(wallet_key);
 
-    const client = createClient({
-      integrator: 'E5',
-    });
-
-    const walletClient = createWalletClient({
-      account: wallet_account,
-      chain: mainnet,
-      transport: http(),
-    });
-
-    client.setProviders([
-      EthereumProvider({
-        getWalletClient: async () => walletClient,
-        switchChain: async (chainId) =>
-          // Switch chain by creating a new wallet client
-          createWalletClient({
-            account: wallet_account,
-            chain: chains.find((chain) => chain.id == chainId),
-            transport: http(),
-          }),
-      }),
-    ]);
-
-    const quote = await getQuote(client, {
-      fromAddress: account.address,
-      fromChain: ChainId.ARB,
-      toChain: ChainId.OPT,
-      fromToken: '0x0000000000000000000000000000000000000000',
-      toToken: '0x0000000000000000000000000000000000000000',
-      fromAmount: '1000000000000000000',
-    });
-
-    const route = convertQuoteToRoute(quote);
-
-    const executedRoute = await executeRoute(client, route, {
-      // Gets called once the route object gets new updates
-      updateRouteHook(route) {
-        console.log(route);
-      },
-    });
 
     // console.log(toBech32(account.address))
 
@@ -7887,7 +7846,7 @@ class App extends Component {
 
   renderBottomSheet(view, open, onOpenChange, height, disable_background_interaction=true, snap_points=[], active_snap_point=0, set_active_snap_point={}, background_size='cover', background_color=this.state.theme['send_receive_ether_background_color']) {
     const padding = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? 0 : 10;
-    const radius = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? '0px' : '15px';
+    const radius = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? '0px' : '25px';
 
     const is_bottomsheet_at_top = this.is_function_at_complete_top_of_stack(onOpenChange.name)
     const filter = is_bottomsheet_at_top == false ? "blur(1px)" : "none";
@@ -8564,10 +8523,17 @@ class App extends Component {
   }
 
   validate_solana_address(address){
+    // try {
+    //   // Attempt to create a PublicKey object from the address
+    //   let pubkey = new PublicKey(address);
+    //   return PublicKey.isOnCurve(pubkey.toBytes());
+    // } catch (error) {
+    //   return false;
+    // }
+
     try {
-      // Attempt to create a PublicKey object from the address
-      let pubkey = new PublicKey(address);
-      return PublicKey.isOnCurve(pubkey.toBytes());
+      if (!isAddress(address)) return false;
+      return !isOffCurveAddress(address);
     } catch (error) {
       return false;
     }
@@ -8575,10 +8541,12 @@ class App extends Component {
 
   validate_aptos_address(address){
     //starts with '0x' and is 42 characters in length
-    if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+    try {
+      AccountAddress.fromString(address);
+      return true;
+    } catch {
       return false;
     }
-    return true;
   }
 
   validate_cardano_address(address){
@@ -9485,19 +9453,48 @@ class App extends Component {
     const wallet = await this.generate_sol_wallet(seed)
     // var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
     // const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
-    const connection = new Connection('https://solana-rpc.publicnode.com')
+    // const connection = new Connection('https://solana-rpc.publicnode.com')
 
-    const recipient = new PublicKey(recipient_address);
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: wallet.keypair.publicKey,
-        toPubkey: recipient,
-        transfer_amount,
-      })
-    );
+    // const recipient = new PublicKey(recipient_address);
+    // const transaction = new Transaction().add(
+    //   SystemProgram.transfer({
+    //     fromPubkey: wallet.keypair.publicKey,
+    //     toPubkey: recipient,
+    //     transfer_amount,
+    //   })
+    // );
+
+    const rpc = createSolanaRpc('https://solana-rpc.publicnode.com')
+    const rpcSubscriptions = createSolanaRpcSubscriptions('wss://solana-rpc.publicnode.com')
+    const sendAndConfirmTransaction = sendAndConfirmTransactionFactory({ rpc, rpcSubscriptions })
+    const recipient = SolanaAddress(recipient_address);
 
     try{
-      const signature = await sendAndConfirmTransaction(connection, transaction, [wallet.keypair]);
+      // const signature = await sendAndConfirmTransaction(connection, transaction, [wallet.keypair]);
+
+      const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
+      const transactionMessage = pipe(
+        createTransactionMessage({ version: 0 }),
+        tx => setTransactionMessageFeePayer(wallet.signer.address, tx),
+        tx => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
+        tx => appendTransactionMessageInstruction(
+          getTransferSolInstruction({
+            source: wallet.signer,       // must be a signer, not just an address
+            destination: recipient,
+            amount: lamports(bigInt(transfer_amount).value),
+          }),
+          tx,
+        ),
+      );
+      
+      // Finds the signer embedded in the instruction's account metas (source)
+      // and signs the transaction with it — this also covers the fee payer
+      // since it's the same address.
+      const signedTransaction = await signTransactionMessageWithSigners(transactionMessage);
+
+      await sendAndConfirmTransaction(signedTransaction, { commitment: 'confirmed' });
+      const signature = getSignatureFromTransaction(signedTransaction);
+
       if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':signature});
       else return signature;
     }catch(e){
@@ -9510,21 +9507,38 @@ class App extends Component {
   create_and_broadcast_aptos_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_aptos_wallet(seed)
-    const NODE_URL = 'https://fullnode.mainnet.aptoslabs.com/v1'; 
-    const client = new AptosClient(NODE_URL);
+    // const NODE_URL = 'https://fullnode.mainnet.aptoslabs.com/v1'; 
+    // const client = new AptosClient(NODE_URL);
 
-    const payload = {
-      type: 'entry_function_payload',
-      function: '0x1::coin::transfer',
-      type_arguments: ['0x1::aptos_coin::AptosCoin'],
-      arguments: [recipient_address, transfer_amount.toString()],
-    };
+    const config = new AptosConfig({ network: AptosNetwork.MAINNET });
+    const aptos = new Aptos(config);
+
+    // const payload = {
+    //   type: 'entry_function_payload',
+    //   function: '0x1::coin::transfer',
+    //   type_arguments: ['0x1::aptos_coin::AptosCoin'],
+    //   arguments: [recipient_address, transfer_amount.toString()],
+    // };
+
+    const transaction = await aptos.transaction.build.simple({
+      sender: wallet.account.accountAddress,
+      data: {
+        // All transactions on Aptos are implemented via smart contracts.
+        function: "0x1::aptos_account::transfer",
+        functionArguments: [AccountAddress.from(recipient_address), transfer_amount.toString()],
+      },
+    });
 
     try{
-      const transaction = await client.generateTransaction(wallet.account.address(), payload);
-      const signedTxn = await client.signTransaction(wallet.account, transaction);
-      const transactionHash = await client.submitTransaction(signedTxn);
-      await client.waitForTransaction(transactionHash);
+      // const transaction = await client.generateTransaction(wallet.account.address(), payload);
+      // const signedTxn = await client.signTransaction(wallet.account, transaction);
+      // const transactionHash = await client.submitTransaction(signedTxn);
+      // await client.waitForTransaction(transactionHash);
+
+      const senderAuthenticator = aptos.transaction.sign({ signer: wallet.account, transaction, });
+      const submittedTransaction = await aptos.transaction.submit.simple({ transaction, senderAuthenticator, });
+      const executedTransaction = await aptos.transaction.waitForTransaction({ transactionHash: submittedTransaction.hash });
+      const transactionHash = submittedTransaction.hash
 
       if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':transactionHash});
       else return transactionHash
@@ -30150,7 +30164,7 @@ class App extends Component {
             resolve(transaction_status);
             return;
           }
-          setTimeout(checkReady, 15_000);
+          setTimeout(checkReady, 5_000);
         } 
         catch (error) {
           reject(error);
@@ -32391,10 +32405,13 @@ class App extends Component {
 
     // var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
     // const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
-    const connection = new Connection('https://solana-rpc.publicnode.com')
-    const balance = await this.get_solana_address_balance(address, connection)
+    // const connection = new Connection('https://solana-rpc.publicnode.com')
+    // const balance = await this.get_solana_address_balance(address, connection)
+
+    const rpc = createSolanaRpc('https://solana-rpc.publicnode.com')
+    const balance = await this.get_solana_address_balance(address, rpc)
     
-    var fee_info = {'fee':await this.get_sol_transaction_fee(address, connection), 'type':'fixed', 'per':'transaction'}
+    var fee_info = {'fee':await this.get_sol_transaction_fee(address, rpc), 'type':'fixed', 'per':'transaction'}
     var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info}
     // var clone = structuredClone(this.state.coin_data)
     // clone['SOL'] = data;
@@ -32405,18 +32422,35 @@ class App extends Component {
   }
 
   generate_sol_wallet = async (mnemonic) => {
-    const seed = await mnemonicToSeed(mnemonic);
+    // const seed = await mnemonicToSeed(mnemonic);
+    // const derivationPath = "m/44'/501'/0'";
+    // const derivedSeed = derivePath(derivationPath, seed.toString('hex')).key;
+    // const keypair = Keypair.fromSeed(derivedSeed);
+    // return {address: keypair.publicKey.toBase58(), keypair: keypair}
+
+    const entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic)
+    const seed = await mnemonicToSeed(entropic_mnemonic);
     const derivationPath = "m/44'/501'/0'";
-    const derivedSeed = derivePath(derivationPath, seed.toString('hex')).key;
-    const keypair = Keypair.fromSeed(derivedSeed);
-    return {address: keypair.publicKey.toBase58(), keypair: keypair}
+    const derivedSeed = derivePath(derivationPath, seed.toString('hex')).key; // 32-byte private key
+    const signer = await createKeyPairSignerFromPrivateKeyBytes(new Uint8Array(derivedSeed));
+    return {address: signer.address, signer: signer}
   }
 
-  get_solana_address_balance = async (address, connection) => {
+  get_solana_address_balance = async (address, rpc) => {
+    // if(!this.is_address_set(address)) return 0
+    // try{
+    //   const publicKey = new PublicKey(address);
+    //   return await connection.getBalance(publicKey);
+    // }
+    // catch(e){
+    //   console.log(e)
+    //   return 0
+    // }
+
     if(!this.is_address_set(address)) return 0
     try{
-      const publicKey = new PublicKey(address);
-      return await connection.getBalance(publicKey);
+      const { value: balance } = await rpc.getBalance(SolanaAddress(address)).send();
+      return Number(balance); // balance is a bigint; fine for realistic wallet balances
     }
     catch(e){
       console.log(e)
@@ -32424,32 +32458,55 @@ class App extends Component {
     }
   }
 
-  async get_sol_transaction_fee(address, connection){
+  async get_sol_transaction_fee(address, rpc){
     // return 5000
-    const fromPubkey = new PublicKey(address);
-    const toPubkey = new PublicKey(address);
+    // const fromPubkey = new PublicKey(address);
+    // const toPubkey = new PublicKey(address);
 
-    const lamports = 1000000;
+    // const lamports = 1000000;
   
-    // Create the transaction
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey,
-        toPubkey,
-        lamports,
-      })
-    );
+    // // Create the transaction
+    // const transaction = new Transaction().add(
+    //   SystemProgram.transfer({
+    //     fromPubkey,
+    //     toPubkey,
+    //     lamports,
+    //   })
+    // );
 
-    transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-    transaction.feePayer = fromPubkey;
+    // transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+    // transaction.feePayer = fromPubkey;
     
-    // Get the fee estimate
-    const fee = await connection.getFeeForMessage(
-      transaction.compileMessage(),
-      'confirmed'
+    // // Get the fee estimate
+    // const fee = await connection.getFeeForMessage(
+    //   transaction.compileMessage(),
+    //   'confirmed'
+    // );
+
+    // return fee.value
+
+    const feePayer = SolanaAddress(address);
+    const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
+
+    const transactionMessage = pipe(
+      createTransactionMessage({ version: 0 }),
+      tx => setTransactionMessageFeePayer(feePayer, tx),
+      tx => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
+      tx => appendTransactionMessageInstruction(
+        getTransferSolInstruction({
+          source: feePayer,      // no signature needed just to estimate the fee
+          destination: feePayer,
+          amount: lamports(1000000n),
+        }),
+        tx,
+      ),
     );
 
-    return fee.value
+    const { messageBytes } = compileTransaction(transactionMessage);
+    const base64Message = getBase64Decoder().decode(messageBytes);
+
+    const { value: fee } = await rpc.getFeeForMessage(base64Message, { commitment: 'confirmed' }).send();
+    return fee !== null ? Number(fee) : 5000;
   }
 
   update_solana_balance = async (clone) => {
@@ -32458,8 +32515,11 @@ class App extends Component {
     
     // var key = `${process.env.REACT_APP_SOLANA_API_KEY}`
     // const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${key}`);
-    const connection = new Connection('https://solana-rpc.publicnode.com')
-    const balance = await this.get_solana_address_balance(address, connection)
+    // const connection = new Connection('https://solana-rpc.publicnode.com')
+    // const balance = await this.get_solana_address_balance(address, connection)
+
+    const rpc = createSolanaRpc('https://solana-rpc.publicnode.com')
+    const balance = await this.get_solana_address_balance(address, rpc)
 
     clone['SOL']['balance'] = balance;
     // this.setState({coin_data: clone})
@@ -32472,12 +32532,18 @@ class App extends Component {
 
   get_and_set_aptos_wallet_info = async (seed) => {
     try{
+      // const wallet = await this.generate_aptos_wallet(seed)
+      // const address = wallet.address
+      // const NODE_URL = 'https://fullnode.mainnet.aptoslabs.com/v1'; 
+      // const client = new AptosClient(NODE_URL);
+
       const wallet = await this.generate_aptos_wallet(seed)
       const address = wallet.address
-      const NODE_URL = 'https://fullnode.mainnet.aptoslabs.com/v1'; 
-      const client = new AptosClient(NODE_URL);
-      const balance = await this.get_aptos_wallet_balance(wallet.address, client)
-      const network_fee = await this.get_aptos_gas_prices(client)
+      const config = new AptosConfig({ network: AptosNetwork.MAINNET });
+      const aptos = new Aptos(config);
+
+      const balance = await this.get_aptos_wallet_balance(address, aptos)
+      const network_fee = await this.get_aptos_gas_prices()
       
       var fee_info = {'fee':network_fee, 'type':'fixed', 'per':'transaction'}
       var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info}
@@ -32485,6 +32551,7 @@ class App extends Component {
       // clone['APT'] = data;
       // this.setState({coin_data: clone})
       // await this.wait(100)
+      console.log('get_and_set_aptos_wallet_info','data', data)
       this.fetch_specific_coin_receipts(address)
       return data
     }catch(e){
@@ -32494,27 +32561,33 @@ class App extends Component {
   }
 
   generate_aptos_wallet = async (mnemonic) => {
-    const seed = await mnemonicToSeed(mnemonic);
-    const path = "m/44'/637'/0'/0'/0'"
-    const { key } = derivePath(path, Buffer.from(seed).toString('hex'));
-    const account = new AptosAccount(key);
+    // const seed = await mnemonicToSeed(mnemonic);
+    // const path = "m/44'/637'/0'/0'/0'"
+    // const { key } = derivePath(path, Buffer.from(seed).toString('hex'));
+    // const account = new AptosAccount(key);
 
-    return {address: account.address().toString(), account: account}
+    const entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic)
+    const path = "m/44'/637'/0'/0'/1";
+    const account = AptosAccount.fromDerivationPath({ path, mnemonic: entropic_mnemonic });
+
+    return { address: account.accountAddress.toString() , account: account }
   }
 
-  get_aptos_wallet_balance = async (address, client) => {
+  get_aptos_wallet_balance = async (address, aptos) => {
     try{
-      const resource = await client.getAccountResource(address, '0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>');
-      console.log(resource)
-      const balance = resource.data.coin.value;
-      return balance;
+      // const resource = await client.getAccountResource(address, '0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>');
+      // console.log(resource)
+      // const balance = resource.data.coin.value;
+      // return balance;
+      const balance = await aptos.getAccountAPTAmount({ accountAddress: address });
+      return Number(balance);
     }catch(e){
       console.log(e)
       return 0
     }
   }
 
-  get_aptos_gas_prices = async (client) => {
+  get_aptos_gas_prices = async () => {
     return 0.000009 * 100_000_000
   }
 
@@ -32522,9 +32595,9 @@ class App extends Component {
     // var clone = structuredClone(this.state.coin_data)
     var address = clone['APT']['address']
 
-    const NODE_URL = 'https://fullnode.mainnet.aptoslabs.com/v1'; 
-    const client = new AptosClient(NODE_URL);
-    const balance = await this.get_aptos_wallet_balance(address, client)
+    const config = new AptosConfig({ network: AptosNetwork.MAINNET });
+    const aptos = new Aptos(config);
+    const balance = await this.get_aptos_wallet_balance(address, aptos)
 
     clone['APT']['balance'] = balance;
     // this.setState({coin_data: clone})
