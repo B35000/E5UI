@@ -446,7 +446,7 @@ class CoinsDetailsSection extends Component {
 
     render_external_swappers(external_swappers){
         const swappers = {
-            'lifi': 'Li.Fi',
+            'lifi': 'LiFi',
             'changenow': 'ChangeNOW'
         }
         return(

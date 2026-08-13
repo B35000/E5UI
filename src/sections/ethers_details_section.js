@@ -389,6 +389,8 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('3', item['block_time'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['network_utilization'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['runs_per_second'])}
                     {this.render_detail_item('0')}
 
                     {this.render_wallet_status(item)}
@@ -562,7 +564,7 @@ class EthersDetailsSection extends Component {
 
     render_external_swappers(external_swappers){
         const swappers = {
-            'lifi': 'Li.Fi',
+            'lifi': 'LiFi',
             'changenow': 'ChangeNOW'
         }
         return(
@@ -807,6 +809,18 @@ class EthersDetailsSection extends Component {
                 other_tags.push(this.props.app_state.loc['2481n']/* zero-knowledge */)
             }
         }
+        let ether_symbol_footer = null
+        const layer1e5 = this.props.app_state.e5s[e5].parent
+        if(layer1e5 != null && layer1e5 != ''){
+            const token = this.props.app_state.e5s[layer1e5].token
+            ether_symbol_footer = this.props.app_state.loc['2481be']/* Internal alias for $ */.replace('$', token)
+        }
+
+        const gas_limit_per_block = this.get_latest_block_data(e5).gasLimit
+        const average_block_time = this.get_average_block_time_from_blocks2(e5)
+        const runs_per_second = (gas_limit_per_block / (average_block_time)) / (2_300_000)
+        const runs_per_second_final = runs_per_second > 1000 ? number_with_commas(parseInt(runs_per_second)) : parseFloat(runs_per_second).toFixed(3)
+
         return {
                 'id':symbol,
                 'name': name,
@@ -816,7 +830,9 @@ class EthersDetailsSection extends Component {
                 'label':{'title':symbol, 'details':name, 'size':'l', 'image': this.props.app_state.e5s[e5].ether_image},
                 'tags':{'active_tags':[name, 'EVM', symbol].concat(other_tags), 'index_option':'indexed'},
                 'ether_name':{'title':name, 'details':this.props.app_state.loc['2481ba']/* 'Ether Name.' */, 'size' :'l'},
-                'ether_symbol':{'title':symbol, 'details':this.props.app_state.loc['2481bb']/* 'Ether Symbol.' */, 'size' :'l'},
+                'ether_symbol':{'title':symbol, 'details':this.props.app_state.loc['2481bb']/* 'Ether Symbol.' */, 'size' :'l', 'footer':ether_symbol_footer},
+                'runs_per_second':{'title':this.props.app_state.loc['2481bg']/* '$ runs per second.' */.replace('$', runs_per_second_final), 'details':this.props.app_state.loc['2481bf']/* 'Run Throughput (2.3M gas average)' */, 'size' :'l'},
+                
                 'number_label':this.get_blockchain_data('s', e5),
                 'number_label_large': this.get_blockchain_data('l', e5),
                 'banner-icon':{'header':symbol, 'subtitle':name, 'image':this.props.app_state.e5s[e5].ether_image},
@@ -841,7 +857,7 @@ class EthersDetailsSection extends Component {
 
                 'supply':{'style': 'l', 'title':'Ether Supply', 'subtitle': this.format_power_figure(this.get_supply_figure(e5)), 'barwidth': this.calculate_bar_width(this.get_supply_figure(e5)), 'number': this.format_account_balance_figure(this.get_supply_figure(e5)), 'barcolor': '', 'relativepower': 'ether',},
 
-                'address':{'details':this.get_account_address(e5), 'title':this.props.app_state.loc['2472']/* 'Your Address' */, 'size' :'l'},
+                'address':{'details':start_and_end(this.get_account_address(e5)), 'title':this.props.app_state.loc['2472']/* 'Your Address' */, 'size' :'l'},
                 'block_time':{'title':this.get_average_block_time_from_blocks(e5), 'details':this.props.app_state.loc['2473']/* 'Average block time for the last 5 blocks' */, 'size' :'l'},
 
                 'network_utilization':{'title':this.get_network_utilization_rate_average(e5)+'%', 'details':this.props.app_state.loc['2481t']/* 'The network\'s average utilization rate.' */, 'size' :'l'}
@@ -870,7 +886,7 @@ class EthersDetailsSection extends Component {
             return(
                 <div>
                     <div>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2474']/* 'Wallet Address' */, 'details':this.format_address_if_harmony('0x0000000000000000000000000000000000000000', e5), 'size':'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2474']/* 'Wallet Address' */, 'details':start_and_end(this.format_address_if_harmony('0x0000000000000000000000000000000000000000', e5)), 'size':'l'})}
                     </div>
                 </div>
             )
@@ -955,6 +971,27 @@ class EthersDetailsSection extends Component {
         }
         var av_time = total_time / is
         return av_time+this.props.app_state.loc['2476']/* ' seconds' */
+    }
+
+    get_average_block_time_from_blocks2(e5){
+        var blocks = this.props.app_state.last_blocks[e5]== null ? [] : this.props.app_state.last_blocks[e5]        
+        var total_time = 0
+        var is = 0
+        for(var i=1; i<blocks.length; i++){
+            var block = blocks[i];
+            try{
+                if(block != null && block.timestamp != null && blocks[i-1].timestamp != null){
+                    let time = block.timestamp - blocks[i-1].timestamp
+                    total_time += time
+                    is++
+                }
+            }catch(e){
+                // console.log(e)
+            }
+            
+        }
+        var av_time = total_time / is
+        return av_time
     }
 
 

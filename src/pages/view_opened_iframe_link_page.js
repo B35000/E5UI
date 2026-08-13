@@ -48,10 +48,12 @@ class OpenedIframeLinkPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
                 <div className="row">
-                    <div className="col-11" onClick={()=>this.copy_link_to_clipboard()}  style={{'padding': '0px 0px 0px 10px'}}>
-                        {this.render_detail_item('4', {'text':link, 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div className="col-10" onClick={()=>this.copy_link_to_clipboard()}  style={{'padding': '0px 0px 0px 10px'}}>
+                        <div style={{'margin':'0px 30px 0px 0px'}}>
+                            {this.render_detail_item('4', {'text':link, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        </div>
                     </div>
-                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
+                    <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
                             {/* <img alt="" className="text-end" onClick={()=>this.refresh()} src={this.props.theme['add_text']} style={{height:36, width:'auto'}} /> */}
                             <div onClick={()=> this.refresh()}>
