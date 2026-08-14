@@ -283,12 +283,16 @@ class EthersDetailsSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['number_label_large'])}
                     </div>
-                    {/* <div style={{height: 10}}/>
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', item['supply'])}
-                    </div> */}
-                    {/* {this.render_detail_item('0')} */}
-
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['block_time'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['network_utilization'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['runs_per_second'])}
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
+                        {this.render_wallet_status(item)}
+                    </div>
                     {/* {this.render_detail_item('3', item['chain_id'])} */}
                     {/* <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['peer_count'])} */}
@@ -335,12 +339,14 @@ class EthersDetailsSection extends Component {
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481x']/* 'Ether\'s Market Cap in $' */.replace('$', 'SATs'), 'subtitle':this.format_power_figure(market_cap_in_sats), 'barwidth':this.calculate_bar_width(market_cap_in_sats), 'number':''+this.format_account_balance_figure(market_cap_in_sats), 'barcolor':'#606060', 'relativepower':'SATs', })}
                                 </div>
                             </div>
-                            <div style={{height:10}}/>
                         </div>
                     )}
 
-                    {this.render_wallet_address(item, item['e5'])}
+                    {this.render_coin_ether_chart_data(item)}
+
                     {this.render_detail_item('0')}
+                    
+                    {this.render_wallet_address(item, item['e5'])}
 
                     {/* {this.render_detail_item('3', item['gas_used_chart_data_label'])} */}
                     {/* {this.render_detail_item('6', item['gas_used_chart_data'])} */}
@@ -352,7 +358,7 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('3', item['lowest_gas_consumed'])}
                     {this.render_detail_item('0')} */}
 
-
+                    <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'number':this.props.app_state.account_balance[item['e5']], 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item['e5']]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
@@ -380,27 +386,18 @@ class EthersDetailsSection extends Component {
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', item['gas_limit'])}
-                    <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} >
-                        {this.render_detail_item('2', item['base_fee_per_gas_unit_in_gwei'])}
-                        {this.render_detail_item('2', item['base_fee_per_gas_unit'])}
-                    </div>
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['block_time'])}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['network_utilization'])}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['runs_per_second'])}
-                    {this.render_detail_item('0')}
-
-                    {this.render_wallet_status(item)}
-                    <div style={{height:10}}/>
-                    <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
-                        {/* {this.props.app_state.updating_individual_coin[item['e5']] == true && this.render_line_loader_if_loading()} */}
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
-                    </div>
-                    {this.render_detail_item('0')}
                     
+                    {this.get_base_fee_in_wei(item['e5']) > 0 && (
+                        <div>
+                            <div style={{height: 10}}/>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} >
+                                {this.render_detail_item('2', item['base_fee_per_gas_unit_in_gwei'])}
+                                {this.render_detail_item('2', item['base_fee_per_gas_unit'])}
+                            </div>
+                        </div>
+                    )}
+                    
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2457']/* '💸 Send/Receive Ether' */, 'details':this.props.app_state.loc['2458']/* 'Send or receive ether from a specified account.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_send_receive_ether_bottomsheet(item)}>
@@ -819,7 +816,7 @@ class EthersDetailsSection extends Component {
         const gas_limit_per_block = this.get_latest_block_data(e5).gasLimit
         const average_block_time = this.get_average_block_time_from_blocks2(e5)
         const runs_per_second = (gas_limit_per_block / (average_block_time)) / (2_300_000)
-        const runs_per_second_final = runs_per_second > 1000 ? number_with_commas(parseInt(runs_per_second)) : parseFloat(runs_per_second).toFixed(3)
+        const runs_per_second_final = runs_per_second > 1000 ? this.format_account_balance_figure(parseInt(runs_per_second)) : parseFloat(runs_per_second).toFixed(3)
 
         return {
                 'id':symbol,
@@ -831,7 +828,7 @@ class EthersDetailsSection extends Component {
                 'tags':{'active_tags':[name, 'EVM', symbol].concat(other_tags), 'index_option':'indexed'},
                 'ether_name':{'title':name, 'details':this.props.app_state.loc['2481ba']/* 'Ether Name.' */, 'size' :'l'},
                 'ether_symbol':{'title':symbol, 'details':this.props.app_state.loc['2481bb']/* 'Ether Symbol.' */, 'size' :'l', 'footer':ether_symbol_footer},
-                'runs_per_second':{'title':this.props.app_state.loc['2481bg']/* '$ runs per second.' */.replace('$', runs_per_second_final), 'details':this.props.app_state.loc['2481bf']/* 'Run Throughput (2.3M gas average)' */, 'size' :'l'},
+                'runs_per_second':{'title':this.props.app_state.loc['2481bg']/* '$ runs/sec' */.replace('$', runs_per_second_final), 'details':this.props.app_state.loc['2481bf']/* 'Run Throughput (2.3M gas average)' */, 'size' :'l'},
                 
                 'number_label':this.get_blockchain_data('s', e5),
                 'number_label_large': this.get_blockchain_data('l', e5),
@@ -900,7 +897,7 @@ class EthersDetailsSection extends Component {
     }
 
     format_address_if_harmony(address, e5){
-        if(e5 == 'E45'){
+        if(e5 == 'E305'){
             return toBech32(address)
         }
         else if(e5 == 'E115'){
@@ -995,7 +992,244 @@ class EthersDetailsSection extends Component {
     }
 
 
+    render_coin_ether_chart_data(item){
+        const symbol = item['symbol']
+        const chart_data = this.props.app_state.coin_ether_chart_info[symbol];
+        if(chart_data != null){
+            const datapoints1 = this.get_coin_ether_chart_data(item);
+            const datapoints2 = this.get_dominance_change_datapoints(item)
+            let dominance_target = this.state.dominance_target || 'BTC'
+            if(dominance_target == symbol){
+                dominance_target = this.get_next_dominance_target(dominance_target)
+            }
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bq']/* 'Price History.' */, 'details':this.props.app_state.loc['2927br']/* 'Chart containing the price history for $ overtime.' */.replace('$', item['symbol']), 'size':'l'})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time,})}
 
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bs']/* Y-Axis: Price' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                    {symbol != dominance_target && (
+                        <div>
+                            <div style={{height: 10}}/>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bu']/* 'Relative Dominance Change.' */, 'details':this.props.app_state.loc['2927bv']/* 'Chart containing the relative change in dominance of $ against % over the last year.' */.replace('$', item['symbol']).replace('%', dominance_target), 'size':'l'})}
+                            {this.render_detail_item('6', {'dataPoints':datapoints2.dps, 'start_time':datapoints2.starting_time,})}
+                            <div style={{height: 10}}/>
+                            {this.render_dominance_targets(item)}
+
+                            <div style={{height: 10}}/>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bw']/* Y-Axis: Dominance Points' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+                        </div>
+                    )}
+                </div>
+            )
+        }
+    }
+
+    render_dominance_targets(item){
+        const selected_items = this.get_all_dominance_targets()
+        const items = []
+        selected_items.forEach(selected_item => {
+            if(item['symbol'] != selected_item){
+                items.push(selected_item)
+            }
+        });
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.set_dominance_target(item)}>
+                            {this.render_detail_item('4', {'text':item, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            {this.render_line_if_selected(item, item['symbol'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_line_if_selected(item, symbol){
+        let dominance_target = this.state.dominance_target
+        if(dominance_target == null){
+            dominance_target = 'BTC'
+        }
+        if(dominance_target == symbol){
+            dominance_target = this.get_next_dominance_target(dominance_target)
+        }
+        if(dominance_target == item){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    set_dominance_target(item){
+        this.props.get_token_chart_data(item)
+        this.setState({dominance_target: item})
+    }
+
+
+
+    get_coin_ether_chart_data(item){
+        const selected_preferred_currency = this.props.app_state.preferred_currency
+        const symbol = item['symbol'];
+        const chart_data = this.props.app_state.coin_ether_chart_info[symbol];
+        const btc_chart_data = this.props.app_state.coin_ether_chart_info['BTC'];
+        const data = []
+        const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time'] : Date.now()
+        if(chart_data != null){
+            for(var j=0; j<chart_data.length; j++){
+                const data_point = chart_data[j];
+                const price_in_usd = data_point['price'];
+                const time = data_point['time']
+                if(selected_preferred_currency == this.props.app_state.loc['1593eg']/* 'SAT' */){
+                    const price_of_bitcoin_at_time = this.findClosestSorted(btc_chart_data, time)
+                    if(price_of_bitcoin_at_time != null){
+                        const bitcoin_price = price_of_bitcoin_at_time['price']
+                        const number_of_btc_for_one_usd = 1 / bitcoin_price
+                        const balance_value_in_btc = number_of_btc_for_one_usd * price_in_usd
+                        const balance_value_in_sat = parseInt(balance_value_in_btc * this.props.app_state.coins['BTC']['conversion'])
+
+                        data.push(parseFloat(balance_value_in_sat).toFixed(4))
+                    }
+                }else{
+                    const point = price_in_usd * this.props.app_state.my_currency_exchange_rate
+                    data.push(point.toFixed(2))
+                }
+            }
+        }
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            
+            var indicator = data[factor * xVal] > 1000 ? this.format_account_balance_figure(data[factor * xVal]) : data[factor * xVal]
+            const token_name = selected_preferred_currency == this.props.app_state.loc['1593eg']/* 'SAT' */ ? 'SATs' : this.props.app_state.loc['1593ef']/* 'USD' */
+            var final_indicator = '$ %'.replace('$', indicator).replace('%', token_name)
+            if(yVal != null){
+                if(i == 23 || i == 53){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return { dps, starting_time: starting_time }
+    }
+
+    findClosestSorted(objects, targetTime) {
+        if (!objects || objects.length === 0) return null;
+
+        let left = 0, right = objects.length - 1;
+        let closest = objects[0];
+
+        while (left <= right) {
+            const mid = Math.floor((left + right) / 2);
+            const midTime = objects[mid].time;
+
+            if (Math.abs(midTime - targetTime) < Math.abs(closest.time - targetTime)) {
+                closest = objects[mid];
+            }
+
+            if (midTime === targetTime) {
+                return objects[mid];
+            } else if (midTime < targetTime) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return closest;
+    }
+
+
+
+    get_all_dominance_targets(){
+        return ['BTC', 'ETH', 'ETC', 'DOT', '???']
+    }
+
+    get_next_dominance_target(selected_target){
+        const selected_items = this.get_all_dominance_targets()
+        for(var i=0; i<selected_items.length; i++){
+            if(selected_items[i] != selected_target){
+                return selected_items[i]
+            }
+        }
+    }
+
+    get_dominance_change_datapoints(item){
+        const symbol = item['symbol'];
+        const chart_data = this.props.app_state.coin_ether_chart_info[symbol];
+        let dominance_target = this.state.dominance_target || 'BTC'
+        if(dominance_target == symbol){
+            dominance_target = this.get_next_dominance_target(dominance_target)
+        }
+        const btc_chart_data = this.props.app_state.coin_ether_chart_info[dominance_target];
+        const data = []
+        const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time'] : Date.now()
+
+        if(chart_data != null && chart_data.length > 0 && btc_chart_data != null && btc_chart_data.length > 0){
+            const anchor_price_in_usd = chart_data[0]['price'];
+            const anchor_bitcoin_price = btc_chart_data[0]['price']
+
+            for(var j=0; j<chart_data.length; j++){
+                const data_point = chart_data[j];
+                const price_in_usd = data_point['price'];
+                const equivalent_bitcoin_price = btc_chart_data[j]['price']
+
+                const last_data_point = j==0 ? chart_data[j] : chart_data[j-1];
+                const last_price_in_usd = last_data_point['price'];
+                const last_equivalent_bitcoin_price = j==0 ? btc_chart_data[j]['price'] : btc_chart_data[j-1]['price']
+
+                const price_proportion = ((price_in_usd - last_price_in_usd) / last_price_in_usd) * 100
+                const bitcoin_price_proportion = ((equivalent_bitcoin_price - last_equivalent_bitcoin_price) / last_equivalent_bitcoin_price) * 100
+
+                const relative_dominance_change = price_proportion.toFixed(2) - bitcoin_price_proportion.toFixed(2)
+
+                if(data.length == 0){
+                    data.push(parseFloat(relative_dominance_change))
+                }else{
+                    const previous_value = parseFloat(data[data.length-1])
+                    data.push(previous_value+parseFloat(relative_dominance_change))
+                }
+            }
+        }
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            
+            var indicator = data[factor * xVal] > 1000 ? this.format_account_balance_figure(data[factor * xVal]) : data[factor * xVal]
+            const points_text = this.props.app_state.loc['2927bt']/* 'points' */
+            if(yVal != null){
+                var final_indicator = '$ %'.replace('$', indicator.toFixed(2)).replace('%', points_text)
+                if(i == 23 || i == 53){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return { dps, starting_time: starting_time }
+        
+    }
 
 
 
@@ -1062,7 +1296,7 @@ class EthersDetailsSection extends Component {
         if(e5 == 'E25' || e5 == 'E35' || e5 == 'E115' || e5 == 'E85' || e5 == 'E185' || e5 == 'E195' || e5 == 'E205' || e5 == 'E255' || e5 == 'E285' || e5 == 'E305' || e5 == 'E395'){
             return tx_history['items']
         }
-        else if(e5 == 'E45'){
+        else if(e5 == 'E305'){
             var data =  tx_history['result']['transactions']
             return data
         }
@@ -1155,7 +1389,7 @@ class EthersDetailsSection extends Component {
             var relative_time = this.get_time_difference(new Date(item['timestamp']).getTime()/1000)
             return {'from':item['from']['hash'], 'to':item['to']['hash'], 'gas_used':item['gas_used'], 'gas_price':item['gas_price'], 'value':item['value'], 'time':''+(new Date(item['timestamp'])), 'block':number_with_commas(item['block']), 'relative_time':''+(relative_time)}
         }
-        else if(e5 == 'E45'){
+        else if(e5 == 'E305'){
             var relative_time = this.get_time_difference(item['timestamp'])
             return {'from':item['from'], 'to':item['to'], 'gas_used':item['gas'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timestamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
         }

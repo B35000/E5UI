@@ -1452,7 +1452,7 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -1545,10 +1545,10 @@ class App extends Component {
         end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, masked_image:false, id: null, external_swappers:['changenow'],changenow_object: get_changenow_object("Ethereum Classic")
       },
       'E45':{
-        web3:['https://api.harmony.one'],
-        token:'ONE',
-        e5_address:'', /* 0xC621A0305D1826AB1E24C7d78792035cD9204eD4 */
-        first_block:50166065, end_image:'https://nftstorage.link/ipfs/bafkreiehe7jgkkhkb6rwh6o3eirbi4hr6rvm256gxuxnpltbcjiymsnaji', spend_image:'https://nftstorage.link/ipfs/bafkreihyjmhty3kqxvicghsh2apwd4n2grvmhcadwuzfuqtpcm4c2h7jwm', ether_image:harmony_logo/* 'https://nftstorage.link/ipfs/bafkreidqivbjiabs2zcyj2qljx5u4wytvhoctjkq4kjrleuyxjrhz3xjl4' */, iteration:1_024/* this limit is horrible. bad blockchain. */, url:0, active:false, e5_img:null, id: ChainId.ONE, external_swappers:['lifi', 'changenow'], changenow_object: get_changenow_object("Harmony")
+        web3:['https://avalanche.drpc.org'],
+        token:'AVAX',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image:avalanche_logo/* 'https://nftstorage.link/ipfs/bafkreiazy7wgqjb3w6owts3xixp527kxdb6mohcrt3rkvvomsvk3rqep4e' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.AVA, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Avalanche (C-Chain)")
       },
       'E55':{
         web3:['https://1rpc.io/celo', 'https://forno.celo.org'],
@@ -1711,10 +1711,10 @@ class App extends Component {
         first_block:0, end_image:null, spend_image:null, ether_image:'syscoin_logo'/* 'https://nftstorage.link/ipfs/bafkreibmwawsdkh5tgdcotewbdunarzapcb2qmh6eoo5ynbojy6kkwyaky' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E305':{
-        web3:['https://avalanche.drpc.org'],
-        token:'AVAX',
-        e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:avalanche_logo/* 'https://nftstorage.link/ipfs/bafkreiazy7wgqjb3w6owts3xixp527kxdb6mohcrt3rkvvomsvk3rqep4e' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.AVA, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Avalanche (C-Chain)")
+        web3:['https://api.harmony.one'],
+        token:'ONE',
+        e5_address:'', /* 0xC621A0305D1826AB1E24C7d78792035cD9204eD4 */
+        first_block:50166065, end_image:'https://nftstorage.link/ipfs/bafkreiehe7jgkkhkb6rwh6o3eirbi4hr6rvm256gxuxnpltbcjiymsnaji', spend_image:'https://nftstorage.link/ipfs/bafkreihyjmhty3kqxvicghsh2apwd4n2grvmhcadwuzfuqtpcm4c2h7jwm', ether_image:harmony_logo/* 'https://nftstorage.link/ipfs/bafkreidqivbjiabs2zcyj2qljx5u4wytvhoctjkq4kjrleuyxjrhz3xjl4' */, iteration:1_024/* this limit is horrible. bad blockchain. */, url:0, active:false, e5_img:null, id: ChainId.ONE, external_swappers:['lifi', 'changenow'], changenow_object: get_changenow_object("Harmony")
       },
       'E315':{
         web3:['https://rpc-mainnet.findora.org'],
@@ -2433,7 +2433,7 @@ class App extends Component {
     var list = [
       // this.get_token('ETHT', 'Ethereum Testnet', 'E15'),
       this.get_token('ETC', 'Ethereum Classic', 'E35'),
-      this.get_token('ONE', 'Harmony', 'E45'),
+      this.get_token('AVAX', 'Avalanche C-Chain', 'E45'),
       this.get_token('CELO', 'Celo', 'E55'),
       this.get_token('FLR', 'Flare', 'E65'),
       this.get_token('XDAI', 'Gnosis Chain', 'E75'),
@@ -2461,7 +2461,7 @@ class App extends Component {
       this.get_token('FTM', 'Fantom Opera', 'E275', true),
       this.get_token('BRISE', 'Bitgert', 'E285', true),
       this.get_token('SYS', 'Syscoin EVM', 'E295', true),
-      this.get_token('AVAX', 'Avalanche C-Chain', 'E305'),
+      this.get_token('ONE', 'Harmony', 'E305'),
       this.get_token('FRA', 'Findora', 'E315', true),
       this.get_token('FDX', '5Dax', 'E325', true),
       this.get_token('ROSE', 'Oasis Emerald', 'E335', true),
@@ -2478,7 +2478,7 @@ class App extends Component {
       this.get_token('ULX', 'Ultron Mainnet', 'E445'),
       this.get_token('CET', 'CoinEx Smart Chain', 'E455'),
       this.get_token('TFUEL', 'Theta Mainnet', 'E465'),
-      this.get_token('FITFI', 'Step Network', 'E475'),
+      this.get_token('FITFI', 'Step Network', 'E475', true),
       this.get_token('EWT', 'Energy Web Chain', 'E485'),
       this.get_token('CLO', 'Callisto', 'E495', true),
       this.get_token('SDN', 'Shiden', 'E505', true),
@@ -2710,7 +2710,8 @@ class App extends Component {
       'EQAoACQJdanybwA1e3BkMqDVABpWT1yzjPiq0hRTb18yHrBo',
       '4BDSEqq7KBufgPubsni9sWhiBZMbsm9cz1DnHD1NsrBrVg9DpwrME5X6tP2u2sect6TadPFFzmuxyCEMbRToyaPv11UXYLf',
       '0xb41ddb764ae6e1ba964768e855f9e19f13d98eaebc04a463fdb8205bdf63f0e0',
-      'Hbo45L26rrK4RyvejanPmGQ95h7bsp3XBYBKjPHmtC19'
+      'Hbo45L26rrK4RyvejanPmGQ95h7bsp3XBYBKjPHmtC19',
+      'f1jobvrpnwagat2p3qwthuvmswn7alla7gq7vkjgy',
     ]
     return default_addresses
   }
@@ -4407,6 +4408,7 @@ class App extends Component {
       locked_wallet: this.state.locked_wallet,
 
       xmr_restore_height: this.state.xmr_restore_height,
+      coinlore_asset_mapping: this.state.coinlore_asset_mapping,
     }
   }
 
@@ -4661,6 +4663,9 @@ class App extends Component {
       var preserve_state = state.preserve_state || this.state.preserve_state;
 
       var xmr_restore_height = state.xmr_restore_height || null
+      var seed_object = saved_cypher_seed_object.seed_object
+      var passcode_expiry_time = saved_cypher_seed_object.passcode_expiry_time
+      var coinlore_asset_mapping = state.coinlore_asset_mapping || {}
 
       this.setState({
         theme: theme,
@@ -4756,6 +4761,9 @@ class App extends Component {
         locked_wallet: locked_wallet,
         preserve_state: preserve_state,
         xmr_restore_height: xmr_restore_height,
+        seed_object: seed_object,
+        passcode_expiry_time: passcode_expiry_time,
+        coinlore_asset_mapping: coinlore_asset_mapping
       })
       var me = this;
       setTimeout(function() {
@@ -7235,7 +7243,7 @@ class App extends Component {
 
           load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} show_bridge_coin_bottomsheet={this.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.refresh_wallet.bind(this)} is_function_at_complete_top_of_stack={this.is_function_at_complete_top_of_stack.bind(this)} 
 
-          get_room_participant_count={this.get_room_participant_count.bind(this)} show_swap_ether_bottomsheet={this.show_swap_ether_bottomsheet.bind(this)}
+          get_room_participant_count={this.get_room_participant_count.bind(this)} show_swap_ether_bottomsheet={this.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.get_token_chart_data.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -8038,7 +8046,7 @@ class App extends Component {
           const expiry_time = me.state.saved_cypher_seed_object['time'] + (me.state.saved_cypher_seed_object['passcode_expiry_time'] * 1000)
           if(Date.now() <= expiry_time){
             console.log('close_syncronizing_page_after_single_tap', 'time hasnt expired, user can set password.')
-            me.setState({is_setting_passcode: true})
+            me.setState({is_setting_passcode: true, seed_object: null, passcode_expiry_time: null,})
             me.show_dialog_bottomsheet({}, 'request_passcode_for_decrypting_stored_seed')
           }else{
             console.log('close_syncronizing_page_after_single_tap', 'time has expired.')
@@ -30697,9 +30705,11 @@ class App extends Component {
       const parsed_data = JSON.parse(data)
       const fees_object = parsed_data['fees_object']
       const exchange_rates = parsed_data['exchange_rates']
+      const coin_chart_info = parsed_data['coin_chart_info']
       console.log('load_coin_and_externals_data', 'exchange_rates', exchange_rates)
       console.log('load_coin_and_externals_data', 'fees_object', fees_object)
-      this.setState({fees_object: fees_object, exchange_rates: exchange_rates})
+      console.log('load_coin_and_externals_data', 'coin_chart_info', coin_chart_info)
+      this.setState({fees_object: fees_object, exchange_rates: exchange_rates, coin_chart_info: coin_chart_info})
     }
     catch(e){
       console.log('apppage', 'something went wrong with get_socket_data', e)
@@ -33809,6 +33819,38 @@ class App extends Component {
 
 
 
+
+
+
+  load_coinlore_coin_and_ether_ids = async () => {
+    var { all_symbols, symbol_mappings, all_tickers } = this.get_all_coin_and_ether_symbols()
+    // if(Object.keys(this.state.coinlore_asset_mapping).length > 0){
+    //   return;
+    // }
+    try{
+      const response = await fetch("https://api.coinlore.net/api/assets/");
+      const assets = await response.json();
+
+      const coinlore_asset_mapping = {}
+      assets['data'].forEach(asset => {
+        if(all_tickers.includes(asset.symbol.toUpperCase())){
+          coinlore_asset_mapping[asset.symbol.toUpperCase()] = asset.id;
+        }
+        else if(asset.symbol.toUpperCase() == 'XMR'){
+          coinlore_asset_mapping['???'] = asset.id;
+        }
+      });
+
+      this.setState({coinlore_asset_mapping: coinlore_asset_mapping})
+      await this.wait(700);
+      await this.get_token_chart_data('BTC')
+    }
+    catch(e){
+      console.log('load_coinlore_coin_and_ether_ids', e)
+    }
+    
+  }
+
   load_coin_and_ether_coin_supplies = async () => {
     var { all_symbols, symbol_mappings } = this.get_all_coin_and_ether_symbols()
     const assetFilter = all_symbols.join(',');
@@ -33871,10 +33913,12 @@ class App extends Component {
       const exchange_rates = this.state.exchange_rates || {}
       var my_currency = await this.get_country_currency()
       var my_currency_exchange_rate = parseFloat(exchange_rates[my_currency])
+      
       if(my_currency_exchange_rate == null){
         my_currency_exchange_rate = 1.0;
         my_currency = 'USD';
       } 
+      this.setState({my_currency_exchange_rate: my_currency_exchange_rate})
       this.set_currency_name_in_locale(my_currency)
       for(var i=0; i<asset_ids.length; i++){
         const asset_id_in_focus = asset_ids[i]
@@ -33902,6 +33946,7 @@ class App extends Component {
       this.setState({asset_price_data: price_data})
       await this.wait(3000)
       await this.load_coin_and_ether_coin_supplies()
+      await this.load_coinlore_coin_and_ether_ids()
     }
     catch(e){
       console.log('apppage', 'load_coin_and_ether_coin_prices', e)
@@ -33934,6 +33979,7 @@ class App extends Component {
 
   get_all_coin_and_ether_symbols(){
     var all_symbols = []
+    const all_tickers = []
     var symbol_mappings = {}
     var state_list = this.state.ether_data
     state_list.forEach(ether_desc => {
@@ -33944,6 +33990,7 @@ class App extends Component {
           if(!symbol.endsWith('ETH') || symbol == 'ETH'){
             if(item_to_use != null) {
               all_symbols.push(item_to_use['id']);
+              all_tickers.push(symbol)
               symbol_mappings[item_to_use['id']] = { symbol, name }
             }
           }
@@ -33955,11 +34002,12 @@ class App extends Component {
           const item_to_use = currencies.find(c => c['symbol'] == coin.toLowerCase());
           if(item_to_use != null){
             all_symbols.push(item_to_use['id'])
+            all_tickers.push(coin)
             symbol_mappings[item_to_use['id']] = { symbol: coin, name: coins[coin]['name'] }
           } 
         }
     }
-    return { all_symbols, symbol_mappings }
+    return { all_symbols, symbol_mappings, all_tickers }
   }
 
   get_browser_cache_size_limit(){
@@ -37918,7 +37966,7 @@ class App extends Component {
         console.log('Error fetching data: ', error)
       }
     }
-    else if(e5 == 'E45'){
+    else if(e5 == 'E305'){
       try {
         const response = await fetch('https://api.harmony.one', {
           method: 'POST',
@@ -44172,7 +44220,7 @@ class App extends Component {
 
     try{
       // console.log('apppage', 'get_object_messages', tag, 'starting fetch...', request)
-      const response = await fetch(request);
+      const response = await fetch(request, body);
       if (!response.ok) {
         console.log('all_data', tag, response)
         throw new Error(`Failed to retrieve data. Status: ${response}`);
@@ -55656,6 +55704,34 @@ class App extends Component {
     this.setState({verified_certificates: verified_certificates_clone})
   }
 
+  get_token_chart_data = (symbol) => {
+    if(this.state.coin_ether_chart_info[symbol] != null){
+      return;
+    }
+    const asset_data = this.state.coin_chart_info[symbol]
+    if(asset_data != null){
+      try{
+        const candle_sticks = []
+        asset_data.forEach(value_array => {
+          const candle_timestamp = value_array[0]
+          const close_price = value_array[1]
+
+          candle_sticks.push({
+            'time':parseInt(candle_timestamp),
+            'price':close_price
+          })
+        });
+        const sorted_candle_sticks = this.sortByAttributeDescending(candle_sticks, 'time').reverse()
+        const clone = structuredClone(this.state.coin_ether_chart_info)
+        clone[symbol] = sorted_candle_sticks
+        this.setState({coin_ether_chart_info: clone})
+      }
+      catch(e){
+        console.log('get_token_chart_data', e)
+      }
+    }
+  }
+
 
 
 
@@ -60363,7 +60439,7 @@ class App extends Component {
   }
 
   format_address(address, e5){
-    if(e5 == 'E45'){
+    if(e5 == 'E305'){
       return toBech32(address)
     }
     else if(e5 == 'E115'){

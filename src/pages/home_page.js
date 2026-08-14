@@ -5538,6 +5538,7 @@ class home_page extends Component {
         this.props.get_wallet_data_for_specific_e5(e5, true)
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
+        this.props.get_token_chart_data(this.props.app_state.e5s[e5].token)
         await this.props.emit_view_object_event(id)
         await this.props.fetch_and_set_loaded_object_views([id], '')
     }
@@ -5553,6 +5554,7 @@ class home_page extends Component {
             this.props.update_coin_balances(item_object['symbol'], false, true)
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        this.props.get_token_chart_data(item_object['symbol'])
         await this.props.emit_view_object_event(item)
         await this.props.fetch_and_set_loaded_object_views([item], '')
     }
@@ -6564,7 +6566,7 @@ class home_page extends Component {
                 get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)} show_bridge_coin_bottomsheet={this.props.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.props.refresh_wallet.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
 
                 get_channel_creator_payout_stagings={this.props.get_channel_creator_payout_stagings.bind(this)} get_channel_payout_records={this.props.get_channel_payout_records.bind(this)}
-                show_swap_ether_bottomsheet={this.props.show_swap_ether_bottomsheet.bind(this)}
+                show_swap_ether_bottomsheet={this.props.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.props.get_token_chart_data.bind(this)}
 
 
 

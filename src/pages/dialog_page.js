@@ -1030,7 +1030,7 @@ class DialogPage extends Component {
     }
 
     format_address(address, e5){
-        if(e5 == 'E45'){
+        if(e5 == 'E305'){
             return toBech32(address)
         }
         else if(e5 == 'E115'){

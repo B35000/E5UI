@@ -315,6 +315,8 @@ class CoinsDetailsSection extends Component {
                             </div>
                         </div>
                     )}
+
+                    {this.render_coin_ether_chart_data(item)}
                     
                     {this.render_detail_item('0')}
 
@@ -1012,6 +1014,252 @@ class CoinsDetailsSection extends Component {
             this.props.notify(this.props.app_state.loc['2927bd']/* Reloading Your Wallet...' */, 2000)
             this.props.refresh_wallet(item['symbol'])
         }
+    }
+
+    render_coin_ether_chart_data(item){
+        const symbol = item['symbol']
+        const chart_data = this.props.app_state.coin_ether_chart_info[symbol];
+        if(chart_data != null){
+            const datapoints1 = this.get_coin_ether_chart_data(item);
+            const datapoints2 = this.get_dominance_change_datapoints(item)
+            let dominance_target = this.state.dominance_target || 'BTC'
+            if(dominance_target == symbol){
+                dominance_target = this.get_next_dominance_target(dominance_target)
+            }
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bq']/* 'Price History.' */, 'details':this.props.app_state.loc['2927br']/* 'Chart containing the price history for $ overtime.' */.replace('$', item['symbol']), 'size':'l'})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time,})}
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bs']/* Y-Axis: Price' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                    {symbol != dominance_target && (
+                        <div>
+                            <div style={{height: 10}}/>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bu']/* 'Relative Dominance Change.' */, 'details':this.props.app_state.loc['2927bv']/* 'Chart containing the relative change in dominance of $ against % over the last year.' */.replace('$', item['symbol']).replace('%', dominance_target), 'size':'l'})}
+                            {this.render_detail_item('6', {'dataPoints':datapoints2.dps, 'start_time':datapoints2.starting_time,})}
+                            <div style={{height: 10}}/>
+                            {this.render_dominance_targets(item)}
+
+                            <div style={{height: 10}}/>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bw']/* Y-Axis: Dominance Points' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+                        </div>
+                    )}
+                </div>
+            )
+        }
+    }
+
+    render_dominance_targets(item){
+        const selected_items = this.get_all_dominance_targets()
+        const items = []
+        selected_items.forEach(selected_item => {
+            if(item['symbol'] != selected_item){
+                items.push(selected_item)
+            }
+        });
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.set_dominance_target(item)}>
+                            {this.render_detail_item('4', {'text':item, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            {this.render_line_if_selected(item, item['symbol'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_line_if_selected(item, symbol){
+        let dominance_target = this.state.dominance_target
+        if(dominance_target == null){
+            dominance_target = 'BTC'
+        }
+        if(dominance_target == symbol){
+            dominance_target = this.get_next_dominance_target(dominance_target)
+        }
+        if(dominance_target == item){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    set_dominance_target(item){
+        this.props.get_token_chart_data(item)
+        this.setState({dominance_target: item})
+    }
+
+
+
+
+    get_coin_ether_chart_data(item){
+        const selected_preferred_currency = this.props.app_state.preferred_currency
+        const symbol = item['symbol'];
+        const chart_data = this.props.app_state.coin_ether_chart_info[symbol];
+        const btc_chart_data = this.props.app_state.coin_ether_chart_info['BTC'];
+        const data = []
+        const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time'] : Date.now()
+        if(chart_data != null){
+            for(var j=0; j<chart_data.length; j++){
+                const data_point = chart_data[j];
+                const price_in_usd = parseFloat(data_point['price']);
+                const time = data_point['time']
+                if(selected_preferred_currency == this.props.app_state.loc['1593eg']/* 'SAT' */){
+                    const price_of_bitcoin_at_time = this.findClosestSorted(btc_chart_data, time)
+                    if(price_of_bitcoin_at_time != null){
+                        const bitcoin_price = price_of_bitcoin_at_time['price']
+                        const number_of_btc_for_one_usd = 1 / bitcoin_price
+                        const balance_value_in_btc = number_of_btc_for_one_usd * price_in_usd
+                        const balance_value_in_sat = balance_value_in_btc * this.props.app_state.coins['BTC']['conversion']
+
+                        data.push(parseFloat(balance_value_in_sat).toFixed(4))
+                    }
+                }else{
+                    const point = price_in_usd * this.props.app_state.my_currency_exchange_rate
+                    data.push(point.toFixed(2))
+                }
+            }
+        }
+
+
+        // console.log('get_coin_ether_chart_data','data', data, chart_data)
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            
+            var indicator = data[factor * xVal] > 1000 ? this.format_account_balance_figure(data[factor * xVal]) : data[factor * xVal]
+            const token_name = selected_preferred_currency == this.props.app_state.loc['1593eg']/* 'SAT' */ ? 'SATs' : this.props.app_state.loc['1593ef']/* 'USD' */
+            var final_indicator = '$ %'.replace('$', indicator).replace('%', token_name)
+            if(yVal != null){
+                if(i == 23 || i == 53){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return { dps, starting_time: starting_time }
+    }
+
+    findClosestSorted(objects, targetTime) {
+        if (!objects || objects.length === 0) return null;
+
+        let left = 0, right = objects.length - 1;
+        let closest = objects[0];
+
+        while (left <= right) {
+            const mid = Math.floor((left + right) / 2);
+            const midTime = objects[mid].time;
+
+            if (Math.abs(midTime - targetTime) < Math.abs(closest.time - targetTime)) {
+                closest = objects[mid];
+            }
+
+            if (midTime === targetTime) {
+                return objects[mid];
+            } else if (midTime < targetTime) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return closest;
+    }
+
+
+
+    get_all_dominance_targets(){
+        return ['BTC', 'ETH', 'ETC', 'DOT', '???']
+    }
+
+    get_next_dominance_target(selected_target){
+        const selected_items = this.get_all_dominance_targets()
+        for(var i=0; i<selected_items.length; i++){
+            if(selected_items[i] != selected_target){
+                return selected_items[i]
+            }
+        }
+    }
+
+    get_dominance_change_datapoints(item){
+        const symbol = item['symbol'];
+        const chart_data = this.props.app_state.coin_ether_chart_info[symbol];
+        let dominance_target = this.state.dominance_target || 'BTC'
+        if(dominance_target == symbol){
+            dominance_target = this.get_next_dominance_target(dominance_target)
+        }
+        const btc_chart_data = this.props.app_state.coin_ether_chart_info[dominance_target];
+        const data = []
+        const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time'] : Date.now()
+
+        if(chart_data != null && chart_data.length > 0 && btc_chart_data != null && btc_chart_data.length > 0){
+            const anchor_price_in_usd = chart_data[0]['price'];
+            const anchor_bitcoin_price = btc_chart_data[0]['price']
+
+            for(var j=0; j<chart_data.length; j++){
+                const data_point = chart_data[j];
+                const price_in_usd = data_point['price'];
+                const equivalent_bitcoin_price = btc_chart_data[j]['price']
+
+                const last_data_point = j==0 ? chart_data[j] : chart_data[j-1];
+                const last_price_in_usd = last_data_point['price'];
+                const last_equivalent_bitcoin_price = j==0 ? btc_chart_data[j]['price'] : btc_chart_data[j-1]['price']
+
+                const price_proportion = ((price_in_usd - last_price_in_usd) / last_price_in_usd) * 100
+                const bitcoin_price_proportion = ((equivalent_bitcoin_price - last_equivalent_bitcoin_price) / last_equivalent_bitcoin_price) * 100
+
+                const relative_dominance_change = price_proportion.toFixed(2) - bitcoin_price_proportion.toFixed(2)
+
+                if(data.length == 0){
+                    data.push(parseFloat(relative_dominance_change))
+                }else{
+                    const previous_value = parseFloat(data[data.length-1])
+                    data.push(previous_value+parseFloat(relative_dominance_change))
+                }
+            }
+        }
+
+
+        // console.log('get_dominance_change_datapoints', 'data', data)
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            
+            var indicator = data[factor * xVal] > 1000 ? this.format_account_balance_figure(data[factor * xVal]) : data[factor * xVal]
+            const points_text = this.props.app_state.loc['2927bt']/* 'points' */
+            if(yVal != null){
+                var final_indicator = '$ %'.replace('$', indicator.toFixed(2)).replace('%', points_text)
+                if(i == 23 || i == 53){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return { dps, starting_time: starting_time }
+        
     }
 
 

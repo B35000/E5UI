@@ -260,8 +260,8 @@ class SuccessfulSend extends Component {
 
         if(e5 == 'E25' || e5 == 'E35'){
             return `https://etc.blockscout.com/tx/${hash}`
-        }else if(e5 == 'E45'){
-            return `https://explorer.harmony.one/tx/${hash}`
+        }else if(e5 == 'E305'){
+            return `https://snowtrace.io/tx/${hash}`
         }else if(e5 == 'E55'){
             return `https://explorer.celo.org/mainnet/tx/${hash}`
         }else if(e5 == 'E65'){
@@ -313,7 +313,7 @@ class SuccessfulSend extends Component {
         }else if(e5 == 'E295'){
             return `https://explorer.syscoin.org/tx/${hash}`
         }else if(e5 == 'E305'){
-            return `https://snowtrace.io/tx/${hash}`
+            return `https://explorer.harmony.one/tx/${hash}`
         }else if(e5 == 'E315'){
             return `https://evm.findorascan.io/tx/${hash}`
         }else if(e5 == 'E325'){

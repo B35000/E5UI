@@ -457,7 +457,7 @@ class WithdrawEtherPage extends Component {
     }
 
     format_address(address, e5){
-        if(e5 == 'E45'){
+        if(e5 == 'E305'){
             return toBech32(address)
         }
         else if(e5 == 'E115'){
@@ -548,7 +548,7 @@ class WithdrawEtherPage extends Component {
 
 
     format_to_address(address, e5){
-        if(e5 == 'E45'){
+        if(e5 == 'E305'){
             return fromBech32(address)
         }
         if(e5 == 'E115'){

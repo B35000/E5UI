@@ -119,7 +119,7 @@ const currencies = [
     "symbol": "atom",
     "name": "Cosmos Hub"
   },
-  {
+  {//
     "id": "cronos-zkevm-cro",
     "symbol": "zkcro",
     "name": "Cronos zkEVM CRO"
@@ -149,7 +149,7 @@ const currencies = [
     "symbol": "ewt",
     "name": "Energy Web"
   },
-  {
+  {//
     "id": "eos",
     "symbol": "eos",
     "name": "EOS"
@@ -174,7 +174,7 @@ const currencies = [
     "symbol": "evmos",
     "name": "Evmos"
   },
-  {
+  {//
     "id": "fantom",
     "symbol": "ftm",
     "name": "Fantom"

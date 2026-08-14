@@ -822,10 +822,15 @@ class ViewGroups extends Component {
                         // Format the Y value (reuse your existing formatting logic)
                         const rawY = dataPoint.y;
                         let formattedY;
-                        if (rawY.toString().includes('.')) {
-                            formattedY = ((rawY * scale).toFixed(4)).toString() + y_axis_units;
+                        if (rawY.toString().includes('.') && parseInt(rawY) < 1_000_000) {
+                            if(rawY.toString().split('.')[1].length > 4){
+                                formattedY = ((rawY * scale).toFixed(4)).toString() + y_axis_units;
+                            }
+                            else{
+                                formattedY = ((rawY * scale)).toString() + y_axis_units;
+                            }
                         } else {
-                            const final_value = bigInt(rawY).multiply(scale);
+                            const final_value = bigInt(parseInt(rawY)).multiply(scale);
                             if (bigInt(final_value).lesser(bigInt(1_000_000))) {
                                 formattedY = number_with_commas(final_value.toString()) + y_axis_units;
                             } else {
@@ -1359,10 +1364,15 @@ class ViewGroups extends Component {
                     // Format the Y value (reuse your existing formatting logic)
                     const rawY = dataPoint.y;
                     let formattedY;
-                    if (rawY.toString().includes('.')) {
-                        formattedY = ((rawY * scale).toFixed(4)).toString() + y_axis_units;
+                    if (rawY.toString().includes('.') && parseInt(rawY) < 1_000_000) {
+                        if(rawY.toString().split('.')[1].length > 4){
+                            formattedY = ((rawY * scale).toFixed(4)).toString() + y_axis_units;
+                        }
+                        else{
+                            formattedY = ((rawY * scale)).toString() + y_axis_units;
+                        }
                     } else {
-                        const final_value = bigInt(rawY).multiply(scale);
+                        const final_value = bigInt(parseInt(rawY)).multiply(scale);
                         if (bigInt(final_value).lesser(bigInt(1_000_000))) {
                             formattedY = number_with_commas(final_value.toString()) + y_axis_units;
                         } else {

@@ -2872,7 +2872,7 @@ class PostListSection extends Component {
         const e5_image = this.props.app_state.e5s[object['account_e5']].e5_img
         const alias = this.get_account_alias(object['account_id'], object['account_e5'])
         const most_recent_message = object['messages'][object['messages'].length - 1]
-        const most_recent_message_text = most_recent_message == null ? '...' : this.shorten_message_item(most_recent_message['ipfs']['message']);
+        const most_recent_message_text = most_recent_message == null ? '...' : this.shorten_message_item((most_recent_message['ipfs']['message'] == '' ? most_recent_message['ipfs']['markdown'] : most_recent_message['ipfs']['message']));
         let arrow = ''
         if(most_recent_message != null){
             const most_recent_message_sender = most_recent_message['ipfs']['sender']
