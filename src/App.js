@@ -1452,7 +1452,7 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets()
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -3724,6 +3724,10 @@ class App extends Component {
       'add-stake':this.getLocale()['3103']/* 'add-stake' */,
       'coupon-payments':this.getLocale()['3105']/* 'coupon-payments' */,
     }
+  }
+
+  get_all_dominance_targets(){
+    return ['BTC', 'ETH', 'ETC', 'DOT', '???']
   }
 
 
@@ -9662,7 +9666,7 @@ class App extends Component {
     try{
       const client = new SuiGrpcClient({
         network: 'mainnet',
-        baseUrl: 'https://fullnode.mainnet.sui.io:443',
+        baseUrl: 'sui-grpc.publicnode.com:443',
       })
       const tx = new SuiTransaction();
       const [coin] = tx.splitCoins(tx.gas, [parseInt(transfer_amount)]);
@@ -30710,6 +30714,9 @@ class App extends Component {
       console.log('load_coin_and_externals_data', 'fees_object', fees_object)
       console.log('load_coin_and_externals_data', 'coin_chart_info', coin_chart_info)
       this.setState({fees_object: fees_object, exchange_rates: exchange_rates, coin_chart_info: coin_chart_info})
+
+      await this.wait(900)
+      await this.load_coinlore_coin_and_ether_ids()
     }
     catch(e){
       console.log('apppage', 'something went wrong with get_socket_data', e)
@@ -32912,7 +32919,7 @@ class App extends Component {
   fetch_sui_balance = async (address) => {
     const client = new SuiGrpcClient({
       network: 'mainnet',
-      baseUrl: 'https://fullnode.mainnet.sui.io:443',
+      baseUrl: 'https://sui-grpc.publicnode.com:443',
     })
     const balances = await client.getBalance({ owner: address, });
     return bigInt(balances.totalBalance)
@@ -33823,32 +33830,10 @@ class App extends Component {
 
 
   load_coinlore_coin_and_ether_ids = async () => {
-    var { all_symbols, symbol_mappings, all_tickers } = this.get_all_coin_and_ether_symbols()
-    // if(Object.keys(this.state.coinlore_asset_mapping).length > 0){
-    //   return;
-    // }
-    try{
-      const response = await fetch("https://api.coinlore.net/api/assets/");
-      const assets = await response.json();
-
-      const coinlore_asset_mapping = {}
-      assets['data'].forEach(asset => {
-        if(all_tickers.includes(asset.symbol.toUpperCase())){
-          coinlore_asset_mapping[asset.symbol.toUpperCase()] = asset.id;
-        }
-        else if(asset.symbol.toUpperCase() == 'XMR'){
-          coinlore_asset_mapping['???'] = asset.id;
-        }
-      });
-
-      this.setState({coinlore_asset_mapping: coinlore_asset_mapping})
-      await this.wait(700);
-      await this.get_token_chart_data('BTC')
+    for(var i=0; i<this.state.dominance_targets.length; i++){
+      this.get_token_chart_data(this.state.dominance_targets[i])
+      await this.wait(900)
     }
-    catch(e){
-      console.log('load_coinlore_coin_and_ether_ids', e)
-    }
-    
   }
 
   load_coin_and_ether_coin_supplies = async () => {
@@ -33946,7 +33931,6 @@ class App extends Component {
       this.setState({asset_price_data: price_data})
       await this.wait(3000)
       await this.load_coin_and_ether_coin_supplies()
-      await this.load_coinlore_coin_and_ether_ids()
     }
     catch(e){
       console.log('apppage', 'load_coin_and_ether_coin_prices', e)

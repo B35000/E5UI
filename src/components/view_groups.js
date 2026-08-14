@@ -602,7 +602,7 @@ class ViewGroups extends Component {
                 labelFontSize: 10,
                 data: dataPoints,
                 x_axis_label_count: 4,
-                y_axis_label_count: 3,
+                y_axis_label_count: 5,
                 display_y_axis_labels: true,
                 labelFontSizeX: 10,
                 labelFontSizeY: label_font_size,
@@ -652,6 +652,16 @@ class ViewGroups extends Component {
 
             const getChartOptions2 = () => {
                 const config = { ...defaultConfig };
+
+                const yValues = config.data.map(item => item.y);
+                const dataMin = Math.min(...yValues);
+                const dataMax = Math.max(...yValues);
+
+                const topPadding = (dataMax - dataMin) * 0.05;
+                const bottomPadding = (dataMax - dataMin) * 0.05;
+
+                const yMin = dataMin - bottomPadding;
+                const yMax = dataMax + topPadding;
                 
                 return {
                     responsive: true,
@@ -678,9 +688,50 @@ class ViewGroups extends Component {
                         y: {
                             type: chart_type,
                             display: config.display_y_axis_labels,
-                            afterDataLimits: (scale) => {
-                                const range = scale.max - scale.min;
-                                scale.max = scale.max + (range * 0.01);
+                            // afterDataLimits: (scale) => {
+                            //     const range = scale.max - scale.min;
+                            //     scale.max = scale.max + (range * 0.01);
+                            // },
+                            afterBuildTicks: (scale) => {
+                                const yValues = config.data.map(item => item.y);
+                                const dataMin = Math.min(...yValues);
+                                const dataMax = Math.max(...yValues);
+                                const range = dataMax - dataMin;
+                                const yMin = dataMin - range * 0.05;
+                                const yMax = dataMax + range * 0.05;
+                                const count = config.y_axis_label_count;
+
+                                let tickValues;
+
+                                if(yValues.length == 0){
+                                    const step = (100 - 0) / (count - 2);
+                                    tickValues = Array.from({ length: count }, (_, i) => 0 + step * i);
+                                }
+                                else if (yMin >= 0 || yMax <= 0) {
+                                    // All one sign — no zero tick needed, just even spacing
+                                    const step = (yMax - yMin) / (count - 2);
+                                    tickValues = Array.from({ length: count }, (_, i) => yMin + step * i);
+                                } else {
+                                    // Both signs present — place a tick at exactly 0
+                                    const negRange = -yMin;
+                                    const posRange = yMax;
+
+                                    // How many ticks fall below zero vs above, proportional to each side's magnitude
+                                    let zeroIndex = Math.round((count - 1) * negRange / (negRange + posRange));
+                                    zeroIndex = Math.min(Math.max(zeroIndex, 1), count - 2); // keep >=1 tick on each side
+
+                                    // Step must be big enough to cover whichever side needs more room
+                                    const step = Math.max(
+                                        negRange / zeroIndex,
+                                        posRange / (count - 1 - zeroIndex)
+                                    );
+
+                                    tickValues = Array.from({ length: count }, (_, i) => (i - zeroIndex) * step);
+                                }
+
+                                scale.min = tickValues[0];
+                                scale.max = tickValues[tickValues.length - 1];
+                                scale.ticks = tickValues.map(v => ({ value: v }));
                             },
                             grid: {
                                 display: true,
@@ -688,14 +739,18 @@ class ViewGroups extends Component {
                                 lineWidth: config.gridLineWidth,
                             },
                             ticks: {
-                                maxTicksLimit: config.y_axis_label_count,
+                                maxTicksLimit: (yMin >= 0 || yMax <= 0) ? config.y_axis_label_count -1 : config.y_axis_label_count,
                                 color: config.labelFontColor,
                                 font: { size: config.labelFontSizeY },
                                 callback: function(value, index, ticks) {
-                                    if (value.toString().includes('.')) {
+                                    if (value.toString().includes('.') && parseInt(value) < 1_000_000) {
+                                        if(parseInt(value) > 1000){
+                                            const split_value = value.toString().split('.');
+                                            return (number_with_commas(split_value[0])+'.'+split_value[1]) + y_axis_units;
+                                        }
                                         return ((value * scale).toFixed(4)).toString() + y_axis_units;
                                     }
-                                    const final_value = bigInt(value).multiply(scale);
+                                    const final_value = bigInt(parseInt(value)).multiply(scale);
                                     if (bigInt(final_value).lesser(bigInt(1_000_000))) {
                                         return number_with_commas(final_value.toString()) + y_axis_units;
                                     } else {
@@ -823,11 +878,12 @@ class ViewGroups extends Component {
                         const rawY = dataPoint.y;
                         let formattedY;
                         if (rawY.toString().includes('.') && parseInt(rawY) < 1_000_000) {
-                            if(rawY.toString().split('.')[1].length > 4){
-                                formattedY = ((rawY * scale).toFixed(4)).toString() + y_axis_units;
-                            }
-                            else{
-                                formattedY = ((rawY * scale)).toString() + y_axis_units;
+                            const fixed_value = rawY.toString().split('.')[1].length > 4 ? (rawY * scale).toFixed(4) : (rawY * scale);
+                            if(parseInt(rawY) > 1000){
+                                const split_value = fixed_value.toString().split('.');
+                                formattedY =  (number_with_commas(split_value[0])+'.'+split_value[1]) + y_axis_units;
+                            }else{
+                                formattedY = fixed_value.toString() + y_axis_units;
                             }
                         } else {
                             const final_value = bigInt(parseInt(rawY)).multiply(scale);
@@ -1365,11 +1421,12 @@ class ViewGroups extends Component {
                     const rawY = dataPoint.y;
                     let formattedY;
                     if (rawY.toString().includes('.') && parseInt(rawY) < 1_000_000) {
-                        if(rawY.toString().split('.')[1].length > 4){
-                            formattedY = ((rawY * scale).toFixed(4)).toString() + y_axis_units;
-                        }
-                        else{
-                            formattedY = ((rawY * scale)).toString() + y_axis_units;
+                        const fixed_value = rawY.toString().split('.')[1].length > 4 ? (rawY * scale).toFixed(4) : (rawY * scale);
+                        if(parseInt(rawY) > 1000){
+                            const split_value = fixed_value.toString().split('.');
+                            formattedY =  (number_with_commas(split_value[0])+'.'+split_value[1]) + y_axis_units;
+                        }else{
+                            formattedY = fixed_value.toString() + y_axis_units;
                         }
                     } else {
                         const final_value = bigInt(parseInt(rawY)).multiply(scale);

@@ -1155,7 +1155,7 @@ class EthersDetailsSection extends Component {
 
 
     get_all_dominance_targets(){
-        return ['BTC', 'ETH', 'ETC', 'DOT', '???']
+        return this.props.app_state.dominance_targets
     }
 
     get_next_dominance_target(selected_target){

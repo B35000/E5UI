@@ -1183,7 +1183,7 @@ class CoinsDetailsSection extends Component {
 
 
     get_all_dominance_targets(){
-        return ['BTC', 'ETH', 'ETC', 'DOT', '???']
+        return this.props.app_state.dominance_targets
     }
 
     get_next_dominance_target(selected_target){
@@ -1257,6 +1257,8 @@ class CoinsDetailsSection extends Component {
                 xVal++;
             }
         }
+
+        console.log('get_dominance_change_datapoints', 'dps', dps)
 
         return { dps, starting_time: starting_time }
         
