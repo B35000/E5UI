@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.99de1687.css",
-    "main.js": "/static/js/main.3095f59f.js",
+    "main.js": "/static/js/main.15389ccf.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -248,7 +248,6 @@
     "static/media/cardano.png": "/static/media/cardano.44267a47758a41f3cf6b.png",
     "static/media/iotex.png": "/static/media/iotex.033445dc5a3a732d38fe.png",
     "static/media/mintme.png": "/static/media/mintme.974739b5537a57d62fa0.png",
-    "static/media/btt.png": "/static/media/btt.8bed027171fab25b0c61.png",
     "static/media/monero.png": "/static/media/monero.40f22d04e792c5ec7863.png",
     "static/media/previous_icon_orange.png": "/static/media/previous_icon_orange.63e76ceae3ed05ee66bb.png",
     "static/media/next_icon_orange.png": "/static/media/next_icon_orange.10a93c3c09a573bf1851.png",
@@ -292,7 +291,6 @@
     "static/media/play_icon_yellow.png": "/static/media/play_icon_yellow.749bb5b32a7452993c5d.png",
     "static/media/omax.png": "/static/media/omax.02b157dcd915aa6046ae.png",
     "static/media/masked_end_icon.png": "/static/media/masked_end_icon.d9b1580c0c02a43becf7.png",
-    "static/media/shibarium.png": "/static/media/shibarium.9ea290ba2c6346ba0378.png",
     "static/media/manta.png": "/static/media/manta.90dadc547e7d07e064eb.png",
     "static/media/masked_spend_icon.png": "/static/media/masked_spend_icon.4a1a5b80014b927702ec.png",
     "static/media/background_darkyellow.png": "/static/media/background_darkyellow.e5a34c12ffd6bd5a1e7c.png",
@@ -463,6 +461,6 @@
   },
   "entrypoints": [
     "static/css/main.99de1687.css",
-    "static/js/main.3095f59f.js"
+    "static/js/main.15389ccf.js"
   ]
 }
