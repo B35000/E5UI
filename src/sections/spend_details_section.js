@@ -1741,7 +1741,7 @@ class SpendDetailSection extends Component {
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2602b']/* 'Inverse Demand Pressure' */, 'details':this.props.app_state.loc['2602c']/* 'Chart containing the inverse demand pressure over time.' */, 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'interval':this.get_interval_for_proportion_ratio_chart(proportion_ratio_events)})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, /* 'interval':this.get_interval_for_proportion_ratio_chart(proportion_ratio_events) */})}
                     <div style={{height: 10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.block_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_block_limit_chart_tags_objectt_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
@@ -1855,6 +1855,8 @@ class SpendDetailSection extends Component {
             }
             
         }
+
+        // console.log('get_mint_limit_data_points', 'dps', dps)
 
         const chart_starting_time = events.length == 0 ? null : events[0].returnValues.p5*1000
         const scale = bigInt(largest_number).divide(100) == 0 ? 1 : bigInt(largest_number).divide(100)
@@ -2186,7 +2188,7 @@ return data['data']
                 <div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2580']/* Total Supply' */, 'details':this.props.app_state.loc['2397']/* `Chart containing the total supply of ` */ +symbol+this.props.app_state.loc['2389']/* ` over time.` */, 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'interval':110, 'hide_label':false, 'scale':datapoints1.scale})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'hide_label':false, 'scale':datapoints1.scale})}
                     <div style={{height: 10}}/>
                     {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/> */}

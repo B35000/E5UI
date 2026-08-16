@@ -435,7 +435,7 @@ import metadium_logo from './assets/metadium.png'
 // import kardiachain_logo from './assets/kardiachain.png'
 // import caduceus_logo from './assets/cmp.png'
 // import seele_logo from './assets/seele.png'
-import bittorrentchain_logo from './assets/btt.png'
+// import bittorrentchain_logo from './assets/btt.png'
 // import doublea_logo from './assets/doublea.png'
 import karura_logo from './assets/karura.png'
 // import acala_logo from './assets/acala.png'
@@ -482,7 +482,7 @@ import katana_logo from './assets/katana.png'
 // import peth_logo from './assets/zkpolygon.png'/* './assets/peth.png' */
 import ronin_logo from './assets/ronin.png'
 import scroll_logo from './assets/scroll.png'
-import shibarium_logo from './assets/shibarium.png'
+// import shibarium_logo from './assets/shibarium.png'
 import soneium_logo from './assets/soneium.png'
 import superseed_logo from './assets/superseed.png'
 import taiko_logo from './assets/taiko.png'
@@ -1452,7 +1452,7 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets()
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -1611,10 +1611,10 @@ class App extends Component {
         first_block:0, end_image:null, spend_image:null, ether_image:sei_logo, iteration:10_000, url:0	, active:false, e5_img:null, id: ChainId.SEI, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Sei")
       },
       'E155':{
-        web3:['https://mainnet-rpc.thundercore.io'],
-        token:'TT',
-        e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:148816985, end_image:'https://nftstorage.link/ipfs/bafkreihcc4bnygb42rlpib2uev7cbduintrvf72jqf4yzosfoz65s6x7bq', spend_image:'https://nftstorage.link/ipfs/bafkreicxhgrbre7cta2jn5i7sm4lzdige3wiqa3pdpegu7kla5v6g66c74', ether_image:thundercore_logo/* 'https://nftstorage.link/ipfs/bafkreidw4ngkifzyei6dekjjfnpkhwodubkwe2eodrq3yvijeai3sqk74i' */, iteration:40_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
+        web3:['https://rpc.berachain.com/'],
+        token:'BERA',
+        e5_address:'',
+        first_block:0, end_image:null, spend_image:null, ether_image:berachain_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.BER, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Berachain",)
       },
       'E165':{
         web3:['https://viction.drpc.org'],
@@ -1912,7 +1912,7 @@ class App extends Component {
         web3:['https://rpc.bittorrentchain.io'],
         token:'BTT',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:bittorrentchain_logo, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'bittorrentchain_logo', iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E645':{
         web3:['https://rpc.acuteangle.com'],
@@ -2017,10 +2017,10 @@ class App extends Component {
         first_block:0, end_image:null, spend_image:null, ether_image:sonic_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.SON, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Sonic (ex. FTM)")
       },
       'E815':{
-        web3:['https://rpc.berachain.com/'],
-        token:'BERA',
-        e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:berachain_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.BER, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Berachain",)
+        web3:['https://mainnet-rpc.thundercore.io'],
+        token:'TT',
+        e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
+        first_block:148816985, end_image:'https://nftstorage.link/ipfs/bafkreihcc4bnygb42rlpib2uev7cbduintrvf72jqf4yzosfoz65s6x7bq', spend_image:'https://nftstorage.link/ipfs/bafkreicxhgrbre7cta2jn5i7sm4lzdige3wiqa3pdpegu7kla5v6g66c74', ether_image:thundercore_logo/* 'https://nftstorage.link/ipfs/bafkreidw4ngkifzyei6dekjjfnpkhwodubkwe2eodrq3yvijeai3sqk74i' */, iteration:40_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E825':{
         web3:['https://nodeapi.energi.network'],
@@ -2225,7 +2225,7 @@ class App extends Component {
         web3:['https://rpc.shibarium.shib.io'],
         token:'BONE',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:shibarium_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image: null, spend_image: null, ether_image:'shibarium_logo', iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E1165':{
         web3:['https://rpc.soneium.org/'],
@@ -2443,8 +2443,8 @@ class App extends Component {
       this.get_token('XDC', 'Xinfin Network', 'E115'),
       this.get_token('POL', 'Polygon', 'E125'),
       this.get_token('BNB', 'Binance S.C.', 'E135'),
-      this.get_token('TT', 'ThunderCore', 'E155'),
       this.get_token('SEI', 'Sei', 'E145'),
+      this.get_token('BERA', 'Berachain', 'E155'),
       this.get_token('VIC', 'Viction', 'E165'),
       this.get_token('XPL', 'Plasma', 'E175'),
       
@@ -2494,7 +2494,7 @@ class App extends Component {
       this.get_token('KAI', 'Kardiachain', 'E605', true),
       this.get_token('CMP', 'Caduceus', 'E615', true),
       this.get_token('SEELE', 'Seele', 'E625', true),
-      this.get_token('BTT', 'BitTorrent Chain', 'E635'),
+      this.get_token('BTT', 'BitTorrent Chain', 'E635', true),
       this.get_token('AAC', 'Double-A Chain', 'E645', true),
       this.get_token('KAR', 'Karura EVM', 'E655'),
       this.get_token('ACA', 'Acala EVM', 'E665', true),
@@ -2512,7 +2512,7 @@ class App extends Component {
       this.get_token('IOTAE', 'IOTA EVM', 'E785'),
       this.get_token('KAIA', 'KAIA', 'E795'),
       this.get_token('S', 'Sonic', 'E805'),
-      this.get_token('BERA', 'Berachain', 'E815'),
+      this.get_token('TT', 'ThunderCore', 'E815'),
       this.get_token('NRG', 'Energi', 'E825', true),
       this.get_token('HYPE', 'HyperEVM', 'E835'),
       this.get_token('XRPE', 'XRPL EVM', 'E845'),
@@ -2546,7 +2546,7 @@ class App extends Component {
       this.get_token('PETH', 'Polygon zkEVM', 'E1125', true),
       this.get_token('RON', 'Ronin', 'E1135'),
       this.get_token('SETH', 'Scroll', 'E1145'),
-      this.get_token('BONE', 'Shibarium', 'E1155'),
+      this.get_token('BONE', 'Shibarium', 'E1155', true),
       this.get_token('SONETH', 'Soneium', 'E1165'),
       this.get_token('SUETH', 'Superseed', 'E1175'),
       this.get_token('TETH', 'Taiko Alethia', 'E1185'),
@@ -4413,6 +4413,7 @@ class App extends Component {
 
       xmr_restore_height: this.state.xmr_restore_height,
       coinlore_asset_mapping: this.state.coinlore_asset_mapping,
+      password_tries:this.state.password_tries,
     }
   }
 
@@ -4670,6 +4671,7 @@ class App extends Component {
       var seed_object = saved_cypher_seed_object.seed_object
       var passcode_expiry_time = saved_cypher_seed_object.passcode_expiry_time
       var coinlore_asset_mapping = state.coinlore_asset_mapping || {}
+      var password_tries = state.password_tries || 5
 
       this.setState({
         theme: theme,
@@ -4767,7 +4769,8 @@ class App extends Component {
         xmr_restore_height: xmr_restore_height,
         seed_object: seed_object,
         passcode_expiry_time: passcode_expiry_time,
-        coinlore_asset_mapping: coinlore_asset_mapping
+        coinlore_asset_mapping: coinlore_asset_mapping,
+        password_tries: password_tries
       })
       var me = this;
       setTimeout(function() {
@@ -8050,7 +8053,7 @@ class App extends Component {
           const expiry_time = me.state.saved_cypher_seed_object['time'] + (me.state.saved_cypher_seed_object['passcode_expiry_time'] * 1000)
           if(Date.now() <= expiry_time){
             console.log('close_syncronizing_page_after_single_tap', 'time hasnt expired, user can set password.')
-            me.setState({is_setting_passcode: true, seed_object: null, passcode_expiry_time: null,})
+            me.setState({is_setting_passcode: true,})
             me.show_dialog_bottomsheet({}, 'request_passcode_for_decrypting_stored_seed')
           }else{
             console.log('close_syncronizing_page_after_single_tap', 'time has expired.')
@@ -9666,7 +9669,7 @@ class App extends Component {
     try{
       const client = new SuiGrpcClient({
         network: 'mainnet',
-        baseUrl: 'sui-grpc.publicnode.com:443',
+        baseUrl: 'https://fullnode.mainnet.sui.io:443',
       })
       const tx = new SuiTransaction();
       const [coin] = tx.splitCoins(tx.gas, [parseInt(transfer_amount)]);
@@ -19851,7 +19854,7 @@ class App extends Component {
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
 
-        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)}
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)}
         />
       </div>
     )
@@ -19869,10 +19872,11 @@ class App extends Component {
       this.setState({dialog_bottomsheet: !this.state.dialog_bottomsheet});
 
       if(this.state.is_setting_passcode == true){
+        this.setState({seed_object: null, passcode_expiry_time: null,})
         this.set_cookies()
         setTimeout(function() {
           window.location.reload(false);
-        }, (500));
+        }, (650));
       }
 
       var me = this;
@@ -21470,13 +21474,23 @@ class App extends Component {
       this.open_dialog_bottomsheet();
       const seed_object = JSON.parse(decrypted)
       
-      this.setState({seed_passcode: cypher_passcode, passcode_expiry_time: this.state.saved_cypher_seed_object['passcode_expiry_time'], saved_cypher_seed_object: {}})
+      this.setState({
+        seed_passcode: cypher_passcode, 
+        passcode_expiry_time: this.state.saved_cypher_seed_object['passcode_expiry_time'],
+        saved_cypher_seed_object: {}, 
+        password_tries: 5
+      });
       
       this.when_wallet_data_updated3(seed_object.added_tags, seed_object.set_salt, seed_object.selected_item, false, seed_object.selected_item_2)
     }
   }
 
+  set_password_tries(tries){
+    this.setState({password_tries: tries})
+  }
+
   fail_to_set_password(){
+    this.setState({password_tries: 5})
     this.open_dialog_bottomsheet();
   }
 
@@ -32919,10 +32933,12 @@ class App extends Component {
   fetch_sui_balance = async (address) => {
     const client = new SuiGrpcClient({
       network: 'mainnet',
-      baseUrl: 'https://sui-grpc.publicnode.com:443',
+      baseUrl: 'https://fullnode.mainnet.sui.io:443',
     })
     const balances = await client.getBalance({ owner: address, });
-    return bigInt(balances.totalBalance)
+    // console.log('fetch_sui_balance', 'fetch balance result', balances)
+    const balance = balances.balance?.balance;
+    return balance == null ? bigInt(0) : bigInt(balance)
   }
 
   fetch_sui_network_fees(){
@@ -34893,6 +34909,8 @@ class App extends Component {
     var web3_url = this.get_web3_url_from_e5(e5)
     var account_for_e5 = this.state.accounts[e5]
 
+    console.log('get_wallet_data_for_specific_e5', 'web3_url', web3_url, e5, account_for_e5)
+
     const update_clone = structuredClone(this.state.updating_individual_coin)
     update_clone[e5] = true;
     this.setState({updating_individual_coin: update_clone})
@@ -34931,7 +34949,7 @@ class App extends Component {
                   : value
       )
       var clone = JSON.parse(t)
-      // console.log('bal', balance)
+      console.log('get_wallet_data_for_specific_e5','bal', balance)
       clone[e5] = bigInt(balance.toString())
       this.setState({account_balance: clone});
       if(is_syncing)this.inc_synch_progress()
@@ -38370,7 +38388,7 @@ class App extends Component {
         console.log('Error fetching data: ', error)
       }
     }
-    else if(e5 == 'E305'){
+    else if(e5 == 'E45'){
       link = `https://api-beta.avascan.info/v2/network/mainnet/evm/43114/address/${address}/transactions?ecosystem=avalanche&sort=desc`
 
       try{
@@ -38380,7 +38398,7 @@ class App extends Component {
         }
         const data = await response.text();
         e5_address_obj = JSON.parse(data);
-        console.log('--------------------------------E305:load_ether_history-----------------------------------')
+        console.log('--------------------------------E45:load_ether_history-----------------------------------')
         console.log(e5_address_obj)
         console.log(address)
       } catch (error) {

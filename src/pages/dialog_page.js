@@ -128,7 +128,7 @@ class DialogPage extends Component {
 
         weight_tags_search:'', moved_exchanges_search: '', 
 
-        out_of_stock_items:[], seed_passcode:'', passcode_expiry_time:0, passcode_entry_tries:5, cypher_passcode:'', get_remember_seed_during_initial_synch_tags_object: this.get_remember_seed_during_initial_synch_tags_object(),
+        out_of_stock_items:[], seed_passcode:'', passcode_expiry_time:0, passcode_entry_tries:this.props.app_state.password_tries, cypher_passcode:'', get_remember_seed_during_initial_synch_tags_object: this.get_remember_seed_during_initial_synch_tags_object(),
 
         selected_conditions:[], get_include_exit_contract_after_finish_transaction_object:this.get_include_exit_contract_after_finish_transaction_object(),
 
@@ -13583,6 +13583,7 @@ return data['data']
                 const tries_left = this.state.passcode_entry_tries - 1
                 if(tries_left > 0){
                     this.setState({passcode_entry_tries: tries_left})
+                    this.props.set_password_tries(tries_left)
                 }else{
                     this.props.fail_to_set_password()
                 }

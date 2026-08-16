@@ -2482,6 +2482,8 @@ class StackPage extends Component {
 
                 {this.render_arweave_network_fee_if_selected()}
 
+                {this.render_e5s_and_txs_for_quick_switch_ui()}
+
                 <div style={{height:10}}/>
                 {is_running == true || (this.props.app_state.did_just_set_wallet == true && this.props.app_state.pre_launch_fetch_loading == true) ? (
                     <div>
@@ -2911,6 +2913,68 @@ class StackPage extends Component {
     get_token_balance(token_id, e5){
         if(this.props.app_state.created_token_object_mapping[e5] == null || this.props.app_state.created_token_object_mapping[e5][token_id] == null) return 0
         return this.props.app_state.created_token_object_mapping[e5][token_id]['balance']
+    }
+
+
+    
+
+    render_e5s_and_txs_for_quick_switch_ui(){
+        var items = this.load_active_e5s_with_transactions()
+        if(items.length == 0) return;
+        return(
+            <div style={{'margin':'5px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked(item)}>
+                            {this.render_e5_item_and_its_transactions(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_active_e5s_with_transactions(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true && this.get_stack_items_count_for_e5(e5) > 0){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
+
+    get_stack_items_count_for_e5(e5){
+        const txs = this.props.app_state.stack_items
+        let count = 0
+        for(var i=0; i<txs.length; i++){
+            if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == e5){
+                count++
+            }
+        }
+        return count
+    }
+
+    render_e5_item_and_its_transactions(item){
+        const image = this.props.app_state.e5s[item].e5_img
+        const tx_count = this.get_stack_items_count_for_e5(item)
+        const details = this.props.app_state.loc['1593mau']/* '$ transactions.' */.replace('$', number_with_commas(tx_count))
+
+        if(this.props.app_state.selected_e5 == item){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
     }
 
 

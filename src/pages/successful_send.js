@@ -260,7 +260,7 @@ class SuccessfulSend extends Component {
 
         if(e5 == 'E25' || e5 == 'E35'){
             return `https://etc.blockscout.com/tx/${hash}`
-        }else if(e5 == 'E305'){
+        }else if(e5 == 'E45'){
             return `https://snowtrace.io/tx/${hash}`
         }else if(e5 == 'E55'){
             return `https://explorer.celo.org/mainnet/tx/${hash}`
@@ -283,7 +283,7 @@ class SuccessfulSend extends Component {
         }else if(e5 == 'E145'){
             return `https://seitrace.com/tx/${hash}?chain=pacific-1`
         }else if(e5 == 'E155'){
-            return `https://explorer-mainnet.thundercore.com/tx/${hash}`
+            return `https://berascan.com/tx/${hash}`
         }else if(e5 == 'E165'){
             return `https://www.tomoscan.io/tx/${hash}`
         }else if(e5 == 'E175'){
@@ -413,7 +413,7 @@ class SuccessfulSend extends Component {
         }else if(e5 == 'E805'){
             return `https://sonicscan.org/tx/${hash}`
         }else if(e5 == 'E815'){
-            return `https://berascan.com/tx/${hash}`
+            return `https://explorer-mainnet.thundercore.com/tx/${hash}`
         }else if(e5 == 'E835'){
             return `https://www.hyperscan.com/tx/${hash}`
         }else if(e5 == 'E845'){

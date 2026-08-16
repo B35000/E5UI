@@ -1133,17 +1133,18 @@ class CoinsDetailsSection extends Component {
 
         var xVal = 1, yVal = 0;
         var dps = [];
-        var noOfDps = 100;
-        var factor = Math.round(data.length/noOfDps) +1;
+        var noOfDps = 366;
+        // var factor = Math.round(data.length/noOfDps) +1;
         // var noOfDps = data.length
         for(var i = 0; i < noOfDps; i++) {
-            yVal = data[factor * xVal]
+            yVal = data[i]
             
-            var indicator = data[factor * xVal] > 1000 ? this.format_account_balance_figure(data[factor * xVal]) : data[factor * xVal]
-            const token_name = selected_preferred_currency == this.props.app_state.loc['1593eg']/* 'SAT' */ ? 'SATs' : this.props.app_state.loc['1593ef']/* 'USD' */
-            var final_indicator = '$ %'.replace('$', indicator).replace('%', token_name)
             if(yVal != null){
-                if(i == 23 || i == 53){
+                var indicator = data[i] > 1000 ? this.format_account_balance_figure(data[i]) : data[i]
+                const token_name = selected_preferred_currency == this.props.app_state.loc['1593eg']/* 'SAT' */ ? 'SATs' : this.props.app_state.loc['1593ef']/* 'USD' */
+                var final_indicator = '$ %'.replace('$', indicator).replace('%', token_name)
+                
+                if(i == 100 || i == 200){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
                 }else{
                     dps.push({x: xVal, y: yVal});//
@@ -1202,7 +1203,7 @@ class CoinsDetailsSection extends Component {
         if(dominance_target == symbol){
             dominance_target = this.get_next_dominance_target(dominance_target)
         }
-        const btc_chart_data = this.props.app_state.coin_ether_chart_info[dominance_target];
+        const btc_chart_data = this.props.app_state.coin_ether_chart_info[dominance_target]
         const data = []
         const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time'] : Date.now()
 
@@ -1239,18 +1240,17 @@ class CoinsDetailsSection extends Component {
 
         var xVal = 1, yVal = 0;
         var dps = [];
-        var noOfDps = 100;
-        var factor = Math.round(data.length/noOfDps) +1;
-        // var noOfDps = data.length
+        var noOfDps = 366;
+        // var factor = Math.round(data.length/noOfDps) +1;
         for(var i = 0; i < noOfDps; i++) {
-            yVal = data[factor * xVal]
+            yVal = data[i]
             
-            var indicator = data[factor * xVal] > 1000 ? this.format_account_balance_figure(data[factor * xVal]) : data[factor * xVal]
-            const points_text = this.props.app_state.loc['2927bt']/* 'points' */
             if(yVal != null){
-                var final_indicator = '$ %'.replace('$', indicator.toFixed(2)).replace('%', points_text)
-                if(i == 23 || i == 53){
-                    dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
+                var indicator = yVal > 1000 ? this.format_account_balance_figure(yVal.toFixed(2)) : yVal.toFixed(2)
+                
+                var final_indicator = '$ %'.replace('$', indicator).replace('%', this.props.app_state.loc['2927bt']/* 'points' */)
+                if(i == 100 || i == 200){
+                    dps.push({x: xVal, y: yVal, indexLabel: ""+final_indicator});//
                 }else{
                     dps.push({x: xVal, y: yVal});//
                 }
@@ -1258,7 +1258,7 @@ class CoinsDetailsSection extends Component {
             }
         }
 
-        console.log('get_dominance_change_datapoints', 'dps', dps)
+        // console.log('get_dominance_change_datapoints', 'dps', dps)
 
         return { dps, starting_time: starting_time }
         

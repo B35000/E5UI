@@ -230,7 +230,7 @@ class ViewGroups extends Component {
               }
             }
             return (
-                <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'40px'}}>
+                <div onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'40px'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
                         <AnimatePresence initial={true}>
                             {active_tags.map((item, index) => (
@@ -707,6 +707,10 @@ class ViewGroups extends Component {
                                     const step = (100 - 0) / (count - 2);
                                     tickValues = Array.from({ length: count }, (_, i) => 0 + step * i);
                                 }
+                                else if(yMin == yMax){
+                                    const step = (yMax - 0) / (count - 2);
+                                    tickValues = Array.from({ length: count }, (_, i) => (yMin * 0.07) + step * i);
+                                }
                                 else if (yMin >= 0 || yMax <= 0) {
                                     // All one sign — no zero tick needed, just even spacing
                                     const step = (yMax - yMin) / (count - 2);
@@ -743,9 +747,9 @@ class ViewGroups extends Component {
                                 color: config.labelFontColor,
                                 font: { size: config.labelFontSizeY },
                                 callback: function(value, index, ticks) {
-                                    if (value.toString().includes('.') && parseInt(value) < 1_000_000) {
-                                        if(parseInt(value) > 1000){
-                                            const split_value = value.toString().split('.');
+                                    if (value.toString().includes('.') && parseInt(value * scale) < 1_000_000) {
+                                        if((parseInt(value) > 0 && parseInt(value) > 1000) || (parseInt(value) < 0 && parseInt(value) < 1000)){
+                                            const split_value = value.toFixed(1).toString().split('.');
                                             return (number_with_commas(split_value[0])+'.'+split_value[1]) + y_axis_units;
                                         }
                                         return ((value * scale).toFixed(4)).toString() + y_axis_units;
