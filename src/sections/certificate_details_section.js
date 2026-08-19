@@ -1625,6 +1625,12 @@ class CertificateDetailsSection extends Component {
     }
 
     view_acquired_class_item_details(item, object){
+        if(item['ipfs']['certificate_target'] != null && item['ipfs']['certificate_target'] != ''){
+            const certificate_target = item['ipfs']['certificate_target']
+            const certificate_target_type = item['ipfs']['certificate_target_type']
+            const certificate_target_author = item['ipfs']['certificate_target_author']
+            this.props.load_objects(certificate_target_type, [parseInt(certificate_target)], object['e5'])
+        }
         this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_acquired_certificate_item_details')
     }
 

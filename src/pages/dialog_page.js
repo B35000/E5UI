@@ -14785,6 +14785,7 @@ return data['data']
     render_acquired_certificate_item_details_data(){
         const item = this.state.data['item']
         const object = this.state.data['object']
+        const view_only = this.state.data['view_only'] || false
         const depth = item['depth']
         const depth_data = item['depth_data']
         const ipfs = item['ipfs']
@@ -14815,6 +14816,11 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
+                {this.render_targeted_certificate_object_item(object, 31/* 31(token_exchange) */)}
+                <div style={{height: 10}}/>
+
+                {this.render_verified_certificate_issuer_if_verified()}
+
                 {(verification_data['verified'] == true || verification == 1) && (
                     <div>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055qn']/* 'The certificate has been verified by the exchange owner.' */, 'title':this.props.app_state.loc['3055qm']/* 'Certificate Verified.' */, 'size':'l'})}
@@ -14829,7 +14835,7 @@ return data['data']
                     </div>
                 )}
                 
-                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && data['archived'] != true && (
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && data['archived'] != true && view_only == false && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pj']/* ⇄ Transfer Ownership' */, 'details':this.props.app_state.loc['3055pk']/* 'Transfer Ownership of your certificate to another account.' */, 'size':'l'})}
@@ -14839,7 +14845,7 @@ return data['data']
                         </div>
                     </div>
                 )}
-                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && fractionalizable == true && data['archived'] != true && (verification_data['verified'] == true || verification == 1) && (
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && fractionalizable == true && data['archived'] != true && (verification_data['verified'] == true || verification == 1) && view_only == false && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pm']/* ❖ Fractionalize Certificate' */, 'details':this.props.app_state.loc['3055pn']/* 'Fragment your certificate into shares that you can redistribute to other accounts.' */, 'size':'l'})}
@@ -14849,16 +14855,18 @@ return data['data']
                         </div>
                     </div>
                 )}
-                {object['author'] == my_account && verification == 2 && verification_data['verified'] == false && (
+                {object['author'] == my_account && verification == 2 && verification_data['verified'] == false && view_only == false && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055qg']/* ✅ Verify Certificate.' */, 'details':this.props.app_state.loc['3055qh']/* 'Recognise this certificate by its author as authentic and representative of its real world counterpart.' */, 'size':'l'})}
                         <div style={{height:10}}/>
                         <div onClick={()=>this.recognise_certificate(data)}>
-                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055po']/* 'Fractionalize' */, 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055sn']/* 'Verify' */, 'action':''})}
                         </div>
                     </div>
                 )}
+                
+                {view_only == false && this.render_certificate_target_if_any()}
             </div>
         )
     }
@@ -15085,6 +15093,140 @@ return data['data']
         }
         else{
             return { 'verified':true, 'time':verification['time'] }
+        }
+    }
+
+    render_certificate_target_if_any(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+
+        if(item['ipfs']['certificate_target'] != null && item['ipfs']['certificate_target'] != ''){
+            const certificate_target = item['ipfs']['certificate_target']
+            const certificate_target_type = item['ipfs']['certificate_target_type']
+            const certificate_target_author = item['ipfs']['certificate_target_author']
+            const certificate_target_object = this.props.get_object_by_id_and_type(parseInt(certificate_target_type), certificate_target, object['e5'])
+            
+            const time = item['time']
+            const depth_data = item['depth_data']
+            const data = this.get_model_config(depth_data, object, time)
+            const name = data['class_name']
+            const depth = item['depth']
+            const purchase_start_time = data['purchase_start_time']
+            const purchase_end_time = data['purchase_end_time']
+            const now = Date.now() / 1000
+            const verification = object['ipfs'].get_new_certificate_verification_tags_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_new_certificate_verification_tags_object, 'e') 
+            const verification_data = this.get_verification_data(object, depth)
+            return(
+                <div>
+                    {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && data['archived'] != true && (verification_data['verified'] == true || verification == 1) && (
+                        <div>
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sd']/* 🌟 Record Certificate.' */, 'details':this.props.app_state.loc['3055se']/* 'Post this certificate in the specified target object for others to see.' */, 'size':'l'})}
+                            <div style={{height:10}}/>
+                            <div onClick={()=>this.record_certificate_target(data, certificate_target_object)}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055sf']/* 'Record.' */, 'action':''})}
+                            </div>
+
+                            <div style={{height:10}}/>
+                            {this.render_targeted_certificate_object_item(certificate_target_object, certificate_target_type)}
+                        </div>
+                    )}
+                </div>
+            )
+        }
+    }
+
+    render_targeted_certificate_object_item(object, type){
+        if(object == null){
+            return this.render_skeleton_object()
+        }
+        const item = this.format_link_item(object, type)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+
+        if(!this.can_sender_view_poll(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        else if(this.is_post_taken_down_for_sender(object) || this.is_object_sender_blocked(object) || !this.should_show_post_if_masked_for_outsiders(object) || this.is_object_blocked_for_sender(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        
+        if(this.check_if_sender_has_paid_subscriptions(object) || this.is_post_preview_enabled(object) || post_author == me){
+            return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>         
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+    }
+
+    record_certificate_target(model_data, certificate_target_object){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const certificate_target_type = item['ipfs']['certificate_target_type']
+        
+        var obj = {
+            id:makeid(8), type:this.props.app_state.loc['3055sg']/* 'record-certificate' */,
+            entered_indexing_tags:[this.props.app_state.loc['3055si']/* 'link' */, this.props.app_state.loc['3055qk']/* 'certificate' */, this.props.app_state.loc['3055sh']/* 'record' */],
+            e5:object['e5'], depth_item: item, token_item: object, model_data: model_data, certificate_target_ui: this.render_targeted_certificate_object_item(certificate_target_object, certificate_target_type)
+        }
+        this.props.add_recognise_certificate_transaction_to_stack(obj)
+        this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
+    }
+
+    render_verified_certificate_issuer_if_verified(){
+        const object = this.state.data['object']
+        const object_obligation_fulfiller = object['id']
+        const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
+        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+        if(authors_obligation_contracts.length > 0){
+            const contract = authors_obligation_contracts[0]
+            const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
+            const verified_certificates = configuration['ipfs'].verified_certificates
+
+            if(verified_certificates.includes(object['id'])){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sj']/* '✅ Certificate Issuer Verified.' */, 'details':this.props.app_state.loc['3055sk']/* 'The issuer of the certificate is recognised by the moderators of your main public contract subscription.' */, 'size':'l'})}
+                    </div>
+                )
+            }else{
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sl']/* '❌ Certificate Issuer NOT Verified.' */, 'details':this.props.app_state.loc['3055sm']/* 'The issuer of the certificate has not been recognised by the moderators of your main public contract subscription.' */, 'size':'l'})}
+                    </div>
+                )
+            }
         }
     }
 

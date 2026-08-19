@@ -412,7 +412,7 @@ class CoinsDetailsSection extends Component {
 
                     {balance_base_unit > 0 && this.props.app_state.has_wallet_been_set == true && (
                         <div>
-                            {this.render_bridge_button_if_filecoin(item)}
+                            {this.render_bridge_button_if_enabled(item)}
                         </div>
                     )}
 
@@ -535,12 +535,13 @@ class CoinsDetailsSection extends Component {
         }
     }
 
-    render_bridge_button_if_filecoin(item){
+    render_bridge_button_if_enabled(item){
         const obj = {
             'FIL': 'FILE',
             'XRP':'XRPE',
             'IOTA': 'IOTAE',
             'HBAR':'HBARE',
+            'XTZ': 'XTZE'
         }
         if(obj[item['symbol']] != null){
             const evm_symbol = obj[item['symbol']]

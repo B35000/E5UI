@@ -1452,7 +1452,7 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -1663,7 +1663,7 @@ class App extends Component {
         first_block:0, end_image:null, spend_image:null, ether_image:arbitrum_logo/* 'https://nftstorage.link/ipfs/bafkreia5kfqglxtwiyrm7fw4ydrr4dwyrwftxrs6gvksxss7s5wjvc2ndm' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'ar', bridge_enabled: true, parent: 'E185', id: ChainId.ARB, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum (Arbitrum)")
       },
       'E225':{
-        web3:['https://astar-rpc.dwellir.com'],
+        web3:['https://evm.astar.network', 'https://astar.api.onfinality.io/public'],
         token:'ASTR',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:astar_logo/* 'https://nftstorage.link/ipfs/bafkreihq22vobhmkdlrrxv3nei6b757u6acklwsnjcmn6pwpwkh76s7azy' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
@@ -2097,7 +2097,7 @@ class App extends Component {
       },
       'E945':{
         web3:['https://node.mainnet.etherlink.com'],
-        token:'XTZ',
+        token:'XTZE',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:etherlink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.ETL, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
@@ -2438,8 +2438,8 @@ class App extends Component {
       this.get_token('FLR', 'Flare', 'E65'),
       this.get_token('XDAI', 'Gnosis Chain', 'E75'),
       this.get_token('FUSE', 'Fuse', 'E85'),
-      this.get_token('GLMR', 'Moonbeam', 'E95'),
-      this.get_token('MOVR', 'Moonriver', 'E105'),
+      this.get_token('GLMR', 'Moonbeam', 'E95', true),
+      this.get_token('MOVR', 'Moonriver', 'E105', true),
       this.get_token('XDC', 'Xinfin Network', 'E115'),
       this.get_token('POL', 'Polygon', 'E125'),
       this.get_token('BNB', 'Binance S.C.', 'E135'),
@@ -2525,7 +2525,7 @@ class App extends Component {
       this.get_token('BSBTC', 'Bsquared', 'E915'),
       this.get_token('CORE', 'Core', 'E925'),
       this.get_token('BTCN', 'Corn', 'E935', true),
-      this.get_token('XTZ', 'Etherlink', 'E945'),
+      this.get_token('XTZE', 'Etherlink', 'E945'),
       this.get_token('FRAX', 'Fraxtal', 'E955'),
       this.get_token('HSK', 'HashKey', 'E965'),
       this.get_token('HETH', 'Hemi', 'E975'),
@@ -2654,6 +2654,10 @@ class App extends Component {
         changenow_object = filtered[0]
       }
     }
+    const tags = [name, this.getLocale()['2738cu']/* Coin */, symbol]
+    if(symbol == '???'){
+      tags.push(this.getLocale()['2738cv']/* 'IYKYK' */)
+    }
     return{
       'name':name,
       'id':symbol,
@@ -2664,7 +2668,7 @@ class App extends Component {
       'image': image_url,
       'label':{'title':symbol, 'details':name, 'size':'l', 'image': image_url},
       'banner-icon':{'header':symbol, 'subtitle':name, 'image':image_url},
-      'tags':{'active_tags':[name, 'Coin', symbol], 'index_option':'indexed'},
+      'tags':{'active_tags':tags, 'index_option':'indexed'},
       'account_type':account_type,
       'consensus_mechanism':consensus_mechanism,
       'block_time':block_time,
@@ -7250,7 +7254,7 @@ class App extends Component {
 
           load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} show_bridge_coin_bottomsheet={this.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.refresh_wallet.bind(this)} is_function_at_complete_top_of_stack={this.is_function_at_complete_top_of_stack.bind(this)} 
 
-          get_room_participant_count={this.get_room_participant_count.bind(this)} show_swap_ether_bottomsheet={this.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.get_token_chart_data.bind(this)}
+          get_room_participant_count={this.get_room_participant_count.bind(this)} show_swap_ether_bottomsheet={this.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.get_token_chart_data.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} get_objects_showcased_certificates={this.get_objects_showcased_certificates.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -9361,10 +9365,8 @@ class App extends Component {
   create_and_broadcast_tezos_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
     var seed = this.state.final_seed
     const wallet = await this.generate_tezos_wallet(seed)
-    // const wallet = data['wallet']
     const Tezos = new TezosToolkit('https://tezos-mainnet.octez.io');
     Tezos.setProvider({ signer: wallet });
-    // const Tezos = data['Tezos']
     const amount = this.get_amount_int_tez(transfer_amount)
     try{
       const tx = await Tezos.wallet.transfer({ to: recipient_address, amount: amount }).send();
@@ -19854,7 +19856,7 @@ class App extends Component {
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
 
-        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)}
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)}
         />
       </div>
     )
@@ -28425,7 +28427,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <MintCertificatePage ref={this.mint_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_mint_certificate_to_stack={this.add_mint_certificate_to_stack.bind(this)}
-      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_images={this.show_images.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_images={this.show_images.bind(this)} load_item_author_and_type={this.load_item_author_and_type.bind(this)}
       />,
       this.state.mint_certificate_bottomsheet,
       this.open_mint_certificate_bottomsheet,
@@ -28485,6 +28487,43 @@ class App extends Component {
     }
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
+  }
+
+  load_item_author_and_type = async (target) => {
+    const e5 = this.state.selected_e5
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const id = parseInt(target)
+    const id_type = await E52contractInstance.methods.f135(id).call((error, result) => {});
+    const id_author = await E52contractInstance.methods.f133(id).call((error, result) => {});
+
+    // await this.load_objects(id_type, [id], e5)
+
+    return { type: id_type, author: id_author }
+  }
+
+  get_object_by_id_and_type(type, id, e5){
+    const obj = {
+      17/* jobs */: this.state.created_jobs[e5],
+      30/* contracts */: this.state.created_contracts[e5],
+      32/* proposal */: this.state.my_proposals[e5],
+      26/* contractor */: this.state.created_contractors[e5],
+      33/* subscription */: this.state.created_subscriptions[e5],
+      18/* post */: this.state.created_posts[e5],
+      36/* channel */: this.state.created_channels[e5],
+      27/* storefront */: this.state.created_stores[e5],
+      25/* bag */: this.state.created_bags[e5],
+      31/* token */: (this.state.created_tokens[e5] || []).concat((this.state.created_certificates[e5] || []), (this.state.created_crossexchanges[e5] || [])),
+      19/* audioport */: this.state.created_audios[e5],
+      20/* videoport */: this.state.created_videos[e5],
+      21/* nitro */: this.state.created_nitros[e5],
+      28/* 28(poll-object) */: this.state.created_polls[e5]
+    }
+    const items = obj[type] || []
+    return items.find(e => e['id'] == id)
   }
 
 
@@ -29581,6 +29620,44 @@ class App extends Component {
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
       client.close();
+    }
+    else if(coin['symbol'] == 'XTZ'){
+      var seed = this.state.final_seed
+      const wallet = await this.generate_tezos_wallet(seed)
+      const Tezos = new TezosToolkit('https://tezos-mainnet.octez.io');
+      Tezos.setProvider({ signer: wallet });
+      const sender = await Tezos.signer.publicKeyHash();
+      const amount = this.get_amount_int_tez(transfer_amount)
+
+      const BRIDGE_CONTRACT = 'KT1Wj8SUGmnEPFqyahHAcjcNQwe6YGhEXJb5'
+      const ROLLUP_ADDRESS = 'sr1Ghq66tYK9y3r8CC1Tf8i8m5nxh8nTvZEf';
+      const receiverBytes = recipient_ethereum_address.replace('0x', '')
+
+      try{
+        const bridge = await Tezos.contract.at(BRIDGE_CONTRACT);
+        const entrypoints = await bridge.entrypoints.entrypoints;
+
+        const tx = await bridge.methodsObject.deposit(receiverBytes, ROLLUP_ADDRESS).send({
+          amount: amount,
+          mutez: false,
+          gasLimit: 500_000,
+          storageLimit: 1000,
+        });
+
+        await tx.confirmation(1)
+        const hash = tx.opHash
+
+        if(hash){
+          this.show_successful_send_bottomsheet({'type':'coin', 'item':coin, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_ethereum_address, 'sender':sender, 'hash':hash})
+        }
+        else{
+          this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        }
+      }
+      catch(e){
+        console.log('begin_bridging_of_coin', e);
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
     }
   }
 
@@ -32319,6 +32396,8 @@ class App extends Component {
 
 
 
+
+
   get_and_set_tezos_wallet_info = async (seed) => {
     const wallet = await this.generate_tezos_wallet(seed)
     const Tezos = new TezosToolkit('https://tezos-mainnet.octez.io');
@@ -32326,7 +32405,7 @@ class App extends Component {
     const address = await Tezos.signer.publicKeyHash();
     const balance = (await Tezos.tz.getBalance(address)).toString()
 
-    var fee_info = {'fee':await this.get_tezos_transaction_fee(), 'type':'variable', 'per':'transaction'}
+    var fee_info = {'fee':await this.get_tezos_transaction_fee(), 'type':'fixed', 'per':'transaction'}
     var data = {'balance':balance, 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet': wallet}
     // var clone = structuredClone(this.state.coin_data)
     // clone['XTZ'] = data;
@@ -34056,12 +34135,14 @@ class App extends Component {
   }
 
   start_get_accounts_wallet_data = async (is_syncing) => {
+    const state_list = this.state.ether_data
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
       var web3_url = this.get_web3_url_from_e5(e5)
       var e5_address = this.state.e5s[e5].e5_address;
       var account_for_e5 = this.state.accounts[e5]
-      if(web3_url != ''){
+      const ether_object = state_list.find((obj) => obj['e5'] == e5)
+      if(web3_url != '' && ether_object != null && ether_object['disabled'] == false){
         if(is_syncing == false){
           await this.get_wallet_data2(account_for_e5, is_syncing, web3_url, e5_address, e5)
           await this.wait(1000)
@@ -45123,63 +45204,63 @@ class App extends Component {
 
     if(page == this.getLocale()['1196']/* 'jobs' */){
       // this.load_contract_data([], null, [])
-      this.load_jobs_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_jobs_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1197']/* 'contracts' */){
-      this.load_contract_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_contract_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1199']/* 'proposals' */){
-      this.load_proposal_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_proposal_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1198']/* 'contractors' */){
       // this.load_contract_data([], null, [])
-      this.load_contractor_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_contractor_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1200']/* 'subscriptions' */){
-      this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1201']/* 'mail' */){
-      this.load_mail_data(prioritized_accounts, null, prioritized_accounts_data)
+      await this.load_mail_data(prioritized_accounts, null, prioritized_accounts_data)
     }
     if(page == this.getLocale()['1213']/* 'posts' */){
       // this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data)
-      this.load_post_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_post_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1214']/* 'channels' */){
       // this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data)
-      this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
-      this.load_channel_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_channel_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1215']/* 'storefront' */){
-      this.load_storefront_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_storefront_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
       // this.load_bag_data([], null, [])
     }
     if(page == this.getLocale()['1216']/* 'bags' */){
       // this.load_storefront_data([], null, [])
-      this.load_bag_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_bag_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
       // this.load_contract_data([], null, [])
     }
     if(page == this.getLocale()['1264k']/* 'audioport' */){
       // this.load_subscription_data([], null, [])
-      this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
-      this.load_audio_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_audio_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264p']/* videoport */){
       // this.load_subscription_data([], null, [])
-      this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
-      this.load_video_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_video_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264s']/* 'nitro' */){
-      this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264aj']/* 'bills' */){
-      this.load_bill_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_bill_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264ao']/* 'polls' */){
-      this.load_poll_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_poll_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
-    if(page == 'w'){
-      this.load_token_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+    if(page == this.getLocale()['1218']/* 'ends' */ || page == this.getLocale()['1219']/* 'spends' */ || page == this.getLocale()['1264bw']/* 'certificates' */ || page == this.getLocale()['1264bx']/* 'cross-exchanges' */ || page == 'w'){
+      await this.load_token_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
   }
 
@@ -45523,7 +45604,7 @@ class App extends Component {
       var e5_address = this.state.e5s[e5].e5_address;
       if((preferred_e5 != null && e5 != preferred_e5) || (Object.keys(my_prioritized_accounts_data).length > 0 && my_prioritized_accounts_data[e5] == null)){
         e5_address = '';
-      } 
+      }
       if(e5_address != ''){
         var web3_url = this.get_web3_url_from_e5(e5)
         const web3 = new Web3(web3_url);
@@ -46469,6 +46550,7 @@ class App extends Component {
 
   fetch_objects_to_load_from_searched_tags = async (searched_tags, page, search, accounts, object_type=0) => {
     var target_type = object_type != 0 ? object_type : this.get_target_type_from_page(page)
+    console.log('fetch_objects_to_load_from_searched_tags', 'page', page, 'target_type', target_type)
     if(target_type == 0) return;
 
     this.set_loading_for_page(page, true)
@@ -46558,7 +46640,7 @@ class App extends Component {
     this.set_loading_for_page(page, false)
     await this.wait(300);
     this.last_searched_tags = all_final_elements
-    this.load_data_from_page_in_focus(page, extra_data)
+    await this.load_data_from_page_in_focus(page, extra_data)
 
   }
 
@@ -46588,7 +46670,10 @@ class App extends Component {
     obj[this.getLocale()['1264k']/* 'audioport' */] = 19
     obj[this.getLocale()['1264p']/* 'videoport' */] = 20
     obj[this.getLocale()['1264s']/* 'nitro' */] = 21
-    obj['w'] = 31
+    obj[this.getLocale()['1218']/* 'ends' */] = 31
+    obj[this.getLocale()['1219']/* 'spends' */] = 31
+    obj[this.getLocale()['1264bw']/* 'certificates' */] = 31
+    obj[this.getLocale()['1264bx']/* 'cross-exchanges' */] = 31
     obj[this.getLocale()['1264aj']/* 'bills' */] = 31
     obj[this.getLocale()['1264ao']/* 'polls' */] = 28
 
@@ -49791,7 +49876,11 @@ class App extends Component {
     var data = null
     while(data == null && events.length >= n){
       var cid = events[events.length - n].returnValues.p4
-      data = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      try{
+        data = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      }catch(e){
+        console.log('fetch_objects_data', e)
+      }
       if(data == null){
         n++
       }
@@ -55734,6 +55823,95 @@ class App extends Component {
     }
   }
 
+  get_objects_showcased_certificates = async (object) => {
+    const author = object['author']
+    const e5_id = object['e5_id']
+    const e5 = object['e5']
+    const id = object['id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const showcased_certificates_event_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36/* 36(list_object_certificate) */})).reverse()
+
+    var loaded_target = 0
+    if(this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(showcased_certificates_event_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = showcased_certificates_event_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
+    }
+
+    const result_objects = []
+    const tokens_to_load = []
+    var is_first_time = this.state.coupon_payout_stagings[e5_id] == null ? true : false
+    for(var i=0; i<showcased_certificates_event_data.length; i++){
+      const event = showcased_certificates_event_data[i]
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      if(ipfs != null){
+        const obj = {'ipfs':ipfs, 'event':event, 'time':parseInt(event.returnValues.p6/* timestamp */)}
+        result_objects.push(obj)
+
+        const token_id = ipfs['token_id']
+        tokens_to_load.push(parseInt(token_id))
+      }
+
+      if(i == loaded_target && i+1 >= showcased_certificates_event_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(showcased_certificates_event_data.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
+      }
+    }
+
+    const objects_showcased_certificates_clone = structuredClone(this.state.objects_showcased_certificates)
+    objects_showcased_certificates_clone[e5_id] = result_objects
+    this.setState({objects_showcased_certificates: objects_showcased_certificates_clone})
+
+    await this.load_objects(31/* 31(token_exchange) */, tokens_to_load, e5)
+    await this.wait_for_all_ids_to_finish_loading(31/* 31(token_exchange) */, tokens_to_load, e5)
+    await this.load_target_or_object_accounts_obligation_data([id], e5)
+
+    for(var e=0; e<result_objects.length; e++){
+      const ipfs = result_objects[e]['ipfs']
+      const token_id = ipfs['token_id']
+      const depths_used = [ipfs['depth']]
+      const depth_use_times = [ipfs['time']]
+      const object = this.get_object_by_id_and_type(31/* 31(token_exchange) */, token_id, e5);
+      if(object!= null){
+        await this.load_my_non_fungible_token_data(object, depths_used, id, depth_use_times)
+        await this.wait(400)
+      }
+    }
+  }
+
+  wait_for_all_ids_to_finish_loading = (type, ids, e5) => {
+    return new Promise((resolve, reject) => {
+      const checkReady = (n) => {
+        try {
+          const status = this.check_if_provided_ids_have_loaded(type, ids, e5)
+          if (status == true || n >= 40) {
+            resolve();
+            return;
+          }
+          setTimeout(() => checkReady(n+1), 1000);
+        }
+        catch (error) {
+          reject(error);
+        }
+      };
+      checkReady(0);
+    });
+  }
+
+  check_if_provided_ids_have_loaded = (type, ids, e5) => {
+    let has_all_loaded = true;
+    ids.forEach(id => {
+      const object = this.get_object_by_id_and_type(type, id, e5);
+      if(object == null) has_all_loaded = false
+    });
+    return has_all_loaded
+  }
+
 
 
 
@@ -55912,7 +56090,7 @@ class App extends Component {
 
 
 
-
+  
 
   load_modify_item_data = async (modify_target, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));

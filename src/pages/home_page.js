@@ -1872,7 +1872,7 @@ class home_page extends Component {
         }
     }
 
-    get_searched_data(){
+    async get_searched_data(){
         var id = this.get_page_id()
         var posts_to_load = []
         var searched_data = this.state.page_search_data[id] || ''
@@ -1915,7 +1915,7 @@ class home_page extends Component {
             }
         });
         
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page(), searched_data, searched_accounts)
+        await this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, this.get_selected_page(), searched_data, searched_accounts)
     }
 
     get_selected_page(){
@@ -2152,7 +2152,7 @@ class home_page extends Component {
         )
     }
 
-    when_tags_updated(tag_group, clicked_tag_name, is_selecting_same_tag){
+    async when_tags_updated(tag_group, clicked_tag_name, is_selecting_same_tag){
         var selected_page = ''
         if(this.state.page == '?'){
             this.setState({work_page_tags_object: tag_group})
@@ -2270,9 +2270,6 @@ class home_page extends Component {
             posts_to_load = posts_to_load.concat(this.state.viewed_objects)
         }
 
-
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, targeted_accounts)
-
         var me = this;
         setTimeout(function() {
             me.update_scroll_position()
@@ -2281,6 +2278,8 @@ class home_page extends Component {
         setTimeout(function() {
             me.reload_object_album_arts_if_any()
         }, (1 * 400));
+
+        await this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, targeted_accounts)
     }
 
     reload_object_album_arts_if_any(){
@@ -2315,7 +2314,7 @@ class home_page extends Component {
         }, (1 * 10));
     }
 
-    reload_section_data(id, selected_page){
+    async reload_section_data(id, selected_page){
         var posts_to_load = []
         var targeted_accounts = []
         var searched_data = this.state.page_search_data[id] || ''
@@ -2390,11 +2389,6 @@ class home_page extends Component {
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1203']/* 'viewed' */)){
             posts_to_load = posts_to_load.concat(this.state.viewed_objects)
         }
-
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, targeted_accounts)
-
-        this.reload_object_album_arts_if_any()
-
         
         const page_id = this.get_page_id()
         const viewed_items_data_clone = structuredClone(this.state.viewed_items_data)
@@ -2404,6 +2398,10 @@ class home_page extends Component {
         }
         viewed_items_data_clone[page_searched_item][page_id] = []
         this.setState({viewed_items_data: viewed_items_data_clone})
+
+
+        await this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, selected_page, searched_data, targeted_accounts)
+        this.reload_object_album_arts_if_any()
     }
 
     
@@ -2812,7 +2810,7 @@ class home_page extends Component {
         }
     }
 
-    perform_fractionalized_certificate_search(searched_data, object){
+    async perform_fractionalized_certificate_search(searched_data, object){
         const posts_to_load = [object['e5_id']]   
         const targeted_accounts = []     
         const contained_words_in_string = (searched_data.match(/(["'])(.*?)\1/g) || []).map(s => s.slice(1, -1));
@@ -2848,7 +2846,7 @@ class home_page extends Component {
             }
         });
 
-        this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, 'w', searched_data, targeted_accounts)
+        await this.props.fetch_objects_to_load_from_searched_tags(posts_to_load, 'w', searched_data, targeted_accounts)
     }
 
 
@@ -5579,7 +5577,7 @@ class home_page extends Component {
         this.props.set_details_focused_item(e5_id)
     }
 
-    when_ends_object_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_ends_object_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_end_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
@@ -5590,12 +5588,15 @@ class home_page extends Component {
             this.setState({viewed_tokens: viewed_tokens_clone})
             this.update_cookies()
         }
-        this.props.load_extra_token_data(object)
+        
         this.reset_post_detail_object()
         this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1218']/* 'ends' */)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        
+        await this.props.load_extra_token_data(object)
+        await this.props.get_objects_showcased_certificates(object)
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
         this.props.get_exchange_event_data(id, e5)
@@ -5606,7 +5607,7 @@ class home_page extends Component {
         this.props.fetch_and_set_loaded_object_views([id], e5)
     }
 
-    when_spends_object_clicked(index, id, e5, object, ignore_set_details_data){
+    async when_spends_object_clicked(index, id, e5, object, ignore_set_details_data){
         this.setState({selected_spend_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
@@ -5617,12 +5618,13 @@ class home_page extends Component {
             this.setState({viewed_tokens: viewed_tokens_clone})
             this.update_cookies()
         }
-        this.props.load_extra_token_data(object)
-        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1219']/* 'spends' */)
-        this.reset_post_detail_object()
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1219']/* 'spends' */)
+        this.reset_post_detail_object()
+        await this.props.load_extra_token_data(object)
+        await this.props.get_objects_showcased_certificates(object)
         this.props.set_audio_pip_opacity_because_of_inactivity()
         this.props.get_exchange_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
@@ -5717,12 +5719,14 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        this.props.get_subscription_event_data(id, e5)
-        this.props.get_moderator_event_data(id, e5)
-
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
+
+        this.props.get_subscription_event_data(id, e5)
+        this.props.get_moderator_event_data(id, e5)
+        await this.props.get_objects_showcased_certificates(object)
+        
         this.props.set_audio_pip_opacity_because_of_inactivity()
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
@@ -5866,6 +5870,7 @@ class home_page extends Component {
         await this.props.fetch_uploaded_files_for_object(object)
         await this.props.get_storefront_traffic_data(id, e5)
         await this.props.get_tag_price_data_for_object(object)
+        await this.props.get_objects_showcased_certificates(object)
         await this.props.get_object_censored_keywords_and_accounts(object)
         
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -5934,6 +5939,7 @@ class home_page extends Component {
         await this.props.get_contractor_availability_status(object)
         await this.props.get_tag_price_data_for_object(object)
         // await this.props.get_contractor_applications(id, e5)
+        await this.props.get_objects_showcased_certificates(object)
         await this.props.get_object_censored_keywords_and_accounts(object)
         
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -6111,9 +6117,9 @@ class home_page extends Component {
         
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
+        await this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
 
-        this.update_audio_video_recommended_items(this.props.app_state.loc['1264p']/* 'videoport' */, object['e5_id'])
+        await this.update_audio_video_recommended_items(this.props.app_state.loc['1264p']/* 'videoport' */, object['e5_id'])
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -6269,6 +6275,7 @@ class home_page extends Component {
         await this.props.fetch_uploaded_files_for_object(object)
         await this.props.get_certificate_bond_coupon_stagings(object)
         await this.props.load_exchanges_royalty_payout_event_data(object['id'], object['e5'])
+        await this.props.load_target_or_object_accounts_obligation_data([object['id']], object['e5'])
         this.props.get_verified_certificate_data(object)
         this.props.emit_view_object_event(id+e5)
         this.props.fetch_and_set_loaded_object_views([id], e5)
@@ -6293,6 +6300,7 @@ class home_page extends Component {
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
         await this.props.fetch_uploaded_files_for_object(object)
+        await this.props.get_objects_showcased_certificates(object)
         this.props.emit_view_object_event(id+e5)
         this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -6566,7 +6574,7 @@ class home_page extends Component {
                 get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)} show_bridge_coin_bottomsheet={this.props.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.props.refresh_wallet.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
 
                 get_channel_creator_payout_stagings={this.props.get_channel_creator_payout_stagings.bind(this)} get_channel_payout_records={this.props.get_channel_payout_records.bind(this)}
-                show_swap_ether_bottomsheet={this.props.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.props.get_token_chart_data.bind(this)}
+                show_swap_ether_bottomsheet={this.props.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.props.get_token_chart_data.bind(this)} load_objects={this.props.load_objects.bind(this)} get_object_by_id_and_type={this.props.get_object_by_id_and_type.bind(this)}
 
 
 
@@ -6755,7 +6763,7 @@ class home_page extends Component {
         this.props.show_view_staged_royalties_bottomsheet(staging_data, token_item)
     }
 
-    when_discography_audio_item_clicked(object){
+    async when_discography_audio_item_clicked(object){
         var id = object['id']
         var e5 = object['e5']
         this.setState({selected_audio_item: id+e5})
@@ -6775,10 +6783,10 @@ class home_page extends Component {
         this.props.get_post_award_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
+        await this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
     }
 
-    when_discography_video_item_clicked(object){
+    async when_discography_video_item_clicked(object){
         var id = object['id']
         var e5 = object['e5']
 
@@ -6799,7 +6807,7 @@ class home_page extends Component {
         this.props.get_post_award_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
 
-        this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
+        await this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
     }
 
     when_catalogue_storefront_item_clicked(object){

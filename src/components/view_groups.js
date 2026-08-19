@@ -658,7 +658,7 @@ class ViewGroups extends Component {
                 const dataMax = Math.max(...yValues);
 
                 const topPadding = (dataMax - dataMin) * 0.05;
-                const bottomPadding = (dataMax - dataMin) * 0.05;
+                const bottomPadding = dataMin > 0 ? dataMin - (dataMin * 0.93) : (dataMax - dataMin) * 0.05;
 
                 const yMin = dataMin - bottomPadding;
                 const yMax = dataMax + topPadding;
@@ -697,7 +697,7 @@ class ViewGroups extends Component {
                                 const dataMin = Math.min(...yValues);
                                 const dataMax = Math.max(...yValues);
                                 const range = dataMax - dataMin;
-                                const yMin = dataMin - range * 0.05;
+                                const yMin = dataMin > 0 ? dataMin - (dataMin * 0.93) : dataMin - range * 0.05;
                                 const yMax = dataMax + range * 0.05;
                                 const count = config.y_axis_label_count;
 
@@ -754,7 +754,8 @@ class ViewGroups extends Component {
                                         }
                                         return ((value * scale).toFixed(4)).toString() + y_axis_units;
                                     }
-                                    const final_value = bigInt(parseInt(value)).multiply(scale);
+                                    const parsed_value = isNaN(parseInt(value)) ? 0 : parseInt(value)
+                                    const final_value = bigInt(parsed_value).multiply(scale);
                                     if (bigInt(final_value).lesser(bigInt(1_000_000))) {
                                         return number_with_commas(final_value.toString()) + y_axis_units;
                                     } else {

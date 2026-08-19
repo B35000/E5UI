@@ -255,7 +255,8 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['1593lq']/* 'fulfil-obligations' */ &&
             item.type != this.props.app_state.loc['3097e']/* 'purchase-request-messages' */&&
             item.type != this.props.app_state.loc['3097']/* 'accept-storefront-request' */&&
-            item.type != this.props.app_state.loc['3055qi']/* 'verify-certificate' */
+            item.type != this.props.app_state.loc['3055qi']/* 'verify-certificate' */ &&
+            item.type != this.props.app_state.loc['3055sg']/* 'record-certificate' */
         ){
             return(
                 <div>
@@ -1047,6 +1048,9 @@ class ViewTransactionPage extends Component {
             }
             else if(tx.type == this.props.app_state.loc['3108']/* 'crossexchange-swap' */){
                 return this.render_cross_exchange_buy_sell_data()
+            }
+            else if(tx.type == this.props.app_state.loc['3055sg']/* 'record-certificate' */){
+                return this.render_record_certificate()
             }
         }
     }
@@ -10518,6 +10522,49 @@ return data['data']
 
         if(filtered_objects.length == 0) return;
         return filtered_objects[0]
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_record_certificate(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const token_item = transaction_item.token_item
+        const depth_item = transaction_item.depth_item
+        const model_data = transaction_item.model_data
+
+        const depth_data = depth_item['depth_data']
+        const name = model_data['class_name']
+        const maximum_supply = model_data['maximum_supply']
+        const time = depth_item['time']
+
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+                {transaction_item.certificate_target_ui}
+            </div>
+        )
     }
 
 

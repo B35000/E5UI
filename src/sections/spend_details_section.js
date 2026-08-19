@@ -30,6 +30,7 @@ import { ViewPager, Frame, Track, View } from 'react-view-pager'
 import { Virtuoso } from "react-virtuoso";
 import { motion, AnimatePresence } from "framer-motion";
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 var bigInt = require("big-integer");
 
@@ -72,22 +73,16 @@ class SpendDetailSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */, this.props.app_state.loc['2642dc']/* 'operation-certificates 📜' */],[1]
           ],
-           'events': [
-                ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2338']/* 'exchange-transfers' */, this.props.app_state.loc['2339']/* 'updated-balances' */, this.props.app_state.loc['2559']/* 'updated-proportion-ratios' */, this.props.app_state.loc['2341']/* 'modify-exchange' */,this.props.app_state.loc['2342']/* 'freeze-unfreeze' */], [1], [1]
-           ],
-           'moderator-events': [
-                ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
-            ],
         }
 
         obj[this.props.app_state.loc['2119']/* events */] = [
-                ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2338']/* 'exchange-transfers' */, this.props.app_state.loc['2339']/* 'updated-balances' */, this.props.app_state.loc['2559']/* 'updated-proportion-ratios' */, this.props.app_state.loc['2341']/* 'modify-exchange' */,this.props.app_state.loc['2342']/* 'freeze-unfreeze' */], [1], [1]
-           ]
+            ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2338']/* 'exchange-transfers' */, this.props.app_state.loc['2339']/* 'updated-balances' */, this.props.app_state.loc['2559']/* 'updated-proportion-ratios' */, this.props.app_state.loc['2341']/* 'modify-exchange' */,this.props.app_state.loc['2342']/* 'freeze-unfreeze' */], [1], [1]
+        ]
         obj[this.props.app_state.loc['2120']/* moderator-events */] = [
-                ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
-            ]
+            ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
+        ]
 
         return obj
     }
@@ -280,6 +275,9 @@ class SpendDetailSection extends Component {
                     {this.render_blocked_accounts_logs(selected_object)}
                 </div>
             )
+        }
+        else if(selected_item == this.props.app_state.loc['2642dc']/* 'operation-certificates 📜' */){
+            return this.render_object_certificates_section(selected_object)
         }
     }
 
@@ -2542,6 +2540,203 @@ return data['data']
 
         return { dps, largest, starting_time: chart_starting_time, ending_time: chart_ending_time }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_object_certificates_section(object){
+        var he = this.props.height-45
+
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_object_certificates_top_title(object)}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_object_item_certificates(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_object_certificates_top_title(object){
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2642db']/* 'Storefront Certificates.' */, 'size':'l'})} 
+            </div>
+        )
+    }
+
+    render_object_item_certificates(object){
+        var items = this.get_object_certificates(object);
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto'}}>
+                        <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    {this.render_small_empty_object()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div style={{}}>
+                <div style={{ 'padding': '0px 5px 0px 5px'}}>
+                    {items.map((item, index) => (
+                        <div style={{'padding': '2px 5px 2px 5px'}}>
+                            <div key={index}>
+                                {this.render_certificate_item(item, object)}
+                            </div>
+                        </div> 
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    get_object_certificates(object){
+        const e5_id = object['e5_id']
+        const listed_certificates = this.props.app_state.objects_showcased_certificates[e5_id] || []
+        return listed_certificates
+    }
+
+    render_certificate_item(listing, object){
+        const listing_depth = listing['ipfs']['depth']
+        const listing_token_e5_id = listing['ipfs']['token_e5_id']
+        const listing_token_id = listing['ipfs']['token_id']
+        const item = this.props.app_state.non_fungible_token_data[listing_token_e5_id]?.[object['e5']+':'+object['id']]?.[listing_depth]
+        if(item == null){
+            return this.render_small_skeleton_object()
+        }
+        const token_object = this.props.get_object_by_id_and_type(31/* 31(token_exchange) */, parseInt(listing_token_id), object['e5'])
+
+        const depth = item['depth']
+        const depth_data = item['depth_data']
+        const ipfs = item['ipfs']
+        const event = item['event']
+        const time = item['time']
+        const model_config = this.get_model_config(depth_data, token_object, time)
+        const class_name = model_config['class_name']
+        const maximum_supply = model_config['maximum_supply']
+        const identifier_text = this.props.app_state.loc['3098be']/* '$ out of &' */.replace('$', depth_data['identifier']).replace('&', maximum_supply)
+        const title = identifier_text + ' • '+ class_name
+        const details = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+        const op = model_config['archived'] == true ? 0.6 : 1.0
+        return(
+            <div style={{opacity: op}} onClick={() => this.view_acquired_class_item_details(item, token_object)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    get_model_config(depth_data, object, time){
+        const certificate_models = object['ipfs'].certificate_models
+        var valid_models = []
+        Object.keys(certificate_models).forEach(model => {
+          if(
+            certificate_models[model]['id'] == depth_data['class'] && 
+            (certificate_models[model]['base_fee_price_multiplier'] == depth_data['price'] || certificate_models[model]['base_fee_price_multiplier'] == 0) &&
+            parseInt(depth_data['start_time']) == Math.floor(parseInt(certificate_models[model]['purchase_start_time']) / 60) &&
+            parseInt(depth_data['end_time']) == Math.floor(parseInt(certificate_models[model]['purchase_end_time']) / 60)
+        ){
+            valid_models.push(certificate_models[model])
+          }
+        });
+
+        const my_valid_models = valid_models.concat(this.get_model_config_from_archives(depth_data, object))
+        return this.filter_valid_models_by_acquired_time(my_valid_models, time)
+    }
+
+    get_model_config_from_archives(depth_data, object){
+        const certificate_model_history = object['ipfs'].certificate_model_history
+        if(certificate_model_history == null) return []
+        const valid_models = []
+        Object.values(certificate_model_history).forEach(model_config => {
+            if(
+                (model_config['base_fee_price_multiplier'] == depth_data['price'] || model_config['base_fee_price_multiplier'] == 0) && 
+                model_config['maximum_supply'] == depth_data['supply'] &&
+                parseInt(depth_data['start_time']) == Math.floor(parseInt(model_config['purchase_start_time']) / 60) &&
+                parseInt(depth_data['end_time']) == Math.floor(parseInt(model_config['purchase_end_time']) / 60)
+            ){
+                valid_models.push(certificate_model_history[model_config]);
+            }
+        });
+        return valid_models
+    }
+
+    filter_valid_models_by_acquired_time(valid_models, time){
+        if(valid_models.length == 1) return valid_models[0]
+        const sorted_models = this.sortByAttributeDescending(valid_models, 'time');
+        const filtered_models = sorted_models.filter((model) => {
+            return (model['time']/1000 < time)
+        })
+        if(filtered_models.length == 0) return null
+        return filtered_models[0]
+    }
+
+    view_acquired_class_item_details(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object, 'view_only': true}, 'view_acquired_certificate_item_details')
+    }
+
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
+
+
+
+
+
 
 
 

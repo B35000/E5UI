@@ -72,7 +72,9 @@ class ConfigureObligationsPage extends Component {
 
         reserved_keyword:'', reserved_keywords:[],
 
-        selected_e5: this.props.app_state.selected_e5, typed_contract_account:'', contract_beneficiaries:{}, progressive_obligation_proportion:0
+        selected_e5: this.props.app_state.selected_e5, typed_contract_account:'', contract_beneficiaries:{}, progressive_obligation_proportion:0, 
+        
+        typed_certificate_account:'', verified_certificates:[]
     };
 
     get_configure_obligations_title_tags_object(){
@@ -1848,6 +1850,238 @@ class ConfigureObligationsPage extends Component {
         delete clone[item]
         this.setState({contract_beneficiaries: clone})
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_recognised_certificates_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_recognised_certificate_authorities_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_certificate_authorities()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_recognised_certificate_authorities_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_certificate_authorities()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_recognised_certificate_authorities_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_certificate_authorities()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_recognised_certificate_authorities_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093fy']/* 'Recognised Certificates.' */, 'details': this.props.app_state.loc['3093fz']/* 'You may also specify certificate issuing objects as recognised and verified certificates to issue out certificates that will be regarded as valid.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <div className="row">
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['3093ga']/* 'Certificate Object Id...' */} when_text_input_field_changed={this.when_typed_certificate_account_input_field_changed.bind(this)} text={this.state.typed_certificate_account} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.search_contract_id()}>
+                        <div className="text-end" style={{'padding': '5px 10px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+
+                {this.render_searched_certificate()}
+            </div>
+        )
+    }
+
+    render_set_certificate_authorities(){
+        const items = [].concat(this.state.verified_certificates)
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gc']/* 'Added Certificates.' */, 'details': this.props.app_state.loc['3093gd']/* 'When you add a certificate authority, it will show here.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        return(
+            <div style={{}}>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gc']/* 'Added Certificates.' */, 'details': this.props.app_state.loc['3093ge']/* 'All the verified certificate authorities are shown below.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    <SwipeableList>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    <SwipeableListItem
+                                        swipeLeft={{
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3093eq']/* Delete */}</p>,
+                                        action: () =>this.when_certificate_item_clicked(item, index)
+                                        }}>
+                                        <div style={{width:'100%'}}>
+                                            {this.render_contract(this.get_certificate_object(item))}
+                                        </div>
+                                    </SwipeableListItem>
+                                </div>
+                            </li> 
+                        ))}
+                    </SwipeableList>
+                    
+                </ul>
+            </div>
+        )
+    }
+
+    when_typed_certificate_account_input_field_changed(text){
+        this.setState({typed_certificate_account: text})
+    }
+
+    async search_certificate_id(){
+        const typed_certificate_account = this.state.typed_certificate_account.trim().replace('e', '')
+        const selected_e5 = this.state.selected_e5
+        const typed_certificate_e5_id = typed_certificate_account+selected_e5
+
+        if(isNaN(typed_certificate_account) || parseInt(typed_certificate_account) < 1001){
+            this.props.notify(this.props.app_state.loc['3093eu']/* 'That ID is not valid.' */)
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['3093ew']/* 'Searching...' */)
+            const type = await this.props.load_obligation_contract(typed_certificate_account, selected_e5)
+            this.setState({searched_certificate_e5_id: typed_certificate_e5_id})
+            
+            if(type != 31/* 31(token_exchange) */){
+                this.props.notify(this.props.app_state.loc['3093eu']/* 'That ID is not valid.' */)
+            }
+        }
+    }
+
+    get_certificate_object(id){
+        const all_certificates = this.props.app_state.created_certificates[this.state.contract['e5']]
+        const matching_certificate = all_certificates.filter((object) => {
+            return (object['id'] == id)
+        })
+        return matching_certificate[0]
+    }
+
+    render_searched_certificate(){
+        const all_certificates = this.get_all_sorted_objects(this.props.app_state.created_certificates)
+        const searched_certificate_e5_id = this.state.searched_certificate_e5_id;
+        const matching_certificate = all_certificates.filter((object) => {
+            return (object['e5_id'] == searched_certificate_e5_id)
+        })
+        if(matching_certificate.length == 0){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }else{
+            return(
+                <div onClick={() => this.when_searched_certificate_clicked(matching_certificate[0])}>
+                    {this.render_certificate(matching_certificate[0])}
+                </div>
+            )
+        }
+    }
+
+    render_certificate(object){
+        const item = this.format_certificate_item(object)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>         
+                </div>
+            )
+    }
+
+    format_certificate_item(object){
+        var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
+        var age = object['event'].returnValues.p5
+        var time = object['event'].returnValues.p4
+        var sender = this.get_senders_name_or_you(object['author'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
+        }
+    }
+
+    when_searched_certificate_clicked(object){
+        const clone = this.state.verified_certificates.slice()
+
+        if(!clone.includes(object['id'])){
+            this.props.notify(this.props.app_state.loc['3093gb']/* 'Youve already added this certificate.' */, 4400);
+        }
+        else{
+            clone.push(object['id'])
+            this.setState({verified_certificates: clone})
+        }
+        
+    }
+
+    when_certificate_item_clicked(item, index){
+        const clone = this.state.verified_certificates.slice()
+        clone.splice(index, 1)
+        this.setState({verified_certificates: clone})
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 

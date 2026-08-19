@@ -5383,6 +5383,13 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(buy_sell_obj['obj'])
                 }
+                else if(txs[i].type == this.props.app_state.loc['3055sg']/* 'record-certificate' */){
+                    var verify_obj = await this.format_record_certificate_in_target_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(verify_obj.str)
+                    adds.push([])
+                    ints.push(verify_obj.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -6937,6 +6944,9 @@ class StackPage extends Component {
                         'entered_pdf_objects':data.entered_pdf_objects,
                         'markdown':data.markdown,
                         'entered_zip_objects':data.entered_zip_objects,
+                        'certificate_target': data.certificate_target,
+                        'certificate_target_type':data.certificate_target_type,
+                        'certificate_target_author':data.certificate_target_author,
                     }
                     ipfs_index_object[txs[i].id] = certificate_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
@@ -7027,6 +7037,17 @@ class StackPage extends Component {
                     const certificate_data = {
                         'token_e5_id': data.token_item['e5_id'],
                         'depth':data.depth_item['depth_data']['full'],
+                    }
+                    ipfs_index_object[txs[i].id] = certificate_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3055sg']/* 'record-certificate' */){
+                    const data = txs[i]
+                    const certificate_data = {
+                        'token_e5_id': data.token_item['e5_id'],
+                        'token_id': data.token_item['id'],
+                        'depth':data.depth_item['depth_data']['full'],
+                        'time': data.depth_item['time']
                     }
                     ipfs_index_object[txs[i].id] = certificate_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
@@ -8888,7 +8909,7 @@ class StackPage extends Component {
                     const object = tx.token_item
                     const item = tx.selected_class
                     const buy_sell_recipient =  this.props.app_state.user_account_id[this.props.app_state.selected_e5];
-                    const buy_sell_amount = data['base_fee_price_multiplier'] == 0 ? t.base_fee_price_multiplier : data['base_fee_price_multiplier']
+                    const buy_sell_amount = item['base_fee_price_multiplier'] == 0 ? t.base_fee_price_multiplier : item['base_fee_price_multiplier']
                     const final_object_value_transfer_data = [
                         {
                             'exchange':object['id'], 
@@ -14190,6 +14211,30 @@ class StackPage extends Component {
       obj[9].push(0)
 
       return {'obj':obj, 'depth':depth_swap_obj}
+    }
+
+    format_record_certificate_in_target_object = async(t, calculate_gas, ipfs_index) => {
+        const item = t.depth_item
+        const certificate_target = item['ipfs']['certificate_target']
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [certificate_target], [23],
+            [], /* contexts */
+            [] /* int_data */
+        ]
+        var string_obj = [[]]
+
+        var context = 36/* 36(list_object_certificate) */
+        var int_data = item['depth_data']['full']
+
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
     }
 
     

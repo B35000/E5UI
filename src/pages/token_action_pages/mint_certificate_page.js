@@ -38,6 +38,9 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import imageCompression from 'browser-image-compression';
 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -95,7 +98,9 @@ class MintCertificatePage extends Component {
         my_city: this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city,
 
         edit_text_item_pos:-1,
-        entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], base_fee_price_multiplier:0
+        entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], base_fee_price_multiplier:0,
+
+        certificate_target:'', certificate_target_type: null, certificate_target_author: null
     };
 
 
@@ -341,9 +346,61 @@ class MintCertificatePage extends Component {
                         <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_base_fee_price_multiplier.bind(this)} theme={this.props.theme} power_limit={9}/>
                     </div>
                 )}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3099i']/* 'Certificate Target (Optional)' */, 'details':this.props.app_state.loc['3099j']/* 'You may optionally specify a target for the new certificate.' */, 'size':'l'})}
+                
+                <div style={{height: 10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3099m']/* 'Object Id...' */} when_text_input_field_changed={this.when_certificate_target_input_field_changed.bind(this)} text={this.state.certificate_target} theme={this.props.theme} adjust_height={false}/>
+                
+                {this.render_certificate_target_type_and_author_if_set()}
             </div>
         )
     }
+
+    when_certificate_target_input_field_changed(text){
+        const formatted = text.replace('e', '')
+        if(isNaN(formatted)) return;
+        this.setState({certificate_target: formatted})
+        
+        setTimeout(async () => {
+            if(this.state.certificate_target == formatted){
+                const { type, author } = await this.props.load_item_author_and_type(formatted)
+                if(type != 0){
+                    this.setState({certificate_target_type: type, certificate_target_author: author})
+                }
+                else{
+                    this.setState({certificate_target_type: null, certificate_target_author: null})
+                }
+            }
+        }, (1000));
+    }
+
+    render_certificate_target_type_and_author_if_set(){
+        const type = this.state.certificate_target_type
+        const author = this.state.certificate_target_author
+
+        if(type != null){
+            const title = number_with_commas(author)+this.get_sender_title_text(author, this.state.e5)
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':title, 'details':this.props.app_state.loc['3099k']/* 'Target Author.' */, 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    get_sender_title_text(account, e5){
+        const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[account] == null ? '' : ' • ' +bucket[account])
+        return alias
+    }
+
+    
+
+
+
 
     when_base_fee_price_multiplier(number){
         this.setState({base_fee_price_multiplier: number})
@@ -1571,12 +1628,17 @@ class MintCertificatePage extends Component {
         const e5 = object['e5']
         const data = item
         const base_fee_price_multiplier = data['base_fee_price_multiplier'] == 0 ? this.state.base_fee_price_multiplier : data['base_fee_price_multiplier']
+        const certificate_target = this.state.certificate_target 
+        const certificate_target_type = this.state.certificate_target_type
 
         if(this.check_if_sender_has_enough_tokens_for_buy(price_data, base_fee_price_multiplier) == false){
             this.props.notify(this.props.app_state.loc['3099g']/* 'Your balance is insufficient to fulfil this mint.' */, 4500)
         }
         else if(!this.check_if_sender_can_interact_with_exchange()){
             this.props.notify(this.props.app_state.loc['982']/* 'You cant interact with the same exchange twice in one run.' */, 4200)
+        }
+        else if(certificate_target != '' && certificate_target_type == null){
+            this.props.notify(this.props.app_state.loc['3099l']/* 'You need to set a valid certificate target.' */, 4200)
         }
         else{
             this.props.add_mint_certificate_to_stack(this.state)
@@ -1630,6 +1692,85 @@ class MintCertificatePage extends Component {
 
 
 
+
+
+    render_small_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 60,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 30,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
+
+    render_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 160,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 60,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
 
     render_empty_object(){
         var background_color = this.props.theme['card_background_color']
