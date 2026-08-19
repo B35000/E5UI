@@ -1452,7 +1452,7 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -1578,13 +1578,13 @@ class App extends Component {
         web3:['https://rpc.api.moonbeam.network'],
         token:'GLMR',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:4910897, end_image:'https://nftstorage.link/ipfs/bafkreie6krbxayljpkyl4tdyz554us6i4razp2a5b3wuu77h4prq2n7xju', spend_image:'https://nftstorage.link/ipfs/bafkreibf3jqav6igwprq4wzgf24xbzl6eq44lfjv7anbsd2ufirjjbwu5m', ether_image:moonbeam_logo, iteration:10_000, url:0, active:false, e5_img:null, id: ChainId.MOO, external_swappers:['lifi'],changenow_object: get_changenow_object()
+        first_block:4910897, end_image:'https://nftstorage.link/ipfs/bafkreie6krbxayljpkyl4tdyz554us6i4razp2a5b3wuu77h4prq2n7xju', spend_image:'https://nftstorage.link/ipfs/bafkreibf3jqav6igwprq4wzgf24xbzl6eq44lfjv7anbsd2ufirjjbwu5m', ether_image:'moonbeam_logo', iteration:10_000, url:0, active:false, e5_img:null, id: ChainId.MOO, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E105':{
         web3:['https://rpc.api.moonriver.moonbeam.network', 'https://moonriver.unitedbloc.com:2000'],
         token:'MOVR',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:5587390, end_image:'https://nftstorage.link/ipfs/bafkreicfqe6oih24rzjc4vkqv6rmamoia6jshilwqhoc7b6qwvoxaftg74', spend_image:'https://nftstorage.link/ipfs/bafkreibhweqzoh2ntnfexepezpt2ktat3wemkc2egjcrliwasz3v2tzyga', ether_image:moonriver_logo, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.MOR, external_swappers:['lifi'],changenow_object: get_changenow_object()
+        first_block:5587390, end_image:'https://nftstorage.link/ipfs/bafkreicfqe6oih24rzjc4vkqv6rmamoia6jshilwqhoc7b6qwvoxaftg74', spend_image:'https://nftstorage.link/ipfs/bafkreibhweqzoh2ntnfexepezpt2ktat3wemkc2egjcrliwasz3v2tzyga', ether_image:'moonriver_logo', iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.MOR, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E115':{
         web3:['https://xdc.public-rpc.com'],
@@ -1816,7 +1816,7 @@ class App extends Component {
         web3:['https://rpc.step.network'],
         token:'FITFI',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:step_logo/* 'https://nftstorage.link/ipfs/bafkreigqzgwcqib66uivlcmh6c5jr56xfge3cxyc7jb23vghlmiqvkvrky' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: null, external_swappers:[], changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'step_logo'/* 'https://nftstorage.link/ipfs/bafkreigqzgwcqib66uivlcmh6c5jr56xfge3cxyc7jb23vghlmiqvkvrky' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: null, external_swappers:[], changenow_object: get_changenow_object()
       },
       'E485':{
         web3:['https://rpc.energyweb.org'],
@@ -1927,7 +1927,7 @@ class App extends Component {
         first_block:0, end_image:null, spend_image:null, ether_image:karura_logo, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E665':{
-        web3:['https://eth-rpc-acala.aca-staging.network'],
+        web3:['https://eth-rpc-acala.aca-api.network'],
         token:'ACA',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:'acala_logo', iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
@@ -7255,6 +7255,8 @@ class App extends Component {
           load_accounts_non_fungible_token_data={this.load_accounts_non_fungible_token_data.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} show_crossexchange_swap_bottomsheet={this.show_crossexchange_swap_bottomsheet.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} show_bridge_coin_bottomsheet={this.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.refresh_wallet.bind(this)} is_function_at_complete_top_of_stack={this.is_function_at_complete_top_of_stack.bind(this)} 
 
           get_room_participant_count={this.get_room_participant_count.bind(this)} show_swap_ether_bottomsheet={this.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.get_token_chart_data.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} get_objects_showcased_certificates={this.get_objects_showcased_certificates.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)}
+
+          get_ether_gas_usage_chart_data={this.get_ether_gas_usage_chart_data.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -30801,10 +30803,12 @@ class App extends Component {
       const fees_object = parsed_data['fees_object']
       const exchange_rates = parsed_data['exchange_rates']
       const coin_chart_info = parsed_data['coin_chart_info']
+      const ether_usage_chart_info = parsed_data['ether_usage_chart_info'] || {}
       console.log('load_coin_and_externals_data', 'exchange_rates', exchange_rates)
       console.log('load_coin_and_externals_data', 'fees_object', fees_object)
       console.log('load_coin_and_externals_data', 'coin_chart_info', coin_chart_info)
-      this.setState({fees_object: fees_object, exchange_rates: exchange_rates, coin_chart_info: coin_chart_info})
+      console.log('load_coin_and_externals_data', 'ether_usage_chart_info', ether_usage_chart_info)
+      this.setState({fees_object: fees_object, exchange_rates: exchange_rates, coin_chart_info: coin_chart_info, ether_usage_chart_info: ether_usage_chart_info})
 
       await this.wait(900)
       await this.load_coinlore_coin_and_ether_ids()
@@ -55910,6 +55914,31 @@ class App extends Component {
       if(object == null) has_all_loaded = false
     });
     return has_all_loaded
+  }
+
+  get_ether_gas_usage_chart_data(symbol){
+    if(this.state.ether_gas_chart_info[symbol] != null){
+      return;
+    }
+    const asset_data = this.state.ether_usage_chart_info[symbol]?.['data']
+    if(asset_data != null){
+      const candle_sticks = []
+        asset_data.forEach(value_array => {
+          const candle_timestamp = value_array[0]
+          const gas = value_array[1]
+          const proportion = value_array[2]
+
+          candle_sticks.push({
+            'time':parseInt(candle_timestamp),
+            'gas':gas,
+            'proportion':proportion
+          })
+        });
+        const sorted_candle_sticks = this.sortByAttributeDescending(candle_sticks, 'time').reverse()
+        const clone = structuredClone(this.state.ether_gas_chart_info)
+        clone[symbol] = sorted_candle_sticks
+        this.setState({ether_gas_chart_info: clone})
+    }
   }
 
 

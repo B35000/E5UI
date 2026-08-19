@@ -5537,6 +5537,7 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
         this.props.get_token_chart_data(this.props.app_state.e5s[e5].token)
+        this.props.get_ether_gas_usage_chart_data(this.props.app_state.e5s[e5].token)
         await this.props.emit_view_object_event(id)
         await this.props.fetch_and_set_loaded_object_views([id], '')
     }

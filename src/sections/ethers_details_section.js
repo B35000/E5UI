@@ -346,6 +346,8 @@ class EthersDetailsSection extends Component {
 
                     {this.render_coin_ether_chart_data(item)}
 
+                    {this.render_ether_gas_chart_info(item)}
+
                     {this.render_detail_item('0')}
 
                     {/* {this.render_detail_item('3', item['gas_used_chart_data_label'])} */}
@@ -1107,8 +1109,6 @@ class EthersDetailsSection extends Component {
         var xVal = 1, yVal = 0;
         var dps = [];
         var noOfDps = 366;
-        // var factor = Math.round(data.length/noOfDps) +1;
-        // var noOfDps = data.length
         for(var i = 0; i < noOfDps; i++) {
             yVal = data[i]
             
@@ -1232,6 +1232,112 @@ class EthersDetailsSection extends Component {
 
         return { dps, starting_time: starting_time }
         
+    }
+
+
+
+
+    render_ether_gas_chart_info(item){
+        const symbol = item['symbol']
+        const chart_data = this.props.app_state.ether_gas_chart_info[symbol];
+        if(chart_data != null){
+            const datapoints1 = this.get_ether_gas_chart_data(item);
+            const datapoints2 = this.get_ether_gas_proportion_chart_data(item)
+
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bj']/* 'Network Traffic History.' */, 'details':this.props.app_state.loc['2481bk']/* 'Chart containing the amount of gas used in each block in the last day or so.' */.replace('$', item['symbol']), 'size':'l'})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'y_axis_units':'gas'})}
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bl']/* Y-Axis: Gas' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+
+
+
+                    {/* <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bm'] 'Network Traffic Proportion.', 'details':this.props.app_state.loc['2481bn'] 'Chart containing the amount of gas used as a proportion of the networks block gas limit over the last day or so.', 'size':'l'})}
+                    {this.render_detail_item('6', {'dataPoints':datapoints2.dps, 'start_time':datapoints2.starting_time, 'y_axis_units':'%'})}
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bo'] Y-Axis: Proportion' , 'details':this.props.app_state.loc['1461'] 'X-Axis: Time', 'size':'s'})} */}
+                </div>
+            )
+        }
+    }
+
+    get_ether_gas_chart_data(item){
+        const symbol = item['symbol'];
+        const chart_data = this.props.app_state.ether_gas_chart_info[symbol];
+        const data = []
+        const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time']*1000 : Date.now()
+
+        if(chart_data != null){
+            for(var j=0; j<chart_data.length; j++){
+                const data_point = chart_data[j];
+                const gas = data_point['gas'];
+                const time = data_point['time']
+                data.push(parseInt(gas))
+            }
+        }
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = data.length;
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[i]
+            
+            if(yVal != null){
+                var indicator = this.format_account_balance_figure(data[i])
+                var final_indicator = '$ %'.replace('$', indicator).replace('%', 'gas')
+                
+                if(i == parseInt(0.35*noOfDps) || i == parseInt(0.65*noOfDps)){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return { dps, starting_time: starting_time }
+    }
+
+    get_ether_gas_proportion_chart_data(item){
+        const symbol = item['symbol'];
+        const chart_data = this.props.app_state.ether_gas_chart_info[symbol];
+        const data = []
+        const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time']*1000 : Date.now()
+
+        if(chart_data != null){
+            for(var j=0; j<chart_data.length; j++){
+                const data_point = chart_data[j];
+                const proportion = data_point['proportion'];
+                const time = data_point['time']
+                data.push(parseFloat(proportion))
+            }
+        }
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = data.length;
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[i]
+            
+            if(yVal != null){
+                var indicator = data[i].toFixed(4)
+                var final_indicator = '$%'.replace('$', indicator)
+                
+                if(i == parseInt(0.35*noOfDps) || i == parseInt(0.65*noOfDps)){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return { dps, starting_time: starting_time }
     }
 
 
