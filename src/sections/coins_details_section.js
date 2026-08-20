@@ -271,6 +271,8 @@ class CoinsDetailsSection extends Component {
                     
                     {this.render_block_size_metric(item['block_size'])}
 
+                    {this.render_nakamoto_coefficient(item)}
+
                     {supply != null && (
                         <div>
                             <div style={{height: 10}}/>
@@ -427,6 +429,27 @@ class CoinsDetailsSection extends Component {
         )
     }
 
+    render_nakamoto_coefficient(item){
+        const symbol = item['symbol']
+        const coefficient_data = this.props.app_state.decentralization_metrics[symbol]
+        const time = new Date(this.props.app_state.decentralization_metrics['time'])
+
+        if(coefficient_data != null){
+            const validator_text = coefficient_data['validators'] > 0 ? number_with_commas(coefficient_data['validators']) : '???'
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':number_with_commas(coefficient_data['coefficient']), 'details':this.props.app_state.loc['2927bx']/* 'Nakamoto Coefficient.' */, 'size':'l'})}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':validator_text, 'details':this.props.app_state.loc['2927by']/* 'Active Validators/Miners' */, 'size':'l'})}
+
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['2927bz']/* 'As of $' */.replace('$', time.toLocaleString()), 'textsize':'11px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+    }
+
     show_swap_coin_button(item){
         const external_swappers = item['external_swappers']
         if(external_swappers != null && external_swappers.length > 0){
@@ -440,7 +463,6 @@ class CoinsDetailsSection extends Component {
                     <div onClick={()=>this.open_swap_ether_page(item)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2481bh']/* 'Begin Swap' */, 'action': ''})}
                     </div>
-                    <div style={{height:10}}/>
                 </div>
             )
         }
@@ -1376,6 +1398,9 @@ class CoinsDetailsSection extends Component {
         }
         else if(item['symbol'] == 'GRAM'){
             return `https://tonscan.org/address/${hash}`
+        }
+        else if(item['symbol'] == 'EGLD'){
+            return `https://explorer.multiversx.com/accounts/${hash}`
         }
 
     }

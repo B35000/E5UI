@@ -528,6 +528,8 @@ class SuccessfulSend extends Component {
             return `https://blockscout.injective.network/tx/${hash}`
         }else if(e5 == 'E1395'){
             return `https://plasmascan.to/tx/${hash}`
+        }else if(e5 == 'E1405'){
+            return `https://explorer.somnia.network/tx/${hash}`
         }
 
 
@@ -817,6 +819,9 @@ class SuccessfulSend extends Component {
         }
         else if(item['symbol'] == 'GRAM'){
             return `https://tonscan.org/tx/${hash}`
+        }
+        else if(item['symbol'] == 'EGLD'){
+            return `https://explorer.multiversx.com/transactions/${hash}`
         }
     }
 

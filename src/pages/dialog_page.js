@@ -15105,6 +15105,11 @@ return data['data']
             const certificate_target_type = item['ipfs']['certificate_target_type']
             const certificate_target_author = item['ipfs']['certificate_target_author']
             const certificate_target_object = this.props.get_object_by_id_and_type(parseInt(certificate_target_type), certificate_target, object['e5'])
+
+            const showcase_id = certificate_target+object['e5']+item['depth_data']['full']
+            const target_showcasing_events = this.props.app_state.showcasing_events[showcase_id]
+
+            if(target_showcasing_events == null || target_showcasing_events.length != 0) return;
             
             const time = item['time']
             const depth_data = item['depth_data']

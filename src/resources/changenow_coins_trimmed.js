@@ -566,7 +566,6 @@ const changenow_currencies = [
     {
         "ticker": "eth",
         "name": "Ethereum (Linea)",
-        "image": "https://content-api.changenow.io/uploads/ethlna_cf1f5f841a.svg",
         "hasExternalId": false,
         "isExtraIdSupported": false,
         "supportsFixedRate": true,
@@ -612,9 +611,20 @@ const changenow_currencies = [
         "sell": true,
         "legacyTicker": "ethmanta"
     },
-    
+    {
+        "ticker": "egld",
+        "name": "MultiversX",
+        "hasExternalId": false,
+        "isExtraIdSupported": false,
+        "supportsFixedRate": true,
+        "network": "egld",
+        "tokenContract": null,
+        "buy": true,
+        "sell": true,
+        "legacyTicker": "egld"
+    },
 ]
 
-/* missing: moonbeam, moonriver, icp, arweave, thundercore */
+/* missing: icp, arweave, thundercore */
 
 export default changenow_currencies; 

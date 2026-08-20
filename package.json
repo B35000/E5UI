@@ -32,6 +32,7 @@
     "@lifi/sdk-provider-ethereum": "^4.0.8",
     "@mui/material": "^6.4.12",
     "@mui/x-date-pickers": "^7.17.0",
+    "@multiversx/sdk-core": "^16.0.0",
     "@mysten/sui": "^2.23.1",
     "@polkadot/api": "^15.10.2",
     "@polkadot/util-crypto": "^13.1.1",

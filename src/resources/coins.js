@@ -140,6 +140,11 @@ const currencies = [
     "name": "Dogecoin"
   },
   {
+    "id": "elrond-erd-2",
+    "symbol": "egld",
+    "name": "multiversx"
+  },
+  {
     "id": "energi",
     "symbol": "nrg",
     "name": "Energi"
@@ -393,6 +398,11 @@ const currencies = [
     "id": "solana",
     "symbol": "sol",
     "name": "Solana"
+  },
+  {
+    "id": "somnia",
+    "symbol": "somi",
+    "name": "Somnia"
   },
   {
     "id": "songbird",

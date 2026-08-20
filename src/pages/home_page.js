@@ -6575,7 +6575,7 @@ class home_page extends Component {
                 get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} show_crossexchange_swap_bottomsheet={this.props.show_crossexchange_swap_bottomsheet.bind(this)} show_bridge_coin_bottomsheet={this.props.show_bridge_coin_bottomsheet.bind(this)} refresh_wallet={this.props.refresh_wallet.bind(this)} show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
 
                 get_channel_creator_payout_stagings={this.props.get_channel_creator_payout_stagings.bind(this)} get_channel_payout_records={this.props.get_channel_payout_records.bind(this)}
-                show_swap_ether_bottomsheet={this.props.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.props.get_token_chart_data.bind(this)} load_objects={this.props.load_objects.bind(this)} get_object_by_id_and_type={this.props.get_object_by_id_and_type.bind(this)}
+                show_swap_ether_bottomsheet={this.props.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.props.get_token_chart_data.bind(this)} load_objects={this.props.load_objects.bind(this)} get_object_by_id_and_type={this.props.get_object_by_id_and_type.bind(this)} load_object_certificate_showcasing_events={this.props.load_object_certificate_showcasing_events.bind(this)}
 
 
 

@@ -56,6 +56,7 @@ class EthersDetailsSection extends Component {
     state = {
         selected: 0, 
         navigate_view_ethers_list_detail_tags_object: this.get_navigate_view_ethers_list_detail_tags(),
+        get_ethers_traffic_datapoint_type_detail_tags:this.get_ethers_traffic_datapoint_type_detail_tags()
     };
 
     get_navigate_view_ethers_list_detail_tags(){
@@ -65,6 +66,17 @@ class EthersDetailsSection extends Component {
           },
           'e':[
               ['xor','',0], ['e',this.props.app_state.loc['2232']/* 'details' *//* ,this.props.app_state.loc['2448'] *//* 'transactions' */, this.props.app_state.loc['2481d']/* 'requests' */, this.props.app_state.loc['2481i']/* 'E5-Transfers ⚪' */],[1]
+          ],
+        }
+    }
+
+    get_ethers_traffic_datapoint_type_detail_tags(){
+        return{
+          'i':{
+              active:'e', 
+          },
+          'e':[
+              ['xor','',0], ['e',this.props.app_state.loc['2481bp']/* 'gas-average' */, this.props.app_state.loc['2481bq']/* 'proportion' */],[1]
           ],
         }
     }
@@ -295,6 +307,8 @@ class EthersDetailsSection extends Component {
                     <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
                         {this.render_wallet_status(item)}
                     </div>
+
+                    {this.render_nakamoto_coefficient(item)}
                     {/* {this.render_detail_item('3', item['chain_id'])} */}
                     {/* <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['peer_count'])} */}
@@ -427,6 +441,27 @@ class EthersDetailsSection extends Component {
     }
 
 
+    render_nakamoto_coefficient(item){
+        const symbol = item['symbol']
+        const coefficient_data = this.props.app_state.decentralization_metrics[symbol]
+        const time = new Date(this.props.app_state.decentralization_metrics['time'])
+
+        if(coefficient_data != null){
+            const validator_text = coefficient_data['validators'] > 0 ? number_with_commas(coefficient_data['validators']) : '???'
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':number_with_commas(coefficient_data['coefficient']), 'details':this.props.app_state.loc['2927bx']/* 'Nakamoto Coefficient.' */, 'size':'l'})}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':validator_text, 'details':this.props.app_state.loc['2927by']/* 'Active Validators/Miners' */, 'size':'l'})}
+                    
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['2927bz']/* 'As of $' */.replace('$', time.toLocaleString()), 'textsize':'11px', 'font':this.props.app_state.font})}
+                </div>
+            )
+        }
+    }
+
     render_object_views(object){
         const e5_id = object['id']
         const hits = this.props.app_state.object_view_data[e5_id] == null ? 0 : this.props.app_state.object_view_data[e5_id]['all_hits']
@@ -557,7 +592,6 @@ class EthersDetailsSection extends Component {
                     <div onClick={()=>this.open_swap_ether_page(item)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2481bh']/* 'Begin Swap' */, 'action': ''})}
                     </div>
-                    <div style={{height:10}}/>
                 </div>
             )
         }
@@ -1241,30 +1275,52 @@ class EthersDetailsSection extends Component {
     render_ether_gas_chart_info(item){
         const symbol = item['symbol']
         const chart_data = this.props.app_state.ether_gas_chart_info[symbol];
-        if(chart_data != null){
+        if(chart_data != null && chart_data.length > 0){
             const datapoints1 = this.get_ether_gas_chart_data(item);
             const datapoints2 = this.get_ether_gas_proportion_chart_data(item)
+            const selected_item = this.get_selected_item(this.state.get_ethers_traffic_datapoint_type_detail_tags, 'e')
 
-            return(
-                <div>
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bj']/* 'Network Traffic History.' */, 'details':this.props.app_state.loc['2481bk']/* 'Chart containing the amount of gas used in each block in the last day or so.' */.replace('$', item['symbol']), 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'y_axis_units':'gas'})}
+            if(selected_item == this.props.app_state.loc['2481bp']/* 'gas-average' */){
+                return(
+                    <div>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bj']/* 'Network Traffic History.' */, 'details':this.props.app_state.loc['2481bk']/* 'Chart containing the amount of gas used in each block in the last day or so.' */.replace('$', item['symbol']), 'size':'l'})}
+                        <div style={{height: 10}}/>
+                        {this.render_gas_or_proportion_tags()}
 
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bl']/* Y-Axis: Gas' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+                        {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'y_axis_units':'gas'})}
 
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bl']/* Y-Axis: Gas' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+                    </div>
+                )
+            }
+            else{
+                return(
+                    <div>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bm']/*  'Network Traffic.' */, 'details':this.props.app_state.loc['2481bn'] /* 'Chart containing the amount of gas used as a proportion of the networks block gas limit over the last day or so.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                        {this.render_gas_or_proportion_tags()}
 
+                        {this.render_detail_item('6', {'dataPoints':datapoints2.dps, 'start_time':datapoints2.starting_time, 'y_axis_units':'%'})}
 
-                    {/* <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bm'] 'Network Traffic Proportion.', 'details':this.props.app_state.loc['2481bn'] 'Chart containing the amount of gas used as a proportion of the networks block gas limit over the last day or so.', 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':datapoints2.dps, 'start_time':datapoints2.starting_time, 'y_axis_units':'%'})}
-
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bo'] Y-Axis: Proportion' , 'details':this.props.app_state.loc['1461'] 'X-Axis: Time', 'size':'s'})} */}
-                </div>
-            )
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bo']/* ' Y-Axis: Proportion' */ , 'details':this.props.app_state.loc['1461'] /* 'X-Axis: Time' */, 'size':'s'})}
+                    </div>
+                )
+            }
         }
+    }
+
+    render_gas_or_proportion_tags(){
+        return(
+            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_ethers_traffic_datapoint_type_detail_tags} tag_size={'l'} when_tags_updated={this.when_get_ethers_traffic_datapoint_type_detail_tags_updated.bind(this)} theme={this.props.theme}/>
+        )
+    }
+
+    when_get_ethers_traffic_datapoint_type_detail_tags_updated(tags){
+        this.setState({get_ethers_traffic_datapoint_type_detail_tags: tags})
     }
 
     get_ether_gas_chart_data(item){

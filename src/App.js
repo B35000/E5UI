@@ -397,7 +397,7 @@ import arbitrum_logo from './assets/arbitrum.png'
 import astar_logo from './assets/astar.png'
 import cronos_logo from './assets/cronos.png'
 import kava_logo from './assets/kava.png'
-import neon_logo from './assets/neon.png'
+// import neon_logo from './assets/neon.png'
 // import milkomeda_logo from './assets/milkomeda.png'
 // import fantom_logo from './assets/fantom.png'
 // import brise_logo from './assets/brise.png'
@@ -419,7 +419,7 @@ import songbird_logo from './assets/songbird.png'
 import ultron_logo from './assets/ultron.png'
 import coinex_logo from './assets/coinex.png'
 import tfuel_logo from './assets/tfuel.png'
-import step_logo from './assets/step.png'
+// import step_logo from './assets/step.png'
 import energyweb_logo from './assets/energyweb.png'
 // import callisto_logo from './assets/callisto.png'
 // import shiden_logo from './assets/shiden.png'
@@ -499,8 +499,8 @@ import sophon_logo from './assets/sophon.png'
 import berachain_logo from './assets/berachain.png'
 import hedera_logo from './assets/hedera.png'
 import iotaevm_logo from './assets/iotaevm.png'
-import moonbeam_logo from './assets/moonbeam.png'
-import moonriver_logo from './assets/moonriver.png'
+// import moonbeam_logo from './assets/moonbeam.png'
+// import moonriver_logo from './assets/moonriver.png'
 import sonic_logo from './assets/sonic.png'
 import kaia_logo from './assets/kaia.png'
 import manta_logo from './assets/manta.png'
@@ -514,6 +514,7 @@ import immutable_zkevm_logo from './assets/immutable_zkevm.png'
 import kite_ai_logo from './assets/kite.png'
 import injective_evm_logo from './assets/injective_evm.png'
 import plasma_logo from './assets/plasma.png'
+import somnia_logo from './assets/somnia.png'
 
 import celestia_logo from './assets/celestia.png'
 import algorand_logo from './assets/algorand.png'
@@ -546,6 +547,7 @@ import icp_logo from './assets/internet_computer.png'
 import zcash_logo from './assets/zcash.png'
 import gram_logo from './assets/gram.png'
 import monero_logo from './assets/monero.png'
+import egld_logo from './assets/egld.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -619,6 +621,7 @@ import { TonClient, WalletContractV4, internal, SendMode } from '@ton/ton';
 import { Address, toNano, fromNano } from '@ton/core';
 import { mnemonicToPrivateKey, mnemonicValidate } from '@ton/crypto';
 import { createWalletFull, MoneroNetworkType, MoneroUtils, MoneroWalletConfig, MoneroRpcConnection, LibraryUtils, connectToDaemonRpc, MoneroWalletListener, connectToWalletRpc, MoneroTxPriority, openWalletFull } from "monero-ts";
+import { Mnemonic as EgldMnemonic, Address as EgldAddress, Account as EgldAccount, Transaction as EgldTransaction, TransactionComputer, ApiNetworkProvider, } from '@multiversx/sdk-core';
 
 
 /* shared component stuff */
@@ -1452,7 +1455,7 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}, showcasing_events:{}, decentralization_metrics: this.get_decentralization_data()
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -1519,7 +1522,7 @@ class App extends Component {
         return filtered[0]
       }
     }
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335', 'E1345', 'E1355', 'E1365', 'E1375', 'E1385', 'E1395']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765', 'E775', 'E785', 'E795', 'E805', 'E815', 'E825', 'E835', 'E845', 'E855', 'E865', 'E875', 'E885', 'E895', 'E905', 'E915', 'E925', 'E935', 'E945', 'E955', 'E965', 'E975', 'E985', 'E995', 'E1005', 'E1015', 'E1025', 'E1035', 'E1045', 'E1055', 'E1065', 'E1075', 'E1085', 'E1095', 'E1105', 'E1115', 'E1125', 'E1135', 'E1145', 'E1155', 'E1165', 'E1175', 'E1185', 'E1195', 'E1205', 'E1215', 'E1225', 'E1235', 'E1245', 'E1255', 'E1265','E1275', 'E1285', 'E1295', 'E1305', 'E1315', 'E1325', 'E1335', 'E1345', 'E1355', 'E1365', 'E1375', 'E1385', 'E1395', 'E1405']
     return{
       'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
@@ -1684,7 +1687,7 @@ class App extends Component {
         web3:['https://neon-proxy-mainnet.solana.p2p.org'],
         token:'NEON',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:neon_logo/* 'https://nftstorage.link/ipfs/bafkreicezjbxf47t7n6welb63atcx4v7jnl36tfbddmpxiu4ajzi2vmad4' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'neon_logo'/* 'https://nftstorage.link/ipfs/bafkreicezjbxf47t7n6welb63atcx4v7jnl36tfbddmpxiu4ajzi2vmad4' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E265':{
         web3:['https://rpc-mainnet-cardano-evm.c1.milkomeda.com'],
@@ -2378,6 +2381,12 @@ class App extends Component {
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
         first_block:17475951, end_image:'', spend_image:'', ether_image:'evmos_logo', iteration:40_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
+      'E1405':{
+        web3:['https://somnia-rpc.publicnode.com', 'https://api.infra.mainnet.somnia.network'],
+        token:'SOMI',
+        e5_address:'',
+        first_block:17475951, end_image:'', spend_image:'', ether_image:somnia_logo, iteration:40_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
+      },
       
     }
   }
@@ -2571,6 +2580,7 @@ class App extends Component {
       this.get_token('KITE', 'KiteAI', 'E1375'),
       this.get_token('INJE', 'Injective EVM', 'E1385'),
       this.get_token('EVMOS', 'Evmos EVM', 'E1395', true),
+      this.get_token('SOMI', 'Somnia', 'E1405'),
     ]
 
     return list
@@ -2640,6 +2650,8 @@ class App extends Component {
       'GRAM': this.get_coin_info('GRAM', 'Gram', gram_logo, 'nanogram', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.4 sec.', this.get_time_difference(1573516800), 104_715, 1, "Toncoin", ['changenow']),
 
       '???': this.get_coin_info('???', '??????', monero_logo, '???', 12, 1_000_000_000_000, 'UTXO', 'Proof Of Work.', '2 min.', this.get_time_difference(1397818193), 7, '~~~', "Monero", ['changenow']),
+
+      'EGLD': this.get_coin_info('EGLD', 'MultiversX', egld_logo, 'aEGLD', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Secure Proof of Stake', '6 sec.', this.get_time_difference(1567555200), 100_000, '~~~', "MultiversX", ['changenow']),
     }
     return list
   }
@@ -2716,6 +2728,7 @@ class App extends Component {
       '0xb41ddb764ae6e1ba964768e855f9e19f13d98eaebc04a463fdb8205bdf63f0e0',
       'Hbo45L26rrK4RyvejanPmGQ95h7bsp3XBYBKjPHmtC19',
       'f1jobvrpnwagat2p3qwthuvmswn7alla7gq7vkjgy',
+      'erd1jx808y7j4k0c922yzlggnv0lkt7un4xr9r90utsz5xhrfqu4ymkqxuuum0'
     ]
     return default_addresses
   }
@@ -3732,6 +3745,158 @@ class App extends Component {
 
   get_all_dominance_targets(){
     return ['BTC', 'ETH', 'ETC', 'DOT', '???']
+  }
+
+  get_decentralization_data(){
+    const data = {
+      'time' : 1787245415000, //20 Aug 2026
+      'DOT':{
+        'coefficient':171,
+        'validators':600
+      },
+      'GRAM':{
+        'coefficient':86,
+        'validators':396,
+      },
+      'AVAX':{
+        'coefficient':25,
+        'validators':606,
+      },
+      'SUI':{
+        'coefficient':19,
+        'validators':128,
+      },
+      'SOL':{
+        'coefficient':18,
+        'validators':688,
+      },
+      'ADA':{
+        'coefficient':16,
+        'validators':2083,
+      },
+      'ICP':{
+        'coefficient':14,
+        'validators':618,
+      },
+      'TRX':{
+        'coefficient':13,
+        'validators':27,
+      },
+      'ALGO':{
+        'coefficient':13,
+        'validators':1541,
+      },
+      'APT':{
+        'coefficient':13,
+        'validators':90,
+      },
+      'XTZ':{
+        'coefficient':12,
+        'validators':196,
+      },
+      'IOTX':{
+        'coefficient':10,
+        'validators':70,
+      },
+      'SEI':{
+        'coefficient':9,
+        'validators':40,
+      },
+      'NEAR':{
+        'coefficient':9,
+        'validators':411,
+      },
+      'HBAR':{
+        'coefficient':9,
+        'validators':29,
+      },
+      'BNB':{
+        'coefficient':7,
+        'validators':45,
+      },
+      'POL':{
+        'coefficient':7,
+        'validators':105,
+      },
+      'S':{
+        'coefficient':4,
+        'validators':39,
+      },
+      'CRO':{
+        'coefficient':4,
+        'validators':100,
+      },
+      'BTC':{
+        'coefficient':4,
+        'validators':160,
+      },
+      'XLM':{
+        'coefficient':3,
+        'validators':94,
+      },
+      'AETH':{
+        'coefficient':1,
+        'validators':1,
+      },
+      'BETH':{
+        'coefficient':1,
+        'validators':1,
+      },
+      'ETH':{
+        'coefficient':1,
+        'validators':1_324_000,
+      },
+      'XTZE':{
+        'coefficient':1,
+        'validators':1,
+      },
+      'KAIA':{
+        'coefficient':1,
+        'validators':33,
+      },
+      'KSM':{
+        'coefficient':1,
+        'validators':700,
+      },
+      'OETH':{
+        'coefficient':1,
+        'validators':1,
+      },
+      'MON':{
+        'coefficient':20,
+        'validators':0,
+      },
+      'HYPE':{
+        'coefficient':3,
+        'validators':0,
+      },
+      'PLS':{
+        'coefficient':7,
+        'validators':0,
+      },
+      'PLUME':{
+        'coefficient':1,
+        'validators':0,
+      },
+      'ATOM':{
+        'coefficient':3,
+        'validators':0,
+      },
+      'TIA':{
+        'coefficient':6,
+        'validators':0,
+      },
+      'SOMI':{
+        'coefficient':10,
+        'validators':34,
+      },
+      'EGLD':{
+        'coefficient':11,
+        'validators':3223,
+      },
+    }
+
+    return data
   }
 
 
@@ -7256,7 +7421,7 @@ class App extends Component {
 
           get_room_participant_count={this.get_room_participant_count.bind(this)} show_swap_ether_bottomsheet={this.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.get_token_chart_data.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} get_objects_showcased_certificates={this.get_objects_showcased_certificates.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)}
 
-          get_ether_gas_usage_chart_data={this.get_ether_gas_usage_chart_data.bind(this)}
+          get_ether_gas_usage_chart_data={this.get_ether_gas_usage_chart_data.bind(this)} load_object_certificate_showcasing_events={this.load_object_certificate_showcasing_events.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -8424,6 +8589,9 @@ class App extends Component {
     else if(item['symbol'] == '???'){
       return await this.validate_xmr_address(address)
     }
+    else if(item['symbol'] == 'EGLD'){
+      return this.validate_egld_address(address)
+    }
 
 
     return true;
@@ -8722,6 +8890,14 @@ class App extends Component {
     }
   }
 
+  validate_egld_address(address){
+    try {
+      return EgldAddress.isValid(address);
+    } catch (e) {
+      return false;
+    }
+  }
+
 
 
 
@@ -8813,6 +8989,9 @@ class App extends Component {
     }
     else if(item['symbol'] == '???'){
       await this.create_and_broadcast_xmr_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
+    }
+    else if(item['symbol'] == 'EGLD'){
+      await this.create_and_broadcast_egld_transaction(item, fee, transfer_amount, recipient_address, sender_address, data)
     }
 
     var sync_time = item['symbol'] == 'AR' ? (4 * 60_000) : (1 * 30_000)
@@ -10050,6 +10229,43 @@ class App extends Component {
     else {
       return 0
     }
+  }
+
+  create_and_broadcast_egld_transaction = async (item, fee, transfer_amount, recipient_address, sender_address, data, for_swap=false) => {
+    var seed = this.state.final_seed
+    const wallet = await this.generate_egld_wallet(seed)
+    const provider = new ApiNetworkProvider('https://api.multiversx.com', {
+      clientName: 'E5',
+    });
+    const accountOnNetwork = await provider.getAccount(wallet.account.address);
+    const nonce = accountOnNetwork.nonce;
+    const networkConfig = await provider.getNetworkConfig();
+    const dataBytes = new Uint8Array(Buffer.from('', 'utf8'));
+    const gasLimit = networkConfig.minGasLimit + networkConfig.gasPerDataByte * bigInt(dataBytes.length).value;
+
+    const tx = new EgldTransaction({
+      nonce: wallet.account.getNonceThenIncrement(),
+      sender: wallet.account.address,
+      receiver: Address.newFromBech32(recipient_address),
+      value: bigInt(transfer_amount).value,
+      gasLimit,
+      gasPrice: networkConfig.minGasPrice,
+      data: dataBytes.length ? dataBytes : undefined,
+      chainID: '1',
+    });
+
+    try{
+      tx.signature = await wallet.account.signTransaction(tx);
+      const hash = await provider.sendTransaction(tx);
+      
+      if(for_swap == false)this.show_successful_send_bottomsheet({'type':'coin', 'item':item, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash':hash});
+      else return hash
+    }
+    catch(e){
+      console.log(e)
+      this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+    }
+    
   }
 
   async send_coin_request_message(request_coin_recipient, recipient_address, picked_sat_amount, recipient_e5, ether_id, request_coin_memo){
@@ -30394,6 +30610,10 @@ class App extends Component {
       const hash = await this.create_and_broadcast_xmr_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true)
       return hash;
     }
+    else if(item['symbol'] == 'EGLD'){
+      const hash = await this.create_and_broadcast_egld_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true);
+      return hash;
+    }
   }
 
 
@@ -31256,6 +31476,11 @@ class App extends Component {
     this.setState({coin_data: coin_data})
     // await this.wait(400)
     coin_data['???'] = await this.get_and_set_xmr_wallet_info(seed)
+
+
+    this.setState({coin_data: coin_data})
+    // await this.wait(400)
+    coin_data['EGLD'] = await this.get_and_set_egld_wallet_info(seed)
     
 
 
@@ -31357,6 +31582,7 @@ class App extends Component {
     if(coin == 'ZEC' || should_update_all) coin_data = await this.update_zcash_balance(coin_data);
     if(coin == 'GRAM' || should_update_all) coin_data = await this.update_gram_balance(coin_data);
     if(coin == '???' || should_update_all) coin_data = await this.update_xmr_balance(coin_data);
+    if(coin == 'EGLD' || should_update_all) coin_data = await this.update_egld_balance(coin_data)
     
     
     if(coin == 'AR' || should_update_all) coin_data = await this.update_arweave_balance(coin_data);
@@ -31412,6 +31638,7 @@ class App extends Component {
     if(coin == 'ZEC') coin_data[coin] = await this.get_and_set_zcash_wallet_info(seed);
     if(coin == 'GRAM') coin_data[coin] = await this.get_and_set_gram_wallet_info(seed);
     if(coin == '???') coin_data[coin] = await this.get_and_set_xmr_wallet_info(seed);
+    if(coin == 'EGLD') coin_data[coin] = await this.get_and_set_egld_wallet_info(seed)
     if(coin == 'AR') coin_data[coin] = await this.get_and_set_arweave_wallet_info(seed);
     
     
@@ -33873,6 +34100,81 @@ class App extends Component {
 
 
 
+  get_and_set_egld_wallet_info = async (seed) => {
+    const wallet = await this.generate_egld_wallet(seed)
+    const address = wallet.address
+    const provider = new ApiNetworkProvider('https://api.multiversx.com', {
+      clientName: 'E5',
+    });
+    const balance = await this.get_egld_address_balance(provider, address)
+
+    var fee_info = {'fee':await this.get_egld_transaction_fees(provider), 'type':'fixed', 'per':'transaction'}
+    var data = {'balance':(balance.toString()), 'address':address, 'min_deposit':0, 'fee':fee_info, 'wallet':wallet}
+    this.fetch_specific_coin_receipts(address)
+    return data
+  }
+
+  generate_egld_wallet = async (mnemonic) => {
+    const entropic_mnemonic = await this.generate_mnemonic_from_seed(mnemonic);
+    const account = EgldAccount.newFromMnemonic(entropic_mnemonic.trim(), 0);
+    const address = account.address.toBech32();
+
+    return { account: account, address: address }
+  }
+
+  get_egld_address_balance = async (provider, address) => {
+    const accountOnNetwork = await provider.getAccount(EgldAddress.newFromBech32(address));
+    return accountOnNetwork.balance.toString()
+  }
+
+  async get_egld_transaction_fees(provider){
+    const networkConfig = await provider.getNetworkConfig();
+    const dataBytes = new Uint8Array(Buffer.from('', 'utf8'));
+    const gasLimit = networkConfig.minGasLimit + networkConfig.gasPerDataByte * bigInt(dataBytes.length).value;
+ 
+    const computer = new TransactionComputer();
+    const feeWei = computer.computeTransactionFee(
+      { 
+        gasPrice: networkConfig.minGasPrice, 
+        gasLimit, 
+        data: dataBytes 
+      },
+      networkConfig
+    );
+    
+    return feeWei.toString()
+    // return {
+    //   gasLimit: gasLimit.toString(),
+    //   gasPrice: networkConfig.minGasPrice.toString(),
+    //   feeWei: feeWei.toString(), //this.
+    // };
+  }
+
+  update_egld_balance = async (clone) => {
+    const address = clone['EGLD']['address']
+    const provider = new ApiNetworkProvider('https://api.multiversx.com', {
+      clientName: 'E5',
+    });
+    const balance = await this.get_egld_address_balance(provider, address)
+
+    clone['EGLD']['balance'] = balance;
+    return clone
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
 
   //unused
@@ -35066,19 +35368,26 @@ class App extends Component {
       var blockNumber = await web3.eth.getBlockNumber()
       await this.wait(this.state.web3_delay)
       var last_blocks = [];
-      var count = 3
+      var count = 30
       var start = parseInt(blockNumber)-count;
       if(blockNumber < count){
         start = 0;
       }
-      for (let i = start; i <= blockNumber; i++) {
+      var time = 0
+      for (let i = blockNumber; i > start ; i--) {
         await this.wait(this.state.web3_delay)
         var block = await web3.eth.getBlock(i)
         last_blocks.push(block)
+        if(time == 0){
+          time = parseInt(block.timestamp)
+        }
+        else if(time != parseInt(block.timestamp) && i <= blockNumber-5){
+          break;
+        }
       }
 
       var last_blocks_clone = structuredClone(this.state.last_blocks)
-      last_blocks_clone[e5] = last_blocks
+      last_blocks_clone[e5] = last_blocks.reverse()
 
       var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
       number_of_blocks_clone[e5] = blockNumber
@@ -55939,6 +56248,20 @@ class App extends Component {
         clone[symbol] = sorted_candle_sticks
         this.setState({ether_gas_chart_info: clone})
     }
+  }
+
+  async load_object_certificate_showcasing_events(id, e5, depth){
+    const e5_id = id+e5
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const showcased_certificates_event_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:36/* 36(list_object_certificate) */, p5/* int_data */: depth})).reverse()
+
+    const clone = structuredClone(this.state.showcasing_events)
+    clone[e5_id+depth] = showcased_certificates_event_data
+    this.setState({showcasing_events: clone})
   }
 
 
