@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.99de1687.css",
-    "main.js": "/static/js/main.0e5c071b.js",
+    "main.js": "/static/js/main.a5cfac10.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -244,6 +244,7 @@
     "static/media/dash.png": "/static/media/dash.8eced5bd35b9bb240e91.png",
     "static/media/wallet_icon_red.png": "/static/media/wallet_icon_red.678f16d7d864dca8c857.png",
     "static/media/end35.png": "/static/media/end35.6b20e590c2124dec54d2.png",
+    "static/media/egld.png": "/static/media/egld.3e123b1642950b80cdfd.png",
     "static/media/ozone.png": "/static/media/ozone.2d9081213102c72cfb56.png",
     "static/media/cardano.png": "/static/media/cardano.44267a47758a41f3cf6b.png",
     "static/media/iotex.png": "/static/media/iotex.033445dc5a3a732d38fe.png",
@@ -382,7 +383,6 @@
     "static/media/mode.png": "/static/media/mode.4716ee238d1434898734.png",
     "static/media/hemi.png": "/static/media/hemi.61662b28f8d805f8dfb5.png",
     "static/media/zoom_in_icon.png": "/static/media/zoom_in_icon.7fc39003e4aa63d6d378.png",
-    "static/media/neon.png": "/static/media/neon.cbbe28408e73477717c7.png",
     "static/media/katana.png": "/static/media/katana.687bbd42cb845199c182.png",
     "static/media/bsquared.png": "/static/media/bsquared.e14bd0becb0ecd9c1584.png",
     "static/media/zksync.png": "/static/media/zksync.bff57cc1cc14ed6bc029.png",
@@ -411,6 +411,7 @@
     "static/media/okb.png": "/static/media/okb.917a19c38722d8a4bf0a.png",
     "static/media/pause_icon_darkyellow.png": "/static/media/pause_icon_darkyellow.1bd3bc429cc4691f3de5.png",
     "static/media/pause_icon_orange.png": "/static/media/pause_icon_orange.72748dac7b9ca91db75b.png",
+    "static/media/somnia.png": "/static/media/somnia.2264d48527f74fed80f2.png",
     "static/media/kite.png": "/static/media/kite.868918d0fe02cad7c410.png",
     "static/media/eluv.png": "/static/media/eluv.24338d1170a603fd0a37.png",
     "static/media/pause_icon_darkorange.png": "/static/media/pause_icon_darkorange.293cb3c5ebcc741b35cc.png",
@@ -458,6 +459,6 @@
   },
   "entrypoints": [
     "static/css/main.99de1687.css",
-    "static/js/main.0e5c071b.js"
+    "static/js/main.a5cfac10.js"
   ]
 }
