@@ -298,10 +298,11 @@ class EthersDetailsSection extends Component {
                     {/* {this.render_detail_item('3', item['chain_id'])} */}
                     {/* <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['peer_count'])} */}
-                    <div style={{height: 10}}/>
+                    
 
                     {supply != null && (
                         <div>
+                            <div style={{height: 10}}/>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                                 <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481u']/* 'Ether\'s Supply.' */, 'number':supply, 'relativepower':'ether'})}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481u']/* 'Ether\'s Supply.' */, 'subtitle':this.format_power_figure(supply), 'barwidth':this.calculate_bar_width(supply), 'number':''+this.format_account_balance_figure(supply), 'barcolor':'#606060', 'relativepower':'ether', })}
@@ -311,12 +312,12 @@ class EthersDetailsSection extends Component {
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481v']/* 'Ether\'s Atomic Supply.' */, 'subtitle':this.format_power_figure(atomic_supply), 'barwidth':this.calculate_bar_width(atomic_supply), 'number':''+this.format_account_balance_figure(atomic_supply), 'barcolor':'#606060', 'relativepower':'wei', })}
                                 </div>
                             </div>
-                            <div style={{height:10}}/>
                         </div>
                     )}
 
                     {decimal_price != null && (
                         <div>
+                            <div style={{height: 10}}/>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                                 <div>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481y']/* 'Ether\'s Decimal Price.' */, 'subtitle':this.format_power_figure(decimal_price), 'barwidth':this.calculate_bar_width(decimal_price), 'number':''+format_decimal_price_value(decimal_price), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */, })}
@@ -326,12 +327,12 @@ class EthersDetailsSection extends Component {
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481z']/* 'Ether\'s Decimal Price in $' */.replace('$', 'SATs'), 'subtitle':this.format_power_figure(decimal_price_in_sats), 'barwidth':this.calculate_bar_width(decimal_price_in_sats), 'number':''+format_decimal_price_value(decimal_price_in_sats), 'barcolor':'#606060', 'relativepower':'SATs', })}
                                 </div>
                             </div>
-                            <div style={{height:10}}/>
                         </div>
                     )}
 
                     {market_cap != null && (
                         <div>
+                            <div style={{height: 10}}/>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                                 <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481w']/* 'Ether\'s Market Capitalization.' */, 'number':market_cap, 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */})}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481w']/* 'Ether\'s Market Capitalization.' */, 'subtitle':this.format_power_figure(market_cap), 'barwidth':this.calculate_bar_width(market_cap), 'number':''+this.format_account_balance_figure(market_cap), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1593ef']/* 'USD' */, })}

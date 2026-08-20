@@ -2456,7 +2456,7 @@ class App extends Component {
       this.get_token('ASTR', 'Astar EVM', 'E225'),
       this.get_token('CRO', 'Cronos EVM', 'E235'),
       this.get_token('KAVA', 'Kava EVM', 'E245'),
-      this.get_token('NEON', 'Neon EVM', 'E255'),
+      this.get_token('NEON', 'Neon EVM', 'E255', true),
       this.get_token('mADA', 'Milkomeda', 'E265', true),
       this.get_token('FTM', 'Fantom Opera', 'E275', true),
       this.get_token('BRISE', 'Bitgert', 'E285', true),
@@ -55920,7 +55920,7 @@ class App extends Component {
     if(this.state.ether_gas_chart_info[symbol] != null){
       return;
     }
-    const asset_data = this.state.ether_usage_chart_info[symbol]?.['data']
+    const asset_data = this.state.ether_usage_chart_info[symbol]?.['final_data']
     if(asset_data != null){
       const candle_sticks = []
         asset_data.forEach(value_array => {
