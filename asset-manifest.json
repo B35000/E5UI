@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.99de1687.css",
-    "main.js": "/static/js/main.0db37261.js",
+    "main.js": "/static/js/main.ec31399e.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -300,7 +300,6 @@
     "static/media/add_icon_blue.png": "/static/media/add_icon_blue.76f1bbca23e7ed07622f.png",
     "static/media/background_blue.png": "/static/media/background_blue.e20839ebc4a7d8636da2.png",
     "static/media/etherlink.png": "/static/media/etherlink.7253c10c1c8124fac436.png",
-    "static/media/step.png": "/static/media/step.9b844a6c70ebda8dbc20.png",
     "static/media/algorand.png": "/static/media/algorand.e9d942af7c24a5971c67.png",
     "static/media/play_icon_darkgreen.png": "/static/media/play_icon_darkgreen.8c7d2f05301fba3aff1e.png",
     "static/media/opbnb.png": "/static/media/opbnb.dc08622e8db0447591ea.png",
@@ -391,7 +390,6 @@
     "static/media/rei.png": "/static/media/rei.3e6c96e5860ab40d5990.png",
     "static/media/zoom_out_icon.png": "/static/media/zoom_out_icon.ad0e18aa8406d6f7c3aa.png",
     "static/media/ethereum_testnet.png": "/static/media/ethereum_testnet.078fff36c034460a41e3.png",
-    "static/media/moonriver.png": "/static/media/moonriver.b8c88734ee63743879cf.png",
     "static/media/canto.png": "/static/media/canto.7c6979e0348207c8ce2f.png",
     "static/media/repeat_icon.png": "/static/media/repeat_icon.ffd238e717e572a7943d.png",
     "static/media/blast.png": "/static/media/blast.b974ac012dc325babfc5.png",
@@ -411,7 +409,6 @@
     "static/media/metal.png": "/static/media/metal.35c43e3dffc7ed3c6856.png",
     "static/media/polkadot_evm.png": "/static/media/polkadot_evm.91271063a5967ca26530.png",
     "static/media/okb.png": "/static/media/okb.917a19c38722d8a4bf0a.png",
-    "static/media/moonbeam.png": "/static/media/moonbeam.3e5b6ecabddfc7af46b8.png",
     "static/media/pause_icon_darkyellow.png": "/static/media/pause_icon_darkyellow.1bd3bc429cc4691f3de5.png",
     "static/media/pause_icon_orange.png": "/static/media/pause_icon_orange.72748dac7b9ca91db75b.png",
     "static/media/kite.png": "/static/media/kite.868918d0fe02cad7c410.png",
@@ -461,6 +458,6 @@
   },
   "entrypoints": [
     "static/css/main.99de1687.css",
-    "static/js/main.0db37261.js"
+    "static/js/main.ec31399e.js"
   ]
 }
