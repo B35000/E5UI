@@ -316,7 +316,7 @@ class NewVideoPage extends Component {
                     </div>
                 </div>
                 
-                <div style={{'margin':'10px 0px 0px 0px', overflowY: 'auto', maxHeight: this.props.height-(120 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
+                <div style={{'margin':'10px 0px 0px 0px', overflowY: 'auto', maxHeight: this.props.height-(130 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
                     {this.render_everything()}   
                 </div>
             </div>
@@ -446,6 +446,8 @@ class NewVideoPage extends Component {
                     {this.render_title_tags_part()}
                     {this.render_detail_item('0')}
                     {this.render_title_tags_part2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -455,6 +457,8 @@ class NewVideoPage extends Component {
                     <div className="row">
                         <div className="col-6">
                             {this.render_title_tags_part()}
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('0')}
                         </div>
                         <div className="col-6">
                             {this.render_title_tags_part2()}
@@ -469,6 +473,8 @@ class NewVideoPage extends Component {
                     <div className="row">
                         <div className="col-5">
                             {this.render_title_tags_part()}
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('0')}
                         </div>
                         <div className="col-5">
                             {this.render_title_tags_part2()}

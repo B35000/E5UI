@@ -5390,6 +5390,13 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(verify_obj.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3111']/* 'link-certificate' */){
+                    var verify_obj = await this.format_link_certificate_in_targets_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(verify_obj.str)
+                    adds.push([])
+                    ints.push(verify_obj.int)
+                }
                 
                 delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
@@ -7042,6 +7049,17 @@ class StackPage extends Component {
                     ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
                 }
                 else if(txs[i].type == this.props.app_state.loc['3055sg']/* 'record-certificate' */){
+                    const data = txs[i]
+                    const certificate_data = {
+                        'token_e5_id': data.token_item['e5_id'],
+                        'token_id': data.token_item['id'],
+                        'depth':data.depth_item['depth_data']['full'],
+                        'time': data.depth_item['time']
+                    }
+                    ipfs_index_object[txs[i].id] = certificate_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3111']/* 'link-certificate' */){
                     const data = txs[i]
                     const certificate_data = {
                         'token_e5_id': data.token_item['e5_id'],
@@ -14235,6 +14253,36 @@ class StackPage extends Component {
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj}
+    }
+
+    format_link_certificate_in_targets_object = async(t, calculate_gas, ipfs_index) => {
+        const item = t.depth_item
+        const verified_certificates = t.verified_certificates
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [], [],
+            [], /* contexts */
+            [] /* int_data */
+        ]
+        var string_obj = [[]]
+
+        var context = 37/* 37(linked_object_certificate) */
+        var int_data = t.token_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+        
+        for(var i=0; i<verified_certificates.length; i++){
+            const target = verified_certificates[i]
+            obj[1].push(target.toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+            
+            string_obj[0].push(string_data)
+        }
+
+
+        return {int: obj, str: string_obj}
+
     }
 
     

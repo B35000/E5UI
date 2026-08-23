@@ -112,6 +112,13 @@ class SubscriptionDetailsSection extends Component {
 
     when_navigate_view_subscriptions_list_detail_tags_object_updated(tag_obj){
         this.setState({navigate_view_subscriptions_list_detail_tags_object: tag_obj})
+        
+        const selected_item = this.get_selected_item(tag_obj, 'e')
+        const object = this.get_item_in_array(this.get_subscription_items(),this.props.selected_subscription_item)
+        if(object == null) return;
+        if(selected_item == this.props.app_state.loc['2642dc']/* 'operation-certificates 📜' */){
+            this.props.get_objects_showcased_certificates(object)
+        }
     }
 
     get_item_in_array(object_array, id){
@@ -1265,7 +1272,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 5px 0px 5px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    {this.render_small_empty_object()}
+                                    {this.props.app_state.objects_showcased_certificates[object['e5_id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
                                 </li>
                             ))}
                         </ul>
@@ -1317,7 +1324,7 @@ class SubscriptionDetailsSection extends Component {
         const details = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
         const op = model_config['archived'] == true ? 0.6 : 1.0
         return(
-            <div style={{opacity: op}} onClick={() => this.view_acquired_class_item_details(item, token_object)}>
+            <div style={{opacity: op}} onClick={() => this.view_acquired_class_item_details(item, token_object, listing)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
@@ -1368,7 +1375,9 @@ class SubscriptionDetailsSection extends Component {
         return filtered_models[0]
     }
 
-    view_acquired_class_item_details(item, object){
+    view_acquired_class_item_details(item, object, listing){
+        this.props.load_token_certificate_chain(item, object)
+        this.props.get_verified_certificate_data(object)
         this.props.show_dialog_bottomsheet({'item':item, 'object':object, 'view_only': true}, 'view_acquired_certificate_item_details')
     }
 

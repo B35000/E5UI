@@ -1052,6 +1052,9 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['3055sg']/* 'record-certificate' */){
                 return this.render_record_certificate()
             }
+            else if(tx.type == this.props.app_state.loc['3111']/* 'link-certificate' */){
+                return this.render_link_certificate()
+            }
         }
     }
 
@@ -10560,13 +10563,111 @@ return data['data']
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-                {this.render_detail_item('0')}
-
-                {transaction_item.certificate_target_ui}
+                
+                {/* {this.render_detail_item('0')} */}
+                {/* {transaction_item.certificate_target_ui} */}
             </div>
         )
     }
 
+
+
+
+
+
+
+    render_link_certificate(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const token_item = transaction_item.token_item
+        const depth_item = transaction_item.depth_item
+        const model_data = transaction_item.model_data
+
+        const depth_data = depth_item['depth_data']
+        const name = model_data['class_name']
+        const maximum_supply = model_data['maximum_supply']
+        const time = depth_item['time']
+
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+                {this.render_set_certificate_authorities(transaction_item)}
+            </div>
+        )
+    }
+
+    render_set_certificate_authorities(transaction_item){
+        const items = [].concat(transaction_item.verified_certificates)
+        return(
+            <div style={{}}>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gc']/* 'Added Certificates.' */, 'details': this.props.app_state.loc['3111g']/* 'All the added certificate objects are shown below.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px 5px 2px 5px'}}>
+                            <div key={index}>
+                                {this.render_certificate(this.get_certificate_object(item))}
+                            </div>
+                        </li> 
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_certificate_object(id){
+        const e5 = this.props.app_state.stack_items[this.state.transaction_index].e5
+        const all_certificates = this.props.app_state.created_certificates[e5]
+        const matching_certificate = all_certificates.filter((object) => {
+            return (object['id'] == id)
+        })
+        return matching_certificate[0]
+    }
+
+    render_certificate(object){
+        const item = this.format_certificate_item(object)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>         
+                </div>
+            )
+    }
+
+    format_certificate_item(object){
+        var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
+        var age = object['event'].returnValues.p5
+        var time = object['event'].returnValues.p4
+        var sender = this.get_senders_name_or_you(object['author'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
+        }
+    }
+    
 
 
 

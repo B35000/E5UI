@@ -850,6 +850,10 @@ class EthersDetailsSection extends Component {
             const token = this.props.app_state.e5s[layer1e5].token
             ether_symbol_footer = this.props.app_state.loc['2481be']/* Internal alias for $ */.replace('$', token)
         }
+        const parent_coin = this.props.app_state.e5s[e5].parent_coin
+        if(parent_coin != null && parent_coin != ''){
+            ether_symbol_footer = this.props.app_state.loc['2481be']/* Internal alias for $ */.replace('$', parent_coin)
+        }
 
         const gas_limit_per_block = this.get_latest_block_data(e5).gasLimit
         const average_block_time = this.get_average_block_time_from_blocks2(e5)

@@ -14786,6 +14786,7 @@ return data['data']
         const item = this.state.data['item']
         const object = this.state.data['object']
         const view_only = this.state.data['view_only'] || false
+        const neglect_certificate_chain = this.state.data['neglect_certificate_chain'] || false
         const depth = item['depth']
         const depth_data = item['depth_data']
         const ipfs = item['ipfs']
@@ -14805,6 +14806,11 @@ return data['data']
         const verification = object['ipfs'].get_new_certificate_verification_tags_object == null ? 1 : this.get_selected_item2(object['ipfs'].get_new_certificate_verification_tags_object, 'e') 
 
         const verification_data = this.get_verification_data(object, depth)
+
+        const certificate_chain_data = this.props.app_state.objects_showcased_certificate_chain[object['e5_id']] || []
+
+        const linked_certificate_objects = this.props.app_state.loaded_nft_certificate_parents[object['e5_id']+item['depth_data']['full']] || []
+
         return(
             <div>
                 {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
@@ -14817,13 +14823,14 @@ return data['data']
                 <div style={{height: 10}}/>
 
                 {this.render_targeted_certificate_object_item(object, 31/* 31(token_exchange) */)}
-                <div style={{height: 10}}/>
+
+                {view_only == false && this.render_linked_certificates(linked_certificate_objects)}
 
                 {this.render_verified_certificate_issuer_if_verified()}
 
                 {(verification_data['verified'] == true || verification == 1) && (
                     <div>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055qn']/* 'The certificate has been verified by the exchange owner.' */, 'title':this.props.app_state.loc['3055qm']/* 'Certificate Verified.' */, 'size':'l'})}
+                        {this.render_detail_item('3', {'details':this.props.app_state.loc['3055qn']/* 'The certificate has been verified by the exchange owner.' */, 'title':this.props.app_state.loc['3055qm']/* 'Certificate Verified.' */, 'size':'l', 'footer': verification == 1 ? null : this.props.app_state.loc['3055sw']/* 'Verified on $' */.replace('$', new Date(verification_data['time']*1000).toLocaleString())})}
                         <div style={{height: 10}}/>
                     </div>
                 )}
@@ -14862,6 +14869,28 @@ return data['data']
                         <div style={{height:10}}/>
                         <div onClick={()=>this.recognise_certificate(data)}>
                             {this.render_detail_item('5', {'text':this.props.app_state.loc['3055sn']/* 'Verify' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+
+                {view_only == false && now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && data['archived'] != true && (verification_data['verified'] == true || verification == 1) && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055so']/* 🔗 Link Certificate.' */, 'details':this.props.app_state.loc['3055sp']/* 'Link your minted token to another certificate and create a chain of ownership delegation.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <div onClick={()=>this.link_certificate(data)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055sq']/* 'Link' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+
+                {view_only == true && neglect_certificate_chain == false && certificate_chain_data.length > 0 && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sr']/* ⛓ View Certificate Chain.' */, 'details':this.props.app_state.loc['3055ss']/* 'View the certificate tokens linked to this certificate in its certificate-chain.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <div onClick={()=>this.view_certificate_chain(data)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055st']/* 'View.' */, 'action':''})}
                         </div>
                     </div>
                 )}
@@ -15210,8 +15239,8 @@ return data['data']
     render_verified_certificate_issuer_if_verified(){
         const object = this.state.data['object']
         const object_obligation_fulfiller = object['id']
-        const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
-        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
+        const address_key = this.props.app_state.author_address_mapping?.[object['e5']]?.[object_obligation_fulfiller] || ''
+        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions?.[address_key] || {}
         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
         if(authors_obligation_contracts.length > 0){
@@ -15223,16 +15252,53 @@ return data['data']
                 return(
                     <div>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sj']/* '✅ Certificate Issuer Verified.' */, 'details':this.props.app_state.loc['3055sk']/* 'The issuer of the certificate is recognised by the moderators of your main public contract subscription.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
                     </div>
                 )
             }else{
                 return(
                     <div>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sl']/* '❌ Certificate Issuer NOT Verified.' */, 'details':this.props.app_state.loc['3055sm']/* 'The issuer of the certificate has not been recognised by the moderators of your main public contract subscription.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
                     </div>
                 )
             }
         }
+    }
+
+    link_certificate(model_data){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const certificate_ui = this.render_targeted_certificate_object_item(object, 31/* token_exchange */)
+        this.props.open_dialog_bottomsheet()
+        this.props.show_select_certificate_bottomsheet(item, object, model_data, certificate_ui)
+    }
+
+    view_certificate_chain(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const certificate_ui = this.render_targeted_certificate_object_item(object, 31/* token_exchange */)
+        this.props.open_dialog_bottomsheet()
+        this.props.show_certificate_chain_bottomsheet(item, object, certificate_ui)
+    }
+
+    render_linked_certificates(items){
+        if(items.length == 0) return;
+        return(
+            <div>
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055sv']/* 'The Certificate Object IDs that contain the tokens you minted that are linked to this object.' */, 'title':this.props.app_state.loc['3055su']/* 'Linked Certificate Objects.' */, 'size':'l'})}
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_detail_item('4', {'text':item, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        );
     }
 
 

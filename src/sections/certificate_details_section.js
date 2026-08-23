@@ -1632,6 +1632,7 @@ class CertificateDetailsSection extends Component {
             this.props.load_objects(certificate_target_type, [parseInt(certificate_target)], object['e5'])
             this.props.load_object_certificate_showcasing_events(parseInt(certificate_target), object['e5'], item['depth_data']['full'])
         }
+        this.props.load_nft_certificate_parent_objects(item, object)
         this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_acquired_certificate_item_details')
     }
 

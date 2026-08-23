@@ -1912,13 +1912,15 @@ class ConfigureObligationsPage extends Component {
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093fy']/* 'Recognised Certificates.' */, 'details': this.props.app_state.loc['3093fz']/* 'You may also specify certificate issuing objects as recognised and verified certificates to issue out certificates that will be regarded as valid.' */, 'size': 'l' })}
                 <div style={{ height:10 }}/>
 
-                <div className="row">
-                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['3093ga']/* 'Certificate Object Id...' */} when_text_input_field_changed={this.when_typed_certificate_account_input_field_changed.bind(this)} text={this.state.typed_certificate_account} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.search_contract_id()}>
-                        <div className="text-end" style={{'padding': '5px 10px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                <div style={{'width':'98%'}}>
+                    <div className="row">
+                        <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                            <TextInput height={30} placeholder={this.props.app_state.loc['3093ga']/* 'Certificate Object Id...' */} when_text_input_field_changed={this.when_typed_certificate_account_input_field_changed.bind(this)} text={this.state.typed_certificate_account} theme={this.props.theme}/>
+                        </div>
+                        <div className="col-1" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.search_certificate_id()}>
+                            <div className="text-end" style={{'padding': '5px 10px 0px 0px'}} >
+                                <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1954,8 +1956,8 @@ class ConfigureObligationsPage extends Component {
                                         content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3093eq']/* Delete */}</p>,
                                         action: () =>this.when_certificate_item_clicked(item, index)
                                         }}>
-                                        <div style={{width:'100%'}}>
-                                            {this.render_contract(this.get_certificate_object(item))}
+                                        <div style={{width:'100%', 'padding': '2px 5px 2px 5px'}}>
+                                            {this.render_certificate(this.get_certificate_object(item))}
                                         </div>
                                     </SwipeableListItem>
                                 </div>
@@ -1974,7 +1976,7 @@ class ConfigureObligationsPage extends Component {
 
     async search_certificate_id(){
         const typed_certificate_account = this.state.typed_certificate_account.trim().replace('e', '')
-        const selected_e5 = this.state.selected_e5
+        const selected_e5 = this.state.e5
         const typed_certificate_e5_id = typed_certificate_account+selected_e5
 
         if(isNaN(typed_certificate_account) || parseInt(typed_certificate_account) < 1001){
@@ -2057,7 +2059,7 @@ class ConfigureObligationsPage extends Component {
     when_searched_certificate_clicked(object){
         const clone = this.state.verified_certificates.slice()
 
-        if(!clone.includes(object['id'])){
+        if(clone.includes(object['id'])){
             this.props.notify(this.props.app_state.loc['3093gb']/* 'Youve already added this certificate.' */, 4400);
         }
         else{

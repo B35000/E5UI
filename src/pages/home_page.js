@@ -5096,11 +5096,12 @@ class home_page extends Component {
         var subtract2 = this.should_show_line() == true ? 10 : 0
         h -= subtract2;
         if(size == 'm') h-= 4;
+
         return(
             <div>
                 {this.render_line_if_enabled()}
                 {this.render_search_tags_views()}
-                <SwipeableViews disabled={!this.is_swiping_enabled()} index={pos} onChangeIndex={this.handleChange}>
+                {/* <SwipeableViews disabled={!this.is_swiping_enabled()} index={pos} onChangeIndex={this.handleChange}>
                     <div key={'?'}>
                         {this.render_post_list_group2(size, '?', this.work_list_section, h)}
                     </div>
@@ -5110,7 +5111,22 @@ class home_page extends Component {
                     <div key={'w'}>
                         {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
                     </div>
-                </SwipeableViews>
+                </SwipeableViews> */}
+                {pos == 0 && (
+                    <div key={'?'}>
+                        {this.render_post_list_group2(size, '?', this.work_list_section, h)}
+                    </div>
+                )}
+                {pos == 1 && (
+                    <div key={'e'}>
+                        {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
+                    </div>
+                )}
+                {pos == 2 && (
+                    <div key={'w'}>
+                        {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
+                    </div>
+                )}
             </div>
         )
         
@@ -6576,6 +6592,8 @@ class home_page extends Component {
 
                 get_channel_creator_payout_stagings={this.props.get_channel_creator_payout_stagings.bind(this)} get_channel_payout_records={this.props.get_channel_payout_records.bind(this)}
                 show_swap_ether_bottomsheet={this.props.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.props.get_token_chart_data.bind(this)} load_objects={this.props.load_objects.bind(this)} get_object_by_id_and_type={this.props.get_object_by_id_and_type.bind(this)} load_object_certificate_showcasing_events={this.props.load_object_certificate_showcasing_events.bind(this)}
+
+                load_token_certificate_chain={this.props.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.props.load_nft_certificate_parent_objects.bind(this)} get_objects_showcased_certificates={this.props.get_objects_showcased_certificates.bind(this)}
 
 
 

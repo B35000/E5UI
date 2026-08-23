@@ -760,6 +760,8 @@ import SendPurchaseRequestPage from './pages/send_purchase_request_page'
 import ViewStorefrontRequestPage from './pages/view_storefront_purchase_request_page'
 import BridgeCoinPage from './pages/bridge_coin_page'
 import SwapEtherPage from './pages/swap_ether_page'
+import SelectCertificatePage from './pages/select_certificate_page'
+import CertificateChainPage from './pages/view_certificate_chain_page'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -1342,7 +1344,7 @@ class App extends Component {
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
     fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
-    quick_send_bottomsheet:false, edit_crossexchange_bottomsheet: false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false,
+    quick_send_bottomsheet:false, edit_crossexchange_bottomsheet: false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -1455,7 +1457,9 @@ class App extends Component {
 
     locked_wallet_hashed_password:'', bag_payment_confirmation_data:{}, my_objects2:[],free_default_storage_consumed_data:{}, created_certificates:{}, non_fungible_token_data:{}, fractionalized_assets:{}, non_fungible_token_balance_distribution:{}, coupon_payout_stagings:{}, verified_certificates:{},
 
-    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}, showcasing_events:{}, decentralization_metrics: this.get_decentralization_data()
+    created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}, showcasing_events:{}, decentralization_metrics: this.get_decentralization_data(),
+
+    objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -1999,13 +2003,13 @@ class App extends Component {
         web3:['https://mainnet.hashio.io/api'],
         token:'HBARE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:hedera_logo, iteration:400_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:hedera_logo, iteration:400_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object(), parent_coin:'HBAR'
       },
       'E785':{
         web3:['https://json-rpc.evm.iotaledger.net'],
         token:'IOTAE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:iotaevm_logo, iteration:400_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:iotaevm_logo, iteration:400_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object(), parent_coin:'IOTA'
       },
       'E795':{
         web3:['https://public-en.node.kaia.io'],
@@ -2042,7 +2046,7 @@ class App extends Component {
         web3:['https://rpc.xrplevm.org'],
         token:'XRPE',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:xrpl_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image: null, spend_image: null, ether_image:xrpl_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: null, external_swappers:[],changenow_object: get_changenow_object(), parent_coin:'XRP'
       },
       'E855':{
         web3:['https://api.mainnet.abs.xyz'],
@@ -2102,7 +2106,7 @@ class App extends Component {
         web3:['https://node.mainnet.etherlink.com'],
         token:'XTZE',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:etherlink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.ETL, external_swappers:['lifi'],changenow_object: get_changenow_object()
+        first_block:0, end_image: null, spend_image: null, ether_image:etherlink_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: ChainId.ETL, external_swappers:['lifi'],changenow_object: get_changenow_object(), parent_coin: 'XTZ'
       },
       'E955':{
         web3:['https://rpc.frax.com'],
@@ -2323,7 +2327,7 @@ class App extends Component {
         web3:['https://api.node.glif.io'],
         token:'FILE',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:filecoin_evm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image: null, spend_image: null, ether_image:filecoin_evm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object(), parent_coin:'FIL'
       },
       'E1315':{
         web3:['https://rpc3.monad.xyz', 'https://rpc1.monad.xyz', 'https://monad-mainnet.drpc.org'],
@@ -2373,7 +2377,7 @@ class App extends Component {
         web3:['https://sentry.evm-rpc.injective.network', 'https://injectiveevm-rpc.polkachu.com'],
         token:'INJE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: injective_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.INJ, external_swappers:['lifi'],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image: injective_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.INJ, external_swappers:['lifi'],changenow_object: get_changenow_object(), parent_coin:'INJ'
       },
       'E1395':{
         web3:['https://evmos-evm-rpc.publicnode.com'],
@@ -4035,7 +4039,9 @@ class App extends Component {
     this.quick_send_page = React.createRef();
     this.crossexchange_swap_page = React.createRef();
     this.bridge_coin_page = React.createRef();
-    this.swap_ether_page = React.createRef()
+    this.swap_ether_page = React.createRef();
+    this.select_certificate_page = React.createRef();
+    this.certificate_chain_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -5276,7 +5282,7 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false,
       })
 
       return cached_state_obj
@@ -7272,7 +7278,8 @@ class App extends Component {
           {this.render_crossexchange_swap_bottomsheet()}
           {this.render_bridge_coin_bottomsheet()}
           {this.render_swap_ether_bottomsheet()}
-
+          {this.render_select_certificate_bottomsheet()}
+          {this.render_certificate_chain_bottomsheet()}
 
           {this.render_set_map_location_bottomsheet()}
           {this.render_dialog_bottomsheet()}
@@ -7421,7 +7428,7 @@ class App extends Component {
 
           get_room_participant_count={this.get_room_participant_count.bind(this)} show_swap_ether_bottomsheet={this.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.get_token_chart_data.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} get_objects_showcased_certificates={this.get_objects_showcased_certificates.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)}
 
-          get_ether_gas_usage_chart_data={this.get_ether_gas_usage_chart_data.bind(this)} load_object_certificate_showcasing_events={this.load_object_certificate_showcasing_events.bind(this)}
+          get_ether_gas_usage_chart_data={this.get_ether_gas_usage_chart_data.bind(this)} load_object_certificate_showcasing_events={this.load_object_certificate_showcasing_events.bind(this)} load_token_certificate_chain={this.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.load_nft_certificate_parent_objects.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -12786,7 +12793,7 @@ class App extends Component {
         <NewCertificatePage
           ref={this.new_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
           set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_images={this.show_images.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_images={this.show_images.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)}
         />
       )
     }
@@ -17389,6 +17396,15 @@ class App extends Component {
         }
       }, (1 * 1100));
     }
+    else if(tx.type == this.getLocale()['3111']/* 'link-certificate' */){
+      this.open_select_certificate_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.select_certificate_page.current){
+          me.select_certificate_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
     
   }
 
@@ -20074,7 +20090,7 @@ class App extends Component {
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
 
-        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)}
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} show_select_certificate_bottomsheet={this.show_select_certificate_bottomsheet.bind(this)} show_certificate_chain_bottomsheet={this.show_certificate_chain_bottomsheet.bind(this)}
         />
       </div>
     )
@@ -30630,6 +30646,155 @@ class App extends Component {
 
 
 
+  render_select_certificate_bottomsheet(){
+    if(this.state.select_certificate_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <SelectCertificatePage ref={this.select_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} load_obligation_contract={this.load_obligation_contract.bind(this)} add_selected_certificate_to_stack={this.add_selected_certificate_to_stack.bind(this)}
+      />,
+      this.state.select_certificate_bottomsheet,
+      this.open_select_certificate_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_select_certificate_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_select_certificate_bottomsheet')
+    if(this.state.select_certificate_bottomsheet == true){
+      //closing
+      this.select_certificate_bottomsheet = this.select_certificate_page.current?.state;
+
+      this.setState({select_certificate_bottomsheet: !this.state.select_certificate_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({select_certificate_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({select_certificate_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({select_certificate_bottomsheet: !me.state.select_certificate_bottomsheet});
+
+          if(me.select_certificate_bottomsheet != null){
+            me.select_certificate_page.current?.setState(me.select_certificate_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_select_certificate_bottomsheet(item, object, model_data, certificate_ui){
+    this.open_select_certificate_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.select_certificate_page.current != null){
+        me.select_certificate_page.current.set_data(item, object, model_data, certificate_ui)
+      }
+    }, (1 * 1100));
+  }
+
+  add_selected_certificate_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_certificate_chain_bottomsheet(){
+    if(this.state.certificate_chain_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <CertificateChainPage ref={this.certificate_chain_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)}
+      />,
+      this.state.certificate_chain_bottomsheet,
+      this.open_certificate_chain_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_certificate_chain_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_certificate_chain_bottomsheet')
+    if(this.state.certificate_chain_bottomsheet == true){
+      //closing
+      this.certificate_chain_bottomsheet = this.certificate_chain_page.current?.state;
+
+      this.setState({certificate_chain_bottomsheet: !this.state.certificate_chain_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({certificate_chain_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({certificate_chain_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({certificate_chain_bottomsheet: !me.state.certificate_chain_bottomsheet});
+
+          if(me.certificate_chain_bottomsheet != null){
+            me.certificate_chain_page.current?.setState(me.certificate_chain_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_certificate_chain_bottomsheet(item, object, certificate_ui){
+    this.open_certificate_chain_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.certificate_chain_page.current != null){
+        me.certificate_chain_page.current.set_data(item, object, certificate_ui)
+      }
+    }, (1 * 1100));
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -35412,7 +35577,7 @@ class App extends Component {
 
     // this.load_e5_wallet_icons(e5)
 
-  } 
+  }
 
   get_wallet_data2 = async (_account, is_syncing, web3_url, e5_address, e5) => {
     const web3 = new Web3(web3_url);
@@ -56156,7 +56321,6 @@ class App extends Component {
 
     const result_objects = []
     const tokens_to_load = []
-    var is_first_time = this.state.coupon_payout_stagings[e5_id] == null ? true : false
     for(var i=0; i<showcased_certificates_event_data.length; i++){
       const event = showcased_certificates_event_data[i]
       const cid = event.returnValues.p4
@@ -56189,9 +56353,9 @@ class App extends Component {
       const token_id = ipfs['token_id']
       const depths_used = [ipfs['depth']]
       const depth_use_times = [ipfs['time']]
-      const object = this.get_object_by_id_and_type(31/* 31(token_exchange) */, token_id, e5);
-      if(object!= null){
-        await this.load_my_non_fungible_token_data(object, depths_used, id, depth_use_times)
+      const token_object = this.get_object_by_id_and_type(31/* 31(token_exchange) */, token_id, e5);
+      if(token_object!= null){
+        await this.load_my_non_fungible_token_data(token_object, depths_used, id, depth_use_times)
         await this.wait(400)
       }
     }
@@ -56262,6 +56426,148 @@ class App extends Component {
     const clone = structuredClone(this.state.showcasing_events)
     clone[e5_id+depth] = showcased_certificates_event_data
     this.setState({showcasing_events: clone})
+  }
+
+  async load_token_certificate_chain(item, object){
+    /* 
+      item: the nft certificate at the top of the certificate chain.
+      object: the certificate entity that minted the item.
+    */
+
+    const author = object['author']
+    const e5_id = object['e5_id']
+    const e5 = object['e5']
+    const id = object['id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const data = await this.load_branch_in_tree(web3, E52contractInstance, e5, id, []);
+
+    // console.log('load_token_certificate_chain', 'data', data)
+
+    const event_data = []
+    data.return_branch.forEach(branch_data => {
+      event_data.push(branch_data['event'])
+    });
+
+    var loaded_target = 0
+    if(this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(event_data.slice(0, this.state.max_post_bulk_load_count), 0, 'p4')
+      loaded_target = event_data.slice(0, this.state.max_post_bulk_load_count).length - 1;
+    }
+
+    const result_objects = []
+    const tokens_to_load = []
+    for(var i=0; i<data.return_branch.length; i++){
+      const event = data.return_branch[i]['event']
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      if(ipfs != null){
+        const obj = {
+          'ipfs':ipfs, 
+          'event':event, 
+          'time':parseInt(event.returnValues.p6/* timestamp */), 
+          'certificate_id': data.return_branch[i]['certificate_id'],
+          'child':data.return_branch[i]['child']
+        }
+        result_objects.push(obj)
+
+        const token_id = ipfs['token_id']// this is equivalent to the certificate_id
+        tokens_to_load.push(parseInt(token_id))
+      }
+
+      if(i == loaded_target && i+1 >= event_data.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(event_data.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
+      }
+    }
+
+    // console.log('load_token_certificate_chain', 'result_objects', result_objects)
+
+    const objects_showcased_certificates_clone = structuredClone(this.state.objects_showcased_certificate_chain)
+    objects_showcased_certificates_clone[e5_id] = result_objects
+    this.setState({objects_showcased_certificate_chain: objects_showcased_certificates_clone})
+
+    await this.load_objects(31/* 31(token_exchange) */, tokens_to_load, e5)
+    await this.wait_for_all_ids_to_finish_loading(31/* 31(token_exchange) */, tokens_to_load, e5)
+    await this.load_target_or_object_accounts_obligation_data([id], e5)
+
+
+    for(var e=0; e<result_objects.length; e++){
+      const ipfs = result_objects[e]['ipfs']
+      const token_id = ipfs['token_id']
+      const depths_used = [ipfs['depth']]
+      const depth_use_times = [ipfs['time']]
+      const token_object = this.get_object_by_id_and_type(31/* 31(token_exchange) */, token_id, e5);
+      if(token_object!= null){
+        await this.load_my_non_fungible_token_data(token_object, depths_used, id, depth_use_times)
+        await this.wait(400)
+      }
+    }
+  }
+
+  async load_branch_in_tree(web3, E52contractInstance, e5, id, added_ids){
+    const linked_certificates_event_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37/* 37(linked_object_certificate) */})).reverse()
+
+    const new_all_added_ids = added_ids.slice()
+    const certificates_in_branch = []
+    linked_certificates_event_data.forEach(event_item => {
+      const parentt = event_item.returnValues.p5/* int_data */
+      const hash = event_item.returnValues.p4/* string_data */
+      
+      if(!new_all_added_ids.includes(parseInt(parentt))){
+        certificates_in_branch.push({
+          'certificate_id':parentt,
+          'hash': hash,
+          'child': id,
+          'event':event_item
+        })
+        new_all_added_ids.push(parseInt(parentt))
+      }
+    });
+
+    const return_branch = [].concat(certificates_in_branch)
+    for(var e=0; e<certificates_in_branch.length; e++){
+      const data = await this.load_branch_in_tree(web3, E52contractInstance, e5, certificates_in_branch[e]['certificate_id'], new_all_added_ids)
+
+      data.new_all_added_ids.forEach(added_id => {
+        if(!new_all_added_ids.includes(added_id)){
+          new_all_added_ids.push(added_id)
+        }
+      });
+      data.return_branch.forEach(batch => {
+        const existing = return_branch.find(existing => existing['certificate_id'] == batch['certificate_id'] && existing['child'] == batch['child'] && existing['hash'] == batch['hash'])
+        if(existing == undefined) return_branch.push(batch)
+      });
+    }
+
+    return { new_all_added_ids, return_branch }
+  }
+
+  async load_nft_certificate_parent_objects(item, object){
+    const author = object['author']
+    const e5_id = object['e5_id']
+    const e5 = object['e5']
+    const id = object['id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const linked_certificates_event_data = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: id, p3/* context */:37/* 37(linked_object_certificate) */})).reverse()
+
+    const results_objects = []
+    linked_certificates_event_data.forEach(event_item => {
+      const parentt = event_item.returnValues.p5/* int_data */
+      results_objects.push(parentt)
+    });
+
+    const clone = structuredClone(this.state.loaded_nft_certificate_parents)
+    clone[e5_id+item['depth_data']['full']] = results_objects
+    this.setState({loaded_nft_certificate_parents: clone})
   }
 
 

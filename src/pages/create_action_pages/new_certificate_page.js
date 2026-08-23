@@ -107,7 +107,8 @@ class NewCertificatePage extends Component {
         get_new_active_archived_model_settings_tags_object: this.get_new_active_archived_model_settings_tags_object(), 
         get_new_certificate_bond_enabled_tags_object: this.get_new_certificate_bond_enabled_tags_object(), bond_interest_rate:0, coupon_frequency:0, bond_maturity: (Date.now()+(1000*60*60*24*365))/1000,
 
-        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
+        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option(),
+        typed_search_acquired_tokens:''
     };
 
 
@@ -266,7 +267,7 @@ class NewCertificatePage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-(25 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
-                    <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-(50+ (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
+                    <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-(60+ (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
                         <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div style={{'padding': '0px 10px 0px 0px', width:40}}>
@@ -349,6 +350,9 @@ class NewCertificatePage extends Component {
         }
         else if(selected_item == this.props.app_state.loc['d311j']/* 'certificate-model 🏗️' */){
             return this.render_set_certificate_model_data()
+        }
+        else if(selected_item == this.props.app_state.loc['d311cy']/* 'certificate-link 🔗' */){
+            return this.render_certificate_link_data()
         }
     }
 

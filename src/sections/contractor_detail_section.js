@@ -80,6 +80,9 @@ class ContractorDetailsSection extends Component {
         if(selected_item == this.props.app_state.loc['2216']/* 'job-requests' */){
             this.props.get_contractor_applications(object['id'], object['e5'])
         }
+        else if(selected_item == this.props.app_state.loc['2642dc']/* 'operation-certificates 📜' */){
+            this.props.get_objects_showcased_certificates(object)
+        }
     }
 
     get_navigate_view_contracts_list_detail_tags(){
@@ -1918,7 +1921,7 @@ class ContractorDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 5px 0px 5px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    {this.render_small_empty_object()}
+                                    {this.props.app_state.objects_showcased_certificates[object['e5_id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
                                 </li>
                             ))}
                         </ul>
@@ -1970,7 +1973,7 @@ class ContractorDetailsSection extends Component {
         const details = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
         const op = model_config['archived'] == true ? 0.6 : 1.0
         return(
-            <div style={{opacity: op}} onClick={() => this.view_acquired_class_item_details(item, token_object)}>
+            <div style={{opacity: op}} onClick={() => this.view_acquired_class_item_details(item, token_object, listing)}>
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
@@ -2021,7 +2024,9 @@ class ContractorDetailsSection extends Component {
         return filtered_models[0]
     }
 
-    view_acquired_class_item_details(item, object){
+    view_acquired_class_item_details(item, object, listing){
+        this.props.load_token_certificate_chain(item, object)
+        this.props.get_verified_certificate_data(object)
         this.props.show_dialog_bottomsheet({'item':item, 'object':object, 'view_only': true}, 'view_acquired_certificate_item_details')
     }
 
