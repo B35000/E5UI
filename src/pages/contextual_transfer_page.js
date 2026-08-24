@@ -758,7 +758,11 @@ class ContextualTransferPage extends Component {
                 entered_indexing_tags:[this.props.app_state.loc['3068ae']/* 'transfer' */, this.props.app_state.loc['3068ac']/* 'iTransfer' */, this.props.app_state.loc['3068ad']/* 'send' */],
                 e5:this.state.e5, recipient: recipient, price_data: price_data, identifier:identifier
             }
-            this.add_itransfer_in_local_storage({recipient, price_data, identifier})
+            try{
+                this.add_itransfer_in_local_storage({recipient, price_data, identifier})
+            }catch(e){
+                console.log(e)
+            }
             this.props.add_itransfer_transaction_to_stack(obj)
             this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
             this.setState({identifier:'', price_data:[], recipient_id:''})

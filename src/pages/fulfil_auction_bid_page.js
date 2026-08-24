@@ -390,7 +390,11 @@ class FulfilAuctionBidPage extends Component {
         }
         else{
             this.props.add_fulfil_bids_in_auction_to_stack(this.state)
-            this.add_fulfilment_location_to_local_storage()
+            try{
+                this.add_fulfilment_location_to_local_storage()
+            }catch(e){
+                console.log(e)
+            }
             this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1700)
         }
     }

@@ -85,7 +85,7 @@ function toTree(data) {
     node.parent = nodeById[node.data.parent];
     console.log('toTree', 'node.data.parent', node.data.parent, 'node.parent', node.parent);
     
-    node.parent.children.push(node);
+    node.parent?.children.push(node);
   }
   return nodeById[0].sortRecursive();
 }
@@ -425,6 +425,7 @@ class CertificateChainPage extends Component {
         const item = this.props.app_state.non_fungible_token_data[listing_token_e5_id]?.[this.state.token_item['e5']+':'+this.state.token_item['id']]?.[listing_depth]
         
         this.props.get_verified_certificate_data(object)
+        this.props.fetch_uploaded_files_for_object(item, true)
         this.props.show_dialog_bottomsheet({'item':item, 'object':object, 'view_only': true, 'neglect_certificate_chain': true }, 'view_acquired_certificate_item_details')
     }
 

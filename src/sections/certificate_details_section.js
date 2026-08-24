@@ -1530,6 +1530,23 @@ class CertificateDetailsSection extends Component {
         })
 
         if(items.length == 0){
+            const account = this.props.app_state.user_account_id[object['e5']]
+            const nft_loading_data = this.props.app_state.nft_loading_data[object['e5_id']+account] || []
+            if(nft_loading_data.length > 0){
+                return(
+                    <div>
+                        <div style={{ 'padding': '0px 5px 0px 5px'}}>
+                            {nft_loading_data.map((item, index) => (
+                                <div style={{'padding': '2px 5px 2px 5px'}}>
+                                    <div key={index}>
+                                        {this.render_small_skeleton_object()}
+                                    </div>
+                                </div> 
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
             return this.render_empty_views(3)
         }
         else{
@@ -1624,7 +1641,7 @@ class CertificateDetailsSection extends Component {
         return filtered_models[0]
     }
 
-    view_acquired_class_item_details(item, object){
+    async view_acquired_class_item_details(item, object){
         if(item['ipfs']['certificate_target'] != null && item['ipfs']['certificate_target'] != ''){
             const certificate_target = item['ipfs']['certificate_target']
             const certificate_target_type = item['ipfs']['certificate_target_type']
@@ -1633,7 +1650,41 @@ class CertificateDetailsSection extends Component {
             this.props.load_object_certificate_showcasing_events(parseInt(certificate_target), object['e5'], item['depth_data']['full'])
         }
         this.props.load_nft_certificate_parent_objects(item, object)
+        this.props.fetch_uploaded_files_for_object(item, true)
         this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_acquired_certificate_item_details')
+
+        if(item['ipfs']['storefront_object_id'] != null && item['ipfs']['variant_id'] != null){
+            await this.props.load_objects(27/* 27(storefront-item) */, [parseInt(item['ipfs']['storefront_object_id'])], object['e5'])
+            await this.wait_for_storefront_to_finish_loading(item['ipfs']['storefront_object_id'], object['e5'])
+            await this.props.fetch_uploaded_files_for_object(this.get_storefront_object(item['ipfs']['storefront_object_id'], object['e5']), true)
+        }
+    }
+
+    wait_for_storefront_to_finish_loading = (id, e5) => {
+        return new Promise((resolve, reject) => {
+        const checkReady = (n) => {
+            try {
+                const object = this.get_storefront_object(id, e5);
+                if (object != null) {
+                    resolve();
+                    return;
+                }
+                setTimeout(() => checkReady(n+1), 1000);
+            }
+            catch (error) {
+                reject(error);
+            }
+        };
+        checkReady(0);
+        });
+    }
+
+    get_storefront_object(id, e5){
+        const all_storefronts = this.props.app_state.created_stores[e5]
+        const matching_storefronts = all_storefronts.filter((object) => {
+            return (object['id'] == id)
+        })
+        return matching_storefronts[0]
     }
 
 

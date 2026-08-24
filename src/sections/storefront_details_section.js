@@ -1653,7 +1653,7 @@ class StorefrontDetailsSection extends Component {
             return;
         }
 
-        if(direct_purchase_option == 1/* 'enabled' */ && item_in_stock == 1/* 'in-stock' */ && object['event'].returnValues.p5 != my_account.toString() && this.is_object_still_keyword_valid(object)){
+        if(direct_purchase_option == 1/* 'enabled' */ && item_in_stock == 1/* 'in-stock' */ /* && object['event'].returnValues.p5 != my_account.toString() */ && this.is_object_still_keyword_valid(object)){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -2483,6 +2483,7 @@ class StorefrontDetailsSection extends Component {
     view_acquired_class_item_details(item, object, listing){
         this.props.load_token_certificate_chain(item, object)
         this.props.get_verified_certificate_data(object)
+        this.props.fetch_uploaded_files_for_object(item, true)
         this.props.show_dialog_bottomsheet({'item':item, 'object':object, 'view_only': true}, 'view_acquired_certificate_item_details')
     }
 

@@ -1459,7 +1459,7 @@ class App extends Component {
 
     created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}, showcasing_events:{}, decentralization_metrics: this.get_decentralization_data(),
 
-    objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}
+    objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -8037,9 +8037,9 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  renderBottomSheet(view, open, onOpenChange, height, disable_background_interaction=true, snap_points=[], active_snap_point=0, set_active_snap_point={}, background_size='cover', background_color=this.state.theme['send_receive_ether_background_color']) {
-    const padding = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? 0 : 10;
-    const radius = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ ? '0px' : '25px';
+  renderBottomSheet(view, open, onOpenChange, height, disable_background_interaction=true, snap_points=[], active_snap_point=0, set_active_snap_point={}, background_size='cover', background_color=this.state.theme['send_receive_ether_background_color'], ignore_radius=false) {
+    const padding = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ || ignore_radius == true ? 0 : 10;
+    const radius = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ || ignore_radius == true ? '0px' : '25px';
 
     const is_bottomsheet_at_top = this.is_function_at_complete_top_of_stack(onOpenChange.name)
     const filter = is_bottomsheet_at_top == false ? "blur(1px)" : "none";
@@ -11906,6 +11906,14 @@ class App extends Component {
           const t = stack[i];
           mint_certificate_transactions.push(t.token_item['e5_id'])
         }
+        else if(stack[i].type == this.getLocale()['1499']/* 'direct-purchase' */){
+          const t = stack[i];
+          const include_mint_certificate = this.get_selected_item(t.get_mint_certificate_tags_object, 'e')
+          if(include_mint_certificate == this.getLocale()['1114i']/* 'mint-certificate' */){
+            const e5_id = t.selected_variant['certificate_class']['object_id'] + t.storefront_item['e5']
+            mint_certificate_transactions.push(e5_id)
+          }
+        }
       }
     }
 
@@ -12743,7 +12751,7 @@ class App extends Component {
     else if(target == '4'/* storefront */){
       return(
         <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)} show_images={this.show_images.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)} show_images={this.show_images.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} load_obligation_contract={this.load_obligation_contract.bind(this)}
         />
       )
     }
@@ -13583,7 +13591,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-      get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)} show_images={this.show_images.bind(this)}
+      get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)} show_images={this.show_images.bind(this)} load_obligation_contract={this.load_obligation_contract.bind(this)}
       />,
       this.state.edit_storefront_bottomsheet,
       this.open_edit_storefront_bottomsheet,
@@ -21750,7 +21758,11 @@ class App extends Component {
   }
 
   async start_quick_transfer_action(price_data, selected_gas_prices, selected_item, identifier){
-    this.quick_send_page.current?.add_recipients_to_memory(price_data)
+    try{
+      this.quick_send_page.current?.add_recipients_to_memory(price_data)
+    }catch(e){
+      console.log(e)
+    }
     await this.start_quick_transfers(price_data, selected_gas_prices, selected_item, identifier, false)
   }
 
@@ -24212,7 +24224,8 @@ class App extends Component {
       this.open_view_image_bottomsheet,
       this.state.height,
       false, [], 0, {}, 'cover',
-      background_color
+      background_color,
+      true
     )
 
     // var os = getOS()
@@ -30737,7 +30750,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <CertificateChainPage ref={this.certificate_chain_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
-      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} get_verified_certificate_data={this.get_verified_certificate_data.bind(this)} fetch_uploaded_files_for_object={this.fetch_uploaded_files_for_object.bind(this)}
       />,
       this.state.certificate_chain_bottomsheet,
       this.open_certificate_chain_bottomsheet,
@@ -41859,6 +41872,10 @@ class App extends Component {
   }
 
   async load_my_non_fungible_token_data(object, depths_used, account, depth_use_times){
+    const nft_loading_data_clone = this.structuredClone(this.state.nft_loading_data)
+    nft_loading_data_clone[object['e5_id']+account] = depths_used
+    this.setState({nft_loading_data: nft_loading_data_clone})
+
     const e5 = object['e5']
     const id = object['id']
     const e5_id = object['e5_id']
@@ -41877,7 +41894,7 @@ class App extends Component {
     const valid_depths = []
     console.log('load_my_non_fungible_token_data', 'depths_used', depths_used)
     if(depths_used.length > 0){
-      for(var i=0; i<depths_used.length; depths_used++){
+      for(var i=0; i<depths_used.length; i++){
         const depth = depths_used[i]
         const time = depth_use_times[i]
         const depth_data = this.deconstruct_depth_data(depth)
@@ -56255,7 +56272,7 @@ class App extends Component {
       const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
       result_objects.push({'depth':ipfs['depth'], 'event':event, 'time':parseInt(event.returnValues.p6/* timestamp */)})
 
-      if(is_first_time == true){
+      if(is_first_time == true || true){
         const verified_certificates_clone = structuredClone(this.state.verified_certificates)
         verified_certificates_clone[e5_id] = result_objects
         this.setState({verified_certificates: verified_certificates_clone})

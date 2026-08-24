@@ -1002,7 +1002,11 @@ class TransferTokenPage extends Component {
             this.props.notify(this.props.app_state.loc['2810']/* 'add a transaction first' */, 3700)
             return;
         }
-        this.add_recipients_to_memory(this.state.stack_items)
+        try{
+            this.add_recipients_to_memory(this.state.stack_items)
+        }catch(e){
+            console.log(e)
+        }
         this.props.add_transfer_transactions_to_stack(this.state)
         this.props.notify(this.props.app_state.loc['18']/* 'transactions added to stack!' */, 1600)
         this.setState({recipient_id:'', stack_items:[]})

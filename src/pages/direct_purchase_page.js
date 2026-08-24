@@ -22,6 +22,9 @@ import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
 
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 // import Letter from './../assets/letter.png';
 
 var bigInt = require("big-integer");
@@ -57,7 +60,7 @@ function start_and_end(str) {
 class DirectPurchasePage extends Component {
     
     state = {
-        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1093']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5, custom_specifications:'', purchase_option_tags_array:[], pins:[], get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
+        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1093']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5, custom_specifications:'', purchase_option_tags_array:[], pins:[], get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(), get_mint_certificate_tags_object:this.get_mint_certificate_tags_object()
     };
 
     get_direct_purchase_tags_object(){
@@ -90,6 +93,17 @@ class DirectPurchasePage extends Component {
             },
             'e':[
                 ['xor','',0], ['e', this.props.app_state.loc['284v']/* 'blockchain' */], [1]
+            ],
+        };
+    }
+
+    get_mint_certificate_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1114i']/* 'mint-certificate' */], [0]
             ],
         };
     }
@@ -267,13 +281,147 @@ class DirectPurchasePage extends Component {
     render_content2(){
         return(
             <div>
+                {this.render_selected_variant_certificate_if_any()}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1114f']/* 'Order Indexing.' */, 'details':this.props.app_state.loc['1114g']/* 'If set to blockchain, the reference to your new order will be recorded on a blockchain and indexer while if left to indexer, your new order will be referenced in an indexer only.' */, 'size':'l'})}
                 <div style={{height:10}}/>
+
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_job_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_job_object_updated.bind(this)} theme={this.props.theme}/>
                 {this.render_detail_item('0')}
             </div>
         )
     }
+
+    render_selected_variant_certificate_if_any(){
+        if(this.state.selected_variant != null){
+            const item = this.state.selected_variant
+            const certificate_class = item['certificate_class']
+            if(certificate_class != null){
+                const certificate_object_id = certificate_class['object_id']
+                const certificate_object = this.get_certificate_object(certificate_object_id)
+
+                if(certificate_object == null){
+                    return(
+                        <div>
+                            {this.render_skeleton_object()}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )
+                }else{
+                    const data = certificate_class['item']
+                    const name = data['class_name']
+                    const maximum_supply = data['maximum_supply']
+                    const purchase_start_time = data['purchase_start_time']
+                    const purchase_end_time = data['purchase_end_time']
+                    const price_data = certificate_object['ipfs'].price_data
+                    const base_fee_price_multiplier = data['base_fee_price_multiplier']
+                    const e5 = certificate_object['e5']
+
+                    return(
+                        <div>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['1114j']/* 'Mint Certificate' */, 'details':this.props.app_state.loc['1114k']/* 'You may optionally mint a certificate for the item you are directly purchasing.' */, 'size':'l'})}
+                            <div style={{height:10}}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.get_mint_certificate_tags_object} tag_size={'l'} when_tags_updated={this.when_get_mint_certificate_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                            <div style={{height:10}}/>
+
+                            {this.render_certificate(certificate_object)}
+                            <div style={{height:10}}/>
+
+                            {this.render_certificate_class_item(certificate_class)}
+                            <div style={{height:10}}/>
+
+                            {this.render_multiplied_prices(price_data, base_fee_price_multiplier, e5)}
+                            {this.render_detail_item('0')}
+                        </div>
+                    )
+                }
+            }
+        }
+    }
+
+    render_multiplied_prices(price_data, base_fee_price_multiplier, e5){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_data.map((item, index) => (
+                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']).multiply(base_fee_price_multiplier), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'barwidth':this.calculate_bar_width(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'number':this.format_account_balance_figure(bigInt(item['amount']).multiply(base_fee_price_multiplier)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    when_get_mint_certificate_tags_object_updated(tag_obj){
+        this.setState({get_mint_certificate_tags_object: tag_obj})
+    }
+
+    get_certificate_object(id){
+        const all_certificates = this.props.app_state.created_certificates[this.state.e5]
+        const matching_certificate = all_certificates.filter((object) => {
+            return (object['id'] == id)
+        })
+        return matching_certificate[0]
+    }
+
+    render_certificate(object){
+        const item = this.format_certificate_item(object)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>         
+                </div>
+            )
+    }
+
+    format_certificate_item(object){
+        var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
+        var age = object['event'].returnValues.p5
+        var time = object['event'].returnValues.p4
+        var sender = this.get_senders_name_or_you(object['author'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+' • '+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
+        }
+    }
+
+    get_senders_name_or_you(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }
+        var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[sender] == null ? sender : bucket[sender])
+        return alias
+    }
+
+    render_certificate_class_item(item){
+        const data = item['item']
+        const title = data['class_name']
+        const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']*1000).toLocaleString()))
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l',})}
+            </div>
+        )
+    }
+
+
+
 
     when_get_chain_or_indexer_job_object_updated(tag_obj){
         this.setState({get_chain_or_indexer_job_object: tag_obj})
@@ -626,10 +774,10 @@ class DirectPurchasePage extends Component {
     render_variant_price_data(variant){
         var items = [].concat(variant['price_data'])
         return(
-            <div>
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                 {items.map((item, index) => (
                     <div style={{'padding': '0px 0px 0px 0px'}}>
-                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                        <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
                             {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
                         </div>
                     </div>
@@ -1067,6 +1215,13 @@ class DirectPurchasePage extends Component {
     finish_creating_direct_purchase_item(){
         const post_indexing = this.get_selected_item(this.state.get_chain_or_indexer_job_object, 'e')
         const can_make_indexer_order = this.state.storefront_item['ipfs'].get_direct_order_via_indexer_tags_object != null ? this.get_selected_item2(this.state.storefront_item['ipfs'].get_direct_order_via_indexer_tags_object, 'e') == 1 : false;
+
+        const selected_get_mint_certificate_tags_object = this.get_selected_item(this.state.get_mint_certificate_tags_object, 'e')
+
+        const purchase_end_time = this.state.selected_variant['certificate_class']['item']['purchase_end_time']
+        const purchase_start_time = this.state.selected_variant['certificate_class']['item']['purchase_start_time']
+        const now = Date.now() / 1000
+
         if(this.state.selected_variant == null){
             this.props.notify(this.props.app_state.loc['1109']/* 'Pick one variant first.' */, 3500)
         }
@@ -1091,13 +1246,23 @@ class DirectPurchasePage extends Component {
         else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !can_make_indexer_order){
             this.props.notify(this.props.app_state.loc['1114h']/* 'The storefront owner disabled indexer orders.' */, 5000)
         }
+        else if(selected_get_mint_certificate_tags_object == this.props.app_state.loc['1114i']/* 'mint-certificate' */ && this.state.purchase_unit_count > 1){
+            this.props.notify(this.props.app_state.loc['1114l']/* 'You cant mint a certificate while purchasing more than one item.' */, 9000)
+        }
+        else if(selected_get_mint_certificate_tags_object == this.props.app_state.loc['1114i']/* 'mint-certificate' */ && (now < parseInt(purchase_start_time) || now > parseInt(purchase_end_time))){
+            this.props.notify(this.props.app_state.loc['1114m']/* 'You cant mint a certificate, the class has already expired.' */, 9000)
+        }
         else{
 
             if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */){
                 this.props.emit_new_object_in_socket(this.state)
             }else{
                 this.props.add_direct_purchase_to_stack(this.state)
-                this.add_fulfilment_location_to_local_storage()
+                try{
+                    this.add_fulfilment_location_to_local_storage()
+                }catch(e){
+                    console.log(e)
+                }
                 // this.setState({purchase_unit_count:1, selected_variant:null, fulfilment_location:'', custom_specifications:''})
                 this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1700)
             }
@@ -1343,6 +1508,46 @@ class DirectPurchasePage extends Component {
 
 
 
+
+
+
+
+    render_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 160,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 60,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){

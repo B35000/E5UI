@@ -62,6 +62,8 @@ class ViewTransactionLogPage extends Component {
                 <div>
                     {this.render_log_item_data()}
                     {this.render_log_item_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -70,6 +72,8 @@ class ViewTransactionLogPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_log_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_log_item_data2()}
@@ -85,6 +89,8 @@ class ViewTransactionLogPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_log_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_log_item_data2()}
@@ -133,11 +139,11 @@ class ViewTransactionLogPage extends Component {
                 {this.render_detail_item('3',{'title':''+this.get_time_difference(item.returnValues.p8), 'details':this.props.app_state.loc['1772']/* 'Transaction Age ' */,'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3',{'title':''+item.returnValues.p9, 'details':this.props.app_state.loc['1773']/* 'Transaction Block' */,'size':'l'})}
+                {this.render_detail_item('3',{'title':number_with_commas(item.returnValues.p9), 'details':this.props.app_state.loc['1773']/* 'Transaction Block' */,'size':'l'})}
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3',{'title':item.returnValues.p4, 'details':this.props.app_state.loc['1774']/* 'Transaction Stack Size' */,'size':'l'})}
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1775']/* 'Gas Consumed' */, 'number':item.returnValues.p5, 'relativepower':'gas'})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1775']/* 'Gas Consumed' */, 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
@@ -149,7 +155,7 @@ class ViewTransactionLogPage extends Component {
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1088']/* 'Gas Price in wei' */, 'subtitle':this.format_power_figure(item.returnValues.p7), 'barwidth':this.calculate_bar_width(item.returnValues.p7), 'number':this.format_account_balance_figure(item.returnValues.p7), 'barcolor':'', 'relativepower':'wei', })}
                 </div>
-                <div style={{height: 10}}/>
+                {this.render_detail_item('0')}
 
             </div>
             )

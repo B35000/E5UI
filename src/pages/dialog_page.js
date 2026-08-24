@@ -14830,15 +14830,15 @@ return data['data']
 
                 {(verification_data['verified'] == true || verification == 1) && (
                     <div>
-                        {this.render_detail_item('3', {'details':this.props.app_state.loc['3055qn']/* 'The certificate has been verified by the exchange owner.' */, 'title':this.props.app_state.loc['3055qm']/* 'Certificate Verified.' */, 'size':'l', 'footer': verification == 1 ? null : this.props.app_state.loc['3055sw']/* 'Verified on $' */.replace('$', new Date(verification_data['time']*1000).toLocaleString())})}
                         <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'details':this.props.app_state.loc['3055qn']/* 'The certificate has been verified by the exchange owner.' */, 'title':this.props.app_state.loc['3055qm']/* 'Certificate Verified.' */, 'size':'l', 'footer': verification == 1 ? null : this.props.app_state.loc['3055sw']/* 'Verified on $' */.replace('$', new Date(verification_data['time']*1000).toLocaleString())})}
                     </div>
                 )}
 
                 {data['archived'] == true && (
                     <div>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pu']/* 'Class Archived' */, 'details':this.props.app_state.loc['3055pv']/* 'The moderators of the certificate archived this class, and is no longer valid or for use.' */, 'size':'l'})}
                         <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pu']/* 'Class Archived' */, 'details':this.props.app_state.loc['3055pv']/* 'The moderators of the certificate archived this class, and is no longer valid or for use.' */, 'size':'l'})}
                     </div>
                 )}
                 
@@ -14903,6 +14903,9 @@ return data['data']
     render_acquired_certificate_item_details_data2(){
         const item = this.state.data['item']
         const ipfs = item['ipfs']
+        if(ipfs['storefront_object_id'] != null && ipfs['variant_id'] != null){
+            return this.render_storefront_variant_data()
+        }
         return(
             <div>
                 {this.render_item_data(ipfs['entered_objects'])}
@@ -14913,6 +14916,237 @@ return data['data']
             </div>
         )
     }
+
+    render_storefront_variant_data(){
+        const item = this.state.data['item']
+        const ipfs = item['ipfs']
+        const storefront_id = ipfs['storefront_object_id']
+        const storefront = this.get_storefront_object(storefront_id)
+        if(storefront == null){
+            return(
+                <div>
+                    {this.render_skeleton_object()}
+                </div>
+            )
+        }
+        const storefront_variants = storefront['ipfs'].variants
+        const variant_data = storefront_variants.filter((variant_to_filter) => {
+            return variant_to_filter['variant_id'] == ipfs['variant_id']
+        })
+        if(variant_data.length > 0){
+            const item = variant_data[0]
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':this.props.app_state.font})}
+                    <div style={{height:3}}/>
+                    <div style={{padding:'0px 0px 0px 0px'}}>
+                        {this.render_detail_item('9', item['image_data']['data'])}
+                    </div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1107']/* 'Number of Units' */, 'size':'l'})}
+                    <div style={{height:5}}/>
+                    {item['purchase_accessible_objects'] != null && this.render_purchase_accessible_objects(item['purchase_accessible_objects'])}
+                    <div style={{height:5}}/>
+                    {this.render_variant_price_data(item)}
+                </div>
+            )
+        }
+    }
+
+    get_storefront_object(id){
+        const object = this.state.data['object']
+        const all_storefronts = this.props.app_state.created_stores[object['e5']] || []
+        const matching_storefronts = all_storefronts.filter((object) => {
+            return (object['id'] == id)
+        })
+        return matching_storefronts[0]
+    }
+
+    render_variant_price_data(variant){
+        const object = this.state.data['object']
+        const e5 = object['e5']
+        var items = [].concat(variant['price_data'])
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                {items.map((item, index) => (
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_purchase_accessible_objects(purchase_accessible_data){
+        var items = [].concat(purchase_accessible_data)
+        if(items.length == 0) return;
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_uploaded_file2(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_uploaded_file2(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        const minified = false;
+        
+        if(data != null){
+            if(data['type'] == 'image'){
+                var img = data['data']
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+                var size = 'l'
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':img, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'audio'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'video'){
+                var video = data['data']
+                var font_size = ['15px', '12px', 19];
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+                var video_height = "50"
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    font_size = ['12px', '10px', 16];
+                    video_height = "40"
+                }
+
+                if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                    var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }else{
+                    var thumbnail = this.props.app_state.static_assets['video_label']
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }
+            }
+            else if(data['type'] == 'pdf'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'zip'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['zip_file']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'lyric'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['lyric_icon']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'subtitle'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['subtitle_icon']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+        }
+    }
+
+
+    
 
     get_model_config(depth_data, object, time){
         const certificate_models = object['ipfs'].certificate_models
@@ -15121,7 +15355,7 @@ return data['data']
             return { 'verified':false, 'time':0 }
         }
         else{
-            return { 'verified':true, 'time':verification['time'] }
+            return { 'verified':true, 'time':verification[0]['time'] }
         }
     }
 
@@ -15251,15 +15485,16 @@ return data['data']
             if(verified_certificates.includes(object['id'])){
                 return(
                     <div>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sj']/* '✅ Certificate Issuer Verified.' */, 'details':this.props.app_state.loc['3055sk']/* 'The issuer of the certificate is recognised by the moderators of your main public contract subscription.' */, 'size':'l'})}
                         <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sj']/* '✅ Certificate Issuer Verified.' */, 'details':this.props.app_state.loc['3055sk']/* 'The issuer of the certificate is recognised by the moderators of your main public contract subscription.' */, 'size':'l'})}
+                        
                     </div>
                 )
             }else{
                 return(
                     <div>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sl']/* '❌ Certificate Issuer NOT Verified.' */, 'details':this.props.app_state.loc['3055sm']/* 'The issuer of the certificate has not been recognised by the moderators of your main public contract subscription.' */, 'size':'l'})}
                         <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sl']/* '❌ Certificate Issuer NOT Verified.' */, 'details':this.props.app_state.loc['3055sm']/* 'The issuer of the certificate has not been recognised by the moderators of your main public contract subscription.' */, 'size':'l'})}
                     </div>
                 )
             }

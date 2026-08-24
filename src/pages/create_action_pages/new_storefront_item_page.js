@@ -103,7 +103,9 @@ class NewStorefrontItemPage extends Component {
 
         get_direct_order_via_indexer_tags_object:this.get_direct_order_via_indexer_tags_object(), entered_purchase_accessible_objects:[],
 
-        get_bundle_image_tags_option:this.get_bundle_image_tags_option(), get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
+        get_bundle_image_tags_option:this.get_bundle_image_tags_option(), get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option(),
+
+        typed_certificate_account:'', verified_certificates:[], typed_search_id:''
     };
 
     get_new_job_page_tags_object(is_auction){
@@ -132,7 +134,7 @@ class NewStorefrontItemPage extends Component {
                 ],
             };
             obj[this.props.app_state.loc['162az']/* configuration */] = [
-                ['or','',0], [this.props.app_state.loc['162az']/* configuration */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' */], [0]
+                ['or','',0], [this.props.app_state.loc['162az']/* configuration */, this.props.app_state.loc['441']/* 'variants' */, this.props.app_state.loc['535h']/* 'purchase-options' */, this.props.app_state.loc['535bs']/* 'purchase-certificates 📜' */], [0]
             ];
         }
 
@@ -384,8 +386,8 @@ class NewStorefrontItemPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
 
-                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-(25 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
-                    <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-(50+ (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: this.props.app_state.width-(35 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
+                    <div style={{'padding': '0px 0px 0px 0px', width:this.props.app_state.width-(65+ (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 10 ))}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}
                         app_state={this.props.app_state}
                         />
@@ -518,6 +520,9 @@ class NewStorefrontItemPage extends Component {
                     {this.render_access_rights_part()}
                 </div>
             )
+        }
+        else if(selected_item == this.props.app_state.loc['535bs']/* 'purchase-certificates 📜' */){
+            return this.render_searched_certificates()
         }
     }
 
@@ -3993,6 +3998,7 @@ return data['data']
                 <div style={{height:10}}/>
                 {this.render_entered_purchase_accessibles()}
 
+                {this.render_variant_certificate_class_if_any()}
 
                 {this.render_detail_item('0')}
                 {this.render_available_unit_count(selected_composition)}
@@ -4143,6 +4149,94 @@ return data['data']
         this.setState({variant_images: cloned_array})
     }
 
+
+
+    render_variant_certificate_class_if_any(){
+        const certificate_object_ids = this.state.verified_certificates
+        if(certificate_object_ids.length > 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['535bv']/* 'Variant Certificate Class.' */, 'details':this.props.app_state.loc['535bw']/* 'Optionally Specify the variant\'s certificate class for use in direct purchases.' */, 'size':'l'})}
+                    <div style={{margin:'5px 10px 0px 10px'}}>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['3098v']/* 'Search a class...' */} when_text_input_field_changed={this.when_typed_search_id_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
+                    </div>
+                    {this.render_certificate_class_items()}
+                </div>
+            )
+        }
+    }
+
+    when_typed_search_id_text_input_field_changed(text){
+        this.setState({typed_search_id: text})
+    }
+
+    get_set_certificate_classes(){
+        const certificate_object_ids = this.state.verified_certificates
+        const classes = []
+        certificate_object_ids.forEach(item => {
+           const object = this.get_certificate_object(item)
+           const unfiltered_items = [].concat(this.sortByAttributeDescending(Object.values(object['ipfs'].certificate_models), 'time'))
+           const items = unfiltered_items.filter((item) => {
+                return (
+                    this.state.typed_search_id.trim() == '' || 
+                    (item.toLowerCase().startsWith(this.state.typed_search_id.trim().toLowerCase())) ||
+                    (object['ipfs'].certificate_models[item['id']]['class_markdown'].toLowerCase().includes(this.state.typed_search_id.trim().toLowerCase()))
+                )
+            })
+            items.forEach(class_item => {
+                classes.push({
+                    'object_id':item,
+                    'item': class_item
+                })
+            });
+        });
+        return classes
+    }
+
+    render_certificate_class_items(){
+        const classes = this.get_set_certificate_classes()
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {classes.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_certificate_class_item(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_certificate_class_item(item){
+        const data = item['item']
+        const title = data['class_name']
+        const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']*1000).toLocaleString()))
+        return(
+            <div onClick={() => this.select_class_for_new_variant(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l',})}
+                {this.render_line_if_selected(item)}
+            </div>
+        )
+    }
+
+    select_class_for_new_variant(item){
+        this.setState({selected_class_for_new_variant: item})
+    }
+
+    render_line_if_selected(item){
+        if(this.state.selected_class_for_new_variant != null && this.state.selected_class_for_new_variant['object_id'] == item['object_id'] && this.state.selected_class_for_new_variant['item']['class_name'] == item['item']['class_name']){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+
+
     when_add_variant_tapped(){
         var images_to_add = this.state.variant_images
         var id = Math.round(new Date().getTime()/1000);
@@ -4154,6 +4248,7 @@ return data['data']
         var entered_purchase_accessible_objects = this.state.entered_purchase_accessible_objects
 
         var selected_item = this.get_selected_item(this.state.get_option_storefront_type_object, this.state.get_option_storefront_type_object['i'].active)
+        var selected_class_for_new_variant = this.state.selected_class_for_new_variant
 
         if(selected_item == this.props.app_state.loc['535aj']/* 'auction' */){
             available_unit_count = 1
@@ -4169,7 +4264,15 @@ return data['data']
             this.props.notify(this.props.app_state.loc['523']/* 'You need to specify how many units are available first' */, 5900)
         }
         else{
-            var variant = {'variant_id':makeid(3),'image_data':image_data, 'variant_description':variant_description, 'price_data':price_data, 'available_unit_count':available_unit_count, 'purchase_accessible_objects': entered_purchase_accessible_objects}
+            var variant = {
+                'variant_id':makeid(3),
+                'image_data':image_data, 
+                'variant_description':variant_description, 
+                'price_data':price_data, 
+                'available_unit_count':available_unit_count, 
+                'purchase_accessible_objects': entered_purchase_accessible_objects, 
+                'certificate_class': selected_class_for_new_variant
+            }
 
             var clone = this.state.variants.slice()
             if(this.state.edit_variant_item_pos != -1){
@@ -4178,7 +4281,17 @@ return data['data']
             }else{
                 clone.push(variant)
             }
-            this.setState({variants:clone, variant_images:[], variant_description:'', price_data:[], available_unit_count:0, edit_variant_item_pos: -1, entered_purchase_accessible_objects:[]})
+            this.setState({
+                variants:clone, 
+                variant_images:[], 
+                variant_description:'', 
+                price_data:[], 
+                available_unit_count:0, 
+                edit_variant_item_pos: -1, 
+                entered_purchase_accessible_objects:[], 
+                selected_class_for_new_variant:null,
+                typed_search_id:''
+            })
             this.props.notify(this.props.app_state.loc['524']/* 'added the variant to the item' */, 2600)
         }
     }
@@ -4574,7 +4687,16 @@ return data['data']
 
     focus_tab(item_pos){
         if(this.is_tab_active(item_pos)){
-            this.setState({edit_variant_item_pos: -1, variant_images:[], variant_description:'', price_data:[], available_unit_count:0, entered_purchase_accessible_objects:[]})
+            this.setState({
+                edit_variant_item_pos: -1, 
+                variant_images:[], 
+                variant_description:'', 
+                price_data:[], 
+                available_unit_count:0, 
+                entered_purchase_accessible_objects:[], 
+                selected_class_for_new_variant:null,
+                typed_search_id:''
+            })
         }else{
             this.props.notify(this.props.app_state.loc['535d']/* 'Editing that variant' */, 2000)
             this.set_focused_variant_data(item_pos)
@@ -4584,7 +4706,15 @@ return data['data']
 
     set_focused_variant_data(item_pos){
         var variant = this.state.variants[item_pos]
-        this.setState({variant_images: variant['image_data']['data']['images'], variant_description: variant['variant_description'], price_data: variant['price_data'], available_unit_count: variant['available_unit_count'], edit_variant_item_pos: item_pos, entered_purchase_accessible_objects: variant['purchase_accessible_objects']});
+        this.setState({
+            variant_images: variant['image_data']['data']['images'], 
+            variant_description: variant['variant_description'],
+            price_data: variant['price_data'], 
+            available_unit_count: variant['available_unit_count'], 
+            edit_variant_item_pos: item_pos, 
+            entered_purchase_accessible_objects: variant['purchase_accessible_objects'],
+            selected_class_for_new_variant: variant['certificate_class']
+        });
     }
 
 
@@ -5101,6 +5231,247 @@ return data['data']
 
 
 
+
+
+
+
+    render_searched_certificates(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_searched_certificates_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_certificate_authorities()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_searched_certificates_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_certificate_authorities()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_searched_certificates_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_certificate_authorities()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_searched_certificates_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['535bt']/* 'Select Purchase Certificates.' */, 'details': this.props.app_state.loc['535bu']/* 'Direct Purchases will come with the option to mint a certificate if you set them here.' */, 'size': 'l' })}
+
+                <div style={{ height:10 }}/>
+                <div style={{'width':'98%'}}>
+                    <div className="row">
+                        <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                            <TextInput height={30} placeholder={this.props.app_state.loc['3093ga']/* 'Certificate Object Id...' */} when_text_input_field_changed={this.when_typed_certificate_account_input_field_changed.bind(this)} text={this.state.typed_certificate_account} theme={this.props.theme}/>
+                        </div>
+                        <div className="col-1" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.search_certificate_id()}>
+                            <div className="text-end" style={{'padding': '5px 10px 0px 0px'}} >
+                                <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style={{height:10}}/>
+
+                {this.render_searched_certificate()}
+            </div>
+        )
+    }
+
+    render_set_certificate_authorities(){
+        const items = [].concat(this.state.verified_certificates)
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gc']/* 'Added Certificates.' */, 'details': this.props.app_state.loc['3111f']/* 'When you add a certificate object, it will show here.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        return(
+            <div style={{}}>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gc']/* 'Added Certificates.' */, 'details': this.props.app_state.loc['3111g']/* 'All the added certificate objects are shown below.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    <SwipeableList>
+                        {items.map((item, index) => (
+                            <li style={{}}>
+                                <div key={index}>
+                                    <SwipeableListItem
+                                        swipeLeft={{
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3093eq']/* Delete */}</p>,
+                                        action: () =>this.when_certificate_item_clicked(item, index)
+                                        }}>
+                                        <div style={{width:'100%', 'padding': '2px 5px 2px 5px'}}>
+                                            {this.render_certificate(this.get_certificate_object(item))}
+                                        </div>
+                                    </SwipeableListItem>
+                                </div>
+                            </li> 
+                        ))}
+                    </SwipeableList>
+                    
+                </ul>
+            </div>
+        )
+    }
+
+    when_typed_certificate_account_input_field_changed(text){
+        this.setState({typed_certificate_account: text})
+    }
+
+    async search_certificate_id(){
+        const typed_certificate_account = this.state.typed_certificate_account.trim().replace('e', '')
+        const selected_e5 = this.state.e5
+        const typed_certificate_e5_id = typed_certificate_account+selected_e5
+
+        if(isNaN(typed_certificate_account) || parseInt(typed_certificate_account) < 1001){
+            this.props.notify(this.props.app_state.loc['3093eu']/* 'That ID is not valid.' */)
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['3093ew']/* 'Searching...' */)
+            const type = await this.props.load_obligation_contract(typed_certificate_account, selected_e5)
+            this.setState({searched_certificate_e5_id: typed_certificate_e5_id})
+            
+            if(type != 31/* 31(token_exchange) */){
+                this.props.notify(this.props.app_state.loc['3093eu']/* 'That ID is not valid.' */)
+            }
+        }
+    }
+
+    get_certificate_object(id){
+        const all_certificates = this.props.app_state.created_certificates[this.state.e5]
+        const matching_certificate = all_certificates.filter((object) => {
+            return (object['id'] == id)
+        })
+        return matching_certificate[0]
+    }
+
+    render_searched_certificate(){
+        const all_certificates = this.get_all_sorted_objects(this.props.app_state.created_certificates)
+        const searched_certificate_e5_id = this.state.searched_certificate_e5_id;
+        const matching_certificate = all_certificates.filter((object) => {
+            return (object['e5_id'] == searched_certificate_e5_id)
+        })
+        if(matching_certificate.length == 0){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }else{
+            return(
+                <div onClick={() => this.when_searched_certificate_clicked(matching_certificate[0])}>
+                    {this.render_certificate(matching_certificate[0])}
+                </div>
+            )
+        }
+    }
+
+    render_certificate(object){
+        const item = this.format_certificate_item(object)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        return(
+                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>         
+                </div>
+            )
+    }
+
+    format_certificate_item(object){
+        var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
+        var age = object['event'].returnValues.p5
+        var time = object['event'].returnValues.p4
+        var sender = this.get_senders_name_or_you(object['author'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
+        }
+    }
+
+    when_searched_certificate_clicked(object){
+        const clone = this.state.verified_certificates.slice()
+        const my_account = this.props.app_state.user_account_id[object['e5']]
+        if(clone.includes(object['id'])){
+            this.props.notify(this.props.app_state.loc['3093gb']/* 'Youve already added this certificate.' */, 4400);
+        }
+        else if(my_account != object['author']){
+            this.props.notify(this.props.app_state.loc['3111h']/* 'You are not the owner of that certificate.' */, 4400);
+        }
+        else{
+            clone.push(object['id'])
+            this.setState({verified_certificates: clone})
+        }
+        
+    }
+
+    when_certificate_item_clicked(item, index){
+        const clone = this.state.verified_certificates.slice()
+        clone.splice(index, 1)
+        this.setState({verified_certificates: clone})
+    }
+
+    get_senders_name_or_you(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* You. */
+        }
+        var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[sender] == null ? sender : bucket[sender])
+        return alias
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     load_token_suggestions(target_type){
         var items = [].concat(this.get_suggested_tokens(target_type))
         var background_color = this.props.theme['card_background_color']
@@ -5217,6 +5588,17 @@ return data['data']
 
 
 
+    render_empty_object(){
+        var background_color = this.props.theme['card_background_color']
+        return(
+                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                        <img src={this.props.app_state.theme['letter']} style={{height:60 ,width:'auto'}} />
+                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                    </div>
+                </div>
+            );
+    }
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
@@ -5317,6 +5699,15 @@ return data['data']
         return ((proportion/10**18) * 100)+'%';
     }
 
+    get_number_width(number){
+        if(number == null) return '0%'
+        var last_two_digits = number.toString().slice(0, 1)+'0';
+        if(number > 10){
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
+
 
 
 
@@ -5379,7 +5770,12 @@ return data['data']
             //     device_country :me.props.app_state.device_country,
             //     e5 :me.props.app_state.selected_e5,})
 
-            this.add_fulfilment_location_to_local_storage()
+            try{
+                this.add_fulfilment_location_to_local_storage()
+            }
+            catch(e){
+                console.log(e)
+            }
 
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)

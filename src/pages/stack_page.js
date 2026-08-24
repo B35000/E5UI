@@ -3118,7 +3118,7 @@ class StackPage extends Component {
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.props.show_view_transaction_log_bottomsheet(item)}>
-                            {this.render_detail_item('3',{'title':'ID: '+item.returnValues.p3, 'details':this.get_time_difference(item.returnValues.p8)+this.props.app_state.loc['1462']/* ' ago' */,'size':'s'})}
+                            {this.render_detail_item('3',{'title':'#️⃣ '+item.returnValues.p3, 'details':this.get_time_difference(item.returnValues.p8)+this.props.app_state.loc['1462']/* ' ago' */,'size':'s'})}
                         </li>
                     ))}
                 </ul>
@@ -4354,6 +4354,20 @@ class StackPage extends Component {
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
+
+                    const include_mint_certificate = this.get_selected_item(txs[i].get_mint_certificate_tags_object, 'e')
+
+                    if(include_mint_certificate == this.props.app_state.loc['1114i']/* 'mint-certificate' */){
+                        var purchase_obj = await this.format_purchase_certificate_object2(txs[i], calculate_gas, ipfs_index)
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(purchase_obj.buy_obj)
+
+                        strs.push(purchase_obj.str)
+                        adds.push([])
+                        ints.push(purchase_obj.int)
+                    }
                     
                     tag_payment_indexer_data = true
                 }
@@ -6403,6 +6417,41 @@ class StackPage extends Component {
                     payment_tag_index_objects.push({
                         'tags':all_final_elements, 'amounts':amounts, 'time':Date.now(), 'lan':this.props.app_state.device_language, 'state': this.props.hash_data_with_randomizer(object['ipfs'].device_country), 'type':object['object_type'], 'e5_id':object['e5_id'], 'e5':object['e5'], 'sender':this.props.app_state.user_account_id[object['e5']], 'recipient_account':object['e5']+':'+object['author'], 'identifier': txs[i].identifier, 'obligations':{}
                     })
+
+                    const include_mint_certificate = this.get_selected_item(t.get_mint_certificate_tags_object, 'e')
+
+                    if(include_mint_certificate == this.props.app_state.loc['1114i']/* 'mint-certificate' */){
+                        const my_country = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_country : this.props.app_state.device_country
+
+                        const my_city = this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address] != null ? this.props.app_state.obligation_subscriptions[this.props.app_state.accounts[this.props.app_state.selected_e5].address].my_original_city : this.props.app_state.device_city
+
+                        const certificate_data = {
+                            'token_id': t.selected_variant['certificate_class']['object_id'],
+                            'token_e5': job_author_e5,
+                            'class': t.selected_variant['certificate_class']['item'],
+                            'entered_image_objects': [],
+                            'entered_objects': [],
+                            'content_channeling_setting':this.props.app_state.content_channeling,
+                            'device_language_setting':this.props.app_state.device_language,
+                            'device_country':this.props.app_state.device_country,
+                            'device_region':this.props.app_state.device_region,
+                            'my_country':my_country,
+                            'my_city':my_city,
+                            'entered_pdf_objects':[],
+                            'markdown':'',
+                            'entered_zip_objects':[],
+                            'certificate_target':'',
+                            'certificate_target_type':null,
+                            'certificate_target_author':null,
+                            'type':'storefront_purchase',
+                            'variant_id': t.selected_variant['variant_id'],
+                            'storefront_object_id': t.storefront_item['id'],
+                            'ecid_encryption_passwords':t.storefront_item['ipfs'].ecid_encryption_passwords
+                        }
+                        const index_id = txs[i].id+'c'
+                        ipfs_index_object[index_id] = certificate_data
+                        ipfs_index_array.push({'id':index_id, 'data':certificate_data})
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1500']/* 'clear-purchase' */){
                     var t = txs[i]
@@ -6939,7 +6988,6 @@ class StackPage extends Component {
                         'token_id': data.token_item['id'],
                         'token_e5': data.token_item['e5'],
                         'class': data.selected_class,
-                        // 'entered_text_objects': data.entered_text_objects, 
                         'entered_image_objects': data.entered_image_objects,
                         'entered_objects': data.entered_objects,
                         'content_channeling_setting':data.content_channeling_setting,
@@ -6954,6 +7002,7 @@ class StackPage extends Component {
                         'certificate_target': data.certificate_target,
                         'certificate_target_type':data.certificate_target_type,
                         'certificate_target_author':data.certificate_target_author,
+                        'ecid_encryption_passwords':data.ecid_encryption_passwords
                     }
                     ipfs_index_object[txs[i].id] = certificate_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
@@ -7987,7 +8036,7 @@ class StackPage extends Component {
                     amount_data.forEach(price_item => {
                         final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
                     });
-                    const shipping_price_data = tx['ipfs'].shipping_price_data || []
+                    const shipping_price_data = object['ipfs'].shipping_price_data || []
                     shipping_price_data.forEach(price_item => {
                         final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
                     });
@@ -14283,6 +14332,77 @@ class StackPage extends Component {
 
         return {int: obj, str: string_obj}
 
+    }
+
+    format_purchase_certificate_object2 = async (t, calculate_gas, ipfs_index) => {
+        const item = t.selected_variant['certificate_class']['item']
+        const data = item
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        // const split_period = data['split_period']
+        const maximum_supply = data['maximum_supply']
+        const base_fee_price_multiplier = data['base_fee_price_multiplier'] == 0 ? 1 : data['base_fee_price_multiplier']
+        const class_id = data['id']
+        // const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
+        // const previous_split_time = this.get_previous_split_time(split_period, purchase_start_time, purchase_end_time)
+        
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        const start_time_minutes = Math.floor(purchase_start_time / 60)
+        const end_time_minutes = Math.floor(purchase_end_time / 60)
+
+        const start_end_time = bigInt(bgN(start_time_minutes, 36)).plus(end_time_minutes)
+
+        var target_id = t.selected_variant['certificate_class']['object_id']
+        var context = 32
+        var int_data = start_end_time.toString().toLocaleString('fullwide', {useGrouping:false})
+
+        const index_id = t.id+'c'
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, index_id);
+
+        obj[1].push(target_id)
+        obj[2].push(23)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        
+        const price = base_fee_price_multiplier
+        const supply = maximum_supply
+        const token_class = class_id
+
+        const v3_depths_to_add/* depths_to_add */ = [
+            bgN(price, 54)/* exchange_ratio_y */, 
+            bgN(end_time_minutes, 45)/* end_time */, 
+            bgN(start_time_minutes, 36)/* start_time */, 
+            bgN(supply, 27)/* supply */, 
+            bgN(token_class, 18)/* class */, 
+            0/* identifier */
+        ]
+
+        var v4_depth_final/* targeted_depth */ = bigInt(0)
+        v3_depths_to_add/* depths_to_add */.forEach(value => {
+            v4_depth_final/* targeted_depth */ = bigInt(v4_depth_final/* targeted_depth */).plus(bigInt(value.toString().toLocaleString('fullwide', {useGrouping:false}))).toString().toLocaleString('fullwide', {useGrouping:false})
+        });
+
+        var buy_obj = [/* buy end/spend */
+            [30000, 8, 0],
+            [target_id], [23],/* exchanges */
+            [0], [53],/* receivers */
+            [price.toString().toLocaleString('fullwide', {useGrouping:false})]/* amounts */, [0],/* action */
+            []/* lower_bounds */, [],/* upper_bounds */
+            [v4_depth_final],/* depths */
+        ];
+
+        return {int: obj, str: string_obj, buy_obj}
     }
 
     

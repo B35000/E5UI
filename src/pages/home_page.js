@@ -5889,11 +5889,19 @@ class home_page extends Component {
         await this.props.get_tag_price_data_for_object(object)
         await this.props.get_objects_showcased_certificates(object)
         await this.props.get_object_censored_keywords_and_accounts(object)
+
+        this.load_storefront_direct_purchase_certificates_if_any(object)
         
         this.props.set_audio_pip_opacity_because_of_inactivity()
         this.update_audio_video_recommended_items(this.props.app_state.loc['1215']/* 'storefront' */, object['e5_id'])
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
+    }
+
+    load_storefront_direct_purchase_certificates_if_any(object){
+        if(object['ipfs'].verified_certificates != null && object['ipfs'].verified_certificates.length > 0){
+            this.props.load_objects(31/* token_exchange */, object['ipfs'].verified_certificates, object['e5'])
+        }
     }
 
     async when_bag_post_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -6593,7 +6601,7 @@ class home_page extends Component {
                 get_channel_creator_payout_stagings={this.props.get_channel_creator_payout_stagings.bind(this)} get_channel_payout_records={this.props.get_channel_payout_records.bind(this)}
                 show_swap_ether_bottomsheet={this.props.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.props.get_token_chart_data.bind(this)} load_objects={this.props.load_objects.bind(this)} get_object_by_id_and_type={this.props.get_object_by_id_and_type.bind(this)} load_object_certificate_showcasing_events={this.props.load_object_certificate_showcasing_events.bind(this)}
 
-                load_token_certificate_chain={this.props.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.props.load_nft_certificate_parent_objects.bind(this)} get_objects_showcased_certificates={this.props.get_objects_showcased_certificates.bind(this)}
+                load_token_certificate_chain={this.props.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.props.load_nft_certificate_parent_objects.bind(this)} get_objects_showcased_certificates={this.props.get_objects_showcased_certificates.bind(this)} fetch_uploaded_files_for_object={this.props.fetch_uploaded_files_for_object.bind(this)}
 
 
 
