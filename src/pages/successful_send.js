@@ -196,10 +196,10 @@ class SuccessfulSend extends Component {
                 {this.render_detail_item('3',{'details':''+data['tx'].to, 'title':this.props.app_state.loc['2789']/* 'Recipient Address' */,'size':'l'})}
 
                 <div style={{height: 10}}/>
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2790']/* 'Amount Sent in Wei.' */, 'number':(data['tx'].value/1), 'relativepower':'wei'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2790']/* 'Amount Sent in Wei.' */, 'subtitle':this.format_power_figure(data['tx'].value/1), 'barwidth':this.calculate_bar_width(data['tx'].value/1), 'number':this.format_account_balance_figure(data['tx'].value/1), 'barcolor':'', 'relativepower':'wei', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2790']/* 'Amount Sent in Wei.' */, 'number':(data['tx'].value/1), 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2790']/* 'Amount Sent in Wei.' */, 'subtitle':this.format_power_figure(data['tx'].value/1), 'barwidth':this.calculate_bar_width(data['tx'].value/1), 'number':this.format_account_balance_figure(data['tx'].value/1), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2791']/* Amount Sent in Ether.' */, 'subtitle':this.format_power_figure(parseInt(data['tx'].value)/10**18), 'barwidth':this.calculate_bar_width(parseInt(data['tx'].value)/10**18), 'number':(parseInt(data['tx'].value)/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2791']/* Amount Sent in Ether.' */, 'subtitle':this.format_power_figure(parseInt(data['tx'].value)/10**18), 'barwidth':this.calculate_bar_width(parseInt(data['tx'].value)/10**18), 'number':(parseInt(data['tx'].value)/10**18), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
                 </div>
 
                 {this.render_detail_item('0')}
@@ -258,288 +258,289 @@ class SuccessfulSend extends Component {
         var hash = data['hash']
         var e5 = data['e5']
 
-        if(e5 == 'E25' || e5 == 'E35'){
-            return `https://etc.blockscout.com/tx/${hash}`
-        }else if(e5 == 'E45'){
-            return `https://snowtrace.io/tx/${hash}`
-        }else if(e5 == 'E55'){
-            return `https://explorer.celo.org/mainnet/tx/${hash}`
-        }else if(e5 == 'E65'){
-            return `https://flare-explorer.flare.network/tx/${hash}`
-        }else if(e5 == 'E75'){
-            return `https://gnosisscan.io/tx/${hash}`
-        }else if(e5 == 'E85'){
-            return `https://explorer.fuse.io/tx/${hash}`
-        }else if(e5 == 'E95'){
-            return `https://moonscan.io/tx/${hash}`
-        }else if(e5 == 'E105'){
-            return `https://moonriver.moonscan.io/tx/${hash}`
-        }else if(e5 == 'E115'){
-            return `https://xdc.blocksscan.io/txs/${hash}`
-        }else if(e5 == 'E125'){
-            return `https://polygonscan.com/tx/${hash}`
-        }else if(e5 == 'E135'){
-            return `https://bscscan.com/tx/${hash}`
-        }else if(e5 == 'E145'){
-            return `https://seitrace.com/tx/${hash}?chain=pacific-1`
-        }else if(e5 == 'E155'){
-            return `https://berascan.com/tx/${hash}`
-        }else if(e5 == 'E165'){
-            return `https://www.tomoscan.io/tx/${hash}`
-        }else if(e5 == 'E175'){
-            return `https://escan.live/tx/${hash}`
-        }else if(e5 == 'E185'){
-            return `https://etherscan.io/tx/${hash}`
-        }else if(e5 == 'E195'){
-            return `https://optimistic.etherscan.io/tx/${hash}`
-        }else if(e5 == 'E205'){
-            return `https://basescan.org/tx/${hash}`
-        }else if(e5 == 'E215'){
-            return `https://arbiscan.io/tx/${hash}`
-        }else if(e5 == 'E225'){
-            return `https://astar.subscan.io/tx/${hash}`
-        }else if(e5 == 'E235'){
-            return `https://cronoscan.com/tx/${hash}`
-        }else if(e5 == 'E245'){
-            return `https://kavascan.com/tx/${hash}`
-        }else if(e5 == 'E255'){
-            return `https://neon.blockscout.com/tx/${hash}`
-        }else if(e5 == 'E265'){
-            return `https://explorer-mainnet-cardano-evm.c1.milkomeda.com/tx/${hash}`
-        }else if(e5 == 'E275'){
-            return `https://ftmscan.com/tx/${hash}`
-        }else if(e5 == 'E285'){
-            return `https://brisescan.com/tx/${hash}`
-        }else if(e5 == 'E295'){
-            return `https://explorer.syscoin.org/tx/${hash}`
-        }else if(e5 == 'E305'){
-            return `https://explorer.harmony.one/tx/${hash}`
-        }else if(e5 == 'E315'){
-            return `https://evm.findorascan.io/tx/${hash}`
-        }else if(e5 == 'E325'){
-            return `https://blockscout-bellecour.iex.ec/tx/${hash}`
-        }else if(e5 == 'E335'){
-            return `https://explorer.oasis.io/mainnet/emerald/tx/${hash}`
-        }else if(e5 == 'E345'){
-            return `https://ozonescan.io/tx/${hash}`
-        }else if(e5 == 'E355'){
-            return `https://scan.chain.pixie.xyz/tx/${hash}/token-transfers`
-        }else if(e5 == 'E365'){
-            return `https://scan.rei.network/tx/${hash}`
-        }else if(e5 == 'E375'){
-            return `https://klaytnscope.com/tx/${hash}`
-        }else if(e5 == 'E385'){
-            return `https://explorer.mantle.xyz/tx/${hash}`
-        }else if(e5 == 'E395'){
-            return `https://pulsescan.app/#/tx/${hash}`
-        }else if(e5 == 'E405'){
-            return `https://canto.dex.guru/tx/${hash}`
-        }else if(e5 == 'E415'){
-            return `https://explorer.evm.eosnetwork.com/tx/${hash}`
-        }else if(e5 == 'E425'){
-            return `https://iotexscan.io/tx/${hash}`
-        }else if(e5 == 'E435'){
-            return `https://songbird-explorer.flare.network/tx/${hash}`
-        }else if(e5 == 'E445'){
-            return `https://explorer.ultron-dev.io/transactions/${hash}`
-        }else if(e5 == 'E455'){
-            return `https://www.coinex.net/tx/${hash}`
-        }else if(e5 == 'E465'){
-            return `https://thetascan.io/hash/?hash=${hash}`
-        }else if(e5 == 'E475'){
-            return `https://stepscan.io/tx/${hash}`
-        }else if(e5 == 'E485'){
-            return `https://explorer.energyweb.org/tx/${hash}`
-        }else if(e5 == 'E495'){
-            return null
-        }else if(e5 == 'E505'){
-            return `https://shiden.blockscout.com/tx/${hash}`
-        }else if(e5 == 'E515'){
-            return `https://tenetscan.io/tx/${hash}`
-        }else if(e5 == 'E525'){
-            return `https://ubiqscan.io/tx/${hash}`
-        }else if(e5 == 'E535'){
-            return `https://explorer.gochain.io/tx/${hash}`
-        }else if(e5 == 'E545'){
-            return `https://www.omaxray.com/tx/${hash}`
-        }else if(e5 == 'E555'){
-            return `https://explorer.wemix.com/tx/${hash}`
-        }else if(e5 == 'E565'){
-            return `https://confluxscan.io/transaction/${hash}`
-        }else if(e5 == 'E575'){
-            return `https://www.teloscan.io/tx/${hash}`
-        }else if(e5 == 'E585'){
-            return `https://explorer.rootstock.io/tx/${hash}`
-        }else if(e5 == 'E595'){
-            return `https://explorer.metadium.com/tx/${hash}`
-        }else if(e5 == 'E605'){
-            return `https://explorer.kardiachain.io/tx/${hash}`
-        }else if(e5 == 'E615'){
-            return `https://mainnet.scan.caduceus.foundation/tx/${hash}`
-        }else if(e5 == 'E625'){
-            return `https://seeleview.net/tx/${hash}`
-        }else if(e5 == 'E635'){
-            return `https://scan.bt.io/#/transaction/${hash}`
-        }else if(e5 == 'E645'){
-            return `https://scan.acuteangle.com/tx/${hash}`
-        }else if(e5 == 'E655'){
-            return `https://karura.subscan.io/extrinsic/${hash}`
-        }else if(e5 == 'E665'){
-            return `https://acala.subscan.io/extrinsic/${hash}`
-        }else if(e5 == 'E675'){
-            return null
-        }else if(e5 == 'E685'){
-            return `https://blockexplorer.bloxberg.org/tx/${hash}`
-        }else if(e5 == 'E695'){
-            return `https://phoenixplorer.com/tx/${hash}`
-        }else if(e5 == 'E705'){
-            return `https://explorer.omchain.io/tx/${hash}`
-        }else if(e5 == 'E715'){
-            return `https://evm-explorer.omplatform.com/tx/${hash}`
-        }else if(e5 == 'E725'){
-            return `https://www.mintme.com/explorer/tx/${hash}`
-        }else if(e5 == 'E735'){
-            return `https://explorer.ecredits.com/tx/${hash}`
-        }else if(e5 == 'E745'){
-            return `https://explorer.contentfabric.io/tx/${hash}`
-        }else if(e5 == 'E755'){
-            return `https://explorer.ethoprotocol.com/tx/${hash}`
-        }else if(e5 == 'E765'){
-            return `https://mainnet-explorer.oneledger.network/tx/${hash}`
-        }else if(e5 == 'E785'){
-            return `https://explorer.evm.iota.org/tx/${hash}`
-        }else if(e5 == 'E795'){
-            return `https://www.kaiascan.io/tx/${hash}`
-        }else if(e5 == 'E805'){
-            return `https://sonicscan.org/tx/${hash}`
-        }else if(e5 == 'E815'){
-            return `https://explorer-mainnet.thundercore.com/tx/${hash}`
-        }else if(e5 == 'E835'){
-            return `https://www.hyperscan.com/tx/${hash}`
-        }else if(e5 == 'E845'){
-            return `https://explorer.xrplevm.org/tx/${hash}`
-        }else if(e5 == 'E855'){
-            return `https://abscan.org/tx/${hash}`
-        }else if(e5 == 'E865'){
-            return `https://apechain.calderaexplorer.xyz/tx/${hash}`
-        }else if(e5 == 'E875'){
-            return `https://www.btrscan.com/tx/${hash}`
-        }else if(e5 == 'E885'){
-            return `https://blastscan.io/tx/${hash}`
-        }else if(e5 == 'E895'){
-            return `https://explorer.gobob.xyz/tx/${hash}`
-        }else if(e5 == 'E905'){
-            return `https://botanixscan.io/tx/${hash}`
-        }else if(e5 == 'E915'){
-            return `https://explorer.bsquared.network/tx/${hash}`
-        }else if(e5 == 'E925'){
-            return `https://scan.coredao.org/tx/${hash}`
-        }else if(e5 == 'E935'){
-            return `https://cornscan.io/tx/${hash}`
-        }else if(e5 == 'E945'){
-            return`https://explorer.etherlink.com/tx/${hash}`
-        }else if(e5 == 'E955'){
-            return `https://fraxscan.com/tx/${hash}`
-        }else if(e5 == 'E965'){
-            return `https://hashkey.blockscout.com/tx/${hash}`
-        }else if(e5 == 'E975'){
-            return `https://explorer.hemi.xyz/tx/${hash}`
-        }else if(e5 == 'E985'){
-            return `https://explorer.inkonchain.com/tx/${hash}`
-        }else if(e5 == 'E995'){
-            return `https://explorer.lens.xyz/tx/${hash}`
-        }else if(e5 == 'E1005'){
-            return `https://lineascan.build/tx/${hash}`
-        }else if(e5 == 'E1015'){
-            return `https://blockscout.lisk.com/tx/${hash}`
-        }else if(e5 == 'E1025'){
-            return `https://scan.merlinchain.io/tx/${hash}`
-        }else if(e5 == 'E1035'){
-            return `https://explorer.metall2.com/tx/${hash}`
-        }else if(e5 == 'E1045'){
-            return `https://explorer.metis.io/tx/${hash}`
-        }else if(e5 == 'E1055'){
-            return `https://explorer.mindnetwork.xyz/tx/${hash}`
-        }else if(e5 == 'E1065'){
-            return `https://explorer.mintchain.io/tx/${hash}`
-        }else if(e5 == 'E1075'){
-            return `https://explorer.mode.network/tx/${hash}`
-        }else if(e5 == 'E1085'){
-            return `https://neoxscan.ngd.network/tx/${hash}`
-        }else if(e5 == 'E1095'){
-            return `https://opbnbscan.com/tx/${hash}`
-        }else if(e5 == 'E1105'){
-            return `https://explorer.plume.org/tx/${hash}`
-        }else if(e5 == 'E1115'){
-            return `https://explorer.katanarpc.com/tx/${hash}`
-        }else if(e5 == 'E1125'){
-            return `https://zkevm.polygonscan.com/tx/${hash}`
-        }else if(e5 == 'E1135'){
-            return `https://app.roninchain.com/tx/${hash}`
-        }else if(e5 == 'E1145'){
-            return `https://scrollscan.com/tx/${hash}`
-        }else if(e5 == 'E1155'){
-            return `https://www.shibariumscan.io/tx/${hash}`
-        }else if(e5 == 'E1165'){
-            return `https://soneium.blockscout.com/tx/${hash}`
-        }else if(e5 == 'E1175'){
-            return `https://explorer.superseed.xyz/tx/${hash}`
-        }else if(e5 == 'E1185'){
-            return `https://taikoscan.io/tx/${hash}`
-        }else if(e5 == 'E1195'){
-            return `https://treasurescan.io/tx/${hash}`
-        }else if(e5 == 'E1205'){
-            return `https://uniscan.xyz/tx/${hash}`
-        }else if(e5 == 'E1215'){
-            return `https://worldscan.org/tx/${hash}`
-        }else if(e5 == 'E1225'){
-            return `https://web3.okx.com/explorer/x-layer/tx/${hash}`
-        }else if(e5 == 'E1235'){
-            return `https://www.oklink.com/oktc/tx/${hash}`
-        }else if(e5 == 'E1245'){
-            return `https://explorer.zircuit.com/tx/${hash}`
-        }else if(e5 == 'E1255'){
-            return `https://explorer.zksync.io/tx/${hash}`
-        }else if(e5 == 'E1265'){
-            return `https://explorer.zkevm.cronos.org/tx/${hash}`
-        }else if(e5 == 'E1275'){
-            return `https://explorer.zero.network/tx/${hash}`
-        }else if(e5 == 'E1285'){
-            return `https://explorer.sophon.xyz/tx/${hash}`
-        }else if(e5 == 'E1295'){
-            return `https://pacific-explorer.manta.network/tx/${hash}`
-        }else if(e5 == 'E1305'){
-            return `https://filscan.io/message/${hash}`
-        }else if(e5 == 'E1315'){
-            return `https://monadvision.com/tx/${hash}`
-        }else if(e5 == 'E1325'){
-            return `https://explorer.zora.energy/tx/${hash}`
-        }else if(e5 == 'E1335'){
-            return `https://arbitrum-nova.blockscout.com/tx/${hash}`
-        }else if(e5 == 'E1345'){
-            return `https://explorer.arena-z.gg/tx/${hash}`
-        }else if(e5 == 'E1355'){
-            return `https://blockscout.polkadot.io/tx/${hash}`
-        }else if(e5 == 'E1365'){
-            return `https://explorer.immutable.com/tx/${hash}`
-        }else if(e5 == 'E1375'){
-            return `https://kitescan.ai/tx/${hash}`
-        }else if(e5 == 'E1385'){
-            return `https://blockscout.injective.network/tx/${hash}`
-        }else if(e5 == 'E1395'){
-            return `https://plasmascan.to/tx/${hash}`
-        }else if(e5 == 'E1405'){
-            return `https://explorer.somnia.network/tx/${hash}`
-        }
+        return this.props.get_blockexplorer_link(e5, hash)
+        // if(e5 == 'E25' || e5 == 'E35'){
+        //     return `https://etc.blockscout.com/tx/${hash}`
+        // }else if(e5 == 'E45'){
+        //     return `https://snowtrace.io/tx/${hash}`
+        // }else if(e5 == 'E55'){
+        //     return `https://explorer.celo.org/mainnet/tx/${hash}`
+        // }else if(e5 == 'E65'){
+        //     return `https://flare-explorer.flare.network/tx/${hash}`
+        // }else if(e5 == 'E75'){
+        //     return `https://gnosisscan.io/tx/${hash}`
+        // }else if(e5 == 'E85'){
+        //     return `https://explorer.fuse.io/tx/${hash}`
+        // }else if(e5 == 'E95'){
+        //     return `https://moonscan.io/tx/${hash}`
+        // }else if(e5 == 'E105'){
+        //     return `https://moonriver.moonscan.io/tx/${hash}`
+        // }else if(e5 == 'E115'){
+        //     return `https://xdc.blocksscan.io/txs/${hash}`
+        // }else if(e5 == 'E125'){
+        //     return `https://polygonscan.com/tx/${hash}`
+        // }else if(e5 == 'E135'){
+        //     return `https://bscscan.com/tx/${hash}`
+        // }else if(e5 == 'E145'){
+        //     return `https://seitrace.com/tx/${hash}?chain=pacific-1`
+        // }else if(e5 == 'E155'){
+        //     return `https://berascan.com/tx/${hash}`
+        // }else if(e5 == 'E165'){
+        //     return `https://www.tomoscan.io/tx/${hash}`
+        // }else if(e5 == 'E175'){
+        //     return `https://escan.live/tx/${hash}`
+        // }else if(e5 == 'E185'){
+        //     return `https://etherscan.io/tx/${hash}`
+        // }else if(e5 == 'E195'){
+        //     return `https://optimistic.etherscan.io/tx/${hash}`
+        // }else if(e5 == 'E205'){
+        //     return `https://basescan.org/tx/${hash}`
+        // }else if(e5 == 'E215'){
+        //     return `https://arbiscan.io/tx/${hash}`
+        // }else if(e5 == 'E225'){
+        //     return `https://astar.subscan.io/tx/${hash}`
+        // }else if(e5 == 'E235'){
+        //     return `https://cronoscan.com/tx/${hash}`
+        // }else if(e5 == 'E245'){
+        //     return `https://kavascan.com/tx/${hash}`
+        // }else if(e5 == 'E255'){
+        //     return `https://neon.blockscout.com/tx/${hash}`
+        // }else if(e5 == 'E265'){
+        //     return `https://explorer-mainnet-cardano-evm.c1.milkomeda.com/tx/${hash}`
+        // }else if(e5 == 'E275'){
+        //     return `https://ftmscan.com/tx/${hash}`
+        // }else if(e5 == 'E285'){
+        //     return `https://brisescan.com/tx/${hash}`
+        // }else if(e5 == 'E295'){
+        //     return `https://explorer.syscoin.org/tx/${hash}`
+        // }else if(e5 == 'E305'){
+        //     return `https://explorer.harmony.one/tx/${hash}`
+        // }else if(e5 == 'E315'){
+        //     return `https://evm.findorascan.io/tx/${hash}`
+        // }else if(e5 == 'E325'){
+        //     return `https://blockscout-bellecour.iex.ec/tx/${hash}`
+        // }else if(e5 == 'E335'){
+        //     return `https://explorer.oasis.io/mainnet/emerald/tx/${hash}`
+        // }else if(e5 == 'E345'){
+        //     return `https://ozonescan.io/tx/${hash}`
+        // }else if(e5 == 'E355'){
+        //     return `https://scan.chain.pixie.xyz/tx/${hash}/token-transfers`
+        // }else if(e5 == 'E365'){
+        //     return `https://scan.rei.network/tx/${hash}`
+        // }else if(e5 == 'E375'){
+        //     return `https://klaytnscope.com/tx/${hash}`
+        // }else if(e5 == 'E385'){
+        //     return `https://explorer.mantle.xyz/tx/${hash}`
+        // }else if(e5 == 'E395'){
+        //     return `https://pulsescan.app/#/tx/${hash}`
+        // }else if(e5 == 'E405'){
+        //     return `https://canto.dex.guru/tx/${hash}`
+        // }else if(e5 == 'E415'){
+        //     return `https://explorer.evm.eosnetwork.com/tx/${hash}`
+        // }else if(e5 == 'E425'){
+        //     return `https://iotexscan.io/tx/${hash}`
+        // }else if(e5 == 'E435'){
+        //     return `https://songbird-explorer.flare.network/tx/${hash}`
+        // }else if(e5 == 'E445'){
+        //     return `https://explorer.ultron-dev.io/transactions/${hash}`
+        // }else if(e5 == 'E455'){
+        //     return `https://www.coinex.net/tx/${hash}`
+        // }else if(e5 == 'E465'){
+        //     return `https://thetascan.io/hash/?hash=${hash}`
+        // }else if(e5 == 'E475'){
+        //     return `https://stepscan.io/tx/${hash}`
+        // }else if(e5 == 'E485'){
+        //     return `https://explorer.energyweb.org/tx/${hash}`
+        // }else if(e5 == 'E495'){
+        //     return null
+        // }else if(e5 == 'E505'){
+        //     return `https://shiden.blockscout.com/tx/${hash}`
+        // }else if(e5 == 'E515'){
+        //     return `https://tenetscan.io/tx/${hash}`
+        // }else if(e5 == 'E525'){
+        //     return `https://ubiqscan.io/tx/${hash}`
+        // }else if(e5 == 'E535'){
+        //     return `https://explorer.gochain.io/tx/${hash}`
+        // }else if(e5 == 'E545'){
+        //     return `https://www.omaxray.com/tx/${hash}`
+        // }else if(e5 == 'E555'){
+        //     return `https://explorer.wemix.com/tx/${hash}`
+        // }else if(e5 == 'E565'){
+        //     return `https://confluxscan.io/transaction/${hash}`
+        // }else if(e5 == 'E575'){
+        //     return `https://www.teloscan.io/tx/${hash}`
+        // }else if(e5 == 'E585'){
+        //     return `https://explorer.rootstock.io/tx/${hash}`
+        // }else if(e5 == 'E595'){
+        //     return `https://explorer.metadium.com/tx/${hash}`
+        // }else if(e5 == 'E605'){
+        //     return `https://explorer.kardiachain.io/tx/${hash}`
+        // }else if(e5 == 'E615'){
+        //     return `https://mainnet.scan.caduceus.foundation/tx/${hash}`
+        // }else if(e5 == 'E625'){
+        //     return `https://seeleview.net/tx/${hash}`
+        // }else if(e5 == 'E635'){
+        //     return `https://scan.bt.io/#/transaction/${hash}`
+        // }else if(e5 == 'E645'){
+        //     return `https://scan.acuteangle.com/tx/${hash}`
+        // }else if(e5 == 'E655'){
+        //     return `https://karura.subscan.io/extrinsic/${hash}`
+        // }else if(e5 == 'E665'){
+        //     return `https://acala.subscan.io/extrinsic/${hash}`
+        // }else if(e5 == 'E675'){
+        //     return null
+        // }else if(e5 == 'E685'){
+        //     return `https://blockexplorer.bloxberg.org/tx/${hash}`
+        // }else if(e5 == 'E695'){
+        //     return `https://phoenixplorer.com/tx/${hash}`
+        // }else if(e5 == 'E705'){
+        //     return `https://explorer.omchain.io/tx/${hash}`
+        // }else if(e5 == 'E715'){
+        //     return `https://evm-explorer.omplatform.com/tx/${hash}`
+        // }else if(e5 == 'E725'){
+        //     return `https://www.mintme.com/explorer/tx/${hash}`
+        // }else if(e5 == 'E735'){
+        //     return `https://explorer.ecredits.com/tx/${hash}`
+        // }else if(e5 == 'E745'){
+        //     return `https://explorer.contentfabric.io/tx/${hash}`
+        // }else if(e5 == 'E755'){
+        //     return `https://explorer.ethoprotocol.com/tx/${hash}`
+        // }else if(e5 == 'E765'){
+        //     return `https://mainnet-explorer.oneledger.network/tx/${hash}`
+        // }else if(e5 == 'E785'){
+        //     return `https://explorer.evm.iota.org/tx/${hash}`
+        // }else if(e5 == 'E795'){
+        //     return `https://www.kaiascan.io/tx/${hash}`
+        // }else if(e5 == 'E805'){
+        //     return `https://sonicscan.org/tx/${hash}`
+        // }else if(e5 == 'E815'){
+        //     return `https://explorer-mainnet.thundercore.com/tx/${hash}`
+        // }else if(e5 == 'E835'){
+        //     return `https://www.hyperscan.com/tx/${hash}`
+        // }else if(e5 == 'E845'){
+        //     return `https://explorer.xrplevm.org/tx/${hash}`
+        // }else if(e5 == 'E855'){
+        //     return `https://abscan.org/tx/${hash}`
+        // }else if(e5 == 'E865'){
+        //     return `https://apechain.calderaexplorer.xyz/tx/${hash}`
+        // }else if(e5 == 'E875'){
+        //     return `https://www.btrscan.com/tx/${hash}`
+        // }else if(e5 == 'E885'){
+        //     return `https://blastscan.io/tx/${hash}`
+        // }else if(e5 == 'E895'){
+        //     return `https://explorer.gobob.xyz/tx/${hash}`
+        // }else if(e5 == 'E905'){
+        //     return `https://botanixscan.io/tx/${hash}`
+        // }else if(e5 == 'E915'){
+        //     return `https://explorer.bsquared.network/tx/${hash}`
+        // }else if(e5 == 'E925'){
+        //     return `https://scan.coredao.org/tx/${hash}`
+        // }else if(e5 == 'E935'){
+        //     return `https://cornscan.io/tx/${hash}`
+        // }else if(e5 == 'E945'){
+        //     return`https://explorer.etherlink.com/tx/${hash}`
+        // }else if(e5 == 'E955'){
+        //     return `https://fraxscan.com/tx/${hash}`
+        // }else if(e5 == 'E965'){
+        //     return `https://hashkey.blockscout.com/tx/${hash}`
+        // }else if(e5 == 'E975'){
+        //     return `https://explorer.hemi.xyz/tx/${hash}`
+        // }else if(e5 == 'E985'){
+        //     return `https://explorer.inkonchain.com/tx/${hash}`
+        // }else if(e5 == 'E995'){
+        //     return `https://explorer.lens.xyz/tx/${hash}`
+        // }else if(e5 == 'E1005'){
+        //     return `https://lineascan.build/tx/${hash}`
+        // }else if(e5 == 'E1015'){
+        //     return `https://blockscout.lisk.com/tx/${hash}`
+        // }else if(e5 == 'E1025'){
+        //     return `https://scan.merlinchain.io/tx/${hash}`
+        // }else if(e5 == 'E1035'){
+        //     return `https://explorer.metall2.com/tx/${hash}`
+        // }else if(e5 == 'E1045'){
+        //     return `https://explorer.metis.io/tx/${hash}`
+        // }else if(e5 == 'E1055'){
+        //     return `https://explorer.mindnetwork.xyz/tx/${hash}`
+        // }else if(e5 == 'E1065'){
+        //     return `https://explorer.mintchain.io/tx/${hash}`
+        // }else if(e5 == 'E1075'){
+        //     return `https://explorer.mode.network/tx/${hash}`
+        // }else if(e5 == 'E1085'){
+        //     return `https://neoxscan.ngd.network/tx/${hash}`
+        // }else if(e5 == 'E1095'){
+        //     return `https://opbnbscan.com/tx/${hash}`
+        // }else if(e5 == 'E1105'){
+        //     return `https://explorer.plume.org/tx/${hash}`
+        // }else if(e5 == 'E1115'){
+        //     return `https://explorer.katanarpc.com/tx/${hash}`
+        // }else if(e5 == 'E1125'){
+        //     return `https://zkevm.polygonscan.com/tx/${hash}`
+        // }else if(e5 == 'E1135'){
+        //     return `https://app.roninchain.com/tx/${hash}`
+        // }else if(e5 == 'E1145'){
+        //     return `https://scrollscan.com/tx/${hash}`
+        // }else if(e5 == 'E1155'){
+        //     return `https://www.shibariumscan.io/tx/${hash}`
+        // }else if(e5 == 'E1165'){
+        //     return `https://soneium.blockscout.com/tx/${hash}`
+        // }else if(e5 == 'E1175'){
+        //     return `https://explorer.superseed.xyz/tx/${hash}`
+        // }else if(e5 == 'E1185'){
+        //     return `https://taikoscan.io/tx/${hash}`
+        // }else if(e5 == 'E1195'){
+        //     return `https://treasurescan.io/tx/${hash}`
+        // }else if(e5 == 'E1205'){
+        //     return `https://uniscan.xyz/tx/${hash}`
+        // }else if(e5 == 'E1215'){
+        //     return `https://worldscan.org/tx/${hash}`
+        // }else if(e5 == 'E1225'){
+        //     return `https://web3.okx.com/explorer/x-layer/tx/${hash}`
+        // }else if(e5 == 'E1235'){
+        //     return `https://www.oklink.com/oktc/tx/${hash}`
+        // }else if(e5 == 'E1245'){
+        //     return `https://explorer.zircuit.com/tx/${hash}`
+        // }else if(e5 == 'E1255'){
+        //     return `https://explorer.zksync.io/tx/${hash}`
+        // }else if(e5 == 'E1265'){
+        //     return `https://explorer.zkevm.cronos.org/tx/${hash}`
+        // }else if(e5 == 'E1275'){
+        //     return `https://explorer.zero.network/tx/${hash}`
+        // }else if(e5 == 'E1285'){
+        //     return `https://explorer.sophon.xyz/tx/${hash}`
+        // }else if(e5 == 'E1295'){
+        //     return `https://pacific-explorer.manta.network/tx/${hash}`
+        // }else if(e5 == 'E1305'){
+        //     return `https://filscan.io/message/${hash}`
+        // }else if(e5 == 'E1315'){
+        //     return `https://monadvision.com/tx/${hash}`
+        // }else if(e5 == 'E1325'){
+        //     return `https://explorer.zora.energy/tx/${hash}`
+        // }else if(e5 == 'E1335'){
+        //     return `https://arbitrum-nova.blockscout.com/tx/${hash}`
+        // }else if(e5 == 'E1345'){
+        //     return `https://explorer.arena-z.gg/tx/${hash}`
+        // }else if(e5 == 'E1355'){
+        //     return `https://blockscout.polkadot.io/tx/${hash}`
+        // }else if(e5 == 'E1365'){
+        //     return `https://explorer.immutable.com/tx/${hash}`
+        // }else if(e5 == 'E1375'){
+        //     return `https://kitescan.ai/tx/${hash}`
+        // }else if(e5 == 'E1385'){
+        //     return `https://blockscout.injective.network/tx/${hash}`
+        // }else if(e5 == 'E1395'){
+        //     return `https://plasmascan.to/tx/${hash}`
+        // }else if(e5 == 'E1405'){
+        //     return `https://explorer.somnia.network/tx/${hash}`
+        // }
 
 
-        else{
-            var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link
-            if(blockexplorer_link != null){
-                var link = blockexplorer_link.replace('{hash}', hash)
-                return link
-            }
-        }
+        // else{
+        //     var blockexplorer_link = this.props.app_state.e5s[e5].blockexplorer_link
+        //     if(blockexplorer_link != null){
+        //         var link = blockexplorer_link.replace('{hash}', hash)
+        //         return link
+        //     }
+        // }
     }
 
     render_gas_or_priority_figure(){
@@ -549,14 +550,14 @@ class SuccessfulSend extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2794']/* 'Max Priority Fee Per Gas in Wei.' */, 'subtitle':this.format_power_figure(data['tx'].maxPriorityFeePerGas/1), 'barwidth':this.calculate_bar_width(data['tx'].maxPriorityFeePerGas/1), 'number':this.format_account_balance_figure(data['tx'].maxPriorityFeePerGas/1), 'barcolor':'', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2794']/* 'Max Priority Fee Per Gas in Wei.' */, 'subtitle':this.format_power_figure(data['tx'].maxPriorityFeePerGas/1), 'barwidth':this.calculate_bar_width(data['tx'].maxPriorityFeePerGas/1), 'number':this.format_account_balance_figure(data['tx'].maxPriorityFeePerGas/1), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2797']/* 'Max Priority Fee Per Gas in Gwei.' */, 'subtitle':this.format_power_figure(parseInt(data['tx'].maxPriorityFeePerGas)/10**9), 'barwidth':this.calculate_bar_width(parseInt(data['tx'].maxPriorityFeePerGas)/10**9), 'number':(parseInt(data['tx'].maxPriorityFeePerGas)/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2795']/* 'Max Fee per Gas Set in Wei.' */, 'subtitle':this.format_power_figure(data['tx'].maxFeePerGas/1), 'barwidth':this.calculate_bar_width(data['tx'].maxFeePerGas/1), 'number':this.format_account_balance_figure(data['tx'].maxFeePerGas/1), 'barcolor':'', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2795']/* 'Max Fee per Gas Set in Wei.' */, 'subtitle':this.format_power_figure(data['tx'].maxFeePerGas/1), 'barwidth':this.calculate_bar_width(data['tx'].maxFeePerGas/1), 'number':this.format_account_balance_figure(data['tx'].maxFeePerGas/1), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2798']/* 'Max Fee per Gas Set in Gwei.' */, 'subtitle':this.format_power_figure(parseInt(data['tx'].maxFeePerGas)/10**9), 'barwidth':this.calculate_bar_width(parseInt(data['tx'].maxFeePerGas)/10**9), 'number':(parseInt(data['tx'].maxFeePerGas)/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
@@ -567,7 +568,7 @@ class SuccessfulSend extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2793']/* 'Gas Price Set in Wei.' */, 'subtitle':this.format_power_figure(data['tx'].gasPrice/1), 'barwidth':this.calculate_bar_width(data['tx'].gasPrice/1), 'number':this.format_account_balance_figure(data['tx'].gasPrice/1), 'barcolor':'', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2793']/* 'Gas Price Set in Wei.' */, 'subtitle':this.format_power_figure(data['tx'].gasPrice/1), 'barwidth':this.calculate_bar_width(data['tx'].gasPrice/1), 'number':this.format_account_balance_figure(data['tx'].gasPrice/1), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2796']/* 'Gas Price Set in Gwei.' */, 'subtitle':this.format_power_figure(parseInt(data['tx'].gasPrice)/10**9), 'barwidth':this.calculate_bar_width(parseInt(data['tx'].gasPrice)/10**9), 'number':(parseInt(data['tx'].gasPrice)/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
@@ -913,7 +914,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095h']/* 'Bridged Amount.' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
                     'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -923,7 +924,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', parent_symbol)}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance/10**18),
                     'number':(l1_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -933,7 +934,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', item['symbol'])}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(parseInt(l2_balance)/10**18),
                     'number':(parseInt(l2_balance)/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
@@ -1060,7 +1061,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095h']/* 'Bridged Amount.' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
                     'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -1070,7 +1071,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', parent_symbol)}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance/10**18),
                     'number':(l1_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -1080,7 +1081,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', item['symbol'])}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance/10**18),
                     'number':(l2_balance/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
@@ -1194,7 +1195,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095h']/* 'Bridged Amount.' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
                     'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -1204,7 +1205,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', parent_symbol)}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance/10**18),
                     'number':(l1_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -1214,7 +1215,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', item['symbol'])}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance/10**18),
                     'number':(l2_balance/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
@@ -1222,7 +1223,7 @@ class SuccessfulSend extends Component {
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095j']/* 'Effective Gas Price' */, 'subtitle':this.format_power_figure(effectiveGasPrice), 'barwidth':this.calculate_bar_width(effectiveGasPrice), 'number':this.format_account_balance_figure(effectiveGasPrice), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095j']/* 'Effective Gas Price' */, 'subtitle':this.format_power_figure(effectiveGasPrice), 'barwidth':this.calculate_bar_width(effectiveGasPrice), 'number':this.format_account_balance_figure(effectiveGasPrice), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095k']/* 'Effective Gas Price in Gwei.' */, 'subtitle':this.format_power_figure(effectiveGasPrice/10**9), 'barwidth':this.calculate_bar_width(effectiveGasPrice/10**9), 'number':(effectiveGasPrice/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
@@ -1339,7 +1340,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095h']/* 'Bridged Amount.' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
                     'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -1349,7 +1350,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', parent_symbol)}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance), 'number':this.format_account_balance_figure(l1_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l1_balance/10**18),
                     'number':(l1_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -1359,7 +1360,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', item['symbol'])}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance), 'number':this.format_account_balance_figure(l2_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(l2_balance/10**18),
                     'number':(l2_balance/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
@@ -1367,7 +1368,7 @@ class SuccessfulSend extends Component {
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095j']/* 'Effective Gas Price' */, 'subtitle':this.format_power_figure(effectiveGasPrice), 'barwidth':this.calculate_bar_width(effectiveGasPrice), 'number':this.format_account_balance_figure(effectiveGasPrice), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095j']/* 'Effective Gas Price' */, 'subtitle':this.format_power_figure(effectiveGasPrice), 'barwidth':this.calculate_bar_width(effectiveGasPrice), 'number':this.format_account_balance_figure(effectiveGasPrice), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3095k']/* 'Effective Gas Price in Gwei.' */, 'subtitle':this.format_power_figure(effectiveGasPrice/10**9), 'barwidth':this.calculate_bar_width(effectiveGasPrice/10**9), 'number':(effectiveGasPrice/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
@@ -1482,7 +1483,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110bd']/* 'Swapped Amount.' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount), 'number':this.format_account_balance_figure(amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount/10**18),
                     'number':(amount/10**18), 'barcolor':'#606060', 'relativepower':ether_item['symbol'], })}
@@ -1492,7 +1493,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110bi']/* 'Amount Received.' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(final_amount), 'number':this.format_account_balance_figure(final_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(final_amount), 'number':this.format_account_balance_figure(final_amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(final_amount/10**18),
                     'number':(final_amount/10**18), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
@@ -1503,7 +1504,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', ether_item['symbol'])}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(source_balance), 'number':this.format_account_balance_figure(source_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(source_balance), 'number':this.format_account_balance_figure(source_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(source_balance/10**18),
                     'number':(source_balance/10**18), 'barcolor':'#606060', 'relativepower':ether_item['symbol'], })}
@@ -1513,7 +1514,7 @@ class SuccessfulSend extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095i']/* 'Updated Balance in $' */.replace('$', target_ether_symbol)}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(target_balance), 'number':this.format_account_balance_figure(target_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(target_balance), 'number':this.format_account_balance_figure(target_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(target_balance/10**18),
                     'number':(target_balance/10**18), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
@@ -1536,7 +1537,7 @@ class SuccessfulSend extends Component {
                         <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                             <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{item.name}</p>
 
-                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.amount), 'number':this.format_account_balance_figure(item.amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.amount), 'number':this.format_account_balance_figure(item.amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                             {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.amount/10**18),
                             'number':(item.amount/10**18), 'barcolor':'#606060', 'relativepower':ether_item['symbol'], })}
@@ -1629,7 +1630,7 @@ class SuccessfulSend extends Component {
         const source_item = data['source_item']
         const target_item = data['item']
         const source_type = data['source_type']
-        const source_base_unit_name = source_type == 'ether' ? 'wei' : source_item['base_units']
+        const source_base_unit_name = source_type == 'ether' ? this.props.app_state.loc['2738cx']/* wei */ : source_item['base_units']
 
         const target_ether_name = target_item['name']
         const target_ether_symbol = target_item['symbol']

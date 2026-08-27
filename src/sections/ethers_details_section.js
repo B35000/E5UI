@@ -318,12 +318,12 @@ class EthersDetailsSection extends Component {
                         <div>
                             <div style={{height: 10}}/>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481u']/* 'Ether\'s Supply.' */, 'number':supply, 'relativepower':'ether'})}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481u']/* 'Ether\'s Supply.' */, 'subtitle':this.format_power_figure(supply), 'barwidth':this.calculate_bar_width(supply), 'number':''+this.format_account_balance_figure(supply), 'barcolor':'#606060', 'relativepower':'ether', })}
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481u']/* 'Ether\'s Supply.' */, 'number':supply, 'relativepower':this.props.app_state.loc['2738cw']/* ether */})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481u']/* 'Ether\'s Supply.' */, 'subtitle':this.format_power_figure(supply), 'barwidth':this.calculate_bar_width(supply), 'number':''+this.format_account_balance_figure(supply), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
                                 </div>
 
-                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481v']/* 'Ether\'s Atomic Supply.' */, 'number':atomic_supply, 'relativepower':'wei'})}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481v']/* 'Ether\'s Atomic Supply.' */, 'subtitle':this.format_power_figure(atomic_supply), 'barwidth':this.calculate_bar_width(atomic_supply), 'number':''+this.format_account_balance_figure(atomic_supply), 'barcolor':'#606060', 'relativepower':'wei', })}
+                                <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481v']/* 'Ether\'s Atomic Supply.' */, 'number':atomic_supply, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481v']/* 'Ether\'s Atomic Supply.' */, 'subtitle':this.format_power_figure(atomic_supply), 'barwidth':this.calculate_bar_width(atomic_supply), 'number':''+this.format_account_balance_figure(atomic_supply), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
                                 </div>
                             </div>
                         </div>
@@ -376,8 +376,8 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('0')} */}
 
                     
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2453']/* 'Gas Price in Wei' */, 'number':this.get_gas_price(item['e5']), 'relativepower':'wei'})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2453']/* 'Gas Price in Wei' */, 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])), 'number':this.format_account_balance_figure(this.get_gas_price(item['e5'])), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2453']/* 'Gas Price in Wei' */, 'number':this.get_gas_price(item['e5']), 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2453']/* 'Gas Price in Wei' */, 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])), 'number':this.format_account_balance_figure(this.get_gas_price(item['e5'])), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2454']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])/10**9), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])/10**9), 'number':(this.get_gas_price(item['e5'])/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                     </div>
@@ -405,10 +405,10 @@ class EthersDetailsSection extends Component {
                     {this.render_wallet_address(item, item['e5'])}
 
                     <div style={{height:10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'number':this.props.app_state.account_balance[item['e5']], 'relativepower':'wei'})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item['e5']]), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'number':this.props.app_state.account_balance[item['e5']], 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item['e5']]), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2451']/* 'Your Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]/10**18), 'number':(this.props.app_state.account_balance[item['e5']]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2451']/* 'Your Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]/10**18), 'number':(this.props.app_state.account_balance[item['e5']]/10**18), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2452']/* Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                     </div>
@@ -890,11 +890,11 @@ class EthersDetailsSection extends Component {
 
                 'gas_limit':{'title':this.get_gas_limit(e5), 'details':this.props.app_state.loc['2469']/* 'Gas Limit per Block' */, 'size' :'l'},
 
-                'base_fee_per_gas_unit':{ 'style':'l', 'title':this.props.app_state.loc['2470']/* Base Fee in wei' */, 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)), 'number':this.format_account_balance_figure(this.get_base_fee_in_wei(e5)), 'barcolor':'', 'relativepower':'wei', 'n':this.get_base_fee_in_wei(e5)},
+                'base_fee_per_gas_unit':{ 'style':'l', 'title':this.props.app_state.loc['2470']/* Base Fee in wei' */, 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)), 'number':this.format_account_balance_figure(this.get_base_fee_in_wei(e5)), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, 'n':this.get_base_fee_in_wei(e5)},
 
                 'base_fee_per_gas_unit_in_gwei':{ 'style':'l', 'title':this.props.app_state.loc['2471']/* 'Base Fee in gwei' */, 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)/10**9), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)/10**9), 'number':(this.get_base_fee_in_wei(e5)/10**9), 'barcolor':'', 'relativepower':'gwei', },
 
-                'supply':{'style': 'l', 'title':'Ether Supply', 'subtitle': this.format_power_figure(this.get_supply_figure(e5)), 'barwidth': this.calculate_bar_width(this.get_supply_figure(e5)), 'number': this.format_account_balance_figure(this.get_supply_figure(e5)), 'barcolor': '', 'relativepower': 'ether',},
+                'supply':{'style': 'l', 'title':'Ether Supply', 'subtitle': this.format_power_figure(this.get_supply_figure(e5)), 'barwidth': this.calculate_bar_width(this.get_supply_figure(e5)), 'number': this.format_account_balance_figure(this.get_supply_figure(e5)), 'barcolor': '', 'relativepower': this.props.app_state.loc['2738cw']/* ether */},
 
                 'address':{'details':start_and_end(this.get_account_address(e5)), 'title':this.props.app_state.loc['2472']/* 'Your Address' */, 'size' :'l'},
                 'block_time':{'title':this.get_average_block_time_from_blocks(e5), 'details':this.props.app_state.loc['2473']/* 'Average block time for the last 5 blocks' */, 'size' :'l'},
@@ -1633,13 +1633,13 @@ class EthersDetailsSection extends Component {
             
             'gas_used':{'style': 'l', 'title':this.props.app_state.loc['2477']/* 'Gas Used' */, 'subtitle': this.format_power_figure(gas_used), 'barwidth': this.calculate_bar_width(gas_used), 'number': this.format_account_balance_figure(gas_used), 'barcolor': '', 'relativepower': 'gas', 'n':gas_used},
             
-            'gas_price':{'style': 'l', 'title':this.props.app_state.loc['2478']/* 'Gas Price Paid in Wei' */, 'subtitle': this.format_power_figure(gas_price), 'barwidth': this.calculate_bar_width(gas_price), 'number': this.format_account_balance_figure(gas_price), 'barcolor': '', 'relativepower': 'wei', 'n':gas_price},
+            'gas_price':{'style': 'l', 'title':this.props.app_state.loc['2478']/* 'Gas Price Paid in Wei' */, 'subtitle': this.format_power_figure(gas_price), 'barwidth': this.calculate_bar_width(gas_price), 'number': this.format_account_balance_figure(gas_price), 'barcolor': '', 'relativepower': this.props.app_state.loc['2738cx']/* wei */, 'n':gas_price},
             
             'gas_price_gwei':{'style': 'l', 'title':this.props.app_state.loc['2479']/* 'Gas Price Paid in Gwei' */, 'subtitle': this.format_power_figure(gas_price/10**9), 'barwidth': this.calculate_bar_width(gas_price/10**9), 'number': gas_price/10**9, 'barcolor': '', 'relativepower': 'gwei',},
             
-            'value':{'style': 'l', 'title':this.props.app_state.loc['2480']/* 'Value' */, 'subtitle': this.format_power_figure(value), 'barwidth': this.calculate_bar_width(value), 'number': this.format_account_balance_figure(value), 'barcolor': '', 'relativepower': 'wei', 'n':value},
+            'value':{'style': 'l', 'title':this.props.app_state.loc['2480']/* 'Value' */, 'subtitle': this.format_power_figure(value), 'barwidth': this.calculate_bar_width(value), 'number': this.format_account_balance_figure(value), 'barcolor': '', 'relativepower': this.props.app_state.loc['2738cx']/* wei */, 'n':value},
 
-            'value_ether':{'style': 'l', 'title':this.props.app_state.loc['2480']/* 'Value' */, 'subtitle': this.format_power_figure(value/10**18), 'barwidth': this.calculate_bar_width(value/10**18), 'number': (value/10**18), 'barcolor': '', 'relativepower': 'ether',},
+            'value_ether':{'style': 'l', 'title':this.props.app_state.loc['2480']/* 'Value' */, 'subtitle': this.format_power_figure(value/10**18), 'barwidth': this.calculate_bar_width(value/10**18), 'number': (value/10**18), 'barcolor': '', 'relativepower': this.props.app_state.loc['2738cw']/* ether */,},
 
             'block':{ 'details': block, 'title': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' },
             'time':{ 'details': time+', '+relative_time+' ago', 'title': 'Timestamp', 'size': 'l' },

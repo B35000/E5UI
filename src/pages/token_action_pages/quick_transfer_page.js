@@ -542,9 +542,22 @@ class QuickTransferPage extends Component {
 
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106r']/* 'Set a recipient for all your transfers.' */, 'title':this.props.app_state.loc['3106b']/* 'Send Recipient.' */})}
                 
-                <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
-                {this.load_account_suggestions()} 
+                
+                {this.state.price_data.length == 0 && (
+                    <div>
+                        <div style={{height:10}}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1025']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
+                        {this.load_account_suggestions()} 
+                    </div>
+                )}
+
+                {this.state.price_data.length != 0 && (
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('4', {'text':this.props.app_state.loc['3106n']/* 'To $' */.replace('$', this.get_account_alias3(this.state.price_data[0]['recipient'])+this.state.price_data[0]['recipient']), 'textsize':'13px', 'font':this.props.app_state.font})}
+                    </div>
+                )}
+                
 
 
                 {this.props.app_state.locked_wallet_hashed_password != '' && (
@@ -560,6 +573,12 @@ class QuickTransferPage extends Component {
 
             </div>
         )
+    }
+
+    get_account_alias3(account_id){
+        const alias = this.props.app_state.alias_bucket[this.state.e5][account_id]
+        if(alias == null) return '';
+        else return alias+' • ';
     }
 
     render_select_itransfer_amount_data2(){

@@ -166,7 +166,7 @@ class BridgeEtherPage extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095d']/* 'Balance in $' */.replace('$', parent_symbol)}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance/10**18),
                     'number':(my_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -270,7 +270,7 @@ class BridgeEtherPage extends Component {
             'barwidth':this.calculate_bar_width(this.state.picked_wei_amount),
             'number':this.format_account_balance_figure(this.state.picked_wei_amount),
             'barcolor':'#606060',
-            'relativepower':'wei',
+            'relativepower':this.props.app_state.loc['2738cx']/* wei */,
         }
     }
 
@@ -282,7 +282,7 @@ class BridgeEtherPage extends Component {
             'barwidth':this.calculate_bar_width(this.state.picked_wei_amount/10**18),
             'number':(this.state.picked_wei_amount/10**18),
             'barcolor':'#606060',
-            'relativepower':'ether',
+            'relativepower':this.props.app_state.loc['2738cw']/* ether */,
         }
     }
 

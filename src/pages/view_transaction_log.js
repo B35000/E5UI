@@ -70,12 +70,11 @@ class ViewTransactionLogPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6">
                         {this.render_log_item_data()}
                         {this.render_detail_item('0')}
-                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6">
                         {this.render_log_item_data2()}
                         <div style={{height: 10}}/>
                         {this.render_empty_views(3)}
@@ -87,12 +86,11 @@ class ViewTransactionLogPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5">
                         {this.render_log_item_data()}
                         {this.render_detail_item('0')}
-                        {this.render_detail_item('0')}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5">
                         {this.render_log_item_data2()}
                         <div style={{height: 10}}/>
                         {this.render_empty_views(3)}
@@ -150,10 +148,10 @@ class ViewTransactionLogPage extends Component {
                 </div>
                 <div style={{height: 10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1088']/* 'Gas Price in wei' */, 'number':item.returnValues.p7, 'relativepower':'wei'})}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1088']/* 'Gas Price in wei' */, 'number':item.returnValues.p7, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1087']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(item.returnValues.p7/10**9), 'barwidth':this.calculate_bar_width(item.returnValues.p7/10**9), 'number':this.format_account_balance_figure(item.returnValues.p7/10**9), 'barcolor':'', 'relativepower':'gwei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1088']/* 'Gas Price in wei' */, 'subtitle':this.format_power_figure(item.returnValues.p7), 'barwidth':this.calculate_bar_width(item.returnValues.p7), 'number':this.format_account_balance_figure(item.returnValues.p7), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1088']/* 'Gas Price in wei' */, 'subtitle':this.format_power_figure(item.returnValues.p7), 'barwidth':this.calculate_bar_width(item.returnValues.p7), 'number':this.format_account_balance_figure(item.returnValues.p7), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
                 </div>
                 {this.render_detail_item('0')}
 
@@ -172,10 +170,10 @@ class ViewTransactionLogPage extends Component {
                 {this.render_detail_item('3',{'details':item.returnValues.p2, 'title':this.props.app_state.loc['1777']/* 'Sender Account Address' */,'size':'l'})}
                 <div style={{height: 10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1779']/* 'Included Value in Wei' */, 'number':item.returnValues.p6, 'relativepower':'wei'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1778']/* 'Included Value in Ether' */, 'subtitle':this.format_power_figure(parseInt(item.returnValues.p6)/10**18), 'barwidth':this.calculate_bar_width(parseInt(item.returnValues.p6)/10**18), 'number':(parseInt(item.returnValues.p6)/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1779']/* 'Included Value in Wei' */, 'number':item.returnValues.p6, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1778']/* 'Included Value in Ether' */, 'subtitle':this.format_power_figure(parseInt(item.returnValues.p6)/10**18), 'barwidth':this.calculate_bar_width(parseInt(item.returnValues.p6)/10**18), 'number':(parseInt(item.returnValues.p6)/10**18), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1779']/* 'Included Value in Wei' */, 'subtitle':this.format_power_figure(item.returnValues.p6), 'barwidth':this.calculate_bar_width(item.returnValues.p6), 'number':this.format_account_balance_figure(item.returnValues.p6), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1779']/* 'Included Value in Wei' */, 'subtitle':this.format_power_figure(item.returnValues.p6), 'barwidth':this.calculate_bar_width(item.returnValues.p6), 'number':this.format_account_balance_figure(item.returnValues.p6), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
                 </div>
                 
                 <div style={{height: 10}}/>

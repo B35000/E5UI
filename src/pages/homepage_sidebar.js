@@ -313,8 +313,9 @@ class HomepageSideBar extends Component {
         const ether_coin_request = notification_object['ether_coin_request'] || []
         const ether_coin_receipt = notification_object['ether_coin_receipt'] || []
         const mempool_notification = notification_object['mempool_notification'] || []
+        const quick_itransfer = notification_object['quick_itransfer'] || []
 
-        const all_events = token.concat(bill_request, signature, ether_coin_request, ether_coin_receipt, mempool_notification)
+        const all_events = token.concat(bill_request, signature, ether_coin_request, ether_coin_receipt, mempool_notification, quick_itransfer)
         
         const me = this;
         const filtered_events = all_events.filter(function (event) {
@@ -617,7 +618,7 @@ class HomepageSideBar extends Component {
         var token_name = this.props.app_state.e5s[item].token
         var details = this.format_account_balance_figure(this.props.app_state.account_balance[item]) + ' wei'
         return(
-            <div onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':'wei'})}>
+            <div onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
                 {this.render_coin_item({'title':token_name, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
             </div>
         )

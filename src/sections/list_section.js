@@ -8708,7 +8708,7 @@ return data['data']
             items = []
         }
 
-        var items = this.sortByAttributeDescending(unsorted_items, 'time')
+        var items = this.sortByAttributeDescending(unsorted_items, 'time').reverse()
 
         
 
@@ -8727,13 +8727,8 @@ return data['data']
                         itemContent={(index) => {
                             const item = items[index];
                             return (
-                                <div>
-                                    <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{}}>
-                                            {this.render_itransfer_item(item)}
-                                        </motion.div>
-                                    </AnimatePresence>
+                                <div style={{'margin':'3px 0px 3px 0px'}}>
+                                    {this.render_itransfer_item(item)}
                                     {this.render_space_if_last_item(index, items.length)}
                                 </div>
                             );
@@ -8745,37 +8740,27 @@ return data['data']
     }
 
     render_itransfer_item(item){
-        var alias = this.get_senders_name_or_you2(item['account'], item['e5'])
+        const alias = this.get_senders_name_or_you3(item['account'], item['e5'])
+        const title = this.props.app_state.loc['2509eo']/* 'From $' */.replace('$', number_with_commas(item['account'])) + alias;
+        const details = new Date(item['time']*1000).toLocaleString() + ' • ' + this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */
+        const footer = this.props.app_state.loc['2509ep']/* '$ Transfers' */.replace('$', number_with_commas(item['transfers'].length))
         return(
-            <div>
-                {this.render_detail_item('3', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[item['e5']].e5_img},)}
-                <div style={{height: 3}}/>
-
-                {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-                <div style={{height: 3}}/>
-
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    <div style={{'margin':'0px 0px 0px 5px'}}>
-                        {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
-                    </div>
-
-                    {item['transfers'].map((transfer, index) => (
-                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':transfer['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']]})}>
-                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(transfer['amount']), 'number':this.format_account_balance_figure(transfer['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']], })}
-                        </div>
-                    ))}
-                </div>
-                {this.render_detail_item('0')}
+            <div onClick={() => this.when_itransfer_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'title_image':this.props.app_state.e5s[item['e5']].e5_img, 'footer':footer})}
             </div>
         )
     }
 
-    get_senders_name_or_you2(sender, e5){
+    when_itransfer_item_clicked(item){
+        this.props.show_dialog_bottomsheet({'item':item}, 'show_itransfer_search_transfers_item')
+    }
+
+    get_senders_name_or_you3(sender, e5){
         if(sender == this.props.app_state.user_account_id[e5]){
-            return this.props.app_state.loc['1694']/* You. */
+            return ' • ' +this.props.app_state.loc['1694']/* You. */
         }
         var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
-        var alias = (bucket[sender] == null ? this.props.app_state.loc['1592']/* Alias Unknown */ : bucket[sender])
+        var alias = (bucket[sender] == null ? '' : ' • ' + bucket[sender])
         return alias
     }
 
@@ -8792,7 +8777,7 @@ return data['data']
             sender_accounts.forEach(account => {
                 var transfer_data = this.process_transfers(object[block][account])
                 var time = object[block][account][0].returnValues.p5/* timestamp */
-                object_array.push({'account':account, 'block':block, 'transfers':transfer_data.final_transfers, 'time':time, 'e5':transfer_data.e5 || selected_e5})
+                object_array.push({'account':account, 'block':block, 'transfers':transfer_data.final_transfers, 'time':parseInt(time), 'e5':transfer_data.e5 || selected_e5})
             });
         });
 
@@ -8807,7 +8792,7 @@ return data['data']
         const recipient = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var key = identifier + '' + recipient + selected_e5
         var object = this.props.app_state.searched_itransfer_results[key]
-        console.log('itransfer_data', this.props.app_state.searched_itransfer_results, object)
+        // console.log('itransfer_data', this.props.app_state.searched_itransfer_results, object)
         if(object == null) return []
 
         var blocks = Object.keys(object)
@@ -8817,7 +8802,7 @@ return data['data']
             sender_accounts.forEach(account => {
                 var transfers = this.process_transfers(object[block][account])
                 var time = object[block][account][0].returnValues.p5/* timestamp */
-                object_array.push({'account':account, 'block':block, 'transfers':transfers.final_transfers, 'time':time, 'e5':transfers.e5 || selected_e5})
+                object_array.push({'account':account, 'block':block, 'transfers':transfers.final_transfers, 'time':parseInt(time), 'e5':transfers.e5 || selected_e5})
             });
         });
 

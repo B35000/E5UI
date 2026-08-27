@@ -771,6 +771,12 @@ class DialogPage extends Component {
         else if(option == 'confirm_swap_coin_ether_via_changenow_dialog'){
             return this.view_confirm_swap_coin_ether_via_changenow_ui()
         }
+        else if(option == 'view_incoming_itransfer_transactions'){
+            return this.view_incoming_itransfer_transactions_ui()
+        }
+        else if(option == 'show_itransfer_search_transfers_item'){
+            return this.show_itransfer_search_transfers_item_ui()
+        }
     }
 
 
@@ -837,9 +843,9 @@ class DialogPage extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1526']/* Required Balance in Ether and Wei */}</p>
                         
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether), 'number':this.format_account_balance_figure(required_ether), 'barcolor':'#606060', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether), 'number':this.format_account_balance_figure(required_ether), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether/10**18), 'number':required_ether/10**18, 'barcolor':'#606060', 'relativepower':'ether', })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether/10**18), 'number':required_ether/10**18, 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
                     </div>
 
                 </div>
@@ -855,7 +861,7 @@ class DialogPage extends Component {
             'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]),
             'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]),
             'barcolor':'#606060',
-            'relativepower':'wei',
+            'relativepower':this.props.app_state.loc['2738cx']/* wei */,
         }
     }
 
@@ -867,7 +873,7 @@ class DialogPage extends Component {
             'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18),
             'number':this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18,
             'barcolor':'#606060',
-            'relativepower':'ether',
+            'relativepower':this.props.app_state.loc['2738cw']/* ether */,
         }
     }
 
@@ -1007,7 +1013,7 @@ class DialogPage extends Component {
             'barwidth':this.calculate_bar_width(picked_wei_amount),
             'number':this.format_account_balance_figure(picked_wei_amount),
             'barcolor':'#606060',
-            'relativepower':'wei',
+            'relativepower':this.props.app_state.loc['2738cx']/* wei */,
         }
     }
 
@@ -1019,7 +1025,7 @@ class DialogPage extends Component {
             'barwidth':this.calculate_bar_width(picked_wei_amount/10**18),
             'number':(picked_wei_amount/10**18),
             'barcolor':'#606060',
-            'relativepower':'ether',
+            'relativepower':this.props.app_state.loc['2738cw']/* ether */,
         }
     }
 
@@ -1168,7 +1174,7 @@ class DialogPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2018']/* 'Withdraw Ether Confirmation' */, 'details':this.props.app_state.loc['2019']/* 'Confirm that you want to withdraw Ether to the set address' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2020']/* 'Withdraw balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5['id']]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5['id']]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5['id']]), 'relativepower':'wei'})}
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2020']/* 'Withdraw balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5['id']]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5['id']]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5['id']]), 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}
 
                         {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2021']/* 'Withdraw balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'number':(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'relativepower':'Ether'})}
                     </div>
@@ -8452,6 +8458,9 @@ return data['data']
     render_view_link_options_data(){
         return(
             <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sx']/* 'How e should open the link.' */, 'details':this.state.data['link'], 'size':'l'})}
+                <div style={{height: 10}}/>
+
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055er']/* 'Open Via Iframe' */, 'details':this.props.app_state.loc['3055es']/* 'Open the link inside e using an iframe.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div onClick={()=> this.props.open_link(this.state.data['link'], this.props.app_state.loc['1593jl']/* 'iframe' */)}>
@@ -10980,7 +10989,7 @@ return data['data']
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3055jx']/* Requested Amount in Ether and Wei */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(base_unit_amount), 'number':this.format_account_balance_figure(base_unit_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(base_unit_amount), 'number':this.format_account_balance_figure(base_unit_amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(base_unit_amount/10**18), 'number':(base_unit_amount/10**18), 'barcolor':'#606060', 'relativepower':ether_coin_id, })}
                 </div>
@@ -13311,7 +13320,6 @@ return data['data']
         const e5_image = this.props.app_state.e5s[sender_account_e5].e5_img
         const transaction_expiry_time = this.state.data['transaction_expiry_time']
         const transaction_expiry_block = this.state.data['transaction_expiry_block']
-        // console.log('render_mempool_notification_data','transaction_expiry_time', transaction_expiry_time)
         var current_gas_prices = this.props.app_state.gas_price[sender_account_e5]
         return(
             <div>
@@ -13324,11 +13332,11 @@ return data['data']
                 {this.render_detail_item('3', {'title':alias, 'details':this.props.app_state.loc['3055mw']/* 'Transaction Author.' */, 'size':'l', 'title_image': e5_image})}
                 <div style={{height: 10}}/>
                 
-                {this.render_detail_item('3', {'title':sender_address, 'details':this.props.app_state.loc['3055mx']/* 'Author\'s Address.' */, 'size':'l',})}
+                {this.render_detail_item('3', {'details':sender_address, 'title':this.props.app_state.loc['3055mx']/* 'Author\'s Address.' */, 'size':'l',})}
                 <div style={{height: 10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['3055na']/* 'Gas Price Used.' */, 'number':gas_price, 'relativepower':'wei'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055na']/* 'Gas Price Used' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['3055na']/* 'Gas Price Used.' */, 'number':gas_price, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055na']/* 'Gas Price Used' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055nb']/* 'Gas Price Used in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
 
@@ -13666,7 +13674,7 @@ return data['data']
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095d']/* 'Balance in $' */.replace('$', parent_symbol)}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance/10**18),
                     'number':(my_balance/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -13683,7 +13691,7 @@ return data['data']
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3055of']/* 'Set Amount To Bridge.' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount), 'number':this.format_account_balance_figure(picked_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount), 'number':this.format_account_balance_figure(picked_amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount/10**18),
                     'number':(picked_amount/10**18), 'barcolor':'#606060', 'relativepower':parent_symbol, })}
@@ -13693,7 +13701,7 @@ return data['data']
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3055oe']/* 'Gas Price To Be Used.' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_price/10**9),
                     'number':(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
@@ -17779,7 +17787,7 @@ return data['data']
                                     }}>
                                     <div style={{width:'100%'}}>
                                         <li style={{'padding': '5px'}}>
-                                            {this.render_transfer_item2(item)}
+                                            {this.render_transfer_item4(item)}
                                         </li>
                                     </div>
                                 </SwipeableListItem>
@@ -17793,7 +17801,7 @@ return data['data']
         
     }
 
-    render_transfer_item2(item){
+    render_transfer_item4(item){
         const title = this.state.deductible_data[item] + ' '+ this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]
         return(
             <div>
@@ -17885,7 +17893,7 @@ return data['data']
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095d']/* 'Balance in $' */.replace('$', item['symbol'])}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance/10**18),
                     'number':(my_balance/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
@@ -17901,7 +17909,7 @@ return data['data']
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110i']/* 'Set amount to Swap.' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount), 'number':this.format_account_balance_figure(picked_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount), 'number':this.format_account_balance_figure(picked_amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount/10**18),
                     'number':(picked_amount/10**18), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
@@ -17953,7 +17961,7 @@ return data['data']
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110o']/* 'Amount to Receive' */}</p>
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount_to_receive), 'number':this.format_account_balance_figure(amount_to_receive), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount_to_receive), 'number':this.format_account_balance_figure(amount_to_receive), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(amount_to_receive/10**18),
                     'number':(amount_to_receive/10**18), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
@@ -17977,7 +17985,7 @@ return data['data']
                         <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                             <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{item.name}</p>
 
-                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.amount), 'number':this.format_account_balance_figure(item.amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.amount), 'number':this.format_account_balance_figure(item.amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                             {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.amount/10**18),
                             'number':(item.amount/10**18), 'barcolor':'#606060', 'relativepower':ether_item['symbol'], })}
@@ -18089,7 +18097,7 @@ return data['data']
         const target_base_units = swap_target_data['base_units']
        
         const type = this.state.data['type'] 
-        const item_base_units = type == 'ether' ? 'wei' : swap_target_data['item']['base_unit']
+        const item_base_units = type == 'ether' ? this.props.app_state.loc['2738cx']/* wei */ : swap_target_data['item']['base_unit']
         const item_decimal_count = type == 'ether' ? 18 : item['decimals']
 
         return(
@@ -18210,6 +18218,253 @@ return data['data']
 
         this.props.swap_ether_to_specified_target_via_changenow(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, type, swap_target_data, changenow_swap_object)
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    view_incoming_itransfer_transactions_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_incoming_itransfer_transactions_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_incoming_itransfer_transactions_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_incoming_itransfer_transactions_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_incoming_itransfer_transactions_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_incoming_itransfer_transactions_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_incoming_itransfer_transactions_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_incoming_itransfer_transactions_data(){
+        const time = this.state.data['time']/1000
+        const sender_account = this.state.data['sender_account']
+        const sender_account_e5 = this.state.data['sender_account_e5']
+        const sender_address = this.state.data['sender_address']
+        const gas_price = this.state.data['gas_price']
+        const gas_limit = this.state.data['gas_limit']
+        const rpc_url = this.state.data['rpc_url']
+        const alias = this.get_senders_alias(sender_account, sender_account_e5)
+        const e5_image = this.props.app_state.e5s[sender_account_e5].e5_img
+        const transaction_expiry_time = this.state.data['transaction_expiry_time']
+        const transaction_expiry_block = this.state.data['transaction_expiry_block']
+        var current_gas_prices = this.props.app_state.gas_price[sender_account_e5]
+        const identifier = this.state.data['identifier']
+        const hash = this.state.data['hash']
+        const pre_compute_gas = this.state.data['pre_compute_gas']
+        const pre_compute_gas_note = pre_compute_gas != 0 ? this.props.app_state.loc['3055tb']/* '✨ This run will succeed.' */ : this.props.app_state.loc['3055tc']/* '� The success of this run is unknown.' */
+        const recipient_account = this.state.data['recipient_account']
+        const recipient_alias = this.get_senders_alias(recipient_account, sender_account_e5)
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055my']/* 'Transaction Details.' */, 'details':this.props.app_state.loc['3055sy']/* 'The details for the transaction posted in the mempool for a watched quick iTransfer.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':''+(new Date(time*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                
+                {this.render_detail_item('3', {'title':alias, 'details':this.props.app_state.loc['3055mw']/* 'Transaction Author.' */, 'size':'l', 'title_image': e5_image})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':recipient_alias, 'details':this.props.app_state.loc['3055td']/* 'Transaction Recipient' */, 'size':'l', 'title_image': e5_image})}
+                <div style={{height: 10}}/>
+                
+                {this.render_detail_item('3', {'details':sender_address, 'title':this.props.app_state.loc['3055mx']/* 'Author\'s Address.' */, 'size':'l',})}
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['3055na']/* 'Gas Price Used.' */, 'number':gas_price, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055na']/* 'Gas Price Used' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055nb']/* 'Gas Price Used in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+
+                    {current_gas_prices != null && this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055nj']/* 'Current Gas Prices In Gwei.' */, 'subtitle':this.format_power_figure(current_gas_prices/10**9), 'barwidth':this.calculate_bar_width(current_gas_prices/10**9), 'number':(current_gas_prices/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['3055nc']/* 'Transaction Gas Limit Used' */, 'number':gas_limit, 'relativepower':this.props.app_state.loc['3055nd']/* 'gas' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055nc']/* 'Transaction Gas Limit Used.' */, 'subtitle':this.format_power_figure(gas_limit), 'barwidth':this.calculate_bar_width(gas_limit), 'number':this.format_account_balance_figure(gas_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['3055nd']/* 'gas' */, })}
+                </div>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':rpc_url, 'details':this.props.app_state.loc['3055ne']/* 'RPC used.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055nh']/* 'Expiry Time: $' */.replace('$', (new Date(parseInt(transaction_expiry_time)*1000).toLocaleString())), 'details':this.props.app_state.loc['3055ni']/* 'Transaction Expiry Block: $' */.replace('$', this.format_account_balance_figure(transaction_expiry_block)), 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':number_with_commas(pre_compute_gas), 'details':this.props.app_state.loc['3055ta']/* 'Pre-Computed Gas' */, 'size':'l', 'footer':pre_compute_gas_note})}
+                
+            </div>
+        )
+    }
+
+    render_incoming_itransfer_transactions_data2(){
+        const transaction_groups = this.state.data['price_data']
+        const hash = this.state.data['hash']
+        const e5 = this.state.data['sender_account_e5']
+        const link = this.props.get_blockexplorer_link(e5, hash)
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2802']/* Track Your Transaction. */,'details':this.props.app_state.loc['2803']/* You can track the status of your transaction from the chain blockexplorer. */, 'size':'l'})}
+                    
+                <div style={{height: 10}}/>
+                {this.render_detail_item('4', {'text':link, 'textsize':'13px', 'font':'Sans-serif'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055sz']/* 'iTransfer Payments.' */, 'details':this.props.app_state.loc['3055ng']/* 'The transfers set to occur once the run is included in an upcoming block.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {transaction_groups.map((item, index) => (
+                    <div style={{'padding': '3px 0px 3px 0px'}}>
+                        {this.render_transfer_item3(item)}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    render_transfer_item3(item){
+        const title = item['amount'] + ' '+ this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':title, 'textsize':'13px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    show_itransfer_search_transfers_item_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_itransfer_search_transfers_item_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_itransfer_search_transfers_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_itransfer_search_transfers_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_itransfer_search_transfers_item_data(){
+        const item = this.state.data['item']
+        const e5 = item['e5']
+        const alias = this.get_senders_name_or_you2(item['account'], item['e5'])
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[item['e5']].e5_img},)}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':number_with_commas(item['block']), 'details':this.props.app_state.loc['3068x']/* Block Number */, 'size':'l',},)}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {item['transfers'].map((transfer, index) => (
+                        <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+transfer['exchange']], 'number':transfer['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+transfer['exchange']], 'subtitle':this.format_power_figure(transfer['amount']), 'barwidth':this.calculate_bar_width(transfer['amount']), 'number':this.format_account_balance_figure(transfer['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']], })}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    get_senders_name_or_you2(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return ' • ' +this.props.app_state.loc['1694']/* You. */
+        }
+        var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[sender] == null ? this.props.app_state.loc['1591']/* Unknown */  : bucket[sender])
+        return alias
+    }
+
+
+
 
 
 

@@ -257,18 +257,18 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('0')} */}
 
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1375']/* 'Balance in Wei' */, 'number':this.props.app_state.account_balance[e5], 'relativepower':'wei'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1375']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1375']/* 'Balance in Wei' */, 'number':this.props.app_state.account_balance[e5], 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1375']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1376']/* 'Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18), 'number':(this.props.app_state.account_balance[e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1376']/* 'Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18), 'number':(this.props.app_state.account_balance[e5]/10**18), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(balance_gas_transactions), 'barwidth':this.calculate_bar_width(balance_gas_transactions), 'number':this.format_account_balance_figure(balance_gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
 
                 <div style={{height: 30}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1379']/* 'Gas Price' */, 'number':gas_price, 'relativepower':'wei'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1379']/* 'Gas Price' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1379']/* 'Gas Price' */, 'number':gas_price, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1379']/* 'Gas Price' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1380']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
@@ -339,12 +339,12 @@ class SendReceiveEtherPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1407a']/* 'Max Priority Fee per Gas.' */, 'details':this.props.app_state.loc['1407b']/* 'Set the max prioryt fee per gas for your transaction below.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1407g']/* Picked Max Priority Gas Price. */, 'number':this.state.picked_max_priority_per_gas_amount, 'relativepower':'wei'})}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1407g']/* Picked Max Priority Gas Price. */, 'number':this.state.picked_max_priority_per_gas_amount, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1407g']/* Picked Max Priority Gas Price. */}</p>
 
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount/10**9), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
 
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_max_priority_per_gas_figure_set.bind(this)} theme={this.props.theme} power_limit={13}/>
@@ -352,12 +352,12 @@ class SendReceiveEtherPage extends Component {
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1407c']/* 'Max Fee per Gas.' */, 'details':this.props.app_state.loc['1407d']/* 'Set the maximum amount of gas fee your willing to pay for your transaction below.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1407h']/* Picked Max Fee Gas Price. */, 'number':this.state.picked_max_fee_per_gas_amount, 'relativepower':'wei'})}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1407h']/* Picked Max Fee Gas Price. */, 'number':this.state.picked_max_fee_per_gas_amount, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1407h']/* Picked Max Fee Gas Price. */}</p>
 
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount/10**9), 'number':(this.state.picked_max_fee_per_gas_amount/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
 
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
                     </div>
 
                     <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_max_fee_per_gas_figure_set.bind(this)} theme={this.props.theme} power_limit={13}/>
@@ -375,7 +375,7 @@ class SendReceiveEtherPage extends Component {
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1387']/* Picked Gas Price in Gwei. */}</p>
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_gas_price_in_gwei), 'number':(picked_gas_price_in_gwei)+'', 'barcolor':'#606060', 'relativepower':'gwei', })}
 
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price), 'number':(this.state.picked_wei_gas_price)+'', 'barcolor':'#606060', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price), 'number':(this.state.picked_wei_gas_price)+'', 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                         {/* {this.render_detail_item('2', this.get_picked_gas_price_in_wei())} */}
                         {/* {this.render_detail_item('2', this.get_picked_gas_price_in_ether())} */}
@@ -619,8 +619,8 @@ class SendReceiveEtherPage extends Component {
             'title':{'title':'Block: '+item.blockNumber, 'details':blockhash, 'size':'s'},
             'from':{'title':'From: ', 'details':this.format_hash_or_address(item.from), 'size':'s'},
             'to':{'title':'To: ', 'details':this.format_hash_or_address(item.to), 'size':'s'},
-            'value_in_wei':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.value),'number':this.format_account_balance_figure(item.value), 'barcolor':'#606060', 'relativepower':'wei',},
-            'value_in_ether':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.value/10**18),'number':this.format_account_balance_figure((item.value/10**18).toFixed(8)), 'barcolor':'#606060', 'relativepower':'ether',},
+            'value_in_wei':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.value),'number':this.format_account_balance_figure(item.value), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */,},
+            'value_in_ether':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.value/10**18),'number':this.format_account_balance_figure((item.value/10**18).toFixed(8)), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cw']/* ether */,},
             'gas_gasprice':{'title':'Gas: '+this.format_account_balance_figure(item.gas), 'details':' Gas Price(Wei): '+this.format_account_balance_figure(item.gasPrice), 'size':'s'},
         }
     }
@@ -646,7 +646,7 @@ class SendReceiveEtherPage extends Component {
             'barwidth':this.calculate_bar_width(this.state.picked_wei_amount),
             'number':this.format_account_balance_figure(this.state.picked_wei_amount),
             'barcolor':'#606060',
-            'relativepower':'wei',
+            'relativepower':this.props.app_state.loc['2738cx']/* wei */,
         }
     }
 
@@ -658,7 +658,7 @@ class SendReceiveEtherPage extends Component {
             'barwidth':this.calculate_bar_width(this.state.picked_wei_amount/10**18),
             'number':(this.state.picked_wei_amount/10**18),
             'barcolor':'#606060',
-            'relativepower':'ether',
+            'relativepower':this.props.app_state.loc['2738cw']/* ether */,
         }
     }
 
@@ -671,7 +671,7 @@ class SendReceiveEtherPage extends Component {
             'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price/10**18),
             'number':this.format_account_balance_figure(this.state.picked_wei_gas_price/10**18),
             'barcolor':'#606060',
-            'relativepower':'ether',
+            'relativepower':this.props.app_state.loc['2738cw']/* ether */,
         }
     }
 
@@ -683,7 +683,7 @@ class SendReceiveEtherPage extends Component {
             'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price),
             'number':this.format_account_balance_figure(this.state.picked_wei_gas_price),
             'barcolor':'#606060',
-            'relativepower':'wei',
+            'relativepower':this.props.app_state.loc['2738cx']/* wei */,
         }
     }
 

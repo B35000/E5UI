@@ -186,12 +186,12 @@ class ContextualTransferPage extends Component {
         }
         return(
             <div style={{'padding':'10px 15px 0px 15px'}}>
-                <div className="row" style={{'width':'102%'}}>
-                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
+                <div className="row" style={{width:'102%'}}>
+                    <div className="col-11">
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_title_tags_object} tag_size={'l'} when_tags_updated={this.when_get_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
-                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
+                    <div className="col-1">
+                        <div className="text-end">
                             {this.render_top_tag_bar_finish_button()}
                         </div>
                     </div>
@@ -918,6 +918,8 @@ class ContextualTransferPage extends Component {
                     {this.render_verify_itransfer_data()}
                     {this.render_detail_item('0')}
                     {this.render_search_history_and_itransfer_search_results()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -926,6 +928,8 @@ class ContextualTransferPage extends Component {
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_verify_itransfer_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_search_history_and_itransfer_search_results()}
@@ -939,6 +943,8 @@ class ContextualTransferPage extends Component {
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_verify_itransfer_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_search_history_and_itransfer_search_results()}
@@ -1205,7 +1211,7 @@ class ContextualTransferPage extends Component {
             return(
                 <div>
                     {items.map((item, index) => (
-                        <div key={index}>
+                        <div key={index} style={{'margin':'3px 0px 3px 0px'}}>
                             {this.render_itransfer_item(item)}
                         </div>
                     ))}
@@ -1227,6 +1233,15 @@ class ContextualTransferPage extends Component {
             return this.props.app_state.loc['1694']/* You. */
         }
         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? this.props.app_state.loc['1591']/* Unknown */ : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+        return alias
+    }
+
+    get_senders_name_or_you3(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return ' • ' +this.props.app_state.loc['1694']/* You. */
+        }
+        var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        var alias = (bucket[sender] == null ? '' : ' • ' + bucket[sender])
         return alias
     }
 
@@ -1260,7 +1275,7 @@ class ContextualTransferPage extends Component {
             sender_accounts.forEach(account => {
                 var transfers = this.process_transfers(object[block][account])
                 var time = object[block][account][0].returnValues.p5/* timestamp */
-                object_array.push({'account':account, 'block':block, 'transfers':transfers, 'time':time, 'e5':selected_search['e5']})
+                object_array.push({'account':account, 'block':block, 'transfers':transfers, 'time':parseInt(time), 'e5':selected_search['e5']})
             });
         });
 
@@ -1298,33 +1313,49 @@ class ContextualTransferPage extends Component {
         return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
     }
 
+    // render_itransfer_item(item){
+    //     const alias = this.get_senders_name_or_you2(item['account'], item['e5'])
+    //     return(
+    //         <div>
+    //             {this.render_detail_item('3', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[item['e5']].e5_img},)}
+    //             <div style={{height: 3}}/>
+
+    //             {/* {this.render_detail_item('3', {'title':number_with_commas(item['block']), 'details':this.props.app_state.loc['3068x'] Block Number, 'size':'l', 'border_radius':'0%'},)}
+    //             <div style={{height: 3}}/> */}
+
+    //             {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+    //             <div style={{height: 3}}/>
+
+    //             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+    //                 <div style={{'margin':'0px 0px 0px 5px'}}>
+    //                     {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
+    //                 </div>
+
+    //                 {item['transfers'].map((transfer, index) => (
+    //                     <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':transfer['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']]})}>
+    //                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(transfer['amount']), 'number':this.format_account_balance_figure(transfer['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']], })}
+    //                     </div>
+    //                 ))}
+    //             </div>
+    //             {this.render_detail_item('0')}
+    //         </div>
+    //     )
+    // }
+
     render_itransfer_item(item){
-        var alias = this.get_senders_name_or_you2(item['account'], item['e5'])
+        const alias = this.get_senders_name_or_you3(item['account'], item['e5'])
+        const title = this.props.app_state.loc['2509eo']/* 'From $' */.replace('$', number_with_commas(item['account'])) + alias;
+        const details = new Date(item['time']*1000).toLocaleString() + ' • ' + this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */
+        const footer = this.props.app_state.loc['2509ep']/* '$ Transfers' */.replace('$', number_with_commas(item['transfers'].length))
         return(
-            <div>
-                {this.render_detail_item('3', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[item['e5']].e5_img},)}
-                <div style={{height: 3}}/>
-
-                {/* {this.render_detail_item('3', {'title':number_with_commas(item['block']), 'details':this.props.app_state.loc['3068x'] Block Number, 'size':'l', 'border_radius':'0%'},)}
-                <div style={{height: 3}}/> */}
-
-                {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000).toLocaleString()), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-                <div style={{height: 3}}/>
-
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    <div style={{'margin':'0px 0px 0px 5px'}}>
-                        {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
-                    </div>
-
-                    {item['transfers'].map((transfer, index) => (
-                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':transfer['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']]})}>
-                            {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(transfer['amount']), 'number':this.format_account_balance_figure(transfer['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']], })}
-                        </div>
-                    ))}
-                </div>
-                {this.render_detail_item('0')}
+            <div onClick={() => this.when_itransfer_item_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'title_image':this.props.app_state.e5s[item['e5']].e5_img, 'footer':footer})}
             </div>
         )
+    }
+
+    when_itransfer_item_clicked(item){
+        this.props.show_dialog_bottomsheet({'item':item}, 'show_itransfer_search_transfers_item')
     }
 
     check_for_new_payments(){

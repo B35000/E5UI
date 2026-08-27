@@ -1852,8 +1852,8 @@ class StackPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'details':this.props.app_state.loc['1593r']/* 'The max priority fee per gas(miner tip) for your next run with E5.' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'number':this.state.picked_max_priority_per_gas_amount, 'relativepower':'wei'})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593q']/* ' Max Priority Fee Per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'number':this.state.picked_max_priority_per_gas_amount, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593q']/* ' Max Priority Fee Per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593cb']/* ' Max Priority Fee Per Gas in Gwei.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount /10**9), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount /10**9), 'number':(this.state.picked_max_priority_per_gas_amount/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
@@ -1866,8 +1866,8 @@ class StackPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'details':this.props.app_state.loc['1593t']/* 'The maximum amount of gas fee your willing to pay for your next run with E5.' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'number':this.state.picked_max_fee_per_gas_amount, 'relativepower':'wei'})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'number':this.state.picked_max_fee_per_gas_amount, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593ca']/* 'Max Fee per Gas in Gwei.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount/10**9), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount/10**9), 'number':(this.state.picked_max_fee_per_gas_amount/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
@@ -1886,8 +1886,8 @@ class StackPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'details':this.props.app_state.loc['1434']/* 'The gas price for your next run with E5. The default is set to the amount set by the network.' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'number':this.state.run_gas_price, 'relativepower':'wei'})}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'number':this.state.run_gas_price, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593bz']/* 'Transaction Gas Price in Gwei' */, 'subtitle':this.format_power_figure(this.state.run_gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.run_gas_pric/10**9), 'number':(this.state.run_gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
@@ -2437,10 +2437,10 @@ class StackPage extends Component {
 
                 {this.render_quick_send_end_spend()}
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'number':this.props.app_state.account_balance[this.props.app_state.selected_e5], 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'relativepower':'wei'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'number':this.props.app_state.account_balance[this.props.app_state.selected_e5], 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1449']/* 'Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'number':(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1449']/* 'Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'number':(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
@@ -2474,8 +2474,8 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_message_if_calculating_stack_gas_figures()}
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1454']/* 'Gas Price' */, 'number':gas_price, 'relativepower':'wei'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1454']/* 'Gas Price' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1454']/* 'Gas Price' */, 'number':gas_price, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1454']/* 'Gas Price' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1455']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
@@ -3239,7 +3239,7 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1466']/* 'Top 20% Average' */, 'details':this.props.app_state.loc['1467']/* 'The average gas price offered for the top 20% transactions set to be included in the next blocks.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1468']/* 'Gas prices in wei' */, 'subtitle':this.format_power_figure(data['top_av']), 'barwidth':this.calculate_bar_width(data['top_av']), 'number':this.format_account_balance_figure(data['top_av']), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1468']/* 'Gas prices in wei' */, 'subtitle':this.format_power_figure(data['top_av']), 'barwidth':this.calculate_bar_width(data['top_av']), 'number':this.format_account_balance_figure(data['top_av']), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1469']/* 'Gas prices in gwei' */, 'subtitle':this.format_power_figure(data['top_av']/10**9), 'barwidth':this.calculate_bar_width(data['top_av']/10**9), 'number':(data['top_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                 </div>
@@ -3250,7 +3250,7 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1470']/* 'Bottom 20% Average' */, 'details':this.props.app_state.loc['1471']/* 'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1468']/* 'Gas prices in wei' */, 'subtitle':this.format_power_figure(data['bottom_av']), 'barwidth':this.calculate_bar_width(data['bottom_av']), 'number':this.format_account_balance_figure(data['bottom_av']), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1468']/* 'Gas prices in wei' */, 'subtitle':this.format_power_figure(data['bottom_av']), 'barwidth':this.calculate_bar_width(data['bottom_av']), 'number':this.format_account_balance_figure(data['bottom_av']), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1469']/* 'Gas prices in gwei' */, 'subtitle':this.format_power_figure(data['bottom_av']/10**9), 'barwidth':this.calculate_bar_width(data['bottom_av']/10**9), 'number':(data['bottom_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                 </div>
@@ -3261,7 +3261,7 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1472']/* 'Gas Price Average' */, 'details':this.props.app_state.loc['1473']/* 'The average gas price offered for all transactions in the mempool.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1468']/* 'Gas prices in wei' */, 'subtitle':this.format_power_figure(data['all_av']), 'barwidth':this.calculate_bar_width(data['all_av']), 'number':this.format_account_balance_figure(data['all_av']), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1468']/* 'Gas prices in wei' */, 'subtitle':this.format_power_figure(data['all_av']), 'barwidth':this.calculate_bar_width(data['all_av']), 'number':this.format_account_balance_figure(data['all_av']), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1469']/* 'Gas prices in gwei' */, 'subtitle':this.format_power_figure(data['all_av']/10**9), 'barwidth':this.calculate_bar_width(data['all_av']/10**9), 'number':(data['all_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                 </div>
@@ -3293,9 +3293,9 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1483']/* 'Value Transfer' */, 'details':this.props.app_state.loc['1484']/* 'The total amount of value transfer thats pending in the mempool.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1485']/* 'Value in wei' */, 'subtitle':this.format_power_figure(data['total_value_transfer']), 'barwidth':this.calculate_bar_width(data['total_value_transfer']), 'number':this.format_account_balance_figure(data['total_value_transfer']), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1485']/* 'Value in wei' */, 'subtitle':this.format_power_figure(data['total_value_transfer']), 'barwidth':this.calculate_bar_width(data['total_value_transfer']), 'number':this.format_account_balance_figure(data['total_value_transfer']), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1486']/* 'Value in ether' */, 'subtitle':this.format_power_figure(data['total_value_transfer']/10**18), 'barwidth':this.calculate_bar_width(data['total_value_transfer']/10**18), 'number':this.format_account_balance_figure(data['total_value_transfer']/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1486']/* 'Value in ether' */, 'subtitle':this.format_power_figure(data['total_value_transfer']/10**18), 'barwidth':this.calculate_bar_width(data['total_value_transfer']/10**18), 'number':this.format_account_balance_figure(data['total_value_transfer']/10**18), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -3303,9 +3303,9 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1488']/* 'Value Transfer into E5' */, 'details':this.props.app_state.loc['1489']/* 'The total amount of ether going into E5 thats pending in the mempool.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1485']/* 'Value in wei' */, 'subtitle':this.format_power_figure(data['e5_value_transfer']), 'barwidth':this.calculate_bar_width(data['e5_value_transfer']), 'number':this.format_account_balance_figure(data['e5_value_transfer']), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1485']/* 'Value in wei' */, 'subtitle':this.format_power_figure(data['e5_value_transfer']), 'barwidth':this.calculate_bar_width(data['e5_value_transfer']), 'number':this.format_account_balance_figure(data['e5_value_transfer']), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1486']/* 'Value in ether' */, 'subtitle':this.format_power_figure(data['e5_value_transfer']/10**18), 'barwidth':this.calculate_bar_width(data['e5_value_transfer']/10**18), 'number':this.format_account_balance_figure(data['e5_value_transfer']/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1486']/* 'Value in ether' */, 'subtitle':this.format_power_figure(data['e5_value_transfer']/10**18), 'barwidth':this.calculate_bar_width(data['e5_value_transfer']/10**18), 'number':this.format_account_balance_figure(data['e5_value_transfer']/10**18), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
                 </div>
                 <div style={{height:10}}/>
             </div>
@@ -9600,9 +9600,9 @@ class StackPage extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1526']/* Required Balance in Ether and Wei */}</p>
                         
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether), 'number':this.format_account_balance_figure(required_ether), 'barcolor':'#606060', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether), 'number':this.format_account_balance_figure(required_ether), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether/10**18), 'number':required_ether/10**18, 'barcolor':'#606060', 'relativepower':'ether', })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether/10**18), 'number':required_ether/10**18, 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
                     </div>
 
                 </div>
@@ -16212,1039 +16212,6 @@ class StackPage extends Component {
         )
     }
 
-    // render_settings_details(){
-    //     const items = 17
-    //     return(
-    //         <div>
-    //             <Virtuoso
-    //                 style={{ height: this.props.height-210, 'width':'98%', }}
-    //                 totalCount={items}
-    //                 itemContent={(index) => {
-    //                     return (
-    //                         <div>
-    //                             {index == 0 && this.does_title_details_contain_searched_text('1528','1529') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 1 && this.does_title_details_contain_searched_text('2813', '2814') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 2 && this.does_title_details_contain_searched_text('1530', '1531') && (
-    //                                 <div>
-    //                                     {/* preferred E5 */}
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
-    //                                     <div style={{height: 10}}/>
-    //                                     {this.load_preferred_e5_ui()}
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 3 && this.does_title_details_contain_searched_text('1593dd', '1593de') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     {this.load_my_nitro_objects_to_select()}
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}   
-
-    //                             {index == 4 && this.does_title_details_contain_searched_text('1593en', '1593eo') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                                        
-    //                                     {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 5 && this.does_title_details_contain_searched_text('1535', '1536') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 6 && this.does_title_details_contain_searched_text('1537', '1538') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 7 && this.does_title_details_contain_searched_text('1539', '1540') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 8 && this.does_title_details_contain_searched_text('2893', '2894') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 9 && this.does_title_details_contain_searched_text('1593fh', '1593fi') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fh']/* 'Minify Posts.' */, 'details':this.props.app_state.loc['1593fi']/* 'Compact the posts displayed in your feed.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 10 && this.render_auto_run_setting_if_not_ios()}
-
-    //                             {index == 11 && this.does_title_details_contain_searched_text('1593gx', '1593gy') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 12 && this.render_disable_moderation_setting()}
-
-    //                             {index == 13 && this.does_title_details_contain_searched_text('1593jp', '1593jq') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 14 && this.does_title_details_contain_searched_text('1593jr', '1593js') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 15 && this.does_title_details_contain_searched_text('1593ke', '1593kf') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ke']/* 'Default Message-Comment Fulfilment' */, 'details':this.props.app_state.loc['1593kf']/* 'If set to indexer, all your comments will be fulfiled using indexers exclusively by default while if set to blockchain, your comments will go through the stack and a blockchain' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_option_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_option_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 16 && this.render_empty_views(2)}
-    //                         </div>
-    //                     );
-    //                 }}
-    //             />
-
-
-    //             {/* {this.render_detail_item('3',{'title':this.props.app_state.loc['1532'], 'details':this.props.app_state.loc['1533'], 'size':'l'})}
-    //             <div style={{height: 10}}/>
-
-    //             <div onClick={()=> this.when_clear_cache_clicked()} style={{margin:'0px 10px 0px 10px'}}>
-    //                 {this.render_detail_item('5', {'text':this.props.app_state.loc['1534'], 'action':''},)}
-    //             </div>
-
-    //             {this.render_detail_item('0')} */}
-
-
-    //             {/* {this.render_detail_item('3',{'title':'Content Language', 'details':'Set which language you prefer to use', 'size':'l'})}
-    //             <div style={{height: 10}}/>
-
-    //             <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
-
-    //             {this.render_detail_item('0')} */}
-                
-
-    //         </div>
-    //     )
-    // }
-    // //here
-    // render_settings_details2(){
-    //     return(
-    //         <div>
-    //             <div style={{'padding': '0px 0px 0px 0px'}}>
-    //                 <Virtuoso
-    //                     style={{ height: this.props.height-150, 'width':'98%', }}
-    //                     totalCount={16}
-    //                     itemContent={(index) => {
-    //                         return (
-    //                             <div>
-    //                                 {index == 0 && this.does_title_details_contain_searched_text('1543', '1544') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 1 && this.does_title_details_contain_searched_text('1545', '1546') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-                
-    //                                 {index == 2 && this.does_title_details_contain_searched_text('1547', '1548') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 3 && this.does_title_details_contain_searched_text('1593i', '1593j') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 4 && this.does_title_details_contain_searched_text('1593m', '1593n') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-                                    
-    //                                 {index == 5 && this.does_title_details_contain_searched_text('1593o', '1593p') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 6 && this.does_title_details_contain_searched_text('2754', '2755') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 7 && this.does_title_details_contain_searched_text('1593ea', '1593eb') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 8 && this.does_title_details_contain_searched_text('1593el', '1593em') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 9 && this.render_theme_image_setting_if_any()}
-
-    //                                 {index == 10 && this.does_title_details_contain_searched_text('1593gt', '1593gu') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 11 && this.does_title_details_contain_searched_text('1593hh', '1593hi') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 12 && this.does_title_details_contain_searched_text('1593jd', '1593je') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 13 && this.does_title_details_contain_searched_text('1593jj', '1593jk') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-                                    
-    //                                 {index == 14 && this.does_title_details_contain_searched_text('1593kc', '1593kd') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593kc']/* 'Bottomsheet Background' */, 'details':this.props.app_state.loc['1593kd']/* 'If set to invisible, that bottomsheet background image pattern will be rendered invisible.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_page_background_object} tag_size={'l'} when_tags_updated={this.when_get_page_background_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 15 && this.render_empty_views(2)}
-    //                             </div>
-    //                         );
-    //                     }}
-    //                 />
-                    
-    //             </div>
-    //         </div>
-    //     )
-    // }
-
-    // render_settings_details_all(){
-    //     return(
-    //         <div>
-    //             <Virtuoso
-    //                 style={{ height: this.props.height-190 }}
-    //                 totalCount={32}
-    //                 itemContent={(index) => {
-    //                     return (
-    //                         <div>
-    //                             {index == 0 && this.does_title_details_contain_searched_text('1528','1529') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 1 && this.does_title_details_contain_searched_text('2813', '2814') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 2 && this.does_title_details_contain_searched_text('1530', '1531') && (
-    //                                 <div>
-    //                                     {/* preferred E5 */}
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
-    //                                     <div style={{height: 10}}/>
-    //                                     {this.load_preferred_e5_ui()}
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 3 && this.does_title_details_contain_searched_text('1593dd', '1593de') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     {this.load_my_nitro_objects_to_select()}
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}   
-
-    //                             {index == 4 && this.does_title_details_contain_searched_text('1593en', '1593eo') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                                        
-    //                                     {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 5 && this.does_title_details_contain_searched_text('1535', '1536') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 6 && this.does_title_details_contain_searched_text('1537', '1538') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 7 && this.does_title_details_contain_searched_text('1539', '1540') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 8 && this.does_title_details_contain_searched_text('2893', '2894') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 9 && this.does_title_details_contain_searched_text('1593fh', '1593fi') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fh']/* 'Minify Posts.' */, 'details':this.props.app_state.loc['1593fi']/* 'Compact the posts displayed in your feed.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 10 && this.render_auto_run_setting_if_not_ios()}
-
-    //                             {index == 11 && this.does_title_details_contain_searched_text('1593gx', '1593gy') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 12 && this.render_disable_moderation_setting()}
-
-    //                             {index == 13 && this.does_title_details_contain_searched_text('1593jp', '1593jq') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 14 && this.does_title_details_contain_searched_text('1593jr', '1593js') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 15 && this.does_title_details_contain_searched_text('1593ke', '1593kf') && (
-    //                                 <div>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ke']/* 'Default Message-Comment Fulfilment' */, 'details':this.props.app_state.loc['1593kf']/* 'If set to indexer, all your comments will be fulfiled using indexers exclusively by default while if set to blockchain, your comments will go through the stack and a blockchain' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_option_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_option_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 16 && this.does_title_details_contain_searched_text('1543', '1544') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 17 && this.does_title_details_contain_searched_text('1545', '1546') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-                
-    //                                 {index == 18 && this.does_title_details_contain_searched_text('1547', '1548') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 19 && this.does_title_details_contain_searched_text('1593i', '1593j') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 20 && this.does_title_details_contain_searched_text('1593m', '1593n') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-                                    
-    //                                 {index == 21 && this.does_title_details_contain_searched_text('1593o', '1593p') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 22 && this.does_title_details_contain_searched_text('2754', '2755') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 23 && this.does_title_details_contain_searched_text('1593ea', '1593eb') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 24 && this.does_title_details_contain_searched_text('1593el', '1593em') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 25 && this.render_theme_image_setting_if_any()}
-
-    //                                 {index == 26 && this.does_title_details_contain_searched_text('1593gt', '1593gu') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 27 && this.does_title_details_contain_searched_text('1593hh', '1593hi') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 28 && this.does_title_details_contain_searched_text('1593jd', '1593je') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 29 && this.does_title_details_contain_searched_text('1593jj', '1593jk') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-                                    
-    //                                 {index == 30 && this.does_title_details_contain_searched_text('1593kc', '1593kd') && (
-    //                                     <div>
-    //                                         {this.render_detail_item('3',{'title':this.props.app_state.loc['1593kc']/* 'Bottomsheet Background' */, 'details':this.props.app_state.loc['1593kd']/* 'If set to invisible, that bottomsheet background image pattern will be rendered invisible.' */, 'size':'l'})}
-    //                                         <div style={{height: 10}}/>
-
-    //                                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_page_background_object} tag_size={'l'} when_tags_updated={this.when_get_page_background_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                         {this.render_detail_item('0')}
-    //                                     </div>
-    //                                 )}
-
-    //                                 {index == 31 && this.render_empty_views(2)}
-    //                         </div>
-    //                     );
-    //                 }}
-    //             />
-    //         </div>
-    //     )
-    // }
-
-    // render_settings_details_grid(){
-    //     return(
-    //         <div>
-    //             <VirtuosoGrid
-    //                 style={{ height: this.props.height-177 }}
-    //                 totalCount={32}
-    //                 components={gridComponents}
-    //                 itemContent={(index) => {
-    //                     return (
-    //                         <div>
-    //                             {index == 0 && this.does_title_details_contain_searched_text('1528','1529') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 1 && this.does_title_details_contain_searched_text('2813', '2814') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 2 && this.does_title_details_contain_searched_text('1530', '1531') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {/* preferred E5 */}
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l', 'title_image':this.props.app_state.e5s[this.props.app_state.selected_e5].e5_img, 'border_radius':'0%'})}
-    //                                     <div style={{height: 10}}/>
-    //                                     {this.load_preferred_e5_ui()}
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 3 && this.does_title_details_contain_searched_text('1593dd', '1593de') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593dd']/* 'Preferred nitro storage option' */, 'details':this.props.app_state.loc['1593de']/* 'Set the nitro storage option you prefer to use for your files and posts. To see a nitro option, first buy storage from it in the nitro section.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     {this.load_my_nitro_objects_to_select()}
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}   
-
-    //                             {index == 4 && this.does_title_details_contain_searched_text('1593en', '1593eo') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593en']/* 'Default Data Storage Option.' */, 'details':this.props.app_state.loc['1593eo']/* 'Set the defaut data storage option you prefer to use. If you set a nitro storage option above, the nitro option will take precedence.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                                        
-    //                                     {this.render_detail_item('10', {'text':this.props.app_state.loc['1593es']/* 'Arweave takes about 15 to 20 minutes to finalize uploads.' */, 'textsize':'9px', 'font':this.props.app_state.font})}
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 5 && this.does_title_details_contain_searched_text('1535', '1536') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 6 && this.does_title_details_contain_searched_text('1537', '1538') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 7 && this.does_title_details_contain_searched_text('1539', '1540') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 8 && this.does_title_details_contain_searched_text('2893', '2894') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 9 && this.does_title_details_contain_searched_text('1593fh', '1593fi') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593fh']/* 'Minify Posts.' */, 'details':this.props.app_state.loc['1593fi']/* 'Compact the posts displayed in your feed.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minified_content_setting_object} tag_size={'l'} when_tags_updated={this.when_get_minified_content_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 10 && this.render_auto_run_setting_if_not_ios()}
-
-    //                             {index == 11 && this.does_title_details_contain_searched_text('1593gx', '1593gy') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gx']/* 'Audioplayer Position.' */, 'details':this.props.app_state.loc['1593gy']/* 'Set the default position for the audio mini-player that appears above your feed. This only applies for medium and small screens.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_audiplayer_position_setting_object} tag_size={'l'} when_tags_updated={this.when_get_audiplayer_position_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 12 && this.render_disable_moderation_setting()}
-
-    //                             {index == 13 && this.does_title_details_contain_searched_text('1593jp', '1593jq') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jp']/* 'Floating Close Button.' */, 'details':this.props.app_state.loc['1593jq']/* 'Enable a floating action button for conveniently closing bottomsheet pages.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 14 && this.does_title_details_contain_searched_text('1593jr', '1593js') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jr']/* 'Floating Close Button Position.' */, 'details':this.props.app_state.loc['1593js']/* 'Set the position for the floating close button.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_floating_close_button_position_object} tag_size={'l'} when_tags_updated={this.when_get_floating_close_button_position_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 15 && this.does_title_details_contain_searched_text('1593ke', '1593kf') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ke']/* 'Default Message-Comment Fulfilment' */, 'details':this.props.app_state.loc['1593kf']/* 'If set to indexer, all your comments will be fulfiled using indexers exclusively by default while if set to blockchain, your comments will go through the stack and a blockchain' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_chain_or_indexer_option_object} tag_size={'l'} when_tags_updated={this.when_get_chain_or_indexer_option_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 16 && this.does_title_details_contain_searched_text('1543', '1544') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 17 && this.does_title_details_contain_searched_text('1545', '1546') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-            
-    //                             {index == 18 && this.does_title_details_contain_searched_text('1547', '1548') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 19 && this.does_title_details_contain_searched_text('1593i', '1593j') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 20 && this.does_title_details_contain_searched_text('1593m', '1593n') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 21 && this.does_title_details_contain_searched_text('1593o', '1593p') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 22 && this.does_title_details_contain_searched_text('2754', '2755') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 23 && this.does_title_details_contain_searched_text('1593ea', '1593eb') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ea']/* Hide Audio Player Pip. */, 'details':this.props.app_state.loc['1593eb']/* If set to hidden, the mini-player used to control audio playing in the background will be hidden. */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_hide_pip_tags_object} tag_size={'l'} when_tags_updated={this.when_get_hide_pip_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 24 && this.does_title_details_contain_searched_text('1593el', '1593em') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593el']/* 'Wallet Value Denomination' */, 'details':this.props.app_state.loc['1593em']/* 'Set the currency you wish to be displayed in your wallets value. */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_currency_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_currency_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 25 && this.render_theme_image_setting_if_any()}
-
-    //                             {index == 26 && this.does_title_details_contain_searched_text('1593gt', '1593gu') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593gt']/* 'Explore Elements Display Type.' */, 'details':this.props.app_state.loc['1593gu']/* 'Set your preference for how the storefront, audiopost and videopost items in the explore section should be displayed.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_explore_display_type_setting_object} tag_size={'l'} when_tags_updated={this.when_get_explore_display_type_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 27 && this.does_title_details_contain_searched_text('1593hh', '1593hi') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593hh']/* 'Rating Denomination' */, 'details':this.props.app_state.loc['1593hi']/* 'Set the preferred rating denomination youd like to be using.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rating_denomination_setting_object} tag_size={'l'} when_tags_updated={this.when_get_rating_denomination_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 28 && this.does_title_details_contain_searched_text('1593jd', '1593je') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jd']/* 'Bulk Load Size.' */, 'details':this.props.app_state.loc['1593je']/* 'Specify the relative number of posts and objects you want e to be loading for you at once. Set many if you have a good network connection.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_load_size_setting_object} tag_size={'l'} when_tags_updated={this.when_get_post_load_size_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 29 && this.does_title_details_contain_searched_text('1593jj', '1593jk') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593jj']/* 'Link Handler.' */, 'details':this.props.app_state.loc['1593jk']/* 'Set the default link handler for displaying the links you click here.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_link_handler_setting_object} tag_size={'l'} when_tags_updated={this.when_get_link_handler_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-                                
-    //                             {index == 30 && this.does_title_details_contain_searched_text('1593kc', '1593kd') && (
-    //                                 <div style={{width: this.state.screen_width-20}}>
-    //                                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593kc']/* 'Bottomsheet Background' */, 'details':this.props.app_state.loc['1593kd']/* 'If set to invisible, that bottomsheet background image pattern will be rendered invisible.' */, 'size':'l'})}
-    //                                     <div style={{height: 10}}/>
-
-    //                                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_page_background_object} tag_size={'l'} when_tags_updated={this.when_get_page_background_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-    //                                     {this.render_detail_item('0')}
-    //                                 </div>
-    //                             )}
-
-    //                             {index == 31 && this.render_empty_views(2)}
-    //                         </div>
-    //                     );
-    //                 }}
-    //             />
-    //         </div>
-    //     )
-    // }
-
     render_disable_moderation_setting(){
         const disable_moderation_setting = this.get_selected_item(this.state.get_disable_moderation_setting_object, 'e')
         if(
@@ -17882,8 +16849,8 @@ class StackPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '3px 0px 3px 0px'}}>
-                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':'wei'})}>
-                                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.e5s[item].token, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item]), 'barcolor':'', 'relativepower':'wei', })}
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.e5s[item].token, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item]), 'barcolor':'', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
                             </div>
                         </li>
                     ))}
@@ -17981,7 +16948,7 @@ class StackPage extends Component {
         var token_name = this.props.app_state.e5s[item].token
         var details = this.format_account_balance_figure(this.props.app_state.account_balance[item]) + ' wei'
         return(
-            <div onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':'wei'})}>
+            <div onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
                 {this.render_coin_item({'title':token_name, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
             </div>
         )
@@ -18401,7 +17368,7 @@ class StackPage extends Component {
             'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]),
             'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]),
             'barcolor':'#606060',
-            'relativepower':'wei',
+            'relativepower':this.props.app_state.loc['2738cx']/* wei */,
         }
     }
 
@@ -18414,7 +17381,7 @@ class StackPage extends Component {
             'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18),
             'number':this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18,
             'barcolor':'#606060',
-            'relativepower':'ether',
+            'relativepower':this.props.app_state.loc['2738cw']/* ether */,
         }
     }
 
@@ -19064,10 +18031,10 @@ class StackPage extends Component {
     //     else if(size == 'm'){
     //         return(
     //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-6" >
     //                     {this.render_my_notifications()}
     //                 </div>
-    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-6" >
     //                     {this.render_empty_views(3)}
     //                 </div>
     //             </div>
@@ -19076,10 +18043,10 @@ class StackPage extends Component {
     //     else if(size == 'l'){
     //         return(
     //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-5" >
     //                     {this.render_my_notifications()}
     //                 </div>
-    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-5" >
     //                     {this.render_empty_views(3)}
     //                 </div>
     //             </div>
@@ -19322,10 +18289,10 @@ class StackPage extends Component {
     //     else if(size == 'm'){
     //         return(
     //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-6" >
     //                     {this.render_watched_account_ui_data()}
     //                 </div>
-    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-6" >
     //                     {this.render_empty_views(3)}
     //                 </div>
     //             </div>
@@ -19335,10 +18302,10 @@ class StackPage extends Component {
     //     else if(size == 'l'){
     //         return(
     //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-5" >
     //                     {this.render_watched_account_ui_data()}
     //                 </div>
-    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-5" >
     //                     {this.render_empty_views(3)}
     //                 </div>
     //             </div>
@@ -22793,10 +21760,10 @@ class StackPage extends Component {
     //     else if(size == 'm'){
     //         return(
     //             <div className="row">
-    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-6" >
     //                     {this.render_set_custom_gateway_data()}
     //                 </div>
-    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-6" >
     //                     {this.render_empty_views(3)}
     //                 </div>
     //             </div> 
@@ -22805,10 +21772,10 @@ class StackPage extends Component {
     //     else if(size == 'l'){
     //         return(
     //             <div className="row">
-    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-5" >
     //                     {this.render_set_custom_gateway_data()}
     //                 </div>
-    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-5" >
     //                     {this.render_empty_views(3)}
     //                 </div>
     //             </div>
@@ -23192,11 +22159,11 @@ class StackPage extends Component {
     //     else if(size == 'm'){
     //         return(
     //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-6" >
     //                     {this.render_contextual_transfers_data()}
     //                     {this.render_empty_views(2)}
     //                 </div>
-    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-6" >
     //                     {this.load_itransfer_search_results()}
     //                 </div>
     //             </div>
@@ -23206,11 +22173,11 @@ class StackPage extends Component {
     //     else if(size == 'l'){
     //         return(
     //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-5" >
     //                     {this.render_contextual_transfers_data()}
     //                     {this.render_empty_views(2)}
     //                 </div>
-    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-5" >
     //                     {this.load_itransfer_search_results()}
     //                 </div>
     //             </div>
@@ -23683,10 +22650,10 @@ class StackPage extends Component {
     //     else if(size == 'm'){
     //         return(
     //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-6" >
     //                     {this.render_group_calls_parts()}
     //                 </div>
-    //                 <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-6" >
     //                     {this.render_empty_views(3)}
     //                 </div>
     //             </div>
@@ -23696,10 +22663,10 @@ class StackPage extends Component {
     //     else if(size == 'l'){
     //         return(
     //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-5" >
     //                     {this.render_group_calls_parts()}
     //                 </div>
-    //                 <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+    //                 <div className="col-5" >
     //                     {this.render_empty_views(3)}
     //                 </div>
     //             </div>

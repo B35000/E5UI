@@ -361,12 +361,12 @@ class E5DetailsSection extends Component {
                                     {index == 32 && this.render_traffic_distribution_number(obj)}
 
                                     {index == 33 && (
-                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 0px 0px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':'wei'})}>
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '15px 0px 0px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
                                             <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2234']}</p>
                                         
                                             {this.render_detail_item('2', {'style':'s','title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'subtitle':this.format_power_figure(this.round_off_to_nearest_gwei(this.props.app_state.E5_balance[e5]/10**18)), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]/10**18), 'number':(this.round_off_to_nearest_gwei(this.props.app_state.E5_balance[e5]/10**18)), 'relativepower':'Ether'})}
 
-                                            {this.render_detail_item('2', {'style':'s','title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance[e5]), 'relativepower':'wei'})}
+                                            {this.render_detail_item('2', {'style':'s','title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance[e5]), 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}
                                         </div>
                                     )}
                                     
@@ -376,8 +376,8 @@ class E5DetailsSection extends Component {
                                     {index == 35 && this.render_last_transaction_time_data(e5)}
 
                                     {index == 36 && (
-                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'number':this.props.app_state.withdraw_balance[e5], 'relativepower':'wei'})}>
-                                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5]), 'relativepower':'wei'})}
+                                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'number':this.props.app_state.withdraw_balance[e5], 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5]), 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}
                                         </div>
                                     )}
                                     
@@ -576,13 +576,13 @@ class E5DetailsSection extends Component {
             'tag_indexing_limit': {'title':contract_config[16], 'details':this.props.app_state.loc['2253']/* 'Tag Indexing Limit' */, 'size':'l'},
             'minimum_transaction_count': {'title':contract_config[19], 'details':this.props.app_state.loc['2254']/* 'Minimum Transaction Count for Consensus Particiation' */, 'size':'l'},
 
-            'gas_anchor_price':{'style':'l','title':this.props.app_state.loc['2255']/* 'Gas Anchor Price' */, 'subtitle':this.format_power_figure(contract_config[23]), 'barwidth':this.calculate_bar_width(contract_config[23]), 'number':this.format_account_balance_figure(contract_config[23]), 'relativepower':'wei', 'n':contract_config[23]},
+            'gas_anchor_price':{'style':'l','title':this.props.app_state.loc['2255']/* 'Gas Anchor Price' */, 'subtitle':this.format_power_figure(contract_config[23]), 'barwidth':this.calculate_bar_width(contract_config[23]), 'number':this.format_account_balance_figure(contract_config[23]), 'relativepower':this.props.app_state.loc['2738cx']/* wei */, 'n':contract_config[23]},
 
             'tx_gas_reduction_proportion': {'title':this.format_proportion(contract_config[24]), 'details':this.props.app_state.loc['2256']/* 'Transaction Gas Reduction Proportion' */, 'size':'l'},
 
-            'tx_gas_anchor_price':{'style':'l','title':this.props.app_state.loc['2257']/* 'Transaction Gas Anchor Price' */, 'subtitle':this.format_power_figure(contract_config[25]), 'barwidth':this.calculate_bar_width(contract_config[25]), 'number':this.format_account_balance_figure(contract_config[25]), 'relativepower':'wei', 'n':contract_config[25]},
+            'tx_gas_anchor_price':{'style':'l','title':this.props.app_state.loc['2257']/* 'Transaction Gas Anchor Price' */, 'subtitle':this.format_power_figure(contract_config[25]), 'barwidth':this.calculate_bar_width(contract_config[25]), 'number':this.format_account_balance_figure(contract_config[25]), 'relativepower':this.props.app_state.loc['2738cx']/* wei */, 'n':contract_config[25]},
 
-            'tx_gas_lower_limit':{'style':'l','title':this.props.app_state.loc['2258']/* 'Transaction Gas Lower Limit' */, 'subtitle':this.format_power_figure(contract_config[26]), 'barwidth':this.calculate_bar_width(contract_config[26]), 'number':this.format_account_balance_figure(contract_config[26]), 'relativepower':'wei', 'n':contract_config[26]},
+            'tx_gas_lower_limit':{'style':'l','title':this.props.app_state.loc['2258']/* 'Transaction Gas Lower Limit' */, 'subtitle':this.format_power_figure(contract_config[26]), 'barwidth':this.calculate_bar_width(contract_config[26]), 'number':this.format_account_balance_figure(contract_config[26]), 'relativepower':this.props.app_state.loc['2738cx']/* wei */, 'n':contract_config[26]},
 
             'absolute_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[30]), 'details':this.props.app_state.loc['2259']/* 'Absolute Proposal Expiry Duration Limit' */, 'size':'l'},
 

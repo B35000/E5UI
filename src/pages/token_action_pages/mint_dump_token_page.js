@@ -466,8 +466,8 @@ class NewMintActionPage extends Component {
                         {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['996j']/* 'E5 Ether balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]/10**18), 'number':(this.props.app_state.E5_balance[e5]/10**18), 'relativepower':'Ether'})}
                     </div>
 
-                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':'wei'})}>
-                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance[e5]), 'relativepower':'wei'})}
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'number':this.props.app_state.E5_balance[e5], 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance[e5]), 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}
                     </div>
                 </div>
             )

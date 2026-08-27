@@ -2299,7 +2299,7 @@ class App extends Component {
       },
       'E1265':{
         web3:['https://mainnet.zkevm.cronos.org/'],
-        token:'zkCRO',
+        token:'ZKCRO',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:cronoszkevm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, class:'L2', rollup_type:'zk', parent: 'E235', id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
@@ -2356,9 +2356,9 @@ class App extends Component {
       },
       'E1355':{
         web3:['https://eth-rpc.polkadot.io', 'https://services.polkadothub-rpc.com/mainnet'],
-        token:'DOT',
+        token:'DOTE',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: polkadot_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image: polkadot_evm_logo, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object(), parent_coin:'DOT'
       },
 
       'E1365':{
@@ -2543,7 +2543,7 @@ class App extends Component {
       this.get_token('HSK', 'HashKey', 'E965'),
       this.get_token('HETH', 'Hemi', 'E975'),
       this.get_token('IETH', 'Ink', 'E985'),
-      this.get_token('GHO', 'lens', 'E995'),
+      this.get_token('GHO', 'Lens', 'E995'),
       this.get_token('LETH', 'Linea', 'E1005'),
       this.get_token('LIETH', 'Lisk', 'E1015'),
       this.get_token('MBTC', 'Merlin', 'E1025'),
@@ -2570,7 +2570,7 @@ class App extends Component {
       this.get_token('OKT', 'OKTC', 'E1235', true),
       this.get_token('ZETH', 'Zircuit', 'E1245'),
       this.get_token('ZKETH', 'zkSync Era', 'E1255'),
-      this.get_token('zkCRO', 'Cronos zkEVM', 'E1265'),
+      this.get_token('ZKCRO', 'Cronos zkEVM', 'E1265'),
       this.get_token('ZERETH', 'ZERϴ Network', 'E1275'),
       this.get_token('SOPH', 'Sophon', 'E1285'),
       this.get_token('MAETH', 'Manta Pacific', 'E1295'),
@@ -2579,7 +2579,7 @@ class App extends Component {
       this.get_token('ZOETH', 'Zora', 'E1325'),
       this.get_token('ANETH', 'Arbitrum Nova', 'E1335'),
       this.get_token('ARETH', 'Arena-Z', 'E1345', true),
-      this.get_token('DOT', 'Polkadot PolkaVM', 'E1355', true),
+      this.get_token('DOTE', 'Polkadot PolkaVM', 'E1355', true),
       this.get_token('IMX', 'Immutable zkEVM', 'E1365'),
       this.get_token('KITE', 'KiteAI', 'E1375'),
       this.get_token('INJE', 'Injective EVM', 'E1385'),
@@ -2591,71 +2591,81 @@ class App extends Component {
   }
 
   get_token(ticker, name, e5, disabled){
-    if(disabled !== null && disabled === true) return {symbol: ticker, name: name, e5: e5, disabled: true};
-    else return {symbol: ticker, name: name, e5: e5, disabled: false};
+    if(disabled !== null && disabled === true) return {
+      symbol: this.getLocale()['3113']/* symbols */[ticker] || ticker, 
+      name: this.getLocale()['3113t']/* names */[ticker] || name, 
+      e5: e5,
+      disabled: true
+    }
+    else return {
+      symbol: this.getLocale()['3113']/* symbols */[ticker] || ticker, 
+      name: this.getLocale()['3113t']/* names */[ticker] || name, 
+      e5: e5, 
+      disabled: false
+    };
   }
 
   get_coin_data(){
     var list = {
-      'BTC': this.get_coin_info('BTC', 'Bitcoin', bitcoin_logo, 'satoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '10 min.', this.get_time_difference(1231006505), 3, 1, "Bitcoin", ['changenow']),
+      'BTC': this.get_coin_info('BTC', 'Bitcoin', bitcoin_logo, 'satoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113b']/* 'Proof Of Work' */, '10 min.', this.get_time_difference(1231006505), 3, 1, "Bitcoin", ['changenow']),
 
-      'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', bitcoincash_logo, 'satoshi', 8, 100_000_000, 'UTXO','Proof Of Work','10 min.', this.get_time_difference(1231006505), 60, 32, "Bitcoin Cash",['changenow']),
+      'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', bitcoincash_logo, 'satoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */,'10 min.', this.get_time_difference(1231006505), 60, 32, "Bitcoin Cash",['changenow']),
 
-      'LTC': this.get_coin_info('LTC', 'Litecoin', litecoin_logo, 'litoshi', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1317972665), 56, 1, "Litecoin", ['changenow']),
+      'LTC': this.get_coin_info('LTC', 'Litecoin', litecoin_logo, 'litoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '2.5 min.', this.get_time_difference(1317972665), 56, 1, "Litecoin", ['changenow']),
 
-      'DOGE': this.get_coin_info('DOGE', 'Dogecoin', dogecoin_logo, 'koinu', 8, 100_000_000, 'UTXO','Proof Of Work', '1 min.', this.get_time_difference(1386338512), 30, 1, "Dogecoin", ['changenow']),
+      'DOGE': this.get_coin_info('DOGE', 'Dogecoin', dogecoin_logo, 'koinu', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '1 min.', this.get_time_difference(1386338512), 30, 1, "Dogecoin", ['changenow']),
 
-      'DASH': this.get_coin_info('DASH', 'Dash', dash_logo, 'duff', 8, 100_000_000, 'UTXO','Proof Of Work', '2.5 min.', this.get_time_difference(1390083000), 56, 2, "Dash", ['changenow']),
+      'DASH': this.get_coin_info('DASH', 'Dash', dash_logo, 'duff', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '2.5 min.', this.get_time_difference(1390083000), 56, 2, "Dash", ['changenow']),
 
-      'TRX': this.get_coin_info('TRX', 'Tron', tron_logo, 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof Of Stake', '3 sec.', this.get_time_difference(1529885280), 2000, 1, "TRON", ['changenow']),
+      'TRX': this.get_coin_info('TRX', 'Tron', tron_logo, 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113s']/* 'Delegated Proof Of Stake' */, '3 sec.', this.get_time_difference(1529885280), 2000, 1, "TRON", ['changenow']),
       
-      'XRP': this.get_coin_info('XRP', 'XRP', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Ripple Protocol Consensus Algorithm', '5 sec.', this.get_time_difference(1338672000), 1500, '~~~', "Ripple", ['changenow']),
+      'XRP': this.get_coin_info('XRP', 'XRP', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113r']/* 'Ripple Protocol Consensus Algorithm' */, '5 sec.', this.get_time_difference(1338672000), 1500, '~~~', "Ripple", ['changenow']),
 
-      'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, 'Stellar Consensus Protocol ', '5 sec.', this.get_time_difference(1406780800), 1000, '~~~', "Stellar", ['changenow']),
+      'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113q']/* 'Stellar Consensus Protocol' */, '5 sec.', this.get_time_difference(1406780800), 1000, '~~~', "Stellar", ['changenow']),
 
-      'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1590480213), 143_000, '~~~', "Polkadot", ['changenow']),
+      'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113p']/* 'Nominated Proof of Stake' */, '6 sec.', this.get_time_difference(1590480213), 143_000, '~~~', "Polkadot", ['changenow']),
 
-      'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Nominated Proof of Stake', '6 sec.', this.get_time_difference(1566096000), 143_000, '~~~', null, []),
+      'KSM': this.get_coin_info('KSM', 'Kusama', kusama_logo, 'planck', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113p']/* 'Nominated Proof of Stake' */, '6 sec.', this.get_time_difference(1566096000), 143_000, '~~~', null, []),
 
-      'ALGO': this.get_coin_info('ALGO', 'Algorand', algorand_logo, '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Pure Proof of Stake', '4.5 sec.', this.get_time_difference(1560902400), 1000, 5, "Algorand", ['changenow']),
+      'ALGO': this.get_coin_info('ALGO', 'Algorand', algorand_logo, '𝜇algo', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113o']/* 'Pure Proof of Stake' */, '4.5 sec.', this.get_time_difference(1560902400), 1000, 5, "Algorand", ['changenow']),
 
-      'XTZ': this.get_coin_info('XTZ', 'Tezos', tezos_logo, 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Liquid Proof of Stake', '30 sec.', this.get_time_difference(1537161600), 40, 1, "Tezos", ['changenow']),
+      'XTZ': this.get_coin_info('XTZ', 'Tezos', tezos_logo, 'mutez', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113n']/* 'Liquid Proof of Stake' */, '30 sec.', this.get_time_difference(1537161600), 40, 1, "Tezos", ['changenow']),
 
-      'ATOM': this.get_coin_info('ATOM', 'Cosmos', cosmos_logo, 'uATOM', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Delegated Proof of Stake', '10 sec.', this.get_time_difference(1552521600), 1000, '~~~', "Cosmos", ['changenow']),
+      'ATOM': this.get_coin_info('ATOM', 'Cosmos', cosmos_logo, '𝜇ATOM', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113m']/* 'Delegated Proof of Stake' */, '10 sec.', this.get_time_difference(1552521600), 1000, '~~~', "Cosmos", ['changenow']),
 
-      'FIL': this.get_coin_info('FIL', 'Filecoin', filecoin_logo, 'aFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Spacetime & Proof of Replication', '50 sec.', this.get_time_difference(1602729600), 7, '~~~', "Filecoin", ['changenow']),
+      'FIL': this.get_coin_info('FIL', 'Filecoin', filecoin_logo, 'aFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113l']/* 'Proof of Spacetime & Proof of Replication' */, '50 sec.', this.get_time_difference(1602729600), 7, '~~~', "Filecoin", ['changenow']),
 
-      'SOL': this.get_coin_info('SOL', 'Solana',solana_logo, 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake & Proof of History', '0.4 sec.', this.get_time_difference(1584372000),65_000, 2, "Solana", ['changenow']),
+      'SOL': this.get_coin_info('SOL', 'Solana',solana_logo, 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113k']/* 'Proof of Stake & Proof of History' */, '0.4 sec.', this.get_time_difference(1584372000),65_000, 2, "Solana", ['changenow']),
 
-      'APT': this.get_coin_info('APT', 'Aptos', aptos_logo, 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~', "Aptos", ['changenow']),
+      'APT': this.get_coin_info('APT', 'Aptos', aptos_logo, 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~', "Aptos", ['changenow']),
 
-      'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, 'UTXO', 'Proof Of Stake', '20 sec.', this.get_time_difference(1506203091), 10, 0.088, "Cardano", ['changenow']),
+      'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '20 sec.', this.get_time_difference(1506203091), 10, 0.088, "Cardano", ['changenow']),
 
-      'STX': this.get_coin_info('STX', 'Stacks', stacks_logo, 'µSTX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Transfer', '10 sec.', this.get_time_difference(1610641813), 10, '~~~', "Stacks", ['changenow']),
+      'STX': this.get_coin_info('STX', 'Stacks', stacks_logo, '𝜇STX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113j']/* 'Proof Of Transfer' */, '10 sec.', this.get_time_difference(1610641813), 10, '~~~', "Stacks", ['changenow']),
 
-      'AR': this.get_coin_info('AR', 'Arweave', arweave_logo, 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Succinct Proof of Random Access', '2 min.', this.get_time_difference(1528473343), 5, '~~~', null, []),
+      'AR': this.get_coin_info('AR', 'Arweave', arweave_logo, 'winston', 12, 1_000_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113i']/* 'Succinct Proof Of Random Access' */, '2 min.', this.get_time_difference(1528473343), 5, '~~~', null, []),
 
-      'SUI': this.get_coin_info('SUI', 'Sui', sui_logo, 'mist', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1683115200), 100_000, '~~~', "Sui", ['changenow']),
+      'SUI': this.get_coin_info('SUI', 'Sui', sui_logo, 'mist', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, this.getLocale()['3113h']/* 'Delegated Proof Of Stake' */, '0.4 sec.', this.get_time_difference(1683115200), 100_000, '~~~', "Sui", ['changenow']),
 
-      'TIA': this.get_coin_info('TIA', 'Celestia', celestia_logo, 'uTIA', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof of Stake', '6 sec.', this.get_time_difference(1698760800), 1300, 2, "Celestia", ['changenow']),
+      'TIA': this.get_coin_info('TIA', 'Celestia', celestia_logo, '𝜇TIA', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '6 sec.', this.get_time_difference(1698760800), 1300, 2, "Celestia", ['changenow']),
 
-      'IOTA': this.get_coin_info('IOTA', 'IOTA', iota_logo, 'nano', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, 'Delegated Proof Of Stake', '0.4 sec.', this.get_time_difference(1746446400), 53_000, 0.032768, "IOTA", ['changenow']),
+      'IOTA': this.get_coin_info('IOTA', 'IOTA', iota_logo, 'nano', 9, 1_000_000_000, this.getLocale()['2927k']/* Object-Based' */, this.getLocale()['3113h']/* 'Delegated Proof Of Stake' */, '0.4 sec.', this.get_time_difference(1746446400), 53_000, 0.032768, "IOTA", ['changenow']),
 
-      'HBAR': this.get_coin_info('HBAR', 'Hedera Hashgraph', hedera_hashgraph_logo, 'tinybar', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Hashgraph', '5 sec.', this.get_time_difference(1568592000), 10_000, '~~~', "Hedera Hashgraph", ['changenow']),
+      'HBAR': this.get_coin_info('HBAR', 'Hedera Hashgraph', hedera_hashgraph_logo, 'tinybar', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113g']/* 'Hashgraph' */, '5 sec.', this.get_time_difference(1568592000), 10_000, '~~~', "Hedera Hashgraph", ['changenow']),
 
-      'INJ': this.get_coin_info('INJ', 'Injective', injective_logo, 'inj', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.65 sec.', this.get_time_difference(1625058000), 600_000, '~~~', "Injective (Mainnet)", ['changenow']),
+      'INJ': this.get_coin_info('INJ', 'Injective', injective_logo, 'inj', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '0.65 sec.', this.get_time_difference(1625058000), 600_000, '~~~', "Injective (Mainnet)", ['changenow']),
 
-      'NEAR': this.get_coin_info('NEAR', 'Near Protocol', near_logo, 'yocto', 24, 10**24, this.getLocale()['2916']/* Accounting' */, 'Thresholded Proof of Stake', '1 sec.', this.get_time_difference(1595350551), 4100, '~~~', "NEAR Protocol", ['changenow']),
+      'NEAR': this.get_coin_info('NEAR', 'Near Protocol', near_logo, 'yocto', 24, 10**24, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113f']/* 'Thresholded Proof of Stake' */, '1 sec.', this.get_time_difference(1595350551), 4100, '~~~', "NEAR Protocol", ['changenow']),
 
-      'ICP': this.get_coin_info('ICP', 'Internet Computer', icp_logo, 'e8', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, 'Threshold Relay', '0.5 sec.', this.get_time_difference(1623283200), 3_000, '~~~', null, []),
+      'ICP': this.get_coin_info('ICP', 'Internet Computer', icp_logo, 'e8', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113e']/* 'Threshold Relay' */, '0.5 sec.', this.get_time_difference(1623283200), 3_000, '~~~', null, []),
 
-      'ZEC': this.get_coin_info('ZEC', 'Zcash', zcash_logo, 'zatoshi', 8, 100_000_000, 'UTXO', 'Proof Of Work', '1.25 min.', this.get_time_difference(1477673333), 5, 2, "Zcash", ['changenow']),
+      'ZEC': this.get_coin_info('ZEC', 'Zcash', zcash_logo, 'zatoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113b']/* 'Proof Of Work' */, '1.25 min.', this.get_time_difference(1477673333), 5, 2, "Zcash", ['changenow']),
 
-      'GRAM': this.get_coin_info('GRAM', 'Gram', gram_logo, 'nanogram', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Proof Of Stake', '0.4 sec.', this.get_time_difference(1573516800), 104_715, 1, "Toncoin", ['changenow']),
+      'GRAM': this.get_coin_info('GRAM', 'Gram', gram_logo, 'nanogram', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '0.4 sec.', this.get_time_difference(1573516800), 104_715, 1, "Toncoin", ['changenow']),
 
-      '???': this.get_coin_info('???', '??????', monero_logo, '???', 12, 1_000_000_000_000, 'UTXO', 'Proof Of Work.', '2 min.', this.get_time_difference(1397818193), 7, '~~~', "Monero", ['changenow']),
+      '???': this.get_coin_info('???', '??????', monero_logo, '???', 12, 1_000_000_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113b']/* 'Proof Of Work' */, '2 min.', this.get_time_difference(1397818193), 7, '~~~', "Monero", ['changenow']),
 
-      'EGLD': this.get_coin_info('EGLD', 'MultiversX', egld_logo, 'aEGLD', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, 'Secure Proof of Stake', '6 sec.', this.get_time_difference(1567555200), 100_000, '~~~', "MultiversX", ['changenow']),
+      'EGLD': this.get_coin_info('EGLD', 'MultiversX', egld_logo, 'aEGLD', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113d']/* 'Secure Proof of Stake' */, '6 sec.', this.get_time_difference(1567555200), 100_000, '~~~', "MultiversX", ['changenow']),
     }
     return list
   }
@@ -2674,16 +2684,19 @@ class App extends Component {
     if(symbol == '???'){
       tags.push(this.getLocale()['2738cv']/* 'IYKYK' */)
     }
+    if(consensus_mechanism == this.getLocale()['3113b']/* 'Proof Of Work' */){
+      tags.push(this.getLocale()['3113v']/* 'Legacy-Chain' */)
+    }
     return{
-      'name':name,
+      'name':this.getLocale()['3113t']/* names */[symbol] || name,
       'id':symbol,
-      'symbol':symbol,
-      'base_unit':base_unit,
+      'symbol':this.getLocale()['3113']/* symbols */[symbol] || symbol,
+      'base_unit':this.getLocale()['3113u']/* base_units */[symbol] || base_unit,
       'decimals':decimals,
       'conversion':conversion,
       'image': image_url,
-      'label':{'title':symbol, 'details':name, 'size':'l', 'image': image_url},
-      'banner-icon':{'header':symbol, 'subtitle':name, 'image':image_url},
+      'label':{'title':this.getLocale()['3113']/* symbols */[symbol] || symbol, 'details':this.getLocale()['3113t']/* names */[symbol] || name, 'size':'l', 'image': image_url},
+      'banner-icon':{'header':this.getLocale()['3113']/* symbols */[symbol] || symbol, 'subtitle':this.getLocale()['3113t']/* names */[symbol] || name, 'image':image_url},
       'tags':{'active_tags':tags, 'index_option':'indexed'},
       'account_type':account_type,
       'consensus_mechanism':consensus_mechanism,
@@ -3901,6 +3914,291 @@ class App extends Component {
     }
 
     return data
+  }
+
+  get_blockexplorer_link(e5, hash){
+    if(e5 == 'E25' || e5 == 'E35'){
+        return `https://etc.blockscout.com/tx/${hash}`
+    }else if(e5 == 'E45'){
+        return `https://snowtrace.io/tx/${hash}`
+    }else if(e5 == 'E55'){
+        return `https://explorer.celo.org/mainnet/tx/${hash}`
+    }else if(e5 == 'E65'){
+        return `https://flare-explorer.flare.network/tx/${hash}`
+    }else if(e5 == 'E75'){
+        return `https://gnosisscan.io/tx/${hash}`
+    }else if(e5 == 'E85'){
+        return `https://explorer.fuse.io/tx/${hash}`
+    }else if(e5 == 'E95'){
+        return `https://moonscan.io/tx/${hash}`
+    }else if(e5 == 'E105'){
+        return `https://moonriver.moonscan.io/tx/${hash}`
+    }else if(e5 == 'E115'){
+        return `https://xdc.blocksscan.io/txs/${hash}`
+    }else if(e5 == 'E125'){
+        return `https://polygonscan.com/tx/${hash}`
+    }else if(e5 == 'E135'){
+        return `https://bscscan.com/tx/${hash}`
+    }else if(e5 == 'E145'){
+        return `https://seitrace.com/tx/${hash}?chain=pacific-1`
+    }else if(e5 == 'E155'){
+        return `https://berascan.com/tx/${hash}`
+    }else if(e5 == 'E165'){
+        return `https://www.tomoscan.io/tx/${hash}`
+    }else if(e5 == 'E175'){
+        return `https://escan.live/tx/${hash}`
+    }else if(e5 == 'E185'){
+        return `https://etherscan.io/tx/${hash}`
+    }else if(e5 == 'E195'){
+        return `https://optimistic.etherscan.io/tx/${hash}`
+    }else if(e5 == 'E205'){
+        return `https://basescan.org/tx/${hash}`
+    }else if(e5 == 'E215'){
+        return `https://arbiscan.io/tx/${hash}`
+    }else if(e5 == 'E225'){
+        return `https://astar.subscan.io/tx/${hash}`
+    }else if(e5 == 'E235'){
+        return `https://cronoscan.com/tx/${hash}`
+    }else if(e5 == 'E245'){
+        return `https://kavascan.com/tx/${hash}`
+    }else if(e5 == 'E255'){
+        return `https://neon.blockscout.com/tx/${hash}`
+    }else if(e5 == 'E265'){
+        return `https://explorer-mainnet-cardano-evm.c1.milkomeda.com/tx/${hash}`
+    }else if(e5 == 'E275'){
+        return `https://ftmscan.com/tx/${hash}`
+    }else if(e5 == 'E285'){
+        return `https://brisescan.com/tx/${hash}`
+    }else if(e5 == 'E295'){
+        return `https://explorer.syscoin.org/tx/${hash}`
+    }else if(e5 == 'E305'){
+        return `https://explorer.harmony.one/tx/${hash}`
+    }else if(e5 == 'E315'){
+        return `https://evm.findorascan.io/tx/${hash}`
+    }else if(e5 == 'E325'){
+        return `https://blockscout-bellecour.iex.ec/tx/${hash}`
+    }else if(e5 == 'E335'){
+        return `https://explorer.oasis.io/mainnet/emerald/tx/${hash}`
+    }else if(e5 == 'E345'){
+        return `https://ozonescan.io/tx/${hash}`
+    }else if(e5 == 'E355'){
+        return `https://scan.chain.pixie.xyz/tx/${hash}/token-transfers`
+    }else if(e5 == 'E365'){
+        return `https://scan.rei.network/tx/${hash}`
+    }else if(e5 == 'E375'){
+        return `https://klaytnscope.com/tx/${hash}`
+    }else if(e5 == 'E385'){
+        return `https://explorer.mantle.xyz/tx/${hash}`
+    }else if(e5 == 'E395'){
+        return `https://pulsescan.app/#/tx/${hash}`
+    }else if(e5 == 'E405'){
+        return `https://canto.dex.guru/tx/${hash}`
+    }else if(e5 == 'E415'){
+        return `https://explorer.evm.eosnetwork.com/tx/${hash}`
+    }else if(e5 == 'E425'){
+        return `https://iotexscan.io/tx/${hash}`
+    }else if(e5 == 'E435'){
+        return `https://songbird-explorer.flare.network/tx/${hash}`
+    }else if(e5 == 'E445'){
+        return `https://explorer.ultron-dev.io/transactions/${hash}`
+    }else if(e5 == 'E455'){
+        return `https://www.coinex.net/tx/${hash}`
+    }else if(e5 == 'E465'){
+        return `https://thetascan.io/hash/?hash=${hash}`
+    }else if(e5 == 'E475'){
+        return `https://stepscan.io/tx/${hash}`
+    }else if(e5 == 'E485'){
+        return `https://explorer.energyweb.org/tx/${hash}`
+    }else if(e5 == 'E495'){
+        return null
+    }else if(e5 == 'E505'){
+        return `https://shiden.blockscout.com/tx/${hash}`
+    }else if(e5 == 'E515'){
+        return `https://tenetscan.io/tx/${hash}`
+    }else if(e5 == 'E525'){
+        return `https://ubiqscan.io/tx/${hash}`
+    }else if(e5 == 'E535'){
+        return `https://explorer.gochain.io/tx/${hash}`
+    }else if(e5 == 'E545'){
+        return `https://www.omaxray.com/tx/${hash}`
+    }else if(e5 == 'E555'){
+        return `https://explorer.wemix.com/tx/${hash}`
+    }else if(e5 == 'E565'){
+        return `https://confluxscan.io/transaction/${hash}`
+    }else if(e5 == 'E575'){
+        return `https://www.teloscan.io/tx/${hash}`
+    }else if(e5 == 'E585'){
+        return `https://explorer.rootstock.io/tx/${hash}`
+    }else if(e5 == 'E595'){
+        return `https://explorer.metadium.com/tx/${hash}`
+    }else if(e5 == 'E605'){
+        return `https://explorer.kardiachain.io/tx/${hash}`
+    }else if(e5 == 'E615'){
+        return `https://mainnet.scan.caduceus.foundation/tx/${hash}`
+    }else if(e5 == 'E625'){
+        return `https://seeleview.net/tx/${hash}`
+    }else if(e5 == 'E635'){
+        return `https://scan.bt.io/#/transaction/${hash}`
+    }else if(e5 == 'E645'){
+        return `https://scan.acuteangle.com/tx/${hash}`
+    }else if(e5 == 'E655'){
+        return `https://karura.subscan.io/extrinsic/${hash}`
+    }else if(e5 == 'E665'){
+        return `https://acala.subscan.io/extrinsic/${hash}`
+    }else if(e5 == 'E675'){
+        return null
+    }else if(e5 == 'E685'){
+        return `https://blockexplorer.bloxberg.org/tx/${hash}`
+    }else if(e5 == 'E695'){
+        return `https://phoenixplorer.com/tx/${hash}`
+    }else if(e5 == 'E705'){
+        return `https://explorer.omchain.io/tx/${hash}`
+    }else if(e5 == 'E715'){
+        return `https://evm-explorer.omplatform.com/tx/${hash}`
+    }else if(e5 == 'E725'){
+        return `https://www.mintme.com/explorer/tx/${hash}`
+    }else if(e5 == 'E735'){
+        return `https://explorer.ecredits.com/tx/${hash}`
+    }else if(e5 == 'E745'){
+        return `https://explorer.contentfabric.io/tx/${hash}`
+    }else if(e5 == 'E755'){
+        return `https://explorer.ethoprotocol.com/tx/${hash}`
+    }else if(e5 == 'E765'){
+        return `https://mainnet-explorer.oneledger.network/tx/${hash}`
+    }else if(e5 == 'E785'){
+        return `https://explorer.evm.iota.org/tx/${hash}`
+    }else if(e5 == 'E795'){
+        return `https://www.kaiascan.io/tx/${hash}`
+    }else if(e5 == 'E805'){
+        return `https://sonicscan.org/tx/${hash}`
+    }else if(e5 == 'E815'){
+        return `https://explorer-mainnet.thundercore.com/tx/${hash}`
+    }else if(e5 == 'E835'){
+        return `https://www.hyperscan.com/tx/${hash}`
+    }else if(e5 == 'E845'){
+        return `https://explorer.xrplevm.org/tx/${hash}`
+    }else if(e5 == 'E855'){
+        return `https://abscan.org/tx/${hash}`
+    }else if(e5 == 'E865'){
+        return `https://apechain.calderaexplorer.xyz/tx/${hash}`
+    }else if(e5 == 'E875'){
+        return `https://www.btrscan.com/tx/${hash}`
+    }else if(e5 == 'E885'){
+        return `https://blastscan.io/tx/${hash}`
+    }else if(e5 == 'E895'){
+        return `https://explorer.gobob.xyz/tx/${hash}`
+    }else if(e5 == 'E905'){
+        return `https://botanixscan.io/tx/${hash}`
+    }else if(e5 == 'E915'){
+        return `https://explorer.bsquared.network/tx/${hash}`
+    }else if(e5 == 'E925'){
+        return `https://scan.coredao.org/tx/${hash}`
+    }else if(e5 == 'E935'){
+        return `https://cornscan.io/tx/${hash}`
+    }else if(e5 == 'E945'){
+        return`https://explorer.etherlink.com/tx/${hash}`
+    }else if(e5 == 'E955'){
+        return `https://fraxscan.com/tx/${hash}`
+    }else if(e5 == 'E965'){
+        return `https://hashkey.blockscout.com/tx/${hash}`
+    }else if(e5 == 'E975'){
+        return `https://explorer.hemi.xyz/tx/${hash}`
+    }else if(e5 == 'E985'){
+        return `https://explorer.inkonchain.com/tx/${hash}`
+    }else if(e5 == 'E995'){
+        return `https://explorer.lens.xyz/tx/${hash}`
+    }else if(e5 == 'E1005'){
+        return `https://lineascan.build/tx/${hash}`
+    }else if(e5 == 'E1015'){
+        return `https://blockscout.lisk.com/tx/${hash}`
+    }else if(e5 == 'E1025'){
+        return `https://scan.merlinchain.io/tx/${hash}`
+    }else if(e5 == 'E1035'){
+        return `https://explorer.metall2.com/tx/${hash}`
+    }else if(e5 == 'E1045'){
+        return `https://explorer.metis.io/tx/${hash}`
+    }else if(e5 == 'E1055'){
+        return `https://explorer.mindnetwork.xyz/tx/${hash}`
+    }else if(e5 == 'E1065'){
+        return `https://explorer.mintchain.io/tx/${hash}`
+    }else if(e5 == 'E1075'){
+        return `https://explorer.mode.network/tx/${hash}`
+    }else if(e5 == 'E1085'){
+        return `https://neoxscan.ngd.network/tx/${hash}`
+    }else if(e5 == 'E1095'){
+        return `https://opbnbscan.com/tx/${hash}`
+    }else if(e5 == 'E1105'){
+        return `https://explorer.plume.org/tx/${hash}`
+    }else if(e5 == 'E1115'){
+        return `https://explorer.katanarpc.com/tx/${hash}`
+    }else if(e5 == 'E1125'){
+        return `https://zkevm.polygonscan.com/tx/${hash}`
+    }else if(e5 == 'E1135'){
+        return `https://app.roninchain.com/tx/${hash}`
+    }else if(e5 == 'E1145'){
+        return `https://scrollscan.com/tx/${hash}`
+    }else if(e5 == 'E1155'){
+        return `https://www.shibariumscan.io/tx/${hash}`
+    }else if(e5 == 'E1165'){
+        return `https://soneium.blockscout.com/tx/${hash}`
+    }else if(e5 == 'E1175'){
+        return `https://explorer.superseed.xyz/tx/${hash}`
+    }else if(e5 == 'E1185'){
+        return `https://taikoscan.io/tx/${hash}`
+    }else if(e5 == 'E1195'){
+        return `https://treasurescan.io/tx/${hash}`
+    }else if(e5 == 'E1205'){
+        return `https://uniscan.xyz/tx/${hash}`
+    }else if(e5 == 'E1215'){
+        return `https://worldscan.org/tx/${hash}`
+    }else if(e5 == 'E1225'){
+        return `https://web3.okx.com/explorer/x-layer/tx/${hash}`
+    }else if(e5 == 'E1235'){
+        return `https://www.oklink.com/oktc/tx/${hash}`
+    }else if(e5 == 'E1245'){
+        return `https://explorer.zircuit.com/tx/${hash}`
+    }else if(e5 == 'E1255'){
+        return `https://explorer.zksync.io/tx/${hash}`
+    }else if(e5 == 'E1265'){
+        return `https://explorer.zkevm.cronos.org/tx/${hash}`
+    }else if(e5 == 'E1275'){
+        return `https://explorer.zero.network/tx/${hash}`
+    }else if(e5 == 'E1285'){
+        return `https://explorer.sophon.xyz/tx/${hash}`
+    }else if(e5 == 'E1295'){
+        return `https://pacific-explorer.manta.network/tx/${hash}`
+    }else if(e5 == 'E1305'){
+        return `https://filscan.io/message/${hash}`
+    }else if(e5 == 'E1315'){
+        return `https://monadvision.com/tx/${hash}`
+    }else if(e5 == 'E1325'){
+        return `https://explorer.zora.energy/tx/${hash}`
+    }else if(e5 == 'E1335'){
+        return `https://arbitrum-nova.blockscout.com/tx/${hash}`
+    }else if(e5 == 'E1345'){
+        return `https://explorer.arena-z.gg/tx/${hash}`
+    }else if(e5 == 'E1355'){
+        return `https://blockscout.polkadot.io/tx/${hash}`
+    }else if(e5 == 'E1365'){
+        return `https://explorer.immutable.com/tx/${hash}`
+    }else if(e5 == 'E1375'){
+        return `https://kitescan.ai/tx/${hash}`
+    }else if(e5 == 'E1385'){
+        return `https://blockscout.injective.network/tx/${hash}`
+    }else if(e5 == 'E1395'){
+        return `https://plasmascan.to/tx/${hash}`
+    }else if(e5 == 'E1405'){
+        return `https://explorer.somnia.network/tx/${hash}`
+    }
+
+
+    else{
+        var blockexplorer_link = this.state.e5s[e5].blockexplorer_link
+        if(blockexplorer_link != null){
+            var link = blockexplorer_link.replace('{hash}', hash)
+            return link
+        }
+    }
   }
 
 
@@ -11298,6 +11596,7 @@ class App extends Component {
     const index = clone.indexOf(id)
     if(index == -1){
       clone.push(id)
+      this.get_objects_from_socket_and_set_in_state(['quick_itransfer_message|'+this.hash_data(id)], [])
     }else{
       clone.splice(index, 1)
     }
@@ -19744,7 +20043,7 @@ class App extends Component {
     var h = 600
     
     return this.renderBottomSheet(
-      <SuccessfulSend ref={this.successful_send_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} get_confirmations={this.get_confirmations.bind(this)}
+      <SuccessfulSend ref={this.successful_send_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} get_confirmations={this.get_confirmations.bind(this)} get_blockexplorer_link={this.get_blockexplorer_link.bind(this)}
       />,
       this.state.successful_send_bottomsheet,
       this.open_successful_send_bottomsheet,
@@ -20098,7 +20397,7 @@ class App extends Component {
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
 
-        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} show_select_certificate_bottomsheet={this.show_select_certificate_bottomsheet.bind(this)} show_certificate_chain_bottomsheet={this.show_certificate_chain_bottomsheet.bind(this)}
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} show_select_certificate_bottomsheet={this.show_select_certificate_bottomsheet.bind(this)} show_certificate_chain_bottomsheet={this.show_certificate_chain_bottomsheet.bind(this)} get_blockexplorer_link={this.get_blockexplorer_link.bind(this)}
         />
       </div>
     )
@@ -20221,6 +20520,8 @@ class App extends Component {
       'get_height_to_use_before_sync':700,
       'show_fulfil_obligations_ui':600,
       'confirm_swap_ether_dialog':550,
+      'view_incoming_itransfer_transactions':500,
+      'show_itransfer_search_transfers_item':450,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -26408,6 +26709,11 @@ class App extends Component {
     else if(event_type == 'storefront_request_response'){
       this.load_specific_storefront_items(events, 'p1')
     }
+    else if(event_type == 'quick_itransfer'){
+      const data = event['view']['data']
+      this.show_dialog_bottomsheet(data, 'view_incoming_itransfer_transactions')
+      return;
+    }
     
 
     var id = obj['notification_id']
@@ -26469,7 +26775,7 @@ class App extends Component {
     return(
       <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
         <ContextualTransferPage ref={this.view_contextual_transfer_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_itransfer_search={this.perform_itransfer_search.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} add_itransfer_transaction_to_stack={this.add_itransfer_transaction_to_stack.bind(this)} add_bill_transaction_to_stack={this.add_bill_transaction_to_stack.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)}
+        set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
         />
       </div>
     )
@@ -29522,6 +29828,9 @@ class App extends Component {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
       .on('transactionHash', (hash) => {
         console.log('TX broadcasted to mempool:', hash);
+        if(selected_item == this.getLocale()['3106p']/* quick-iTransfer */){
+          this.emit_notify_quick_itransfer_listeners_message(price_data, run_tx.gasPrice?.toString() || run_tx.maxFeePerGas?.toString(), gasLimit, identifier, web3_url, run_expiry_time, 100000000000000, hash, this.state.estimated_quick_transfer_gas || 0)
+        }
       })
       .on('receipt', (receipt) => {
         me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
@@ -30909,6 +31218,10 @@ class App extends Component {
         else if(id == 'mempool_notification'){
           const data = onClickData['data']
           this.show_dialog_bottomsheet(data, id)
+        }
+        else if(id == 'view_incoming_itransfer_transactions'){
+          const data = onClickData['data']
+          this.show_dialog_bottomsheet(data, 'view_incoming_itransfer_transactions')
         }
         else{
           this.show_dialog_bottomsheet(onClickData, id)
@@ -41127,8 +41440,8 @@ class App extends Component {
     if(token_name_directory[e5] == null){
       token_name_directory[e5] = {}
     }
-    token_symbol_directory[e5][0] = 'wei'
-    token_symbol_directory[e5]['wei'] = 0
+    token_symbol_directory[e5][0] = this.getLocale()['2738cx']/* wei */
+    token_symbol_directory[e5][this.getLocale()['2738cx']/* wei */] = 0
     token_name_directory[e5][e5+'0'] = this.state.e5s[e5].token
 
     this.setState({token_directory: token_symbol_directory, token_name_directory: token_name_directory})
@@ -41209,7 +41522,7 @@ class App extends Component {
       const is_crossexchange = created_token_data[i][2][18/* <18>classic_swap_exchange_parent_token */] != null && created_token_data[i][2][18/* <18>classic_swap_exchange_parent_token */] > 0
         
       var token_obj = {
-        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':is_certificate == true ? created_certificate_object_data.length : (is_crossexchange == true ? created_crossexchange_object_data.length: created_token_object_data.length), 'spend_balance':spend_balance, 'object_type':'token'
+        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':is_certificate == true ? created_certificate_object_data.length : (is_crossexchange == true ? created_crossexchange_object_data.length: created_token_object_data.length), 'spend_balance':spend_balance, 'object_type':'token', 'interacted':exchanges_to_load_first.includes(token_id)
       }
 
 
@@ -41454,8 +41767,8 @@ class App extends Component {
       token_symbol_directory2[e5][token_name] = token_id;
       token_name_directory2[e5][e5+token_id] = token_title;
 
-      token_symbol_directory2[e5][0] = 'wei'
-      token_symbol_directory2[e5]['wei'] = 0
+      token_symbol_directory2[e5][0] = this.getLocale()['2738cx']/* wei */
+      token_symbol_directory2[e5][this.getLocale()['2738cx']/* wei */] = 0
       token_name_directory2[e5][e5+'0'] = this.state.e5s[e5].token
 
       token_name_thumbnail_directory[token_title] = token_image
@@ -59200,6 +59513,9 @@ class App extends Component {
       else if(roomId == 'jobs' && message.type == 'storefront_availability'){
         me.process_new_storefront_availability_update(message, object_hash)
       }
+      else if(roomId == 'jobs' && message.type == 'quick_itransfer_message'){
+        me.process_new_mempool_itransfer_action_message(message, object_hash, userId, true)
+      }
       else{
         if(this.state.active_rooms.includes(roomId)){
           if(message.type == 'channel-message'){
@@ -60434,6 +60750,17 @@ class App extends Component {
     await this.reconnect_socket_if_unconnected()
 
     this.state.socket.emit("send_message", {to: to, message: message_object.message, target: target, object_hash: message_object.object_hash, secondary_target: secondary_target });
+  }
+
+  async emit_notify_quick_itransfer_listeners_message(price_data, gas_price, gas_limit, identifier, rpc_url, transaction_expiry_time, transaction_expiry_block, hash, pre_compute_gas){
+    const recipient_account = price_data[0]['recipient']
+    const mail_message_object = await this.prepare_quick_itransfer_in_mempool_message_object_message(price_data, gas_price, gas_limit, rpc_url, recipient_account, transaction_expiry_time, transaction_expiry_block, identifier, hash, pre_compute_gas)
+
+    const target = 'quick_itransfer_message|'+this.hash_data(identifier)
+    const broadcasat_object = {roomId: 'jobs', message: mail_message_object.message, target: target, object_hash: mail_message_object.object_hash}
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
   }
   
 
@@ -62930,6 +63257,62 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_quick_itransfer_in_mempool_message_object_message(price_data, gas_price, gas_limit, rpc_url, recipient_account, transaction_expiry_time, transaction_expiry_block, identifier, hash, pre_compute_gas){
+    const message_obj = {
+      'price_data':price_data,
+      'gas_price':gas_price,
+      'gas_limit':gas_limit,
+      'rpc_url':rpc_url,
+      'recipient_account':recipient_account,
+      'transaction_expiry_time':transaction_expiry_time,
+      'transaction_expiry_block':transaction_expiry_block,
+      'sender_alias':this.state.alias_bucket[this.state.selected_e5]?.[this.state.user_account_id[this.state.selected_e5]],
+      'identifier':identifier,
+      'hash':hash,
+      'sender_account':this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5':this.state.selected_e5,
+      'sender_address':this.state.accounts[this.state.selected_e5].address,
+      'pre_compute_gas':pre_compute_gas,
+      'time':Date.now(),
+    }
+    const tags = [this.hash_data(recipient_account), this.hash_data(identifier)]
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[this.state.selected_e5]
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(message_obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const message = {
+      type: 'quick_itransfer_message',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      identifier: identifier,
+      id: id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65784,6 +66167,77 @@ class App extends Component {
     }
   }
 
+  async process_new_mempool_itransfer_action_message(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+
+    console.log('process_new_mempool_itransfer_action_message', 'received mempool notification')
+    if(am_I_the_author == true) return;
+
+    if(!this.state.tracked_contextual_transfer_identifiers.includes(message.identifier)){
+      console.log('process_new_mempool_itransfer_action_message', 'identifier not in tracked values')
+      return
+    }
+
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
+
+    console.log('process_new_mempool_itransfer_action_message', 'ipfs', ipfs)
+    if(ipfs != message.data){
+      const e5 = message.e5;
+      const id = message.id;
+      const sender_acc = message.author;
+      const convo_id = id;
+      const cid = object_hash;
+      const request_id = message.id
+      const channel_e5_id = id+message.object_e5
+
+      const event = {returnValues:{p1:17, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+      var ipfs_obj = ipfs
+      
+      if(ipfs_obj != null){
+        if(message.time > (Date.now()/1000) - (7*60) && !am_I_the_author){
+          event['e5'] = e5
+          const notifs = [event]
+          this.handle_observed_quick_itransfer_notifications(notifs, ipfs_obj)
+          this.set_observed_quick_itransfer_event_in_notifications(event, e5, ipfs_obj)
+        }
+      }
+    }
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
+  }
+
+  async handle_observed_quick_itransfer_notifications(events, ipfs_obj){
+    var senders = []
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
+    var prompt = this.getLocale()['2738cy']/* 'Observed iTransfer payment in mempool from $.' */
+    prompt = prompt.replace('$', senders.toString())
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'view_incoming_itransfer_transactions','events':events, 'type':'itransfer', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2', 'data':ipfs_obj})
+  }
+
+  set_observed_quick_itransfer_event_in_notifications(event, e5, ipfs_obj){
+    event['e5'] = e5
+    event['p'] = event.returnValues.p1
+    event['time'] = event.returnValues.p6
+    event['block'] = event.returnValues.p7
+    event['sender'] = event.returnValues.p2
+    event['type'] = 'itransfer'
+    event['event_type'] = 'quick_itransfer'
+    event['view'] = {'notification_id':'view_incoming_itransfer_transactions','events':[], 'type':'itransfer', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2', 'data':ipfs_obj}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['quick_itransfer'] == null ? [] : clone['quick_itransfer'].slice()
+    request_clone_array.push(event)
+    clone['quick_itransfer'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
+  }
+
   
 
 
@@ -66081,6 +66535,7 @@ class App extends Component {
   }
 
   async get_objects_from_socket_and_set_in_state(targets, filter_tags, application_responses=[], absolute_load_limit=(Date.now() - (72*7*24*60*60*1000)), default_load_step=(35*7*24*60*60*1000), authors=[], target_e5='', recipients=[]){
+
     const load_step = absolute_load_limit == 0 ? Date.now()-1000 : (default_load_step)
     var current_filter_end_time = Date.now() - load_step
     var current_filter_start_time = Date.now()
@@ -66425,6 +66880,9 @@ class App extends Component {
     }
     else if(object_data['type'] == 'my_commented_list'){
       await this.process_new_commented_posts_list_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
+    }
+    else if(object_data['type'] == 'quick_itransfer_message'){
+      me.process_new_mempool_itransfer_action_message(object_data, object_hash, object_data['author_address'], true)
     }
   }
 

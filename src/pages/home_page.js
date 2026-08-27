@@ -1220,8 +1220,9 @@ class home_page extends Component {
         const ether_coin_request = notification_object['ether_coin_request'] || []
         const ether_coin_receipt = notification_object['ether_coin_receipt'] || []
         const mempool_notification = notification_object['mempool_notification'] || []
+        const quick_itransfer = notification_object['quick_itransfer'] || []
         
-        const all_events = token.concat(bill_request, signature, ether_coin_request, ether_coin_receipt, mempool_notification)
+        const all_events = token.concat(bill_request, signature, ether_coin_request, ether_coin_receipt, mempool_notification, quick_itransfer)
         const me = this;
         const filtered_events = all_events.filter(function (event) {
             return (types.includes(event['event_type'])  || types.length == 0)  && (parseInt(event['time']) >= me.props.app_state.last_notification_view_time['w'] / 1000)
@@ -4361,7 +4362,7 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */){
             var all_tokens = this.get_items_for_page2(page_id, selected_page)
             var main_tokens = all_tokens.filter(function (object) {
-                return (object['balance'] != 0)
+                return (object['balance'] != 0 || object['interacted'] == true)
             })
             return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
         }
