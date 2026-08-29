@@ -32884,7 +32884,7 @@ class App extends Component {
     if(account != null){
       account['balances'].forEach(b => {
         if(b['asset_type'] == 'native'){
-          balance = (parseFloat(b['balance']) * 10000000)
+          balance = parseInt(parseFloat(b['balance']) * 10000000)
         }
       });
     }
@@ -39859,22 +39859,22 @@ class App extends Component {
       created_subscription_events = my_posted_events
     }else{
       //prioritize my content first
-      var my_posted_events = created_subscription_events.filter(function (event) {
-        return (event.returnValues.p3/* sender_account_id */ == account)
-      })
-      created_subscription_events.forEach(event => {
-        if(my_paid_subs.includes(event.returnValues.p1)){
-          if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
-            my_posted_events.push(event)
-          }
-        }
-      });
-      created_subscription_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_subscription_events = my_posted_events
+      // var my_posted_events = created_subscription_events.filter(function (event) {
+      //   return (event.returnValues.p3/* sender_account_id */ == account)
+      // })
+      // created_subscription_events.forEach(event => {
+      //   if(my_paid_subs.includes(event.returnValues.p1)){
+      //     if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
+      //       my_posted_events.push(event)
+      //     }
+      //   }
+      // });
+      // created_subscription_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_subscription_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -40368,20 +40368,20 @@ class App extends Component {
       created_contract_events = my_posted_events
     }else{
       //prioritize my content first
-      var my_posted_events = created_contract_events.filter(function (event) {
-        return (event.returnValues.p3/* sender_account_id */ == account)
-      })
-      created_contract_events.forEach(event => {
-        if(entered_contracts.includes(event.returnValues.p1)){
-          my_posted_events.push(event)
-        }
-      });
-      created_contract_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_contract_events = my_posted_events
+      // var my_posted_events = created_contract_events.filter(function (event) {
+      //   return (event.returnValues.p3/* sender_account_id */ == account)
+      // })
+      // created_contract_events.forEach(event => {
+      //   if(entered_contracts.includes(event.returnValues.p1)){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_contract_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_contract_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -41306,15 +41306,15 @@ class App extends Component {
       created_token_events = my_posted_events
     }
     else{
-      var my_posted_events = created_token_events.filter(function (event) {
-        return (exchanges_to_load_first.includes(event.returnValues.p1))
-      })
-      created_token_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_token_events = my_posted_events
+      // var my_posted_events = created_token_events.filter(function (event) {
+      //   return (exchanges_to_load_first.includes(event.returnValues.p1))
+      // })
+      // created_token_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_token_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -42658,7 +42658,8 @@ class App extends Component {
 
 
     //prioritize the objects ive participated in first
-    if(this.state.my_objects.length > 0){
+    if(this.state.my_objects.length > 0 && true == false){
+      console.log('get_post_data', e5, 'prioritizing my objects first', this.state.my_objects)
       //prioritize my participated in objects first
       var my_participated_object_ids = this.filter_accounts_by_e5(this.state.my_objects, e5)
       var my_participated_events = created_post_events.filter(function (event) {
@@ -42673,6 +42674,7 @@ class App extends Component {
     }
 
     if(prioritized_accounts && prioritized_accounts.length > 0){
+      console.log('get_post_data', e5, 'prioritizing prioritized_accounts first', prioritized_accounts)
       var my_posted_events = created_post_events.filter(function (event) {
         return (prioritized_accounts.includes(parseInt(event.returnValues.p5/* sender_account_id */)) || prioritized_accounts.includes(parseInt(event.returnValues.p2/* object_id */)))
       })
@@ -42680,18 +42682,19 @@ class App extends Component {
     }
     else{
       //prioritize my content first
-      var my_posted_events = created_post_events.filter(function (event) {
-        return (event.returnValues.p5/* sender_account */ == account)
-      })
-      created_post_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_post_events = my_posted_events
+      // var my_posted_events = created_post_events.filter(function (event) {
+      //   return (event.returnValues.p5/* sender_account */ == account)
+      // })
+      // created_post_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_post_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
+      console.log('get_post_data', e5, 'prioritizing specific_items first', specific_items)
       var my_events = created_post_events.filter(function (event) {
         return (specific_items.includes(event.returnValues.p2))
       })
@@ -42809,7 +42812,7 @@ class App extends Component {
     created_channel_events = created_channel_events.slice().reverse()
 
     //prioritize the channels ive participated in first
-    if(this.state.my_channels.length > 0){
+    if(this.state.my_channels.length > 0 && true == false){
       //prioritize my participated in channels first
       var my_participated_channel_ids = this.filter_accounts_by_e5(this.state.my_channels, e5)
       var my_participated_events = created_channel_events.filter(function (event) {
@@ -42832,15 +42835,15 @@ class App extends Component {
     }
     else{
       //prioritize my content first
-      var my_posted_events = created_channel_events.filter(function (event) {
-        return (event.returnValues.p5/* sender_account */== account)
-      })
-      created_channel_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_channel_events = my_posted_events
+      // var my_posted_events = created_channel_events.filter(function (event) {
+      //   return (event.returnValues.p5/* sender_account */== account)
+      // })
+      // created_channel_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_channel_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -43001,7 +43004,7 @@ class App extends Component {
     console.log('get_job_data', 'found ', created_job_events.length, 'job events')
 
     //prioritize the objects ive participated in first
-    if(this.state.my_objects.length > 0){
+    if(this.state.my_objects.length > 0 && true == false){
       //prioritize my participated in objects first
       var my_participated_object_ids = this.filter_accounts_by_e5(this.state.my_objects, e5)
       var my_participated_events = created_job_events.filter(function (event) {
@@ -43045,15 +43048,15 @@ class App extends Component {
     }
     else{
       //prioritize my content first
-      var my_posted_events = created_job_events.filter(function (event) {
-        return (event.returnValues.p5/* sender_account */ == account)
-      })
-      created_job_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p2/* item */ === event.returnValues.p2/* item */) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_job_events = my_posted_events
+      // var my_posted_events = created_job_events.filter(function (event) {
+      //   return (event.returnValues.p5/* sender_account */ == account)
+      // })
+      // created_job_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p2/* item */ === event.returnValues.p2/* item */) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_job_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -43452,7 +43455,7 @@ class App extends Component {
 
 
     //prioritize the objects ive participated in first
-    if(this.state.my_objects.length > 0){
+    if(this.state.my_objects.length > 0 && true == false){
       //prioritize my participated in objects first
       var my_participated_object_ids = this.filter_accounts_by_e5(this.state.my_objects, e5)
       var my_participated_events = created_store_events.filter(function (event) {
@@ -43488,15 +43491,15 @@ class App extends Component {
     }
     else{
       //prioritize my content first
-      var my_posted_events = created_store_events.filter(function (event) {
-        return (event.returnValues.p5/* sender_account */ == account)
-      })
-      created_store_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_store_events = my_posted_events
+      // var my_posted_events = created_store_events.filter(function (event) {
+      //   return (event.returnValues.p5/* sender_account */ == account)
+      // })
+      // created_store_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_store_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -43647,7 +43650,7 @@ class App extends Component {
 
 
     //prioritize the objects ive participated in first
-    if(this.state.my_objects.length > 0){
+    if(this.state.my_objects.length > 0 && true == false){
       //prioritize my participated in objects first
       var my_participated_object_ids = this.filter_accounts_by_e5(this.state.my_objects, e5)
       var my_participated_events = created_bag_events.filter(function (event) {
@@ -43691,15 +43694,15 @@ class App extends Component {
     }
     else{
       //prioritize my content first
-      var my_posted_events = created_bag_events.filter(function (event) {
-        return (event.returnValues.p3/* sender_account_id */ == account)
-      })
-      created_bag_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_bag_events = my_posted_events
+      // var my_posted_events = created_bag_events.filter(function (event) {
+      //   return (event.returnValues.p3/* sender_account_id */ == account)
+      // })
+      // created_bag_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p1 === event.returnValues.p1) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_bag_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -43952,15 +43955,15 @@ class App extends Component {
     }
     else{
       //prioritize my content first
-      var my_posted_events = created_contractor_events.filter(function (event) {
-        return (event.returnValues.p5/* sender_account */ == account)
-      })
-      created_contractor_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_contractor_events = my_posted_events
+      // var my_posted_events = created_contractor_events.filter(function (event) {
+      //   return (event.returnValues.p5/* sender_account */ == account)
+      // })
+      // created_contractor_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_contractor_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -44112,7 +44115,7 @@ class App extends Component {
 
 
     //prioritize the objects ive participated in first
-    if(this.state.my_objects.length > 0){
+    if(this.state.my_objects.length > 0 && true == false){
       //prioritize my participated in objects first
       var my_participated_object_ids = this.filter_accounts_by_e5(this.state.my_objects, e5)
       var my_participated_events = created_audio_events.filter(function (event) {
@@ -44135,15 +44138,15 @@ class App extends Component {
     }
     else{
       //prioritize my content first
-      var my_posted_events = created_audio_events.filter(function (event) {
-        return (event.returnValues.p5/* sender_account */ == account)
-      })
-      created_audio_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_audio_events = my_posted_events
+      // var my_posted_events = created_audio_events.filter(function (event) {
+      //   return (event.returnValues.p5/* sender_account */ == account)
+      // })
+      // created_audio_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_audio_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -44315,7 +44318,7 @@ class App extends Component {
 
 
     //prioritize the objects ive participated in first
-    if(this.state.my_objects.length > 0){
+    if(this.state.my_objects.length > 0 && true == false){
       //prioritize my participated in objects first
       var my_participated_object_ids = this.filter_accounts_by_e5(this.state.my_objects, e5)
       var my_participated_events = created_video_events.filter(function (event) {
@@ -44337,15 +44340,15 @@ class App extends Component {
     }
     else{
       //prioritize my content first
-      var my_posted_events = created_video_events.filter(function (event) {
-        return (event.returnValues.p5/* sender_account */ == account)
-      })
-      created_video_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_video_events = my_posted_events
+      // var my_posted_events = created_video_events.filter(function (event) {
+      //   return (event.returnValues.p5/* sender_account */ == account)
+      // })
+      // created_video_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_video_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -44545,7 +44548,7 @@ class App extends Component {
     
 
     //prioritize the objects ive participated in first
-    if(this.state.my_objects.length > 0){
+    if(this.state.my_objects.length > 0 && true == false){
       //prioritize my participated in objects first
       var my_participated_object_ids = this.filter_accounts_by_e5(this.state.my_objects, e5)
       var my_participated_events = created_nitro_events.filter(function (event) {
@@ -44567,15 +44570,15 @@ class App extends Component {
     }
     else{
       //prioritize my content first
-      var my_posted_events = created_nitro_events.filter(function (event) {
-        return (event.returnValues.p5/* sender_account */ == account)
-      })
-      created_nitro_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p2/* item */ === event.returnValues.p2) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_nitro_events = my_posted_events
+      // var my_posted_events = created_nitro_events.filter(function (event) {
+      //   return (event.returnValues.p5/* sender_account */ == account)
+      // })
+      // created_nitro_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p2/* item */ === event.returnValues.p2) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_nitro_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){
@@ -44770,7 +44773,7 @@ class App extends Component {
 
 
     //prioritize the polls ive participated in first
-    if(this.state.my_polls.length > 0){
+    if(this.state.my_polls.length > 0 && true == false){
       //prioritize my participated in polls first
       var my_participated_poll_ids = this.filter_accounts_by_e5(this.state.my_polls, e5)
       var my_participated_events = created_post_events.filter(function (event) {
@@ -44792,15 +44795,15 @@ class App extends Component {
     }
     else{
       //prioritize my content first
-      var my_posted_events = created_post_events.filter(function (event) {
-        return (event.returnValues.p5/* sender_account */ == account)
-      })
-      created_post_events.forEach(event => {
-        if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
-          my_posted_events.push(event)
-        }
-      });
-      created_post_events = my_posted_events
+      // var my_posted_events = created_post_events.filter(function (event) {
+      //   return (event.returnValues.p5/* sender_account */ == account)
+      // })
+      // created_post_events.forEach(event => {
+      //   if(my_posted_events.find(e => e.returnValues.p2 === event.returnValues.p2) == null){
+      //     my_posted_events.push(event)
+      //   }
+      // });
+      // created_post_events = my_posted_events
     }
 
     if(specific_items != null && specific_items.length > 0){

@@ -2270,6 +2270,18 @@ class home_page extends Component {
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1203']/* 'viewed' */)){
             posts_to_load = posts_to_load.concat(this.state.viewed_objects)
         }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1204']/* 'created' */)){
+            Object.keys(this.props.app_state.user_account_id).forEach(e5 => {
+                const user_account_id = this.props.app_state.user_account_id[e5]
+                if(user_account_id != 1){
+                    const e5_id = e5+':'+user_account_id
+                    targeted_accounts.push(e5_id)
+                }
+            });
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264at']/* 'participated ✍' */)){
+            posts_to_load = posts_to_load.concat(this.props.app_state.my_channels, this.props.app_state.my_objects)
+        }
 
         var me = this;
         setTimeout(function() {
@@ -2389,6 +2401,15 @@ class home_page extends Component {
         }
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1203']/* 'viewed' */)){
             posts_to_load = posts_to_load.concat(this.state.viewed_objects)
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1204']/* 'created' */)){
+            Object.keys(this.props.app_state.user_account_id).forEach(e5 => {
+                const user_account_id = this.props.app_state.user_account_id[e5]
+                if(user_account_id != 1){
+                    const e5_id = e5+':'+user_account_id
+                    targeted_accounts.push(e5_id)
+                }
+            });
         }
         
         const page_id = this.get_page_id()

@@ -17249,6 +17249,8 @@ return data['data']
                 <div className="row">
                     <div className="col-6">
                         {this.render_object_obligations_parts()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-6">
                         {this.render_object_obligations_parts2()}
@@ -17262,6 +17264,8 @@ return data['data']
                 <div className="row">
                     <div className="col-5">
                         {this.render_object_obligations_parts()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
                     </div>
                     <div className="col-5">
                         {this.render_object_obligations_parts2()}
