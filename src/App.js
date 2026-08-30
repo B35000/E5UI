@@ -416,22 +416,22 @@ import canto_logo from './assets/canto.png'
 // import eosnetwork_logo from './assets/eos.png'
 import iotex_logo from './assets/iotex.png'
 import songbird_logo from './assets/songbird.png'
-import ultron_logo from './assets/ultron.png'
+// import ultron_logo from './assets/ultron.png'
 import coinex_logo from './assets/coinex.png'
 import tfuel_logo from './assets/tfuel.png'
 // import step_logo from './assets/step.png'
 import energyweb_logo from './assets/energyweb.png'
 // import callisto_logo from './assets/callisto.png'
 // import shiden_logo from './assets/shiden.png'
-import tenet_logo from './assets/tenet.png'
-import ubiq_logo from './assets/ubiq.png'
+// import tenet_logo from './assets/tenet.png'
+// import ubiq_logo from './assets/ubiq.png'
 import gochain_logo from './assets/gochain.png'
-import omax_logo from './assets/omax.png'
+// import omax_logo from './assets/omax.png'
 import wemix_logo from './assets/wemix.png'
 import conflux_logo from './assets/conflux.png'
 import telos_logo from './assets/telos.png'
 import rsk_logo from './assets/rsk.png'
-import metadium_logo from './assets/metadium.png'
+// import metadium_logo from './assets/metadium.png'
 // import kardiachain_logo from './assets/kardiachain.png'
 // import caduceus_logo from './assets/cmp.png'
 // import seele_logo from './assets/seele.png'
@@ -442,13 +442,13 @@ import karura_logo from './assets/karura.png'
 // import edgeware_logo from './assets/edgeware.png'
 // import bloxberg_logo from './assets/bloxberg.png'
 // import phoenix_logo from './assets/phoenix.png'
-import omchain_logo from './assets/omchain.png'
+// import omchain_logo from './assets/omchain.png'
 import om_logo from './assets/om.png'
-import mintme_logo from './assets/mintme.png'
+// import mintme_logo from './assets/mintme.png'
 // import ecredits_logo from './assets/ecredits.png'
 import eluv_logo from './assets/eluv.png'
 import etho_logo from './assets/etho.png'
-import oneledger_logo from './assets/oneledger.png'
+// import oneledger_logo from './assets/oneledger.png'
 import sei_logo from './assets/sei.png'
 import hyperliquid_logo from './assets/hyperliquid.png'
 import xrpl_logo from './assets/xrpl.png'
@@ -1805,7 +1805,7 @@ class App extends Component {
         web3:['https://ultron-rpc.net'],
         token:'ULX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:ultron_logo/* 'https://nftstorage.link/ipfs/bafkreieswovobb76mebl4hl5amisqsyh4wuaw6vdkdf5iflx4pufeghida' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'ultron_logo'/* 'https://nftstorage.link/ipfs/bafkreieswovobb76mebl4hl5amisqsyh4wuaw6vdkdf5iflx4pufeghida' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E455':{
         web3:['https://rpc.coinex.net'],
@@ -1847,13 +1847,13 @@ class App extends Component {
         web3:['https://tenet-evm.publicnode.com'],
         token:'TENET',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:tenet_logo/* 'https://nftstorage.link/ipfs/bafkreifxl5uapxvm47vc4hec4bbvvsnazedn36zjiwsw2s4v7dzqn6s74m' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'tenet_logo'/* 'https://nftstorage.link/ipfs/bafkreifxl5uapxvm47vc4hec4bbvvsnazedn36zjiwsw2s4v7dzqn6s74m' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E525':{
         web3:['https://pyrus2.ubiqscan.io'],
         token:'UBQ',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:ubiq_logo/* 'https://nftstorage.link/ipfs/bafkreidh2cvl7y2njzpfuc6z2rdiocdbw2sbczz4rtod3c7pzw3pckob5u' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'ubiq_logo'/* 'https://nftstorage.link/ipfs/bafkreidh2cvl7y2njzpfuc6z2rdiocdbw2sbczz4rtod3c7pzw3pckob5u' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E535':{
         web3:['https://rpc.gochain.io'],
@@ -1865,7 +1865,7 @@ class App extends Component {
         web3:['https://mainapi.omaxray.com'],
         token:'OMAX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:omax_logo/* 'https://nftstorage.link/ipfs/bafkreicf546yuctqunrcfdb73vwdl7bq645f26zkfjodj2rymcqcwicliu' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'omax_logo'/* 'https://nftstorage.link/ipfs/bafkreicf546yuctqunrcfdb73vwdl7bq645f26zkfjodj2rymcqcwicliu' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E555':{
         web3:['https://api.wemix.com'],
@@ -1895,7 +1895,7 @@ class App extends Component {
         web3:['https://api.metadium.com/prod'],
         token:'META',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:metadium_logo/* 'https://nftstorage.link/ipfs/bafkreiem6fmyfzpix5dmokefc7dakf5hd5ouckwtuzo2yxh6yn7g45iioe' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[], changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'metadium_logo'/* 'https://nftstorage.link/ipfs/bafkreiem6fmyfzpix5dmokefc7dakf5hd5ouckwtuzo2yxh6yn7g45iioe' */, iteration:3_000, url:0, active:false, e5_img:null, external_swappers:[], changenow_object: get_changenow_object()
       },
       'E605':{
         web3:['https://rpc.kardiachain.io'],
@@ -1961,7 +1961,7 @@ class App extends Component {
         web3:['https://seed.omchain.io'],
         token:'OMC',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:omchain_logo/* 'https://nftstorage.link/ipfs/bafkreieph4yuxvzjxugw5hmdtwlsp7434dwapm65pr5b3o5pk2fb5uvosa' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'omchain_logo'/* 'https://nftstorage.link/ipfs/bafkreieph4yuxvzjxugw5hmdtwlsp7434dwapm65pr5b3o5pk2fb5uvosa' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E715':{
         web3:['https://rpc.omplatform.com'],
@@ -1973,7 +1973,7 @@ class App extends Component {
         web3:['https://node1.mintme.com'],
         token:'MINTME',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:mintme_logo/* 'https://nftstorage.link/ipfs/bafkreicpvjaago2uqrvid4x5cq27grwuxapcxs4l2tfwgqcocwbxxq7edq' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'mintme_logo'/* 'https://nftstorage.link/ipfs/bafkreicpvjaago2uqrvid4x5cq27grwuxapcxs4l2tfwgqcocwbxxq7edq' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E735':{
         web3:['https://rpc.ecredits.com'],
@@ -1997,7 +1997,7 @@ class App extends Component {
         web3:['https://mainnet-rpc.oneledger.network'],
         token:'OLT',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:oneledger_logo/* 'https://nftstorage.link/ipfs/bafkreifn4sbeosn63ogew4z7gm4dw2t5l2xhmtauxwgh4wakaqmxjuuwwm' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'oneledger_logo'/* 'https://nftstorage.link/ipfs/bafkreifn4sbeosn63ogew4z7gm4dw2t5l2xhmtauxwgh4wakaqmxjuuwwm' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E775':{
         web3:['https://mainnet.hashio.io/api'],
@@ -2488,22 +2488,22 @@ class App extends Component {
       this.get_token('EOS', 'EOS EVM', 'E415', true),
       this.get_token('IOTX', 'IoTeX', 'E425'),
       this.get_token('SGB', 'Songbird Canary', 'E435'),
-      this.get_token('ULX', 'Ultron Mainnet', 'E445'),
+      this.get_token('ULX', 'Ultron Mainnet', 'E445', true),
       this.get_token('CET', 'CoinEx Smart Chain', 'E455'),
       this.get_token('TFUEL', 'Theta Mainnet', 'E465'),
       this.get_token('FITFI', 'Step Network', 'E475', true),
       this.get_token('EWT', 'Energy Web Chain', 'E485'),
       this.get_token('CLO', 'Callisto', 'E495', true),
       this.get_token('SDN', 'Shiden', 'E505', true),
-      this.get_token('TENET', 'Tenet', 'E515'),
-      this.get_token('UBQ', 'Ubiq', 'E525'),
+      this.get_token('TENET', 'Tenet', 'E515', true),
+      this.get_token('UBQ', 'Ubiq', 'E525', true),
       this.get_token('GO', 'GoChain', 'E535'),
-      this.get_token('OMAX', 'Omax Mainnet', 'E545'),
+      this.get_token('OMAX', 'Omax Mainnet', 'E545', true),
       this.get_token('WEMIX', 'Wemix3.0 Mainnet', 'E555'),
       this.get_token('CFX', 'Conflux eSpace', 'E565'),
       this.get_token('TLOS', 'Telos EVM', 'E575'),
       this.get_token('RSK', 'RSK Mainnet', 'E585'),
-      this.get_token('META', 'Metadium', 'E595'),
+      this.get_token('META', 'Metadium', 'E595', true),
       this.get_token('KAI', 'Kardiachain', 'E605', true),
       this.get_token('CMP', 'Caduceus', 'E615', true),
       this.get_token('SEELE', 'Seele', 'E625', true),
@@ -2514,13 +2514,13 @@ class App extends Component {
       this.get_token('EDG', 'Edgeware EVM', 'E675', true),
       this.get_token('BERG', 'Bloxberg', 'E685', true),
       this.get_token('PHOENIX', 'Phoenix', 'E695', true),
-      this.get_token('OMC', 'Omchain', 'E705'),
+      this.get_token('OMC', 'Omchain', 'E705', true),
       this.get_token('OM', 'Om', 'E715'),
-      this.get_token('MINTME', 'MintMe.com', 'E725'),
+      this.get_token('MINTME', 'MintMe.com', 'E725', true),
       this.get_token('ECS', 'eCredits', 'E735', true),
       this.get_token('ELV', 'Eluv.io', 'E745'),
       this.get_token('ETHO', 'Etho Protocol', 'E755'),
-      this.get_token('OLT', 'One Ledger', 'E765'),
+      this.get_token('OLT', 'One Ledger', 'E765', true),
       this.get_token('HBARE', 'Hedera EVM', 'E775'),
       this.get_token('IOTAE', 'IOTA EVM', 'E785'),
       this.get_token('KAIA', 'KAIA', 'E795'),
@@ -10744,6 +10744,7 @@ class App extends Component {
 
       for(var i=0; i<e5s.length; i++){
         var e5 = e5s[i]
+        if(typeof original_ether_settings[e5].ether_image === "string") continue;
         this.image_transformation_counter[transformation_id]++;
         await this.update_ether_image(e5, original_ether_settings, theme, transformation_id)
         // const updated_image = this.existing_image_data[theme][e5] == null ? await this.transform_image_by_theme(original_ether_settings[e5].ether_image, theme) : this.existing_image_data[theme][e5]

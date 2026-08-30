@@ -697,7 +697,7 @@ class ViewGroups extends Component {
                                 const dataMin = Math.min(...yValues);
                                 const dataMax = Math.max(...yValues);
                                 const range = dataMax - dataMin;
-                                const yMin = dataMin == 0 ? (dataMin * 0.05) : dataMin - range * 0.05;
+                                const yMin = dataMin == 0 ? (dataMin * 0.05) : (dataMin < 0 ? dataMin + dataMin * 0.05 : dataMin - dataMin * 0.05)
                                 const yMax = dataMax + range * 0.05;
                                 const count = config.y_axis_label_count;
 

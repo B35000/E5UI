@@ -110,7 +110,7 @@ const currencies = [
     "name": "Conflux"
   },
   {
-    "id": "core-2",
+    "id": "coredaoorg",
     "symbol": "core",
     "name": "Core"
   },
@@ -235,6 +235,11 @@ const currencies = [
     "name": "Hyperliquid"
   },
   {
+    "id": "immutable-x",
+    "symbol": "imx",
+    "name": "Immutable"
+  },
+  {
     "id": "internet-computer",
     "symbol": "icp",
     "name": "Internet Computer"
@@ -313,6 +318,11 @@ const currencies = [
     "id": "moonriver",
     "symbol": "movr",
     "name": "Moonriver"
+  },
+  {
+    "id": "monad",
+    "symbol": "mon",
+    "name": "Monad"
   },
   {
     "id": "monero",
@@ -484,11 +494,11 @@ const currencies = [
     "symbol": "ulx",
     "name": "ULTRON"
   },
-  {
-    "id": "warpcore",
-    "symbol": "core",
-    "name": "Warpcore"
-  },
+  // {
+  //   "id": "warpcore",
+  //   "symbol": "core",
+  //   "name": "Warpcore"
+  // },
   {
     "id": "webchain",
     "symbol": "mintme",
@@ -518,7 +528,7 @@ const currencies = [
     "id": "zksync-staked-eth",
     "symbol": "zketh",
     "name": "ZKsync Staked ETH"
-  }
+  },
 ]
 
 export default currencies; 
