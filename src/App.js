@@ -447,7 +447,7 @@ import om_logo from './assets/om.png'
 // import mintme_logo from './assets/mintme.png'
 // import ecredits_logo from './assets/ecredits.png'
 import eluv_logo from './assets/eluv.png'
-import etho_logo from './assets/etho.png'
+// import etho_logo from './assets/etho.png'
 // import oneledger_logo from './assets/oneledger.png'
 import sei_logo from './assets/sei.png'
 import hyperliquid_logo from './assets/hyperliquid.png'
@@ -605,7 +605,8 @@ import { RPC } from 'iso-filecoin/rpc'
 import { Client, Mnemonic, PrivateKey, AccountId, AccountBalanceQuery, TransferTransaction, TransactionRecordQuery, Hbar, HbarUnit, TransactionId, Status, } from "@hashgraph/sdk";
 import { PrivateKey as InjectivePrivateKey, PublicKey as InjectivePublicKey, MsgSend, ChainGrpcBankApi, ChainRestAuthApi, ChainRestTendermintApi, createTransaction, TxRestApi, BaseAccount} from '@injectivelabs/sdk-ts';
 import { Network, getNetworkEndpoints, getNetworkInfo } from '@injectivelabs/networks';
-import { BigNumberInBase, BigNumberInWei, DEFAULT_STD_FEE } from '@injectivelabs/utils';
+import { BigNumberInBase, BigNumberInWei } from '@injectivelabs/utils';
+import { getInjectiveAddress, getEthereumAddress } from '@injectivelabs/sdk-ts/utils'
 import { Account, JsonRpcProvider, KeyPair, PublicKey as NearPublicKey, nearToYocto, yoctoToNear, teraToGas, } from 'near-api-js';
 import { parseSeedPhrase } from 'near-seed-phrase';
 import { NEAR } from 'near-api-js/tokens';
@@ -1155,74 +1156,462 @@ class DecryptTransform {
 }
 
 // Pitch Shifter Processor using Tone.js
-class PitchShifterProcessor {
-  constructor() {
-    this.pitchShift = 0;
-    this.enabled = false;
-    this.pitchShifter = null;
-    this.source = null;
-    this.destination = null;
-    this.destinationStream = null;
-  }
+// class PitchShifterProcessor {
+//   constructor() {
+//     this.pitchShift = 0;
+//     this.enabled = false;
+//     this.pitchShifter = null;
+//     this.source = null;
+//     this.destination = null;
+//     this.destinationStream = null;
+//   }
 
+//   async initialize(inputStream) {
+//     try {
+//       // Start Tone.js context — must be inside a user gesture
+//       await Tone.start();
+//       console.log('Tone.js audio context started');
+
+//       // Create MediaStream source node from existing mic stream
+//       this.source = Tone.getContext().createMediaStreamSource(inputStream);
+
+//       // Create pitch shifter effect
+//       this.pitchShifter = new Tone.PitchShift({pitch: 3, windowSize: 0.2, delayTime: 0.05, feedback: 0.1 });
+
+//       Tone.connect(this.source, this.pitchShifter);
+
+//       // Create a MediaStreamDestination to pipe processed audio to
+//       this.destination = Tone.getContext().createMediaStreamDestination();
+//       this.destinationStream = this.destination.stream;
+//       // Connect source → effect → destination
+
+//       this.pitchShifter.connect(this.destination);
+
+//       console.log('Pitch shifter initialized with Tone.js');
+//       return this.destinationStream;
+//     } catch (error) {
+//       console.error('Error initializing pitch shifter:', error);
+//       throw error;
+//     }
+//   }
+
+//   setPitch(semitones) {
+//     this.pitchShift = semitones;
+//     if (this.pitchShifter) {
+//       this.pitchShifter.pitch = semitones;
+//       console.log(`Pitch shift: ${semitones} semitones`);
+//     }
+//   }
+
+//   setEnabled(enabled) {
+//     this.enabled = enabled;
+//     if (this.pitchShifter) {
+//       if (enabled) {
+//         this.pitchShifter.wet.value = 1; // 100% wet (processed signal)
+//       } else {
+//         this.pitchShifter.wet.value = 0; // 100% dry (original signal)
+//       }
+//       console.log(`Pitch shifter ${enabled ? 'enabled' : 'disabled'}`);
+//     }
+//   }
+
+//   cleanup() {
+//     if (this.source) this.source.disconnect();
+//     if (this.pitchShifter) this.pitchShifter.dispose();
+//     this.source = null;
+//     this.pitchShifter = null;
+//     this.destination = null;
+//     this.destinationStream = null;
+//   }
+// }
+
+const EFFECTS_CONFIG = [
+  {
+    key: "pitchShift",
+    label: "Pitch Shift",
+    ToneClass: Tone.PitchShift,
+    defaults: { pitch: 0, windowSize: 0.1, feedback: 0 },
+    params: [
+      { name: "pitch", label: "Pitch (semitones)", min: -24, max: 24, step: 1, default: 0 },
+      { name: "windowSize", label: "Window Size", min: 0.03, max: 0.1, step: 0.01, default: 0.1 },
+      { name: "feedback", label: "Feedback", min: 0, max: 0.9, step: 0.01, default: 0 },
+    ],
+  },
+  {
+    key: "bitCrusher",
+    label: "Bit Crusher",
+    ToneClass: Tone.BitCrusher,
+    defaults: { bits: 4 },
+    params: [{ name: "bits", label: "Bit Depth", min: 1, max: 16, step: 1, default: 4 }],
+  },
+  {
+    key: "chebyshev",
+    label: "Chebyshev (waveshaper distortion)",
+    ToneClass: Tone.Chebyshev,
+    defaults: { order: 30 },
+    params: [{ name: "order", label: "Order", min: 1, max: 100, step: 1, default: 30 }],
+  },
+  {
+    key: "chorus",
+    label: "Chorus",
+    ToneClass: Tone.Chorus,
+    defaults: { frequency: 1.5, delayTime: 3.5, depth: 0.7 },
+    params: [
+      { name: "frequency", label: "Rate (Hz)", min: 0.1, max: 10, step: 0.1, default: 1.5 },
+      { name: "delayTime", label: "Delay (ms)", min: 2, max: 20, step: 0.5, default: 3.5 },
+      { name: "depth", label: "Depth", min: 0, max: 1, step: 0.01, default: 0.7 },
+    ],
+  },
+  {
+    key: "distortion",
+    label: "Distortion",
+    ToneClass: Tone.Distortion,
+    defaults: { distortion: 0.4 },
+    params: [{ name: "distortion", label: "Amount", min: 0, max: 1, step: 0.01, default: 0.4 }],
+  },
+  {
+    key: "autoWah",
+    label: "Auto Wah",
+    ToneClass: Tone.AutoWah,
+    defaults: { baseFrequency: 100, octaves: 6, sensitivity: 0 },
+    params: [
+      { name: "baseFrequency", label: "Base Freq (Hz)", min: 20, max: 2000, step: 10, default: 100 },
+      { name: "octaves", label: "Octaves", min: 1, max: 8, step: 0.5, default: 6 },
+      { name: "sensitivity", label: "Sensitivity (dB)", min: -40, max: 0, step: 1, default: 0 },
+    ],
+  },
+  {
+    key: "phaser",
+    label: "Phaser",
+    ToneClass: Tone.Phaser,
+    defaults: { frequency: 0.5, octaves: 3, baseFrequency: 350 },
+    params: [
+      { name: "frequency", label: "Rate (Hz)", min: 0.1, max: 10, step: 0.1, default: 0.5 },
+      { name: "octaves", label: "Octaves", min: 1, max: 8, step: 0.5, default: 3 },
+      { name: "baseFrequency", label: "Base Freq (Hz)", min: 20, max: 2000, step: 10, default: 350 },
+    ],
+  },
+  {
+    key: "tremolo",
+    label: "Tremolo",
+    ToneClass: Tone.Tremolo,
+    defaults: { frequency: 10, depth: 0.5 },
+    params: [
+      { name: "frequency", label: "Rate (Hz)", min: 0.1, max: 20, step: 0.1, default: 10 },
+      { name: "depth", label: "Depth", min: 0, max: 1, step: 0.01, default: 0.5 },
+    ],
+  },
+  {
+    key: "vibrato",
+    label: "Vibrato",
+    ToneClass: Tone.Vibrato,
+    defaults: { frequency: 5, depth: 0.1 },
+    params: [
+      { name: "frequency", label: "Rate (Hz)", min: 0.1, max: 20, step: 0.1, default: 5 },
+      { name: "depth", label: "Depth", min: 0, max: 1, step: 0.01, default: 0.1 },
+    ],
+  },
+  {
+    key: "autoFilter",
+    label: "Auto Filter",
+    ToneClass: Tone.AutoFilter,
+    defaults: { frequency: 1, depth: 1, baseFrequency: 200, octaves: 2.6 },
+    params: [
+      { name: "frequency", label: "Rate (Hz)", min: 0.1, max: 10, step: 0.1, default: 1 },
+      { name: "depth", label: "Depth", min: 0, max: 1, step: 0.01, default: 1 },
+      { name: "baseFrequency", label: "Base Freq (Hz)", min: 20, max: 2000, step: 10, default: 200 },
+      { name: "octaves", label: "Octaves", min: 1, max: 8, step: 0.1, default: 2.6 },
+    ],
+  },
+  {
+    key: "autoPanner",
+    label: "Auto Panner",
+    ToneClass: Tone.AutoPanner,
+    defaults: { frequency: 1, depth: 1 },
+    params: [
+      { name: "frequency", label: "Rate (Hz)", min: 0.1, max: 10, step: 0.1, default: 1 },
+      { name: "depth", label: "Depth", min: 0, max: 1, step: 0.01, default: 1 },
+    ],
+  },
+  {
+    key: "stereoWidener",
+    label: "Stereo Widener",
+    ToneClass: Tone.StereoWidener,
+    defaults: { width: 0.5 },
+    params: [{ name: "width", label: "Width", min: 0, max: 1, step: 0.01, default: 0.5 }],
+  },
+  {
+    key: "feedbackDelay",
+    label: "Feedback Delay (Echo)",
+    ToneClass: Tone.FeedbackDelay,
+    defaults: { delayTime: 0.25, feedback: 0.5 },
+    params: [
+      { name: "delayTime", label: "Delay (s)", min: 0, max: 1, step: 0.01, default: 0.25 },
+      { name: "feedback", label: "Feedback", min: 0, max: 0.95, step: 0.01, default: 0.5 },
+    ],
+  },
+  {
+    key: "pingPongDelay",
+    label: "Ping-Pong Delay",
+    ToneClass: Tone.PingPongDelay,
+    defaults: { delayTime: 0.25, feedback: 0.5 },
+    params: [
+      { name: "delayTime", label: "Delay (s)", min: 0, max: 1, step: 0.01, default: 0.25 },
+      { name: "feedback", label: "Feedback", min: 0, max: 0.95, step: 0.01, default: 0.5 },
+    ],
+  },
+  {
+    key: "frequencyShifter",
+    label: "Frequency Shifter (ring-mod-ish)",
+    ToneClass: Tone.FrequencyShifter,
+    defaults: { frequency: 0 },
+    params: [{ name: "frequency", label: "Shift (Hz)", min: -1000, max: 1000, step: 1, default: 0 }],
+  },
+  {
+    key: "freeverb",
+    label: "Freeverb",
+    ToneClass: Tone.Freeverb,
+    defaults: { roomSize: 0.7, dampening: 3000 },
+    params: [
+      { name: "roomSize", label: "Room Size", min: 0, max: 1, step: 0.01, default: 0.7 },
+      { name: "dampening", label: "Dampening (Hz)", min: 0, max: 10000, step: 100, default: 3000 },
+    ],
+  },
+  {
+    key: "jcReverb",
+    label: "JC Reverb",
+    ToneClass: Tone.JCReverb,
+    defaults: { roomSize: 0.5 },
+    params: [{ name: "roomSize", label: "Room Size", min: 0, max: 1, step: 0.01, default: 0.5 }],
+  },
+  {
+    key: "reverb",
+    label: "Reverb (convolution)",
+    ToneClass: Tone.Reverb,
+    defaults: { decay: 1.5, preDelay: 0.01 },
+    params: [
+      { name: "decay", label: "Decay (s)", min: 0.1, max: 10, step: 0.1, default: 1.5 },
+      { name: "preDelay", label: "Pre-delay (s)", min: 0, max: 1, step: 0.01, default: 0.01 },
+    ],
+  },
+];
+ 
+const PRESETS = {
+  chipmunk: { pitchShift: { enabled: true, params: { pitch: 7 } } },
+  deepVoice: { pitchShift: { enabled: true, params: { pitch: -7 } } },
+  robot: {
+    bitCrusher: { enabled: true, params: { bits: 4 } },
+    chebyshev: { enabled: true, params: { order: 40 } },
+    tremolo: { enabled: true, params: { frequency: 20, depth: 0.6 } },
+  },
+  alien: {
+    pitchShift: { enabled: true, params: { pitch: 5 } },
+    chorus: { enabled: true, params: { frequency: 4, depth: 0.9 } },
+    phaser: { enabled: true, params: { frequency: 2 } },
+  },
+  underwater: {
+    autoFilter: { enabled: true, params: { frequency: 0.4, baseFrequency: 150 } },
+    reverb: { enabled: true, params: { decay: 3 } },
+  },
+  telephone: {
+    autoWah: { enabled: false },
+  },
+  ghost: {
+    pitchShift: { enabled: true, params: { pitch: -3 } },
+    reverb: { enabled: true, params: { decay: 6, preDelay: 0.1 } },
+    tremolo: { enabled: true, params: { frequency: 3, depth: 0.4 } },
+  },
+};
+
+class ToneEffectsProcessor {
+  constructor(config = EFFECTS_CONFIG) {
+    this.config = config;
+    this.effects = new Map(); // key -> Tone effect instance
+    this.enabledState = new Map(); // key -> boolean
+    this.source = null;
+    this.destinationNode = null;
+    this.destinationStream = null;
+    this.initialized = false;
+  }
+ 
   async initialize(inputStream) {
     try {
-      // Start Tone.js context — must be inside a user gesture
       await Tone.start();
-      console.log('Tone.js audio context started');
-
-      // Create MediaStream source node from existing mic stream
+      console.log("Tone.js audio context started");
+ 
+      this.inputStream = inputStream;
       this.source = Tone.getContext().createMediaStreamSource(inputStream);
-
-      // Create pitch shifter effect
-      this.pitchShifter = new Tone.PitchShift({pitch: 3, windowSize: 0.2, delayTime: 0.05, feedback: 0.1 });
-
-      Tone.connect(this.source, this.pitchShifter);
-
-      // Create a MediaStreamDestination to pipe processed audio to
-      this.destination = Tone.getContext().createMediaStreamDestination();
-      this.destinationStream = this.destination.stream;
-      // Connect source → effect → destination
-
-      this.pitchShifter.connect(this.destination);
-
-      console.log('Pitch shifter initialized with Tone.js');
+      this.destinationNode = Tone.getContext().createMediaStreamDestination();
+      this.destinationStream = this.destinationNode.stream;
+ 
+      // Build source -> effect1 -> effect2 -> ... -> destination, in the
+      // order effects are listed in EFFECTS_CONFIG.
+      let previous = this.source;
+ 
+      for (const cfg of this.config) {
+        const instance = new cfg.ToneClass(cfg.defaults);
+ 
+        // Effects with an internal LFO (Chorus, Tremolo, AutoFilter,
+        // AutoPanner, ...) need to be explicitly started.
+        if (typeof instance.start === "function") {
+          try {
+            instance.start();
+          } catch (e) {
+            // Some effects expose .start() but don't need it — safe to ignore.
+          }
+        }
+ 
+        // Reverb builds its impulse response asynchronously.
+        if (instance.ready && typeof instance.ready.then === "function") {
+          await instance.ready;
+        }
+ 
+        // Everything starts fully bypassed; setEnabled() turns it on.
+        instance.wet.value = 0;
+ 
+        Tone.connect(previous, instance);
+        previous = instance;
+ 
+        this.effects.set(cfg.key, instance);
+        this.enabledState.set(cfg.key, false);
+      }
+ 
+      Tone.connect(previous, this.destinationNode);
+ 
+      this.initialized = true;
+      console.log(`Effects chain initialized with ${this.effects.size} effects`);
       return this.destinationStream;
     } catch (error) {
-      console.error('Error initializing pitch shifter:', error);
+      console.error("Error initializing effects chain:", error);
       throw error;
     }
   }
-
+ 
+  // --- per-effect controls -------------------------------------------------
+ 
+  setEnabled(key, enabled) {
+    const fx = this.effects.get(key);
+    if (!fx) {
+      console.warn(`Unknown effect: ${key}`);
+      return;
+    }
+    fx.wet.value = enabled ? 1 : 0;
+    this.enabledState.set(key, enabled);
+  }
+ 
+  isEnabled(key) {
+    return this.enabledState.get(key) ?? false;
+  }
+ 
+  // e.g. setParams('pitchShift', { pitch: 7 })
+  setParams(key, params) {
+    const fx = this.effects.get(key);
+    if (!fx) {
+      console.warn(`Unknown effect: ${key}`);
+      return;
+    }
+    fx.set(params);
+  }
+ 
+  getEffect(key) {
+    return this.effects.get(key);
+  }
+ 
+  // Metadata for building UI controls dynamically.
+  listEffects() {
+    return this.config.map((c) => ({
+      key: c.key,
+      label: c.label,
+      params: c.params,
+      enabled: this.isEnabled(c.key),
+    }));
+  }
+ 
+  // --- convenience: legacy pitch-only API, kept for drop-in compatibility --
+ 
   setPitch(semitones) {
-    this.pitchShift = semitones;
-    if (this.pitchShifter) {
-      this.pitchShifter.pitch = semitones;
-      console.log(`Pitch shift: ${semitones} semitones`);
+    this.setParams("pitchShift", { pitch: semitones });
+  }
+ 
+  // --- presets --------------------------------------------------------------
+ 
+  listPresets() {
+    return Object.keys(PRESETS);
+  }
+ 
+  applyPreset(name) {
+    const preset = PRESETS[name];
+    if (!preset) {
+      console.warn(`Unknown preset: ${name}`);
+      return;
+    }
+    // Turn everything off first so presets don't stack on top of each other.
+    for (const key of this.effects.keys()) this.setEnabled(key, false);
+ 
+    for (const [key, settings] of Object.entries(preset)) {
+      if (settings.params) this.setParams(key, settings.params);
+      this.setEnabled(key, !!settings.enabled);
     }
   }
-
-  setEnabled(enabled) {
-    this.enabled = enabled;
-    if (this.pitchShifter) {
-      if (enabled) {
-        this.pitchShifter.wet.value = 1; // 100% wet (processed signal)
-      } else {
-        this.pitchShifter.wet.value = 0; // 100% dry (original signal)
-      }
-      console.log(`Pitch shifter ${enabled ? 'enabled' : 'disabled'}`);
-    }
-  }
-
+ 
+  // --- cleanup ---------------------------------------------------------------
+ 
   cleanup() {
-    if (this.source) this.source.disconnect();
-    if (this.pitchShifter) this.pitchShifter.dispose();
-    this.source = null;
-    this.pitchShifter = null;
-    this.destination = null;
-    this.destinationStream = null;
+    if (!this.initialized) return Promise.resolve();
+    this.initialized = false; // guard against overlapping/duplicate calls
+ 
+    // 1. Stop the actual mic tracks so the browser releases the microphone.
+    //    (This has nothing to do with Tone.js — it's the raw MediaStreamTrack.)
+    if (this.inputStream) {
+      this.inputStream.getTracks().forEach((t) => {
+        try {
+          t.stop();
+        } catch (e) {}
+      });
+    }
+ 
+    // 2. Disconnect the ENTIRE graph first, tail-to-head, before disposing
+    //    anything. Disposing a node while something downstream is still
+    //    wired to it is what tends to make teardown unpredictable.
+    const chain = [this.source, ...this.effects.values(), this.destinationNode].filter(Boolean);
+    for (let i = chain.length - 1; i >= 0; i--) {
+      try {
+        chain[i].disconnect();
+      } catch (e) {}
+    }
+ 
+    // 3. Dispose the effect instances tail-to-head, one per event-loop tick.
+    //    Some of these (Reverb's convolution buffer, the feedback delay
+    //    lines in PitchShift/FeedbackDelay/PingPongDelay) are heavier to
+    //    tear down — doing all 18 synchronously in one loop is what was
+    //    blocking the main thread long enough to look like a crash.
+    //    Spacing them out with setTimeout lets the browser stay responsive.
+    const remaining = Array.from(this.effects.values()).reverse();
+ 
+    return new Promise((resolve) => {
+      const disposeNext = () => {
+        const fx = remaining.shift();
+        if (!fx) {
+          this.effects.clear();
+          this.enabledState.clear();
+          this.source = null;
+          this.destinationNode = null;
+          this.destinationStream = null;
+          this.inputStream = null;
+          resolve();
+          return;
+        }
+        try {
+          fx.dispose();
+        } catch (e) {}
+        setTimeout(disposeNext, 0);
+      };
+      disposeNext();
+    });
   }
 }
+
+
 
 class CallRecorder {
   constructor() {
@@ -1440,7 +1829,7 @@ class App extends Component {
 
     is_fetching_objects:{}, delete_pos_array_data:{}, storefront_traffic_data:{}, received_open_signature_requests:{}, received_open_signature_responses:{}, purchase_accessible_objects:{}, contractor_availability_info:{}, storefront_order_status_info:{}, my_paid_subscription_e5_ids:[],
 
-    call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift: 0, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{}, 
+    call_invites:{}, call_metadata_object:{}, peers: [], microphoneInitialized: false, pitchShift:{}, isMuted:false, my_active_call_room_participants:{}, isRecording: false, recordingDuration: 0, hasRecording: false, room_participants_count:{}, 
     
     contract_prepurchase_data:{}, is_loading_prepurchase_balance:{}, tag_price_data:{}, hash_keyord_mapping_data:{}, blocked_accounts_data:[], is_device_online: true,
     last_notification_view_time: {'?':0, 'e':0, 'w':0}, 
@@ -1459,7 +1848,8 @@ class App extends Component {
 
     created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}, showcasing_events:{}, decentralization_metrics: this.get_decentralization_data(),
 
-    objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}
+    objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}, 
+    ether_ages:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -1991,7 +2381,7 @@ class App extends Component {
         web3:['https://rpc.ethoprotocol.com'],
         token:'ETHO',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:etho_logo/* 'https://nftstorage.link/ipfs/bafkreihxyf4fksj7bajilfz2m66v455goeushb2w36kn5h63p7f2gvllgq' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image:'etho_logo'/* 'https://nftstorage.link/ipfs/bafkreihxyf4fksj7bajilfz2m66v455goeushb2w36kn5h63p7f2gvllgq' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
       'E765':{
         web3:['https://mainnet-rpc.oneledger.network'],
@@ -2490,7 +2880,7 @@ class App extends Component {
       this.get_token('SGB', 'Songbird Canary', 'E435'),
       this.get_token('ULX', 'Ultron Mainnet', 'E445', true),
       this.get_token('CET', 'CoinEx Smart Chain', 'E455'),
-      this.get_token('TFUEL', 'Theta Mainnet', 'E465'),
+      this.get_token('TFUEL', 'Theta Mainnet', 'E465', true),
       this.get_token('FITFI', 'Step Network', 'E475', true),
       this.get_token('EWT', 'Energy Web Chain', 'E485'),
       this.get_token('CLO', 'Callisto', 'E495', true),
@@ -2519,7 +2909,7 @@ class App extends Component {
       this.get_token('MINTME', 'MintMe.com', 'E725', true),
       this.get_token('ECS', 'eCredits', 'E735', true),
       this.get_token('ELV', 'Eluv.io', 'E745'),
-      this.get_token('ETHO', 'Etho Protocol', 'E755'),
+      this.get_token('ETHO', 'Etho Protocol', 'E755', true),
       this.get_token('OLT', 'One Ledger', 'E765', true),
       this.get_token('HBARE', 'Hedera EVM', 'E775'),
       this.get_token('IOTAE', 'IOTA EVM', 'E785'),
@@ -28083,7 +28473,7 @@ class App extends Component {
     const minus = this.state.os == 'iOS' ? 90 : 120;
     return(
       <div /* style={{ height: this.state.height-minus, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
-        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} toggleMute={this.toggleMute.bind(this)} leave_call_confirmation={this.leave_call_confirmation.bind(this)} stream={this.state.processedStream} setPitchShift={this.setPitchShift.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} add_call_page_message_to_stack_object={this.add_call_page_message_to_stack_object.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} handleRemoteStreamReceived={this.handleRemoteStreamReceived.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
+        <CallPage ref={this.view_call_interface_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} toggleMute={this.toggleMute.bind(this)} leave_call_confirmation={this.leave_call_confirmation.bind(this)} stream={this.state.processedStream} setPitchShift={this.setPitchShift.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)} add_call_page_message_to_stack_object={this.add_call_page_message_to_stack_object.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} handleRemoteStreamReceived={this.handleRemoteStreamReceived.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} deactivate_other_effects={this.deactivate_other_effects.bind(this)}
         />
       </div>
     )
@@ -30212,6 +30602,44 @@ class App extends Component {
         }
       }
       catch(e){
+        console.log('begin_bridging_of_coin', e);
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+      }
+    }
+    else if(coin['symbol'] == 'INJ'){
+      var seed = this.state.final_seed
+      const wallet = await this.generate_inj_wallet(seed)
+      const endpoints = getNetworkEndpoints(Network.Mainnet);
+      const txApi = new TxRestApi(endpoints.rest)
+
+      const send_amount = new BigNumberInWei(transfer_amount).toBase(18).toFixed() 
+
+      const msg = this.build_send_message(getInjectiveAddress(recipient_ethereum_address), send_amount, 'inj', wallet.address);
+      const { accountNumber, sequence, timeoutHeight } = await this.get_signer_data();
+
+      const { signBytes, txRaw } = createTransaction({
+        message: msg,
+        memo: '',
+        pubKey: wallet.publicKey.toBase64(),
+        sequence,
+        accountNumber,
+        chainId: getNetworkInfo(Network.Mainnet).chainId,
+        timeoutHeight: timeoutHeight.toNumber(),
+      });
+
+      try{
+        const signature = await wallet.privateKey.sign(Buffer.from(signBytes));
+        txRaw.signatures = [signature];
+        const txResponse = await txApi.broadcast(txRaw);
+
+        if(txResponse.code == 0){
+          const hash = txResponse.txHash
+          this.show_successful_send_bottomsheet({'type':'coin', 'item':coin, 'fee':fee, 'amount':transfer_amount, 'recipient':recipient_ethereum_address, 'sender':wallet.address, 'hash':hash})
+        }
+        else{
+          this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        }
+      }catch(e){
         console.log('begin_bridging_of_coin', e);
         this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
       }
@@ -35878,12 +36306,28 @@ class App extends Component {
         }
       }
 
+
+      await this.wait(this.state.web3_delay)
+      var first_block = await web3.eth.getBlock(1)
+      const first_block_time = parseInt(first_block.timestamp)
+
+
+
       var last_blocks_clone = structuredClone(this.state.last_blocks)
       last_blocks_clone[e5] = last_blocks.reverse()
 
       var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
       number_of_blocks_clone[e5] = blockNumber
-      this.setState({last_blocks: last_blocks_clone, number_of_blocks: number_of_blocks_clone});
+
+      var ether_ages_clone = structuredClone(this.state.ether_ages)
+      ether_ages_clone[e5] = first_block_time
+
+
+      this.setState({
+        last_blocks: last_blocks_clone, 
+        number_of_blocks: number_of_blocks_clone, 
+        ether_ages: ether_ages_clone
+      });
       if(is_syncing)this.inc_synch_progress()
 
 
@@ -59359,7 +59803,18 @@ class App extends Component {
 
         if(disconnect_time != 0){
           const target_address = this.state.accounts[this.state.selected_e5].address
-          const resync_targets = ['jobs', 'open_signature_request|' +target_address, 'open_signature_response|'+target_address, 'call_invites|'+target_address, 'ether_coin_request|'+target_address, 'pre_purchase_request|'+target_address, 'direct_message|'+target_address, 'tags|'+target_address, 'mempool_notification|'+target_address, 'lock_unlock_wallet|'+target_address]
+          const resync_targets = [
+            'jobs', 
+            'open_signature_request|' +target_address, 
+            'open_signature_response|'+target_address, 
+            'call_invites|'+target_address, 
+            'ether_coin_request|'+target_address, 
+            'pre_purchase_request|'+target_address, 
+            'direct_message|'+target_address, 
+            'tags|'+target_address, 
+            'mempool_notification|'+target_address, 
+            'lock_unlock_wallet|'+target_address
+          ]
           this.get_objects_from_socket_and_set_in_state(resync_targets, [], [], disconnect_time)  
         }
 
@@ -67014,13 +67469,15 @@ class App extends Component {
       console.log('socket_stuff', 'obtained stream', stream);
 
       // Initialize pitch processor
-      this.pitchProcessor = new PitchShifterProcessor();
+      // this.pitchProcessor = new PitchShifterProcessor();
+      this.pitchProcessor = new ToneEffectsProcessor()
       this.processedStream = await this.pitchProcessor.initialize(stream);
       
       console.log('socket_stuff', 'initialised pitchprocessor', this.processedStream);
       // Set initial pitch
-      this.pitchProcessor.setPitch(this.state.pitchShift);
-      this.pitchProcessor.setEnabled(true);
+      // this.pitchProcessor.setPitch(this.state.pitchShift);
+      this.pitchProcessor.setParams('pitchShift', { pitch: 0 });
+      this.pitchProcessor.setEnabled('pitchShift', true);
 
       this.processedStream.getTracks().forEach(track => {
         track.enabled = true;
@@ -67184,12 +67641,31 @@ class App extends Component {
     });
   }
 
-  setPitchShift = (value) => {
+  setPitchShift = (key, value) => {
     const pitch = parseFloat(value);
-    this.setState({ pitchShift: pitch });
+    // this.setState({ pitchShift: pitch });
     
-    if (this.pitchProcessor) {
-      this.pitchProcessor.setPitch(pitch);
+    // if (this.pitchProcessor) {
+    //   this.pitchProcessor.setPitch(pitch);
+    // }
+    if(key == 'e') return;
+    const clone = structuredClone(this.state.pitchShift);
+    clone[key] = pitch
+    this.setState({ pitchShift: clone })
+
+    if(this.pitchProcessor){
+      if(!this.pitchProcessor.isEnabled(key)) this.pitchProcessor.setEnabled(key, true);
+      // this.deactivate_other_effects(key)
+      this.pitchProcessor.setParams(key, { pitch: pitch });
+    }
+  }
+
+  deactivate_other_effects(key){
+    if(this.pitchProcessor){
+      EFFECTS_CONFIG.forEach(effect_object => {
+        const effect_key = effect_object.key
+          if(!this.pitchProcessor.isEnabled(effect_key) && effect_key != key) this.pitchProcessor.setEnabled(effect_key, false);
+      });
     }
   }
 
@@ -67376,20 +67852,21 @@ class App extends Component {
     this.state.socket.on("user_left", ({userId, roomId}) => {});
 
     if (this.pitchProcessor) {
-      this.pitchProcessor.cleanup();
+      await this.pitchProcessor.cleanup();
       this.pitchProcessor = null;
     }
 
-    this.state.stream.getTracks().forEach(track => track.stop());
-
-    if(this.state.processedStream){
-      this.state.processedStream.getTracks().forEach(track => {
-        track.stop();
-      });
-      this.processedStream.getTracks().forEach(track => {
-        track.stop();
-      });
-    }
+    try{
+      this.state.stream.getTracks().forEach(track => track.stop());
+      if(this.state.processedStream){
+        this.state.processedStream.getTracks().forEach(track => {
+          track.stop();
+        });
+        this.processedStream.getTracks().forEach(track => {
+          track.stop();
+        });
+      }
+    }catch(e){}
 
     this.encryptor = null;
 
@@ -67409,7 +67886,7 @@ class App extends Component {
     const clone = structuredClone(this.state.my_active_call_room_participants)
     clone[this.state.current_call_id] = []
     
-    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone, processedStream: null, stream:null, peers: [], microphoneInitialized: false, pitchShift:0, isMuted:false})
+    this.setState({current_call_id: null, current_call_password: null, call_join_time: null, my_active_call_room_participants: clone, processedStream: null, stream:null, peers: [], microphoneInitialized: false, pitchShift:{}, isMuted:false})
     
 
     var me = this;
@@ -67418,7 +67895,7 @@ class App extends Component {
     }, (1 * 100));
   }
 
-  leave_call2(){
+  async leave_call2(){
     this.state.socket.on("signal", ({ from, data }) => {});
     this.state.socket.on("user_joined", async ({userId, roomId}) => {});
     this.state.socket.on("user_in_room", ({userId, roomId}) => {});
@@ -67426,20 +67903,21 @@ class App extends Component {
     this.state.socket.on("user_left", ({userId, roomId}) => {});
 
     if (this.pitchProcessor) {
-      this.pitchProcessor.cleanup();
+      await this.pitchProcessor.cleanup();
       this.pitchProcessor = null;
     }
 
-    this.state.stream.getTracks().forEach(track => track.stop());
-
-    if(this.state.processedStream){
-      this.state.processedStream.getTracks().forEach(track => {
-        track.stop();
-      });
-      this.processedStream.getTracks().forEach(track => {
-        track.stop();
-      });
-    }
+    try{
+      this.state.stream.getTracks().forEach(track => track.stop());
+      if(this.state.processedStream){
+        this.state.processedStream.getTracks().forEach(track => {
+          track.stop();
+        });
+        this.processedStream.getTracks().forEach(track => {
+          track.stop();
+        });
+      }
+    }catch(e){}
 
     this.encryptor = null;
 

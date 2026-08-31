@@ -300,7 +300,7 @@ class CallPage extends Component {
     state = {
         selected: 0, get_call_page_tags_object: this.get_call_page_tags_object(), 
         localVolume: 0, peerVolumes: {}, loudestSpeaker: null, volumeThreshold: 20,
-        get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(this.props.app_state.pitchShift), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), screen_width:0, startIndex: 100000
+        get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(this.props.app_state.pitchShift['pitchShift'] || 0), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), screen_width:0, startIndex: 100000
     };
 
 
@@ -318,14 +318,59 @@ class CallPage extends Component {
     get_pitch_shift_tags_object(shift){
         var pitch_obj = { '-6': 1,'-3': 2,'-1': 3, '0': 4, '1': 5,'3': 6,'6': 7 }
         const p = pitch_obj[shift.toString()] || 0
-        return{
+        
+        const default_list = [ 
+            this.props.app_state.loc['3091y']/* 'very-low' */, 
+            this.props.app_state.loc['3091z']/* 'low' */, 
+            this.props.app_state.loc['3091ba']/* 'slightly-low' */, 
+            this.props.app_state.loc['3091bb']/* 'normal' */, 
+            this.props.app_state.loc['3091bc']/* 'slightly-high' */, 
+            this.props.app_state.loc['3091bd']/* 'high' */, 
+            this.props.app_state.loc['3091be']/* 'very-high' */, 
+        ]
+
+        const effects = [ 
+            this.props.app_state.loc['3091bu']/* 'pitch-shift' */, 
+            this.props.app_state.loc['3091bv']/* 'bit-crusher' */,
+            this.props.app_state.loc['3091bw']/* 'chebyshev' */,
+            this.props.app_state.loc['3091bx']/* 'chorus' */,
+            this.props.app_state.loc['3091by']/* 'distortion' */,
+            this.props.app_state.loc['3091bz']/* 'auto-wah' */,
+            this.props.app_state.loc['3091ca']/* 'phaser' */,
+            this.props.app_state.loc['3091cb']/* 'tremolo' */,
+            this.props.app_state.loc['3091cc']/* 'vibrato' */,
+            this.props.app_state.loc['3091cd']/* 'auto-filter' */,
+            this.props.app_state.loc['3091ce']/* 'auto-panner' */,
+            this.props.app_state.loc['3091cf']/* 'stereo-widener' */,
+            this.props.app_state.loc['3091cg']/* 'feedback-delay' */,
+            this.props.app_state.loc['3091ch']/* 'ping-pong-delay' */,
+            this.props.app_state.loc['3091ci']/* 'frequency-shifter' */,
+            this.props.app_state.loc['3091cj']/* 'freeverb' */,
+            this.props.app_state.loc['3091ck']/* 'jcReverb' */,
+            this.props.app_state.loc['3091cl']/* 'reverb' */,
+        ]
+        
+        const obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], [ 'e', this.props.app_state.loc['3091y']/* 'very-low' */, this.props.app_state.loc['3091z']/* 'low' */, this.props.app_state.loc['3091ba']/* 'slightly-low' */, this.props.app_state.loc['3091bb']/* 'normal' */, this.props.app_state.loc['3091bc']/* 'slightly-high' */, this.props.app_state.loc['3091bd']/* 'high' */, this.props.app_state.loc['3091be']/* 'very-high' */, ], [p]
+                ['or','',0], ['e', ], [0]
             ],
         };
+
+        // effects.forEach(effect => {
+        //     obj['e'][1].push('e.' + effect)
+        //     obj[effect] = [
+        //         ['xor','',0], [effect].concat(default_list), [4]
+        //     ]
+        // });
+
+        effects.forEach(effect => {
+            obj['e'][1].push(effect)
+        });
+
+        return obj
     }
 
     get_comment_structure_tags(){
@@ -341,13 +386,22 @@ class CallPage extends Component {
 
 
 
-
-
-
+    componentDidMount(){
+        this.setState({screen_width: this.screen.current.offsetWidth})
+        // setTimeout(() => this.virtuoso_list?.scrollToIndex(this.get_message_count() - 1, { align: "end", smooth: false, }), 50);
+        setTimeout(() => this.virtuoso_list?.scrollToIndex({ index: "LAST", align: "end" }), 50);
+    }
 
     set_data(){
         
     }
+
+
+
+
+
+
+
 
     render(){
         return(
@@ -482,6 +536,8 @@ class CallPage extends Component {
             return `${hours<10 ? (hours<1 ? '0': '0'):''}${hours}:${minutes<10 ? (minutes<1 ? '0': '0'):''}${minutes}:${seconds<10 ? (seconds<1 ? '0': '0'):''}${seconds}`
         }
         const maxheight = this.get_max_height()
+        const selected_item = this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e')
+        const alpha = selected_item == 'e' ? 0.5 : 1.0
         return(
             <div style={{maxHeight: maxheight, 'overflow':'auto'}}>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -530,7 +586,9 @@ class CallPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3091v']/* 'Pitch Shift. */, 'details':this.props.app_state.loc['3091w']/* 'You can shift the pitch of your voice to be high or low. */, 'size':'l'})}
                 {this.render_detail_item('10', {'text':this.props.app_state.loc['3091x']/* This does NOT anonymise you. */, 'textsize':'9px', 'font':this.props.app_state.font})}
 
-                <Slider value={this.get_pitch_shift()}  whenNumberChanged={(e)=>this.when_number_input_slider_changed(e)} unitIncrease={()=>this.when_number_slider_button_tapped()} unitDecrease={()=>this.when_number_slider_button_double_tapped()} theme={this.props.theme}/>
+                <div style={{opacity: alpha}}>
+                    <Slider value={this.get_pitch_shift()}  whenNumberChanged={(e)=>this.when_number_input_slider_changed(e)} unitIncrease={()=>this.when_number_slider_button_tapped()} unitDecrease={()=>this.when_number_slider_button_double_tapped()} theme={this.props.theme}/>
+                </div>
                 
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_pitch_shift_tags_object} tag_size={'l'} when_tags_updated={this.when_get_pitch_shift_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -558,36 +616,71 @@ class CallPage extends Component {
     }
 
     get_pitch_shift(){
-        return ((this.props.app_state.pitchShift + 6) / 12) * 999
+        const key = this.get_pitch_shift_key()
+        if(key == 'e') return 500;
+        return ((this.props.app_state.pitchShift[key] + 3) / 6) * 999
+    }
+
+    get_pitch_shift_key(tags_object=this.state.get_pitch_shift_tags_object){
+        // var selected_item = tags_object['i'].active 
+        // if(selected_item == 'e') selected_item = this.props.app_state.loc['3091bu']/* 'pitch-shift' */;
+        const selected_item = this.get_selected_item(tags_object, 'e')
+        const obj = {}
+        obj[this.props.app_state.loc['3091bu']/* 'pitch-shift' */] = 'pitchShift'
+        obj[this.props.app_state.loc['3091bv']/* 'bit-crusher' */] = 'bitCrusher'
+        obj[this.props.app_state.loc['3091bw']/* 'chebyshev' */] = 'chebyshev'
+        obj[this.props.app_state.loc['3091bx']/* 'chorus' */] = 'chorus'
+        obj[this.props.app_state.loc['3091by']/* 'distortion' */] = 'distortion'
+        obj[this.props.app_state.loc['3091bz']/* 'auto-wah' */] = 'autoWah'
+        obj[this.props.app_state.loc['3091ca']/* 'phaser' */] = 'phaser'
+        obj[this.props.app_state.loc['3091cb']/* 'tremolo' */] = 'tremolo'
+        obj[this.props.app_state.loc['3091cc']/* 'vibrato' */] = 'vibrato'
+        obj[this.props.app_state.loc['3091cd']/* 'auto-filter' */] = 'autoFilter'
+        obj[this.props.app_state.loc['3091ce']/* 'auto-panner' */] = 'autoPanner'
+        obj[this.props.app_state.loc['3091cf']/* 'stereo-widener' */] = 'stereoWidener'
+        obj[this.props.app_state.loc['3091cg']/* 'feedback-delay' */] = 'feedbackDelay'
+        obj[this.props.app_state.loc['3091ch']/* 'ping-pong-delay' */] = 'pingPongDelay'
+        obj[this.props.app_state.loc['3091ci']/* 'frequency-shifter' */] = 'frequencyShifter'
+        obj[this.props.app_state.loc['3091cj']/* 'freeverb' */] = 'freeverb'
+        obj[this.props.app_state.loc['3091ck']/* 'jc-reverb' */] = 'jcReverb'
+        obj[this.props.app_state.loc['3091cl']/* 'reverb' */] = 'reverb'
+
+        return obj[selected_item] || 'e'
     }
 
     when_number_input_slider_changed(e){
+        const key = this.get_pitch_shift_key()
+        if(key == 'e') return;
         const new_number = parseInt(e.target.value)
-        const new_pitch = ((new_number / 999) * 12) - 6
-        this.props.setPitchShift(new_pitch)
-        if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
-            this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
-        }
+        const new_pitch = ((new_number / 999) * 6) - 3
+        this.props.setPitchShift(key, new_pitch)
+        // if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
+        //     this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
+        // }
     }
 
     when_number_slider_button_tapped(){
+        const key = this.get_pitch_shift_key()
+        if(key == 'e') return;
         const current_pitch_shift = this.get_pitch_shift()
         const new_number = (current_pitch_shift + 1) > 999 ? current_pitch_shift : current_pitch_shift + 1;
-        const new_pitch = ((new_number / 999) * 12) - 6
-        this.props.setPitchShift(new_pitch)
-        if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
-            this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
-        }
+        const new_pitch = ((new_number / 999) * 6) - 3
+        this.props.setPitchShift(this.get_pitch_shift_key(), new_pitch)
+        // if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
+        //     this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
+        // }
     }
 
     when_number_slider_button_double_tapped(){
+        const key = this.get_pitch_shift_key()
+        if(key == 'e') return;
         const current_pitch_shift = this.get_pitch_shift()
         const new_number = (current_pitch_shift - 1) < 0 ? current_pitch_shift : current_pitch_shift - 1;
-        const new_pitch = ((new_number / 999) * 12) - 6
-        this.props.setPitchShift(new_pitch)
-        if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
-            this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
-        }
+        const new_pitch = ((new_number / 999) * 6) - 3
+        this.props.setPitchShift(this.get_pitch_shift_key(), new_pitch)
+        // if(this.get_selected_item(this.state.get_pitch_shift_tags_object, 'e') != 'e'){
+        //     this.setState({get_pitch_shift_tags_object: this.get_pitch_shift_tags_object(new_pitch)})
+        // }
     }
 
     copy_call_id_to_clipboard(text){
@@ -618,20 +711,26 @@ class CallPage extends Component {
 
     when_get_pitch_shift_tags_object_updated(tag_obj){
         this.setState({get_pitch_shift_tags_object: tag_obj})
-        const selected_item = this.get_selected_item(tag_obj, 'e')
+        // const selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
         
-        const pitch_obj = {}
-        pitch_obj[this.props.app_state.loc['3091y']/* 'very-low' */] = -6
-        pitch_obj[this.props.app_state.loc['3091z']/* 'low' */] = -3
-        pitch_obj[this.props.app_state.loc['3091ba']/* 'slightly-low' */] = -1
-        pitch_obj[this.props.app_state.loc['3091bb']/* 'normal' */] = 0
-        pitch_obj[this.props.app_state.loc['3091bc']/* 'slightly-high' */] = 1
-        pitch_obj[this.props.app_state.loc['3091bd']/* 'high' */] = 3
-        pitch_obj[this.props.app_state.loc['3091be']/* 'very-high' */] = 6
-        pitch_obj['e'] = 0
+        // const pitch_obj = {}
+        // pitch_obj[this.props.app_state.loc['3091y']/* 'very-low' */] = -6
+        // pitch_obj[this.props.app_state.loc['3091z']/* 'low' */] = -3
+        // pitch_obj[this.props.app_state.loc['3091ba']/* 'slightly-low' */] = -1
+        // pitch_obj[this.props.app_state.loc['3091bb']/* 'normal' */] = 0
+        // pitch_obj[this.props.app_state.loc['3091bc']/* 'slightly-high' */] = 1
+        // pitch_obj[this.props.app_state.loc['3091bd']/* 'high' */] = 3
+        // pitch_obj[this.props.app_state.loc['3091be']/* 'very-high' */] = 6
+        // pitch_obj['e'] = 999
 
-        const new_pitch = pitch_obj[selected_item]
-        this.props.setPitchShift(new_pitch)
+        // const new_pitch = pitch_obj[selected_item]
+        // if(new_pitch != 999) this.props.setPitchShift(this.get_pitch_shift_key(tag_obj), new_pitch);
+
+        this.props.deactivate_other_effects(this.get_pitch_shift_key(tag_obj))
+        const pitch = this.props.app_state.pitchShift[this.get_pitch_shift_key(tag_obj)]
+        if(pitch == null){
+            this.props.setPitchShift(this.get_pitch_shift_key(tag_obj), 0);
+        }
     }
 
 
@@ -639,11 +738,6 @@ class CallPage extends Component {
 
 
 
-    componentDidMount(){
-        this.setState({screen_width: this.screen.current.offsetWidth})
-        // setTimeout(() => this.virtuoso_list?.scrollToIndex(this.get_message_count() - 1, { align: "end", smooth: false, }), 50);
-        setTimeout(() => this.virtuoso_list?.scrollToIndex({ index: "LAST", align: "end" }), 50);
-    }
 
     render_participants_stuff(){
         const my_account = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
@@ -685,7 +779,9 @@ class CallPage extends Component {
             )
         }
 
-        const peer_items = this.props.app_state.peers
+        const peer_items = this.props.app_state.peers.filter((peerObj) => {
+            return (peerObj.peerId != this.props.app_state.accounts[this.props.app_state.selected_e5].address)
+        });
         return(
             <div>
                 <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>

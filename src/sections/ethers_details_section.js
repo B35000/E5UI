@@ -275,6 +275,8 @@ class EthersDetailsSection extends Component {
                 return this.format_account_balance_figure(parseInt(value))
             }
         }
+
+        const ledger_age = this.props.app_state.ether_ages[item['e5']]
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 15px 0px 15px'}}>
                 <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
@@ -308,7 +310,18 @@ class EthersDetailsSection extends Component {
                         {this.render_wallet_status(item)}
                     </div>
 
+                    {!isNaN(ledger_age) && (
+                        <div>
+                            <div style={{height: 10}}/>
+                            {this.render_detail_item('3', {'title':this.get_time_difference(ledger_age), 'details':this.props.app_state.loc['2927c']/* Ledger Age. */, 'size':'l'})}
+                        </div>
+                    )}
+                    
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3113w']/* Ledger Consensus Mechanisms */[item['symbol']], 'details':this.props.app_state.loc['2927a']/* Ledger Consensus Mechanism.' */, 'size':'l'})}
+
                     {this.render_nakamoto_coefficient(item)}
+                    
                     {/* {this.render_detail_item('3', item['chain_id'])} */}
                     {/* <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['peer_count'])} */}

@@ -563,7 +563,8 @@ class CoinsDetailsSection extends Component {
             'XRP':'XRPE',
             'IOTA': 'IOTAE',
             'HBAR':'HBARE',
-            'XTZ': 'XTZE'
+            'XTZ': 'XTZE',
+            'INJ':'INJE',
         }
         if(obj[item['symbol']] != null){
             const evm_symbol = obj[item['symbol']]
