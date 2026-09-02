@@ -547,11 +547,18 @@ class E5DetailsSection extends Component {
         var contract_config = obj['data'][1]
         var e5_height = this.props.app_state.e5s_transaction_height[obj['id']]
         var chain_message = this.props.app_state.loc['2336bt']/* 'On $' */.replace('$', chain)
+        const ether_data = this.props.app_state.ether_data
+        const chain_obj = ether_data.find((ether_desc) => {
+            return ether_desc['e5'] == obj['id']
+        })
+        const chain_name = chain_obj['name']
         return{
             'label':{'header':obj['id'], 'subtitle':chain_message, 'size':'l', 'image': image},
             'tags':{'active_tags':[obj['id'],this.props.app_state.loc['2244']/* 'E5' */, this.props.app_state.loc['2245']/* 'Main' */, this.props.app_state.loc['361']/* 'Contract' */], 'index_option':'indexed'},
             
-            'address': {'title':this.props.app_state.loc['2246']/* 'E5 Address:' */, 'details':address, 'size':'l'},
+            'address': {'title':this.props.app_state.loc['2246']/* 'E5 Address:' */, 'details':address, 'size':'l', 'footer':this.props.app_state.loc['2336cd']/* 'Deployed On $' */.replace('$', chain_name)},
+
+            'deployed_on': {'title':chain_name, 'details':this.props.app_state.loc['2336cd']/* 'Deployed On $' */, 'size':'l'},
 
             'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':this.props.app_state.loc['2247']/* 'Vote Bounty Split Proportion' */, 'size':'l'},
             
@@ -1739,6 +1746,7 @@ class E5DetailsSection extends Component {
             const start_time2 = nitro_graphs_data['average'] != null ? nitro_graphs_data['average']['chart_starting_time'] : null
             amount = nitro_graphs_data['event_count'] != null ? nitro_graphs_data['event_count'] : 
             events.length
+            if(amount == 0) return;
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2317']/* 'Data Throughput' */, 'details':this.props.app_state.loc['2318']/* `Chart containing the data throughput over time.` */, 'size':'l'})}

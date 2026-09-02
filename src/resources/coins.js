@@ -195,9 +195,9 @@ const currencies = [
     "name": "Flare"
   },
   {
-    "id": "frax",
+    "id": "frax-share",
     "symbol": "frax",
-    "name": "Legacy Frax Dollar"
+    "name": "fraxtal"
   },
   {
     "id": "fuse-network-token",

@@ -6625,6 +6625,8 @@ class home_page extends Component {
 
                 load_token_certificate_chain={this.props.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.props.load_nft_certificate_parent_objects.bind(this)} get_objects_showcased_certificates={this.props.get_objects_showcased_certificates.bind(this)} fetch_uploaded_files_for_object={this.props.fetch_uploaded_files_for_object.bind(this)}
 
+                get_ether_blockexplorer_link={this.props.get_ether_blockexplorer_link.bind(this)}
+
 
 
                 />

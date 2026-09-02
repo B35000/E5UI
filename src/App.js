@@ -1423,15 +1423,212 @@ const PRESETS = {
   },
 };
 
+// class ToneEffectsProcessor {
+//   constructor(config = EFFECTS_CONFIG) {
+//     this.config = config;
+//     this.effects = new Map(); // key -> Tone effect instance
+//     this.enabledState = new Map(); // key -> boolean
+//     this.source = null;
+//     this.destinationNode = null;
+//     this.destinationStream = null;
+//     this.initialized = false;
+//   }
+ 
+//   async initialize(inputStream) {
+//     try {
+//       await Tone.start();
+//       console.log("Tone.js audio context started");
+ 
+//       this.inputStream = inputStream;
+//       this.source = Tone.getContext().createMediaStreamSource(inputStream);
+//       this.destinationNode = Tone.getContext().createMediaStreamDestination();
+//       this.destinationStream = this.destinationNode.stream;
+ 
+//       // Build source -> effect1 -> effect2 -> ... -> destination, in the
+//       // order effects are listed in EFFECTS_CONFIG.
+//       let previous = this.source;
+ 
+//       for (const cfg of this.config) {
+//         const instance = new cfg.ToneClass(cfg.defaults);
+ 
+//         // Effects with an internal LFO (Chorus, Tremolo, AutoFilter,
+//         // AutoPanner, ...) need to be explicitly started.
+//         if (typeof instance.start === "function") {
+//           try {
+//             instance.start();
+//           } catch (e) {
+//             // Some effects expose .start() but don't need it — safe to ignore.
+//           }
+//         }
+ 
+//         // Reverb builds its impulse response asynchronously.
+//         if (instance.ready && typeof instance.ready.then === "function") {
+//           await instance.ready;
+//         }
+ 
+//         // Everything starts fully bypassed; setEnabled() turns it on.
+//         instance.wet.value = 0;
+ 
+//         Tone.connect(previous, instance);
+//         previous = instance;
+ 
+//         this.effects.set(cfg.key, instance);
+//         this.enabledState.set(cfg.key, false);
+//       }
+ 
+//       Tone.connect(previous, this.destinationNode);
+ 
+//       this.initialized = true;
+//       console.log(`Effects chain initialized with ${this.effects.size} effects`);
+//       return this.destinationStream;
+//     } catch (error) {
+//       console.error("Error initializing effects chain:", error);
+//       throw error;
+//     }
+//   }
+ 
+//   // --- per-effect controls -------------------------------------------------
+ 
+//   setEnabled(key, enabled) {
+//     const fx = this.effects.get(key);
+//     if (!fx) {
+//       console.warn(`Unknown effect: ${key}`);
+//       return;
+//     }
+//     fx.wet.value = enabled ? 1 : 0;
+//     this.enabledState.set(key, enabled);
+//   }
+ 
+//   isEnabled(key) {
+//     return this.enabledState.get(key) ?? false;
+//   }
+ 
+//   // e.g. setParams('pitchShift', { pitch: 7 })
+//   setParams(key, params) {
+//     const fx = this.effects.get(key);
+//     if (!fx) {
+//       console.warn(`Unknown effect: ${key}`);
+//       return;
+//     }
+//     fx.set(params);
+//   }
+ 
+//   getEffect(key) {
+//     return this.effects.get(key);
+//   }
+ 
+//   // Metadata for building UI controls dynamically.
+//   listEffects() {
+//     return this.config.map((c) => ({
+//       key: c.key,
+//       label: c.label,
+//       params: c.params,
+//       enabled: this.isEnabled(c.key),
+//     }));
+//   }
+ 
+//   // --- convenience: legacy pitch-only API, kept for drop-in compatibility --
+ 
+//   setPitch(semitones) {
+//     this.setParams("pitchShift", { pitch: semitones });
+//   }
+ 
+//   // --- presets --------------------------------------------------------------
+ 
+//   listPresets() {
+//     return Object.keys(PRESETS);
+//   }
+ 
+//   applyPreset(name) {
+//     const preset = PRESETS[name];
+//     if (!preset) {
+//       console.warn(`Unknown preset: ${name}`);
+//       return;
+//     }
+//     // Turn everything off first so presets don't stack on top of each other.
+//     for (const key of this.effects.keys()) this.setEnabled(key, false);
+ 
+//     for (const [key, settings] of Object.entries(preset)) {
+//       if (settings.params) this.setParams(key, settings.params);
+//       this.setEnabled(key, !!settings.enabled);
+//     }
+//   }
+ 
+//   // --- cleanup ---------------------------------------------------------------
+ 
+//   cleanup() {
+//     if (!this.initialized) return Promise.resolve();
+//     this.initialized = false; // guard against overlapping/duplicate calls
+ 
+//     // 1. Stop the actual mic tracks so the browser releases the microphone.
+//     //    (This has nothing to do with Tone.js — it's the raw MediaStreamTrack.)
+//     if (this.inputStream) {
+//       this.inputStream.getTracks().forEach((t) => {
+//         try {
+//           t.stop();
+//         } catch (e) {}
+//       });
+//     }
+ 
+//     // 2. Disconnect the ENTIRE graph first, tail-to-head, before disposing
+//     //    anything. Disposing a node while something downstream is still
+//     //    wired to it is what tends to make teardown unpredictable.
+//     const chain = [this.source, ...this.effects.values(), this.destinationNode].filter(Boolean);
+//     for (let i = chain.length - 1; i >= 0; i--) {
+//       try {
+//         chain[i].disconnect();
+//       } catch (e) {}
+//     }
+ 
+//     // 3. Dispose the effect instances tail-to-head, one per event-loop tick.
+//     //    Some of these (Reverb's convolution buffer, the feedback delay
+//     //    lines in PitchShift/FeedbackDelay/PingPongDelay) are heavier to
+//     //    tear down — doing all 18 synchronously in one loop is what was
+//     //    blocking the main thread long enough to look like a crash.
+//     //    Spacing them out with setTimeout lets the browser stay responsive.
+//     const remaining = Array.from(this.effects.values()).reverse();
+ 
+//     return new Promise((resolve) => {
+//       const disposeNext = () => {
+//         const fx = remaining.shift();
+//         if (!fx) {
+//           this.effects.clear();
+//           this.enabledState.clear();
+//           this.source = null;
+//           this.destinationNode = null;
+//           this.destinationStream = null;
+//           this.inputStream = null;
+//           resolve();
+//           return;
+//         }
+//         try {
+//           fx.dispose();
+//         } catch (e) {}
+//         setTimeout(disposeNext, 0);
+//       };
+//       disposeNext();
+//     });
+//   }
+// }
+
 class ToneEffectsProcessor {
   constructor(config = EFFECTS_CONFIG) {
     this.config = config;
-    this.effects = new Map(); // key -> Tone effect instance
-    this.enabledState = new Map(); // key -> boolean
+    this.configByKey = new Map(config.map((c) => [c.key, c]));
+ 
+    this.effects = new Map(); // key -> LIVE Tone effect instance (only while enabled)
+    this.pendingParams = new Map(); // key -> params set before the effect existed
+ 
     this.source = null;
     this.destinationNode = null;
     this.destinationStream = null;
+    this.inputStream = null;
     this.initialized = false;
+ 
+    // Every enable/disable/cleanup call is chained through this so two
+    // overlapping calls (e.g. a preset turning on three effects at once)
+    // can never race each other while rebuilding the audio graph.
+    this._queue = Promise.resolve();
   }
  
   async initialize(inputStream) {
@@ -1439,98 +1636,161 @@ class ToneEffectsProcessor {
       await Tone.start();
       console.log("Tone.js audio context started");
  
-      this.inputStream = inputStream;
+      this.inputStream = inputStream; // so cleanup() can actually stop the mic
       this.source = Tone.getContext().createMediaStreamSource(inputStream);
       this.destinationNode = Tone.getContext().createMediaStreamDestination();
       this.destinationStream = this.destinationNode.stream;
  
-      // Build source -> effect1 -> effect2 -> ... -> destination, in the
-      // order effects are listed in EFFECTS_CONFIG.
-      let previous = this.source;
- 
-      for (const cfg of this.config) {
-        const instance = new cfg.ToneClass(cfg.defaults);
- 
-        // Effects with an internal LFO (Chorus, Tremolo, AutoFilter,
-        // AutoPanner, ...) need to be explicitly started.
-        if (typeof instance.start === "function") {
-          try {
-            instance.start();
-          } catch (e) {
-            // Some effects expose .start() but don't need it — safe to ignore.
-          }
-        }
- 
-        // Reverb builds its impulse response asynchronously.
-        if (instance.ready && typeof instance.ready.then === "function") {
-          await instance.ready;
-        }
- 
-        // Everything starts fully bypassed; setEnabled() turns it on.
-        instance.wet.value = 0;
- 
-        Tone.connect(previous, instance);
-        previous = instance;
- 
-        this.effects.set(cfg.key, instance);
-        this.enabledState.set(cfg.key, false);
-      }
- 
-      Tone.connect(previous, this.destinationNode);
+      // Nothing enabled yet — straight passthrough.
+      Tone.connect(this.source, this.destinationNode);
  
       this.initialized = true;
-      console.log(`Effects chain initialized with ${this.effects.size} effects`);
+      console.log("Effects processor initialized (0 effects active)");
       return this.destinationStream;
     } catch (error) {
-      console.error("Error initializing effects chain:", error);
+      console.error("Error initializing effects processor:", error);
       throw error;
     }
   }
  
+  // --- internal: create a Tone effect instance on demand -------------------
+ 
+  async _createEffectInstance(cfg) {
+    const overrides = this.pendingParams.get(cfg.key) || {};
+    const instance = new cfg.ToneClass({ ...cfg.defaults, ...overrides });
+ 
+    // Effects with an internal LFO (Chorus, Tremolo, AutoFilter,
+    // AutoPanner, ...) need to be explicitly started.
+    if (typeof instance.start === "function") {
+      try {
+        instance.start();
+      } catch (e) {
+        // Some effects expose .start() but don't need it — safe to ignore.
+      }
+    }
+ 
+    // Reverb builds its impulse response asynchronously.
+    if (instance.ready && typeof instance.ready.then === "function") {
+      await instance.ready;
+    }
+ 
+    return instance;
+  }
+ 
+  // Rebuilds source -> [active effects, in config order] -> destination
+  // from scratch. Cheap: this only runs when something is toggled on/off,
+  // never on the audio hot path.
+  _rebuildChain() {
+    if (!this.initialized) return;
+ 
+    const liveNodes = [this.source, ...this.effects.values(), this.destinationNode].filter(Boolean);
+    for (const node of liveNodes) {
+      try {
+        node.disconnect();
+      } catch (e) {}
+    }
+ 
+    let previous = this.source;
+    for (const cfg of this.config) {
+      const instance = this.effects.get(cfg.key);
+      if (!instance) continue; // skip anything not currently enabled
+      Tone.connect(previous, instance);
+      previous = instance;
+    }
+    Tone.connect(previous, this.destinationNode);
+  }
+ 
   // --- per-effect controls -------------------------------------------------
  
+  // Returns a Promise — await it if you need to know when the graph change
+  // (and, for things like Reverb, the async setup) has actually completed.
   setEnabled(key, enabled) {
-    const fx = this.effects.get(key);
-    if (!fx) {
+    this._queue = this._queue.then(() => this._setEnabledInternal(key, enabled));
+    return this._queue;
+  }
+ 
+  async _setEnabledInternal(key, enabled) {
+    if (!this.initialized) {
+      console.warn("Call initialize() before enabling effects.");
+      return;
+    }
+    const cfg = this.configByKey.get(key);
+    if (!cfg) {
       console.warn(`Unknown effect: ${key}`);
       return;
     }
-    fx.wet.value = enabled ? 1 : 0;
-    this.enabledState.set(key, enabled);
+    if (enabled === this.effects.has(key)) return; // already in that state
+ 
+    if (enabled) {
+      const instance = await this._createEffectInstance(cfg);
+      this.effects.set(key, instance);
+    } else {
+      const instance = this.effects.get(key);
+      this.effects.delete(key);
+      if (instance) {
+        try {
+          instance.disconnect();
+        } catch (e) {}
+        try {
+          instance.dispose();
+        } catch (e) {}
+      }
+    }
+ 
+    this._rebuildChain();
   }
  
   isEnabled(key) {
-    return this.enabledState.get(key) ?? false;
+    return this.effects.has(key);
   }
  
   // e.g. setParams('pitchShift', { pitch: 7 })
+  // Works even before the effect is enabled — the values are stashed and
+  // applied as soon as it's created.
   setParams(key, params) {
-    const fx = this.effects.get(key);
-    if (!fx) {
+    const cfg = this.configByKey.get(key);
+    if (!cfg) {
       console.warn(`Unknown effect: ${key}`);
       return;
     }
-    fx.set(params);
+    this.pendingParams.set(key, { ...(this.pendingParams.get(key) || {}), ...params });
+ 
+    const fx = this.effects.get(key);
+    if (fx) fx.set(params);
   }
  
   getEffect(key) {
-    return this.effects.get(key);
+    return this.effects.get(key); // undefined if not currently enabled
   }
  
-  // Metadata for building UI controls dynamically.
+  // Current values for an effect's params, whether or not it's live right
+  // now — handy for keeping UI sliders in sync even while an effect is off.
+  getParamsSnapshot(key) {
+    const cfg = this.configByKey.get(key);
+    if (!cfg) return null;
+    const fx = this.effects.get(key);
+    if (fx) return fx.get();
+    return { ...cfg.defaults, ...(this.pendingParams.get(key) || {}) };
+  }
+ 
+  // Metadata for building UI controls dynamically. Includes a "wet" (mix)
+  // slider for every effect, since that's common to all of them.
   listEffects() {
     return this.config.map((c) => ({
       key: c.key,
       label: c.label,
-      params: c.params,
+      params: [...c.params, { name: "wet", label: "Mix", min: 0, max: 1, step: 0.01, default: 1 }],
       enabled: this.isEnabled(c.key),
     }));
   }
  
   // --- convenience: legacy pitch-only API, kept for drop-in compatibility --
  
-  setPitch(semitones) {
+  async setPitch(semitones) {
     this.setParams("pitchShift", { pitch: semitones });
+    if (!this.effects.has("pitchShift")) {
+      await this.setEnabled("pitchShift", true);
+    }
   }
  
   // --- presets --------------------------------------------------------------
@@ -1539,29 +1799,38 @@ class ToneEffectsProcessor {
     return Object.keys(PRESETS);
   }
  
-  applyPreset(name) {
+  async applyPreset(name) {
     const preset = PRESETS[name];
     if (!preset) {
       console.warn(`Unknown preset: ${name}`);
       return;
     }
-    // Turn everything off first so presets don't stack on top of each other.
-    for (const key of this.effects.keys()) this.setEnabled(key, false);
+ 
+    // Turn off whatever's on that isn't part of this preset.
+    const keysToDisable = Array.from(this.effects.keys()).filter(
+      (key) => !preset[key] || !preset[key].enabled
+    );
+    for (const key of keysToDisable) await this.setEnabled(key, false);
  
     for (const [key, settings] of Object.entries(preset)) {
       if (settings.params) this.setParams(key, settings.params);
-      this.setEnabled(key, !!settings.enabled);
+      await this.setEnabled(key, !!settings.enabled);
     }
   }
  
   // --- cleanup ---------------------------------------------------------------
  
+  // Returns a Promise so callers can `await processor.cleanup()` before
+  // re-initializing.
   cleanup() {
-    if (!this.initialized) return Promise.resolve();
-    this.initialized = false; // guard against overlapping/duplicate calls
+    this._queue = this._queue.then(() => this._cleanupInternal());
+    return this._queue;
+  }
  
-    // 1. Stop the actual mic tracks so the browser releases the microphone.
-    //    (This has nothing to do with Tone.js — it's the raw MediaStreamTrack.)
+  _cleanupInternal() {
+    if (!this.initialized) return Promise.resolve();
+    this.initialized = false;
+ 
     if (this.inputStream) {
       this.inputStream.getTracks().forEach((t) => {
         try {
@@ -1570,9 +1839,6 @@ class ToneEffectsProcessor {
       });
     }
  
-    // 2. Disconnect the ENTIRE graph first, tail-to-head, before disposing
-    //    anything. Disposing a node while something downstream is still
-    //    wired to it is what tends to make teardown unpredictable.
     const chain = [this.source, ...this.effects.values(), this.destinationNode].filter(Boolean);
     for (let i = chain.length - 1; i >= 0; i--) {
       try {
@@ -1580,12 +1846,8 @@ class ToneEffectsProcessor {
       } catch (e) {}
     }
  
-    // 3. Dispose the effect instances tail-to-head, one per event-loop tick.
-    //    Some of these (Reverb's convolution buffer, the feedback delay
-    //    lines in PitchShift/FeedbackDelay/PingPongDelay) are heavier to
-    //    tear down — doing all 18 synchronously in one loop is what was
-    //    blocking the main thread long enough to look like a crash.
-    //    Spacing them out with setTimeout lets the browser stay responsive.
+    // Since only enabled effects ever exist here (usually one or two), this
+    // is normally near-instant — but still staggered per tick for safety.
     const remaining = Array.from(this.effects.values()).reverse();
  
     return new Promise((resolve) => {
@@ -1593,7 +1855,7 @@ class ToneEffectsProcessor {
         const fx = remaining.shift();
         if (!fx) {
           this.effects.clear();
-          this.enabledState.clear();
+          this.pendingParams.clear();
           this.source = null;
           this.destinationNode = null;
           this.destinationStream = null;
@@ -1876,7 +2138,7 @@ class App extends Component {
       'expand_icon':expand_icon,
       'close_pip':close_pip,
       'empty_image':empty_image,
-      'all_cities': 'https://bafybeibapy5ft5zisu5k6vd54qseyqzb3efkexerynu7nqzieh7kyl36oy.ipfs.w3s.link/',
+      'all_cities': 'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master',
       /* 'https://bafybeihk2oq34yl7elx3fjygtiarq7b2vc6jxjdcbtwizd6clxj57q6yjq.ipfs.w3s.link/' */
       'download_icon':download_icon,
       'zoom_in_icon':zoom_in_icon,
@@ -2277,7 +2539,7 @@ class App extends Component {
       },
       'E585':{
         web3:['https://mycrypto.rsk.co'],
-        token:'RSK',
+        token:'RBTC',
         e5_address:'',
         first_block:0, end_image:null, spend_image:null, ether_image:rsk_logo/* 'https://nftstorage.link/ipfs/bafkreiegatpac6ycp23meknqhihmlxrsb7asnl22yksh44swopk4nluv7a' */, iteration:3_000, url:0, active:false, e5_img:null, id: null, external_swappers:[],changenow_object: get_changenow_object()
       },
@@ -2502,7 +2764,7 @@ class App extends Component {
         web3:['https://rpc.frax.com'],
         token:'FRAX',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:fraxtal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'op', parent: 'E185', id: ChainId.FRA, external_swappers:['lifi'],changenow_object: get_changenow_object()
+        first_block:0, end_image: null, spend_image: null, ether_image:fraxtal_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', /* class:'L2', rollup_type:'op', parent: 'E185', */ id: ChainId.FRA, external_swappers:['lifi'],changenow_object: get_changenow_object()
       },
       'E965':{
         web3:['https://mainnet.hsk.xyz'],
@@ -2879,7 +3141,7 @@ class App extends Component {
       this.get_token('IOTX', 'IoTeX', 'E425'),
       this.get_token('SGB', 'Songbird Canary', 'E435'),
       this.get_token('ULX', 'Ultron Mainnet', 'E445', true),
-      this.get_token('CET', 'CoinEx Smart Chain', 'E455'),
+      this.get_token('CET', 'CoinEx Smart Chain', 'E455', true),
       this.get_token('TFUEL', 'Theta Mainnet', 'E465', true),
       this.get_token('FITFI', 'Step Network', 'E475', true),
       this.get_token('EWT', 'Energy Web Chain', 'E485'),
@@ -2889,10 +3151,10 @@ class App extends Component {
       this.get_token('UBQ', 'Ubiq', 'E525', true),
       this.get_token('GO', 'GoChain', 'E535'),
       this.get_token('OMAX', 'Omax Mainnet', 'E545', true),
-      this.get_token('WEMIX', 'Wemix3.0 Mainnet', 'E555'),
+      this.get_token('WEMIX', 'Wemix3.0 Mainnet', 'E555', true),
       this.get_token('CFX', 'Conflux eSpace', 'E565'),
       this.get_token('TLOS', 'Telos EVM', 'E575'),
-      this.get_token('RSK', 'RSK Mainnet', 'E585'),
+      this.get_token('RBTC', 'Rootstock Mainnet', 'E585'),
       this.get_token('META', 'Metadium', 'E595', true),
       this.get_token('KAI', 'Kardiachain', 'E605', true),
       this.get_token('CMP', 'Caduceus', 'E615', true),
@@ -2924,7 +3186,7 @@ class App extends Component {
       this.get_token('BIBTC', 'Bitlayer', 'E875'),
       this.get_token('BLETH', 'Blast', 'E885'),
       this.get_token('BOETH', 'Bob', 'E895'),
-      this.get_token('BOBTC', 'Botanix', 'E905'),
+      this.get_token('BOBTC', 'Botanix', 'E905', true),
       this.get_token('BSBTC', 'Bsquared', 'E915'),
       this.get_token('CORE', 'Core', 'E925'),
       this.get_token('BTCN', 'Corn', 'E935', true),
@@ -2939,19 +3201,19 @@ class App extends Component {
       this.get_token('MBTC', 'Merlin', 'E1025'),
       this.get_token('METH', 'Metal', 'E1035'),
       this.get_token('METIS', 'Metis', 'E1045'),
-      this.get_token('MIETH', 'Mind Network', 'E1055'),
+      this.get_token('MIETH', 'Mind Network', 'E1055', true),
       this.get_token('MINETH', 'Mint', 'E1065', true),
       this.get_token('MOETH', 'Mode', 'E1075'),
       this.get_token('GAS', 'Neo X', 'E1085'),
       this.get_token('OBNB', 'opBNB', 'E1095'),
       this.get_token('PLUME', 'Plume', 'E1105'),
-      this.get_token('KETH', 'Katana', 'E1115'),
+      this.get_token('KETH', 'Katana', 'E1115', true),
       this.get_token('PETH', 'Polygon zkEVM', 'E1125', true),
       this.get_token('RON', 'Ronin', 'E1135'),
       this.get_token('SETH', 'Scroll', 'E1145'),
       this.get_token('BONE', 'Shibarium', 'E1155', true),
       this.get_token('SONETH', 'Soneium', 'E1165'),
-      this.get_token('SUETH', 'Superseed', 'E1175'),
+      this.get_token('SUETH', 'Superseed', 'E1175', true),
       this.get_token('TETH', 'Taiko Alethia', 'E1185'),
       this.get_token('MAGIC', 'Treasure', 'E1195', true),
       this.get_token('UETH', 'Unichain', 'E1205'),
@@ -2960,14 +3222,14 @@ class App extends Component {
       this.get_token('OKT', 'OKTC', 'E1235', true),
       this.get_token('ZETH', 'Zircuit', 'E1245'),
       this.get_token('ZKETH', 'zkSync Era', 'E1255'),
-      this.get_token('ZKCRO', 'Cronos zkEVM', 'E1265'),
-      this.get_token('ZERETH', 'ZERϴ Network', 'E1275'),
+      this.get_token('ZKCRO', 'Cronos zkEVM', 'E1265', true),
+      this.get_token('ZERETH', 'ZERϴ Network', 'E1275', true),
       this.get_token('SOPH', 'Sophon', 'E1285'),
       this.get_token('MAETH', 'Manta Pacific', 'E1295'),
       this.get_token('FILE', 'Filecoin EVM', 'E1305'),
       this.get_token('MON', 'Monad', 'E1315'),
       this.get_token('ZOETH', 'Zora', 'E1325'),
-      this.get_token('ANETH', 'Arbitrum Nova', 'E1335'),
+      this.get_token('ANETH', 'Arbitrum Nova', 'E1335', true),
       this.get_token('ARETH', 'Arena-Z', 'E1345', true),
       this.get_token('DOTE', 'Polkadot PolkaVM', 'E1355', true),
       this.get_token('IMX', 'Immutable zkEVM', 'E1365'),
@@ -4588,6 +4850,255 @@ class App extends Component {
             var link = blockexplorer_link.replace('{hash}', hash)
             return link
         }
+    }
+  }
+
+  get_ether_blockexplorer_link(symbol, address){
+    if(symbol == 'ETC'){
+        return `https://etc.blockscout.com/address/${address}`
+    }
+    else if(symbol == 'AVAX'){
+        return `https://subnets.avax.network/c-chain/address/${address}`
+    }
+    else if(symbol == 'CELO'){
+        return `https://celo.blockscout.com/address/${address}`
+    }
+    else if(symbol == 'FLR'){
+        return `https://flare-explorer.flare.network/address/${address}`
+    }
+    else if(symbol == 'XDAI'){
+        return `https://gnosisscan.io/address/${address}`
+    }
+    else if(symbol == 'FUSE'){
+        return `https://explorer.fuse.io/address/${address}`
+    }
+    else if(symbol == 'XDC'){
+        return `https://xdcscan.com/address/${address}`
+    }
+    else if(symbol == 'POL'){
+        return `https://polygon.blockscout.com/address/${address}`
+    }
+    else if(symbol == 'BNB'){
+        return `https://bscscan.com/address/${address}`
+    }
+    else if(symbol == 'SEI'){
+        return `https://seiscan.io/address/${address}`
+    }
+    else if(symbol == 'BERA'){
+        return `https://berascan.com/address/${address}`
+    }
+    else if(symbol == 'VIC'){
+        return `https://www.vicscan.xyz/address/${address}`
+    }
+    else if(symbol == 'XPL'){
+        return `https://plasmascan.to/address/${address}`
+    }
+    else if(symbol == 'ETH'){
+        return `https://etherscan.io/address/${address}`
+    }
+    else if(symbol == 'OETH'){
+        return `https://optimistic.etherscan.io/address/${address}`
+    }
+    else if(symbol == 'BETH'){
+        return `https://base.blockscout.com/address/${address}`
+    }
+    else if(symbol == 'AETH'){
+        return `https://arbiscan.io/address/${address}`
+    }
+    else if(symbol == 'ASTR'){
+        return `https://astar.blockscout.com/address/${address}`
+    }
+    else if(symbol == 'CRO'){
+        return `https://explorer.cronos.com/address/${address}`
+    }
+    else if(symbol == 'KAVA'){
+        return `https://kavascan.com/address/${address}`
+    }
+    else if(symbol == 'ONE'){
+        return `https://explorer.harmony.one/address/${address}`
+    }
+    else if(symbol == 'OZO'){
+        return `https://ozonescan.io/address/${address}`
+    }
+    else if(symbol == 'REI'){
+        return `https://scan.rei.network/address/${address}`
+    }
+    else if(symbol == 'MNT'){
+        return `https://mantlescan.xyz/address/${address}`
+    }
+    else if(symbol == 'PLS'){
+        return `https://api.scan.pulsechain.com/address/${address}`
+    }
+    else if(symbol == 'EWT'){
+        return `https://explorer.energyweb.org/address/${address}`
+    }
+    else if(symbol == 'IOTX'){
+        return `https://iotexscan.io/address/${address}`
+    }
+    else if(symbol == 'GO'){
+        return `https://explorer.gochain.io/addr/${address}`
+    }
+    else if(symbol == 'CFX'){
+        return `https://evm.confluxscan.org/address/${address}`
+    }
+    else if(symbol == 'TLOS'){
+        return `https://www.teloscan.io/address/${address}`
+    }
+    else if(symbol == 'RBTC'){
+        return `https://explorer.rootstock.io/address/${address}`
+    }
+    else if(symbol == 'KAR'){
+        return `https://blockscout.karura.network/address/${address}`
+    }
+    else if(symbol == 'OM'){
+        return `https://omscan.omplatform.com/address/${address}`
+    }
+    else if(symbol == 'ELV'){
+        return `https://explorer.contentfabric.io/address/${address}`
+    }
+    else if(symbol == 'HBARE'){
+        return `https://explorer.arkhia.io/mainnet/account/${address}`
+    }
+    else if(symbol == 'IOTAE'){
+        return `https://explorer.evm.iota.org/address/${address}`
+    }
+    else if(symbol == 'KAIA'){
+        return `https://kaiascan.io/address/${address}`
+    }
+    else if(symbol == 'S'){
+        return `https://sonicscan.org/address/${address}`
+    }
+    else if(symbol == 'TT'){
+        return `https://scan.thundercore.com/address/${address}`
+    }
+    else if(symbol == 'HYPE'){
+        return `https://hyperscan.com/address/${address}`
+    }
+    else if(symbol == 'XRPE'){
+        return `https://explorer.xrplevm.org/address/${address}`
+    }
+    else if(symbol == 'ABETH'){
+        return `https://explorer.mainnet.abs.xyz/address/${address}`
+    }
+    else if(symbol == 'APE'){
+        return `https://apescan.io/address/${address}`
+    }
+    else if(symbol == 'BIBTC'){
+        return `https://www.btrscan.com/address/${address}`
+    }
+    else if(symbol == 'BLETH'){
+        return `https://blastscan.io/address/${address}`
+    }
+    else if(symbol == 'BOETH'){
+        return `https://explorer.gobob.xyz/address/${address}`
+    }
+    else if(symbol == 'BSBTC'){
+        return `https://explorer.bsquared.network/address/${address}`
+    }
+    else if(symbol == 'CORE'){
+        return `https://scan.coredao.org/address/${address}`
+    }
+    else if(symbol == 'XTZE'){
+        return `https://explorer.etherlink.com/address/${address}`
+    }
+    else if(symbol == 'FRAX'){
+        return `https://fraxscan.com/address/${address}`
+    }
+    else if(symbol == 'HSK'){
+        return `https://hsk.blockscout.com/address/${address}`
+    }
+    else if(symbol == 'HETH'){
+        return null
+    }
+    else if(symbol == 'IETH'){
+        return `https://explorer.inkonchain.com/address/${address}`
+    }
+    else if(symbol == 'GHO'){
+        return `https://explorer.lens.xyz/address/${address}`
+    }
+    else if(symbol == 'LETH'){
+        return `https://explorer.linea.build/address/${address}`
+    }
+    else if(symbol == 'LIETH'){
+        return `https://blockscout.lisk.com/address/${address}`
+    }
+    else if(symbol == 'MBTC'){
+        return `https://scan.merlinchain.io/address/${address}`
+    }
+    else if(symbol == 'METH'){
+        return `https://explorer.metall2.com/address/${address}`
+    }
+    else if(symbol == 'METIS'){
+        return `https://andromeda-explorer.metis.io/address/${address}`
+    }
+    else if(symbol == 'MOETH'){
+        return `https://explorer.mode.network/address/${address}`
+    }
+    else if(symbol == 'GAS'){
+        return `https://xexplorer.neo.org/address/${address}`
+    }
+    else if(symbol == 'OBNB'){
+        return `https://opbnbscan.com/address/${address}`
+    }
+    else if(symbol == 'PLUME'){
+        return `https://explorer.plume.org/address/${address}`
+    }
+    else if(symbol == 'RON'){
+        return `https://explorer.roninchain.com/address/${address}`
+    }
+    else if(symbol == 'SETH'){
+        return `https://scrollscan.com/address/${address}`
+    }
+    else if(symbol == 'SONETH'){
+        return `https://soneium.blockscout.com/address/${address}`
+    }
+    else if(symbol == 'TETH'){
+        return `https://taikoscan.io/address/${address}`
+    }
+    else if(symbol == 'UETH'){
+        return `https://unichain.blockscout.com/address/${address}`
+    }
+    else if(symbol == 'WOETH'){
+        return `https://worldscan.org/address/${address}`
+    }
+    else if(symbol == 'OKB'){
+        return `https://www.oklink.com/x-layer/evm/address/${address}`
+    }
+    else if(symbol == 'ZETH'){
+        return `https://explorer.zircuit.com/address/${address}`
+    }
+    else if(symbol == 'ZKETH'){
+        return `https://explorer.zksync.io/address/${address}`
+    }
+    else if(symbol == 'SOPH'){
+        return `https://explorer.sophon.xyz/address/${address}`
+    }
+    else if(symbol == 'MAETH'){
+        return `https://pacific-explorer.manta.network/address/${address}`
+    }
+    else if(symbol == 'FILE'){
+        return `https://filecoin.blockscout.com/address/${address}`
+    }
+    else if(symbol == 'MON'){
+        return `https://monadscan.com/address/${address}`
+    }
+    else if(symbol == 'ZOETH'){
+        return `https://explorer.zora.energy/address/${address}`
+    }
+    else if(symbol == 'IMX'){
+        return `https://explorer.immutable.com/address/${address}`
+    }
+    else if(symbol == 'KITE'){
+        return `https://kitescan.ai/address/${address}`
+    }
+    else if(symbol == 'INJE'){
+        return `https://blockscout.injective.network/address/${address}`
+    }
+    else if(symbol == 'SOMI'){
+        return `https://explorer.somnia.network/address/${address}`
+    }
+    else if(symbol == ''){
+        return ``
     }
   }
 
@@ -7248,11 +7759,11 @@ class App extends Component {
         'letter':letter_green,
         'e5_logo':e5_logo_green,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkgreen1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkgreen2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkgreen3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkgreen4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkgreen5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkgreen1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkgreen2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkgreen3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkgreen4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkgreen5.jpg'],
         'page_background':default_page_background_green,
       }
     }
@@ -7297,11 +7808,11 @@ class App extends Component {
         'letter':letter_darkgreen,
         'e5_logo':e5_logo_darkgreen,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightgreen1.jpg',
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightgreen2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightgreen3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightgreen4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightgreen5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightgreen1.jpg',
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightgreen2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightgreen3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightgreen4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightgreen5.jpg'],
         'page_background':default_page_background_green,
       }
     }
@@ -7349,11 +7860,11 @@ class App extends Component {
         'letter':letter_red,
         'e5_logo':e5_logo_red,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkred1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkred2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkred3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkred4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkred5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkred1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkred2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkred3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkred4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkred5.jpg'],
         'page_background':default_page_background_red,
       }
     }
@@ -7398,11 +7909,11 @@ class App extends Component {
         'letter':letter_darkred,
         'e5_logo':e5_logo_darkred,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightred1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightred2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightred3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightred4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightred5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightred1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightred2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightred3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightred4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightred5.jpg'],
         'page_background':default_page_background_red,
       }
     }
@@ -7451,11 +7962,11 @@ class App extends Component {
         'letter':letter_blue,
         'e5_logo':e5_logo_blue,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkblue1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkblue2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkblue3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkblue4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkblue5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkblue1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkblue2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkblue3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkblue4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkblue5.jpg'],
         'page_background':default_page_background_blue,
       }
     }
@@ -7501,11 +8012,11 @@ class App extends Component {
         'letter':letter_darkblue,
         'e5_logo':e5_logo_darkblue,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightblue1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightblue2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightblue3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightblue4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightblue5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightblue1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightblue2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightblue3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightblue4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightblue5.jpg'],
         'page_background':default_page_background_blue,
       }
     }
@@ -7554,11 +8065,11 @@ class App extends Component {
         'letter':letter_yellow,
         'e5_logo':e5_logo_yellow,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkyellow1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkyellow2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkyellow3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkyellow4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkyellow5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkyellow1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkyellow2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkyellow3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkyellow4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkyellow5.jpg'],
         'page_background':default_page_background_yellow,
       }
     }
@@ -7603,11 +8114,11 @@ class App extends Component {
         'letter':letter_darkyellow,
         'e5_logo':e5_logo_darkyellow,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightyellow1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightyellow2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightyellow3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightyellow4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightyellow5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightyellow1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightyellow2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightyellow3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightyellow4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightyellow5.jpg'],
         'page_background':default_page_background_yellow,
       }
     }
@@ -7655,11 +8166,11 @@ class App extends Component {
         'letter':letter_pink,
         'e5_logo':e5_logo_pink,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkpink1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkpink2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkpink3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkpink4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkpink5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkpink1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkpink2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkpink3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkpink4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkpink5.jpg'],
         'page_background':default_page_background_pink,
       }
     }
@@ -7704,11 +8215,11 @@ class App extends Component {
         'letter':letter_darkpink,
         'e5_logo':e5_logo_darkpink,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightpink1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightpink2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightpink3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightpink4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightpink5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightpink1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightpink2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightpink3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightpink4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightpink5.jpg'],
         'page_background':default_page_background_pink,
       }
     }
@@ -7756,11 +8267,11 @@ class App extends Component {
         'letter':letter_orange,
         'e5_logo':e5_logo_orange,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkorange1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkorange2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkorange3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkorange4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/darkorange5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkorange1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkorange2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkorange3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkorange4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/darkorange5.jpg'],
         'page_background':default_page_background_orange,
       }
     }
@@ -7805,11 +8316,11 @@ class App extends Component {
         'letter':letter_darkorange,
         'e5_logo':e5_logo_darkorange,
         'backgrounds':[
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightorange1.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightorange2.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightorange3.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightorange4.jpg', 
-          'https://bafybeic5j27bfvmxz5aulwgtrvzezamv67qhmke3lepo5t4bp3r46qploi.ipfs.w3s.link/lightorange5.jpg'],
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightorange1.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightorange2.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightorange3.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightorange4.jpg', 
+          'https://raw.githubusercontent.com/B35000/country_cities/refs/heads/master/e5_custom_backgrounds/lightorange5.jpg'],
         'page_background':default_page_background_orange,
       }
     }
@@ -8117,6 +8628,8 @@ class App extends Component {
           get_room_participant_count={this.get_room_participant_count.bind(this)} show_swap_ether_bottomsheet={this.show_swap_ether_bottomsheet.bind(this)} get_token_chart_data={this.get_token_chart_data.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} get_objects_showcased_certificates={this.get_objects_showcased_certificates.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)}
 
           get_ether_gas_usage_chart_data={this.get_ether_gas_usage_chart_data.bind(this)} load_object_certificate_showcasing_events={this.load_object_certificate_showcasing_events.bind(this)} load_token_certificate_chain={this.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.load_nft_certificate_parent_objects.bind(this)}
+
+          get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -20019,7 +20532,7 @@ class App extends Component {
     var os = getOS();
     
     return this.renderBottomSheet(
-      <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)}
+      <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)} get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}
       />,
       this.state.searched_account_bottomsheet,
       this.open_searched_account_bottomsheet,
@@ -67476,8 +67989,8 @@ class App extends Component {
       console.log('socket_stuff', 'initialised pitchprocessor', this.processedStream);
       // Set initial pitch
       // this.pitchProcessor.setPitch(this.state.pitchShift);
-      this.pitchProcessor.setParams('pitchShift', { pitch: 0 });
       this.pitchProcessor.setEnabled('pitchShift', true);
+      this.pitchProcessor.setParams('pitchShift', { pitch: 0 });
 
       this.processedStream.getTracks().forEach(track => {
         track.enabled = true;

@@ -427,6 +427,8 @@ class EthersDetailsSection extends Component {
                     </div>
 
                     {this.render_wallet_vaue(item, (this.props.app_state.account_balance[item['e5']]/10**18))}
+
+                    {this.render_ether_blockexplorer_link(item)}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2457']/* '💸 Send/Receive Ether' */, 'details':this.props.app_state.loc['2458']/* 'Send or receive ether from a specified account.' */, 'size':'l'})}
@@ -1413,6 +1415,276 @@ class EthersDetailsSection extends Component {
 
         return { dps, starting_time: starting_time }
     }
+
+
+
+
+    render_ether_blockexplorer_link(item){
+        if(this.props.app_state.has_wallet_been_set == false) return;
+        const address = this.get_account_address(item['e5'])
+        const link = this.props.get_ether_blockexplorer_link(item['symbol'], address)
+
+        if(link != null){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2927h']/* View Wallet on Explorer */,'details':this.props.app_state.loc['2927i']/* View your wallet on its Blockexplorer. */, 'size':'l'})}
+                    
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('4', {'text':link, 'textsize':'13px', 'font':'Sans-serif'})}
+                </div>
+            )
+        }
+    }
+
+    // get_ether_blockexplorer_link(symbol, address){
+    //     if(symbol == 'ETC'){
+    //         return `https://etc.blockscout.com/address/${address}`
+    //     }
+    //     else if(symbol == 'AVAX'){
+    //         return `https://subnets.avax.network/c-chain/address/${address}`
+    //     }
+    //     else if(symbol == 'CELO'){
+    //         return `https://celo.blockscout.com/address/${address}`
+    //     }
+    //     else if(symbol == 'FLR'){
+    //         return `https://flare-explorer.flare.network/address/${address}`
+    //     }
+    //     else if(symbol == 'XDAI'){
+    //         return `https://gnosisscan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'FUSE'){
+    //         return `https://explorer.fuse.io/address/${address}`
+    //     }
+    //     else if(symbol == 'XDC'){
+    //         return `https://xdcscan.com/address/${address}`
+    //     }
+    //     else if(symbol == 'POL'){
+    //         return `https://polygon.blockscout.com/address/${address}`
+    //     }
+    //     else if(symbol == 'BNB'){
+    //         return `https://bscscan.com/address/${address}`
+    //     }
+    //     else if(symbol == 'SEI'){
+    //         return `https://seiscan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'BERA'){
+    //         return `https://berascan.com/address/${address}`
+    //     }
+    //     else if(symbol == 'VIC'){
+    //         return `https://www.vicscan.xyz/address/${address}`
+    //     }
+    //     else if(symbol == 'XPL'){
+    //         return `https://plasmascan.to/address/${address}`
+    //     }
+    //     else if(symbol == 'ETH'){
+    //         return `https://etherscan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'OETH'){
+    //         return `https://optimistic.etherscan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'BETH'){
+    //         return `https://base.blockscout.com/address/${address}`
+    //     }
+    //     else if(symbol == 'AETH'){
+    //         return `https://arbiscan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'ASTR'){
+    //         return `https://astar.blockscout.com/address/${address}`
+    //     }
+    //     else if(symbol == 'CRO'){
+    //         return `https://explorer.cronos.com/address/${address}`
+    //     }
+    //     else if(symbol == 'KAVA'){
+    //         return `https://kavascan.com/address/${address}`
+    //     }
+    //     else if(symbol == 'ONE'){
+    //         return `https://explorer.harmony.one/address/${address}`
+    //     }
+    //     else if(symbol == 'OZO'){
+    //         return `https://ozonescan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'REI'){
+    //         return `https://scan.rei.network/address/${address}`
+    //     }
+    //     else if(symbol == 'MNT'){
+    //         return `https://mantlescan.xyz/address/${address}`
+    //     }
+    //     else if(symbol == 'PLS'){
+    //         return `https://api.scan.pulsechain.com/address/${address}`
+    //     }
+    //     else if(symbol == 'EWT'){
+    //         return `https://explorer.energyweb.org/address/${address}`
+    //     }
+    //     else if(symbol == 'IOTX'){
+    //         return `https://iotexscan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'GO'){
+    //         return `https://explorer.gochain.io/addr/${address}`
+    //     }
+    //     else if(symbol == 'CFX'){
+    //         return `https://evm.confluxscan.org/address/${address}`
+    //     }
+    //     else if(symbol == 'TLOS'){
+    //         return `https://www.teloscan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'RBTC'){
+    //         return `https://explorer.rootstock.io/address/${address}`
+    //     }
+    //     else if(symbol == 'KAR'){
+    //         return `https://blockscout.karura.network/address/${address}`
+    //     }
+    //     else if(symbol == 'OM'){
+    //         return `https://omscan.omplatform.com/address/${address}`
+    //     }
+    //     else if(symbol == 'ELV'){
+    //         return `https://explorer.contentfabric.io/address/${address}`
+    //     }
+    //     else if(symbol == 'HBARE'){
+    //         return `https://explorer.arkhia.io/mainnet/account/${address}`
+    //     }
+    //     else if(symbol == 'IOTAE'){
+    //         return `https://explorer.evm.iota.org/address/${address}`
+    //     }
+    //     else if(symbol == 'KAIA'){
+    //         return `https://kaiascan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'S'){
+    //         return `https://sonicscan.org/address/${address}`
+    //     }
+    //     else if(symbol == 'TT'){
+    //         return `https://scan.thundercore.com/address/${address}`
+    //     }
+    //     else if(symbol == 'HYPE'){
+    //         return `https://hyperscan.com/address/${address}`
+    //     }
+    //     else if(symbol == 'XRPE'){
+    //         return `https://explorer.xrplevm.org/address/${address}`
+    //     }
+    //     else if(symbol == 'ABETH'){
+    //         return `https://explorer.mainnet.abs.xyz/address/${address}`
+    //     }
+    //     else if(symbol == 'APE'){
+    //         return `https://apescan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'BIBTC'){
+    //         return `https://www.btrscan.com/address/${address}`
+    //     }
+    //     else if(symbol == 'BLETH'){
+    //         return `https://blastscan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'BOETH'){
+    //         return `https://explorer.gobob.xyz/address/${address}`
+    //     }
+    //     else if(symbol == 'BSBTC'){
+    //         return `https://explorer.bsquared.network/address/${address}`
+    //     }
+    //     else if(symbol == 'CORE'){
+    //         return `https://scan.coredao.org/address/${address}`
+    //     }
+    //     else if(symbol == 'XTZE'){
+    //         return `https://explorer.etherlink.com/address/${address}`
+    //     }
+    //     else if(symbol == 'FRAX'){
+    //         return `https://fraxscan.com/address/${address}`
+    //     }
+    //     else if(symbol == 'HSK'){
+    //         return `https://hsk.blockscout.com/address/${address}`
+    //     }
+    //     else if(symbol == 'HETH'){
+    //         return null
+    //     }
+    //     else if(symbol == 'IETH'){
+    //         return `https://explorer.inkonchain.com/address/${address}`
+    //     }
+    //     else if(symbol == 'GHO'){
+    //         return `https://explorer.lens.xyz/address/${address}`
+    //     }
+    //     else if(symbol == 'LETH'){
+    //         return `https://explorer.linea.build/address/${address}`
+    //     }
+    //     else if(symbol == 'LIETH'){
+    //         return `https://blockscout.lisk.com/address/${address}`
+    //     }
+    //     else if(symbol == 'MBTC'){
+    //         return `https://scan.merlinchain.io/address/${address}`
+    //     }
+    //     else if(symbol == 'METH'){
+    //         return `https://explorer.metall2.com/address/${address}`
+    //     }
+    //     else if(symbol == 'METIS'){
+    //         return `https://andromeda-explorer.metis.io/address/${address}`
+    //     }
+    //     else if(symbol == 'MOETH'){
+    //         return `https://explorer.mode.network/address/${address}`
+    //     }
+    //     else if(symbol == 'GAS'){
+    //         return `https://xexplorer.neo.org/address/${address}`
+    //     }
+    //     else if(symbol == 'OBNB'){
+    //         return `https://opbnbscan.com/address/${address}`
+    //     }
+    //     else if(symbol == 'PLUME'){
+    //         return `https://explorer.plume.org/address/${address}`
+    //     }
+    //     else if(symbol == 'RON'){
+    //         return `https://explorer.roninchain.com/address/${address}`
+    //     }
+    //     else if(symbol == 'SETH'){
+    //         return `https://scrollscan.com/address/${address}`
+    //     }
+    //     else if(symbol == 'SONETH'){
+    //         return `https://soneium.blockscout.com/address/${address}`
+    //     }
+    //     else if(symbol == 'TETH'){
+    //         return `https://taikoscan.io/address/${address}`
+    //     }
+    //     else if(symbol == 'UETH'){
+    //         return `https://unichain.blockscout.com/address/${address}`
+    //     }
+    //     else if(symbol == 'WOETH'){
+    //         return `https://worldscan.org/address/${address}`
+    //     }
+    //     else if(symbol == 'OKB'){
+    //         return `https://www.oklink.com/x-layer/evm/address/${address}`
+    //     }
+    //     else if(symbol == 'ZETH'){
+    //         return `https://explorer.zircuit.com/address/${address}`
+    //     }
+    //     else if(symbol == 'ZKETH'){
+    //         return `https://explorer.zksync.io/address/${address}`
+    //     }
+    //     else if(symbol == 'SOPH'){
+    //         return `https://explorer.sophon.xyz/address/${address}`
+    //     }
+    //     else if(symbol == 'MAETH'){
+    //         return `https://pacific-explorer.manta.network/address/${address}`
+    //     }
+    //     else if(symbol == 'FILE'){
+    //         return `https://filecoin.blockscout.com/address/${address}`
+    //     }
+    //     else if(symbol == 'MON'){
+    //         return `https://monadscan.com/address/${address}`
+    //     }
+    //     else if(symbol == 'ZOETH'){
+    //         return `https://explorer.zora.energy/address/${address}`
+    //     }
+    //     else if(symbol == 'IMX'){
+    //         return `https://explorer.immutable.com/address/${address}`
+    //     }
+    //     else if(symbol == 'KITE'){
+    //         return `https://kitescan.ai/address/${address}`
+    //     }
+    //     else if(symbol == 'INJE'){
+    //         return `https://blockscout.injective.network/address/${address}`
+    //     }
+    //     else if(symbol == 'SOMI'){
+    //         return `https://explorer.somnia.network/address/${address}`
+    //     }
+    //     else if(symbol == ''){
+    //         return ``
+    //     }
+    // }
 
 
 

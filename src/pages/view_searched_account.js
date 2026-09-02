@@ -652,6 +652,9 @@ class SearchedAccountPage extends Component {
         var run_data = item['run_data']
 
         const account_id = e5+':'+id
+
+        const symbol = this.props.app_state.e5s[e5].token
+        const link = this.props.get_ether_blockexplorer_link(symbol, address)
         
         return(
             <div>
@@ -669,6 +672,16 @@ class SearchedAccountPage extends Component {
 
                 {this.render_follow_unfollow_author_button(id, e5)}
                 <div style={{height: 10}}/>
+
+                {link != null && (
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1770s']/* View Address on Explorer */,'details':this.props.app_state.loc['1770s']/* View the account\'s wallet history on its Blockexplorer. */, 'size':'l'})}
+                    
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('4', {'text':link, 'textsize':'13px', 'font':'Sans-serif'})}
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
                 
                 <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1716']/* 'Ether Balance in Wei' */, 'number':ether_balance, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
                     {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1715']/* 'Ether Balance in Ether' */, 'subtitle': this.format_power_figure(ether_balance/10**18), 'barwidth': this.calculate_bar_width(ether_balance/10**18), 'number': (ether_balance/10**18), 'barcolor': '', 'relativepower': this.props.app_state.loc['2738cw']/* ether */, })}
@@ -3134,7 +3147,9 @@ return data['data']
         if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '14')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_view_account_exchange_tapped={this.when_view_account_exchange_tapped.bind(this)}/>
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_view_account_exchange_tapped={this.when_view_account_exchange_tapped.bind(this)}
+                show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)}
+                />
             </div>
         )
 
