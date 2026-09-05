@@ -548,10 +548,12 @@ class E5DetailsSection extends Component {
         var e5_height = this.props.app_state.e5s_transaction_height[obj['id']]
         var chain_message = this.props.app_state.loc['2336bt']/* 'On $' */.replace('$', chain)
         const ether_data = this.props.app_state.ether_data
+
         const chain_obj = ether_data.find((ether_desc) => {
-            return ether_desc['e5'] == obj['id']
+            const search_e5 = obj['id'] == 'E25' ? 'E35' : obj['id']
+            return ether_desc['e5'] == search_e5;
         })
-        const chain_name = chain_obj['name']
+        const chain_name = chain_obj?.['name'] || '???';
         return{
             'label':{'header':obj['id'], 'subtitle':chain_message, 'size':'l', 'image': image},
             'tags':{'active_tags':[obj['id'],this.props.app_state.loc['2244']/* 'E5' */, this.props.app_state.loc['2245']/* 'Main' */, this.props.app_state.loc['361']/* 'Contract' */], 'index_option':'indexed'},

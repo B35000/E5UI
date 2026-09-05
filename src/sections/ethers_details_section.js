@@ -885,7 +885,7 @@ class EthersDetailsSection extends Component {
                 'tags':{'active_tags':[name, 'EVM', symbol].concat(other_tags), 'index_option':'indexed'},
                 'ether_name':{'title':name, 'details':this.props.app_state.loc['2481ba']/* 'Ether Name.' */, 'size' :'l'},
                 'ether_symbol':{'title':symbol, 'details':this.props.app_state.loc['2481bb']/* 'Ether Symbol.' */, 'size' :'l', 'footer':ether_symbol_footer},
-                'runs_per_second':{'title':this.props.app_state.loc['2481bg']/* '$ runs/sec' */.replace('$', runs_per_second_final), 'details':this.props.app_state.loc['2481bf']/* 'Run Throughput (2.3M gas average)' */, 'size' :'l'},
+                'runs_per_second':{'title':this.props.app_state.loc['2481bg']/* '$ runs/sec' */.replace('$', runs_per_second_final), 'details':this.props.app_state.loc['2481bf']/* 'Maximum Run Throughput (2.3M gas average)' */, 'size' :'l'},
                 
                 'number_label':this.get_blockchain_data('s', e5),
                 'number_label_large': this.get_blockchain_data('l', e5),

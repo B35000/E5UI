@@ -2,7 +2,7 @@
   "name": "old_e5",
   "homepage": "https://page.twentythreeinreverse.com",
   "hmepage": ".",
-  "version": "9.0",
+  "version": "9.45",
   "private": true,
   "dependencies": {
     "@aptos-labs/ts-sdk": "^7.3.0",

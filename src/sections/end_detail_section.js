@@ -230,6 +230,12 @@ class EndDetailSection extends Component {
                 </div>
             )
         }
+
+        if(this.props.app_state.created_object_full[selected_object['e5_id']] != null){
+            Object.assign(selected_object, this.props.app_state.created_object_full[selected_object['e5_id']])
+        }
+
+
         // if(this.props.screensize != 'l' && show_viewpager == true){
         //     return this.render_post_list_group_if_touch_screen(selected_object)
         // }
@@ -476,12 +482,12 @@ class EndDetailSection extends Component {
                                     
                                     
 
-                                    {/* {index == 4 && selected_object['hidden'] == true && (
+                                    {index == 4 && selected_object['hidden'] == true && (
                                         <div>
                                             <div style={{ height: 10 }} />
-                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2602g'] 'Loading the exchanges metadata...' , 'textsize':'13px', 'font':this.props.app_state.font})}
+                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2602g'] /* 'Loading the exchanges metadata...' */ , 'textsize':'13px', 'font':this.props.app_state.font})}
                                         </div>
-                                    )} */}
+                                    )}
 
 
                                     {index == 5 && (<div style={{height:10}}/>)}

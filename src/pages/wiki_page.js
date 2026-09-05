@@ -292,30 +292,30 @@ class WikiPage extends Component {
                         <Frame className="frame">
                             <Track ref={c => this.track = c} viewsToShow={1} currentView={pos} onViewChange={(e) => this.handleChange(e)} className="track">
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1982']/* The wallet section is in the settings-data...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'0'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                        <div key={'0'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
                                             <img style={{width:'auto', height:h}} src={settings_section_pointer} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1983']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'1'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                        <div key={'1'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
                                             <img style={{width:'auto', height:h}} src={wallet_section_pointer} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1984']/* 'Then afterwards fill it with the E5s ether of your choice' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'2'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                        <div key={'2'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
                                             <img style={{width:'auto', height:h}} src={deposit_section_pointer} alt="E5"/>
                                             <div style={{height: 20}}/>
                                         </div>
@@ -339,30 +339,30 @@ class WikiPage extends Component {
                         <Frame className="frame">
                             <Track ref={c => this.track = c} viewsToShow={1} currentView={pos} onViewChange={(e) => this.handleChange(e)} className="track">
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1987']/* 'The wallet section is in the stack page...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'0'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                        <div key={'0'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
                                             <img style={{width:'auto', height:h}} src={stack_section_pointer} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1988']/* 'In the settings-data section...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'1'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                        <div key={'1'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
                                             <img style={{width:'auto', height:h}} src={settings_section_pointer} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'2'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                        <div key={'2'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
                                             <img style={{width:'auto', height:h}} src={wallet_section_pointer} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
@@ -384,7 +384,7 @@ class WikiPage extends Component {
                         <Frame className="frame">
                             <Track ref={c => this.track = c} viewsToShow={1} onViewChange={(e) => this.handleChange(e)} className="track">
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('3', {'title':this.props.app_state.loc['1989a']/* 'Quick Tutorial' */, 'details':this.props.app_state.loc['1989b']/* 'You need to know how to use this webapp.' */, 'size':'l'})}
                                         <div style={{height: 20}}/>
                                         <div key={'0'} style={{ display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
@@ -394,41 +394,41 @@ class WikiPage extends Component {
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989c']/* 'The top and bottom navigation buttons are for navigating e.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'1'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_navigation_buttons} alt="E5"/>
+                                        <div key={'1'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_navigation_buttons} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989d']/* 'Tap a tag to view its sub-options, then tap it again (the very first tag-option) to go back.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'2'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_navigate_back} alt="E5"/>
+                                        <div key={'2'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_navigate_back} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989e']/* 'Then tap the e+ button at the top right corner to create a new post or object.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'3'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_new_object} alt="E5"/>
+                                        <div key={'3'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_new_object} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989f']/* 'Then when you\'re done creating an object, tap the top right icon to add it to your stack. The stack is where all your staged transactions go before your next run.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'4'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_add_transaction} alt="E5"/>
+                                        <div key={'4'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_add_transaction} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
@@ -436,22 +436,22 @@ class WikiPage extends Component {
 
 
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989k']/* 'To express very large numbers, scientific notation values such as \'e+\' and \'E\' are used. However, for simplicity sake, a lowercase \'e\' is used here.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'5'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number} alt="E5"/>
+                                        <div key={'5'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_number} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
                                 </View>
 
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989l']/* 'Note how the first nine digits of a large number are shown for greater context, and the \'power\' at the end representing the remaining omitted and least significant values.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'6'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number2} alt="E5"/>
+                                        <div key={'6'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_number2} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
@@ -459,41 +459,41 @@ class WikiPage extends Component {
 
 
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989h']/* 'The number picker is what is used on e to pick large numbers. The top slider picks a number, and the bottom slider picks a power.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'7'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker} alt="E5"/>
+                                        <div key={'7'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_number_picker} alt="E5"/>
                                             <div style={{height: 20}}/>
                                         </div>
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989i']/* 'Tap the numbers at the top to select which part of the number your setting. Then tap the circles to the left to increment by one, and double tap to decrement by one.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'8'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker2} alt="E5"/>
+                                        <div key={'8'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_number_picker2} alt="E5"/>
                                             <div style={{height: 20}}/>
                                         </div>
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989j']/* 'Then tap the black circle to change input to be a textarea for small exact figues, and tap the grey circle to reset the number picker.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'9'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker3} alt="E5"/>
+                                        <div key={'9'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_number_picker3} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
                                 </View>
                                 <View className="view">
-                                    <div style={{width: this.props.width-30}}>
+                                    <div style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30}}>
                                         {this.render_detail_item('4', {'text':this.props.app_state.loc['1989g']/* 'Then when your ready to run your stack, tap this button to start your run. This executes all your transactions in your stack as one combined transaction on the blockchain.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                                         <div style={{height: 20}}/>
-                                        <div key={'10'} style={{width: this.props.width-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                            <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_run_transactions} alt="E5"/>
+                                        <div key={'10'} style={{width: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
+                                            <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_run_transactions} alt="E5"/>
                                             <div style={{height: 30}}/>
                                         </div>
                                     </div>
@@ -519,7 +519,7 @@ class WikiPage extends Component {
     render_option_view_pager2(){
         const pos = this.state.page
         const h = this.props.height*0.6
-        const standard_width = this.props.width-30
+        const standard_width = (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30
         const standard_height = this.props.height-270
         
         const previous = () => {
@@ -578,7 +578,7 @@ class WikiPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1980']/* 'One more step' */, 'details':this.props.app_state.loc['1981']/* 'You need to set your wallet and fill it with some ether' */, 'size':'l'})}
                     {this.render_detail_item('0')}
-                    <MySwipeableViews width={this.props.width-30} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
+                    <MySwipeableViews width={(this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
                         <div key={'0'} style={{width: standard_width, height: standard_height}}>
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1982']/* The wallet section is in the settings-data...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
@@ -615,7 +615,7 @@ class WikiPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1985']/* 'Action Required' */, 'details':this.props.app_state.loc['1986']/* 'You need to set your wallet first' */, 'size':'l'})}
                     {this.render_detail_item('0')}
-                    <MySwipeableViews width={this.props.width-30} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
+                    <MySwipeableViews width={(this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
                         <div key={'0'} style={{width: standard_width, height: standard_height}}>
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1987']/* 'The wallet section is in the stack page...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
@@ -651,7 +651,7 @@ class WikiPage extends Component {
             const height_to_use = this.props.height-180
             return(
                 <div>
-                    <MySwipeableViews width={this.props.width-30} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
+                    <MySwipeableViews width={(this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30} index={pos} onChangeIndex={this.handleSwipeableViewsChange}>
                         <div key={'0'} style={{width: standard_width, height: height_to_use}}>
                             {this.render_detail_item('3', {'title':this.props.app_state.loc['1989a']/* 'Quick Tutorial' */, 'details':this.props.app_state.loc['1989b']/* 'You need to know how to use this webapp.' */, 'size':'l'})}
                             <div style={{height: 20}}/>
@@ -664,7 +664,7 @@ class WikiPage extends Component {
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1989c']/* 'The top and bottom navigation buttons are for navigating e.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
                             <div key={'1'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                <img style={{height:'auto', maxWidth: this.props.width-70, 'scale':'0.87'}} src={tutorial_image_navigation_buttons} alt="E5"/>
+                                <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70, 'scale':'0.87'}} src={tutorial_image_navigation_buttons} alt="E5"/>
                                 <div style={{height: 30}}/>
                             </div>
                         </div>
@@ -672,7 +672,7 @@ class WikiPage extends Component {
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1989d']/* 'Tap a tag to view its sub-options, then tap it again (the very first tag-option) to go back.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
                             <div key={'2'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                <img style={{height:'auto', maxWidth: this.props.width-70, 'scale':'0.95'}} src={tutorial_image_navigate_back} alt="E5"/>
+                                <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70, 'scale':'0.95'}} src={tutorial_image_navigate_back} alt="E5"/>
                                 <div style={{height: 30}}/>
                             </div>
                         </div>
@@ -680,7 +680,7 @@ class WikiPage extends Component {
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1989e']/* 'Then tap the e+ button at the top right corner to create a new post or object.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
                             <div key={'3'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_new_object} alt="E5"/>
+                                <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_new_object} alt="E5"/>
                                 <div style={{height: 30}}/>
                             </div>
                         </div>
@@ -688,7 +688,7 @@ class WikiPage extends Component {
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1989f']/* 'Then when you\'re done creating an object, tap the top right icon to add it to your stack. The stack is where all your staged transactions go before your next run.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
                             <div key={'4'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_add_transaction} alt="E5"/>
+                                <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_add_transaction} alt="E5"/>
                                 <div style={{height: 30}}/>
                             </div>
                         </div>
@@ -696,7 +696,7 @@ class WikiPage extends Component {
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1989k']/* 'To express very large numbers, scientific notation values such as \'e+\' and \'E\' are used. However, for simplicity sake, a lowercase \'e\' is used here.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
                             <div key={'5'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number} alt="E5"/>
+                                <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_number} alt="E5"/>
                                 <div style={{height: 30}}/>
                             </div>
                         </div>
@@ -704,7 +704,7 @@ class WikiPage extends Component {
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1989l']/* 'Note how the first nine digits of a large number are shown for greater context, and the \'power\' at the end representing the remaining omitted and least significant values.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
                             <div key={'6'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number2} alt="E5"/>
+                                <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_number2} alt="E5"/>
                                 <div style={{height: 30}}/>
                             </div>
                         </div>
@@ -712,7 +712,7 @@ class WikiPage extends Component {
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1989h']/* 'The number picker is what is used on e to pick large numbers. The top slider picks a number, and the bottom slider picks a power.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
                             <div key={'7'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker} alt="E5"/>
+                                <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_number_picker} alt="E5"/>
                                 <div style={{height: 20}}/>
                             </div>
                         </div>
@@ -720,7 +720,7 @@ class WikiPage extends Component {
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1989i']/* 'Tap the numbers at the top to select which part of the number your setting. Then tap the circles to the left to increment by one, and double tap to decrement by one.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
                             <div key={'8'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker2} alt="E5"/>
+                                <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_number_picker2} alt="E5"/>
                                 <div style={{height: 20}}/>
                             </div>
                         </div>
@@ -728,7 +728,7 @@ class WikiPage extends Component {
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1989j']/* 'Then tap the black circle to change input to be a textarea for small exact figues, and tap the grey circle to reset the number picker.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
                             <div key={'9'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_number_picker3} alt="E5"/>
+                                <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_number_picker3} alt="E5"/>
                                 <div style={{height: 30}}/>
                             </div>
                         </div>
@@ -736,7 +736,7 @@ class WikiPage extends Component {
                             {this.render_detail_item('4', {'text':this.props.app_state.loc['1989g']/* 'Then when your ready to run your stack, tap this button to start your run. This executes all your transactions in your stack as one combined transaction on the blockchain.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                             <div style={{height: 20}}/>
                             <div key={'10'} style={{width: standard_width, display: "flex", alignItems: "center", justifyContent: "center", height:h}}>
-                                <img style={{height:'auto', maxWidth: this.props.width-70}} src={tutorial_image_run_transactions} alt="E5"/>
+                                <img style={{height:'auto', maxWidth: (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-70}} src={tutorial_image_run_transactions} alt="E5"/>
                                 <div style={{height: 30}}/>
                             </div>
                         </div>

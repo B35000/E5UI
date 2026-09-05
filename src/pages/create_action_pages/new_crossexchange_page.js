@@ -431,7 +431,7 @@ class NewCrossexchangePage extends Component {
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['d311cb']/* 'Set some tags for indexing your new certificate.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['e311bg']/* 'Set some tags for indexing your new Cross-Exchange.' */})}
                 <div style={{height:10}}/>
 
                 <div className="row" style={{width:'99%'}}>
@@ -2635,7 +2635,7 @@ class NewCrossexchangePage extends Component {
         }
         const bottom_part = (message) => {
             const image_height = 60
-            const standard_width = this.props.width - 20
+            const standard_width = (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 )) - 20
             return(
                 <div style={{'margin':'20px 0px 20px 0px', 'width':standard_width}}>
                     <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: standard_width}}>
@@ -2698,7 +2698,7 @@ class NewCrossexchangePage extends Component {
         }
         return(
             <div>
-                <MySwipeableViews width={this.props.width-30} index={page} onChangeIndex={this.handleSwipeableViewsChange2}>
+                <MySwipeableViews width={(this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30} index={page} onChangeIndex={this.handleSwipeableViewsChange2}>
                     {items.map((item, index) => (
                         <div key={''+item}>
                             {this.render_custom_token_section_parts(item)}
@@ -3295,7 +3295,7 @@ class NewCrossexchangePage extends Component {
     }
 
     is_my_balance_sufficient(amount, exchange_id){
-        const my_balance = this.props.calculate_actual_balance(this.state.token_item['e5'], exchange_id)
+        const my_balance = this.props.calculate_actual_balance(this.state.e5, exchange_id)
         if(bigInt(my_balance).lesser(bigInt(amount))){
             return false
         }

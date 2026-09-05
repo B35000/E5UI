@@ -175,6 +175,10 @@ class ContractDetailsSection extends Component {
             )
         }
 
+        if(this.props.app_state.created_object_full[object['e5_id']] != null){
+            Object.assign(object, this.props.app_state.created_object_full[object['e5_id']])
+        }
+
         if(object != null){
             // if(this.props.screensize != 'l' && show_viewpager == true){
             //     return this.render_post_list_group_if_touch_screen(object)
@@ -462,15 +466,15 @@ class ContractDetailsSection extends Component {
                                     )}
                                     
 
-                                    {/* {index == 6 && object['hidden'] == true && (
+                                    {index == 6 && object['hidden'] == true && (
                                         <div>
                                             <div style={{ height: 10 }} />
-                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2214i']'Loading the contracts metadata...', 'textsize':'13px', 'font':this.props.app_state.font})}
+                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2214i']/* 'Loading the contracts metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                                         </div>
-                                    )} */}
+                                    )}
                                     
                                     {index == 7 && (<div style={{height:10}}/>)}
-                                    {index == 7 && this.render_detail_item('3', { 'size': 'l', 'details': 'Access Rights', 'title': this.get_access_rights_status(object['access_rights_enabled']) })}
+                                    {index == 7 && this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['570']/* 'Access Rights' */, 'title': this.get_access_rights_status(object['access_rights_enabled']) })}
                                     
                                     {index == 8 && (
                                         <div>

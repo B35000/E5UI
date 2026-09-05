@@ -149,6 +149,10 @@ class SubscriptionDetailsSection extends Component {
             )
         }
 
+        if(this.props.app_state.created_object_full[object['e5_id']] != null){
+            Object.assign(object, this.props.app_state.created_object_full[object['e5_id']])
+        }
+        
         // if(this.props.screensize != 'l' && show_viewpager == true){
         //     return this.render_post_list_group_if_touch_screen(object)
         // }
@@ -383,12 +387,12 @@ class SubscriptionDetailsSection extends Component {
                                     )}
                                     
 
-                                    {/* {index == 4 && object['hidden'] == true && (
+                                    {index == 4 && object['hidden'] == true && (
                                         <div>
                                             <div style={{ height: 10 }} />
-                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2695k'] 'Loading the subscriptions metadata...', 'textsize':'13px', 'font':this.props.app_state.font})}
+                                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2695k'] /* 'Loading the subscriptions metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                                         </div>
-                                    )} */}
+                                    )}
 
                                     {index == 5 && (<div style={{height:10}}/>)}
                                     {index == 5 && this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(object['access_rights_enabled'])})}

@@ -331,7 +331,7 @@ class EditCrossexchangePage extends Component {
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['d311cb']/* 'Set some tags for indexing your new certificate.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.props.app_state.loc['e311bg']/* 'Set some tags for indexing your new Cross-Exchange.' */})}
                 <div style={{height:10}}/>
 
                 <div className="row" style={{width:'99%'}}>

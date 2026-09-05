@@ -2463,7 +2463,7 @@ return data['data']
         var page = this.state.page
         const bottom_part = (message) => {
             const image_height = 60
-            const standard_width = this.props.width - 20
+            const standard_width = (this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 )) - 20
             return(
                 <div style={{'margin':'10px 0px 20px 0px', 'width':standard_width}}>
                     {/* <div className="row">
@@ -2555,7 +2555,7 @@ return data['data']
         }
         return(
             <div>
-                <MySwipeableViews width={this.props.width-30} index={page} onChangeIndex={this.handleSwipeableViewsChange}>
+                <MySwipeableViews width={(this.props.width - (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))-30} index={page} onChangeIndex={this.handleSwipeableViewsChange}>
                     {items.map((item, index) => (
                         <div key={''+item}>
                             {this.render_configuration_section_parts(item)}

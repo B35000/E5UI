@@ -165,6 +165,10 @@ class CrossexchangeDetailsSection extends Component {
             )
         }
 
+        if(this.props.app_state.created_object_full[object['e5_id']] != null){
+            Object.assign(object, this.props.app_state.created_object_full[object['e5_id']])
+        }
+
         if(selected_item ==this.props.app_state.loc['2028']/*  'metadata' */){
             return(
                 <div>
@@ -319,6 +323,13 @@ class CrossexchangeDetailsSection extends Component {
                     </div>
                     <div style={{height:10}}/>
 
+                    {object['hidden'] == true && (
+                        <div>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['2602g'] /* 'Loading the exchanges metadata...' */ , 'textsize':'13px', 'font':this.props.app_state.font})}
+                            <div style={{ height: 10 }} />
+                        </div>
+                    )}
+
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
                     <div style={{height:10}}/>
 
@@ -326,6 +337,14 @@ class CrossexchangeDetailsSection extends Component {
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('0')}
+
+                    
+                    {target_type == 1/* exchange */ && (
+                        <div>
+                            {this.render_detail_item('8', item['target_name'])}
+                            <div style={{height: 10}}/>
+                        </div>
+                    )}
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['buy_limit'])}
@@ -357,7 +376,7 @@ class CrossexchangeDetailsSection extends Component {
                     <div style={{height: 10}}/>
 
                     {this.render_revoke_author_privelages_event(object)}
-                    <div style={{height: 10}}/>
+                    {this.render_detail_item('0')}
 
                     {this.render_price_of_token(object)}
                     <div style={{height: 10}}/>
@@ -1018,7 +1037,16 @@ class CrossexchangeDetailsSection extends Component {
         const minimum_transactions_between_swap = selected_obj_config[2]
         const minimum_transactions_for_first_buy = selected_obj_config[17]
 
-        const id_footer = object['ipfs'].get_object_delisted_setting_tags_option != null && this.get_selected_item2(object['ipfs'].get_object_delisted_setting_tags_option, 'e') == 1 ? this.props.app_state.loc['a2527cp']/* '🔗 delisted' */ : null
+        const id_footer = object['ipfs'].get_object_delisted_setting_tags_option != null && this.get_selected_item2(object['ipfs'].get_object_delisted_setting_tags_option, 'e') == 1 ? this.props.app_state.loc['a2527cp']/* '🔗 delisted' */ : null;
+
+
+
+        const token_target_name = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+token_target] || '???'
+
+        const token_target_symbol = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[token_target] || '???'
+
+        const token_target_image = this.props.app_state.token_name_thumbnail_directory[token_target_name]
+
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'id':{'title':title_space+objectid, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':id_footer },
@@ -1040,6 +1068,8 @@ class CrossexchangeDetailsSection extends Component {
             'sell_limit_proportion':{'title':this.format_proportion(default_exchange_amount_sell_limit), 'details':this.props.app_state.loc['653']/* 'Sell Limit' */, 'size':'l'},
 
             'minimum_transactions_for_first_buy': {'title':minimum_transactions_for_first_buy, 'details':this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, 'size':'l'},
+
+            'target_name':{'title':token_target_name+' • '+token_target_symbol, 'details':this.props.app_state.loc['3107o']/* 'Swap Target' */, 'size':'l', 'image':token_target_image, 'img_size':30 },
         }
     }
 

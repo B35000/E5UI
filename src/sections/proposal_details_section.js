@@ -205,6 +205,10 @@ class ProposalDetailsSection extends Component {
             )
         }
 
+        if(this.props.app_state.created_object_full[object['e5_id']] != null){
+            Object.assign(object, this.props.app_state.created_object_full[object['e5_id']])
+        }
+
         // if(this.props.screensize != 'l' && show_viewpager == true){
         //     return this.render_post_list_group_if_touch_screen(object)
         // }

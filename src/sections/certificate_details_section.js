@@ -180,6 +180,10 @@ class CertificateDetailsSection extends Component {
             )
         }
 
+        if(this.props.app_state.created_object_full[object['e5_id']] != null){
+            Object.assign(object, this.props.app_state.created_object_full[object['e5_id']])
+        }
+
         if(selected_item ==this.props.app_state.loc['2028']/*  'metadata' */){
             return(
                 <div>
@@ -352,6 +356,14 @@ class CertificateDetailsSection extends Component {
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     <div style={{height:10}}/>
+
+
+                    {object['hidden'] == true && (
+                        <div>
+                            {this.render_detail_item('4', {'text':this.props.app_state.loc['3098bq'] /* 'Loading the certificates metadata...' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                            <div style={{ height: 10 }} />
+                        </div>
+                    )}
 
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['570']/* 'Access Rights' */, 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
                     <div style={{height:10}}/>
