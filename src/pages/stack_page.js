@@ -2486,7 +2486,7 @@ class StackPage extends Component {
 
                 <div style={{height:10}}/>
                 {is_running == true || (this.props.app_state.did_just_set_wallet == true && this.props.app_state.pre_launch_fetch_loading == true) ? (
-                    <div>
+                    <div onClick={() => this.when_skeleton_object_clicked(is_running)}>
                         {this.render_small_skeleton_object()}
                     </div>
                 ) : (
@@ -2501,6 +2501,12 @@ class StackPage extends Component {
                 {this.show_e5_locked_message_if_locked()}
             </div>
         )
+    }
+
+    when_skeleton_object_clicked(is_running){
+        if(is_running == true){
+            this.props.show_dialog_bottomsheet({}, 'cancel_current_transactions')
+        }
     }
 
     render_quick_send_end_spend(){
@@ -3452,6 +3458,7 @@ class StackPage extends Component {
                 return;
             }
             this.props.lock_run(true)
+            this.props.set_hash(e5, null)
             
             if(txs.length > 0){
                 this.props.notify(this.props.app_state.loc['1496']/* 'Running your transactions...' */, 7600)

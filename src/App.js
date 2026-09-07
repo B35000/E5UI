@@ -2111,7 +2111,7 @@ class App extends Component {
     created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}, showcasing_events:{}, decentralization_metrics: this.get_decentralization_data(),
 
     objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}, 
-    ether_ages:{}, created_object_full:{}
+    ether_ages:{}, created_object_full:{}, current_run_hash:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -11559,7 +11559,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)}
       />
     )
   }
@@ -12751,7 +12751,7 @@ class App extends Component {
 
     var set_storage_option = this.state.storage_option
     var my_preferred_nitro = this.state.my_preferred_nitro
-    var t = (5 * 60 * 1000)
+    var t = (3 * 60 * 1000)
     if(my_preferred_nitro == '' && set_storage_option == 'arweave') t = (35 * 60 * 1000);
 
     var me = this;
@@ -12854,6 +12854,12 @@ class App extends Component {
     }
   }
 
+  set_hash(e5, hash){
+    const clone = structuredClone(this.state.current_run_hash)
+    clone[e5] = hash
+    this.setState({current_run_hash: clone})
+  }
+
   run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, _run_gas_price, run_expiry_duration, e5, finish_job_payment_data, set_max_priority_per_gas, set_max_fee_per_gas) => {
     this.lock_delete_pos_array(delete_pos_array, e5)
     const web3_url = this.get_selected_web3_url()
@@ -12907,6 +12913,7 @@ class App extends Component {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
       .on('transactionHash', (hash) => {
         console.log('TX broadcasted to mempool:', hash);
+        me.set_hash(e5, hash)
         if(Object.keys(finish_job_payment_data).length > 0){
           me.notify_of_finishing_payment_in_mempool(finish_job_payment_data, run_gas_price, gasLimit, web3_url, run_expiry_time, 100000000000000)
         }
@@ -12928,8 +12935,9 @@ class App extends Component {
           should_update_posts_reposted_by_me:false,
           update_hidden_values_in_e5:false,
           update_pinns_on_chain:false,
-          should_update_default_location_pins_in_e5:false
+          should_update_default_location_pins_in_e5:false,
         })
+        me.set_hash(e5, null)
         me.unlock_delete_pos_array(e5)
         me.delete_stack_items(delete_pos_array)
         me.reset_gas_calculation_figure(me)
@@ -12953,6 +12961,7 @@ class App extends Component {
         var clone = structuredClone(this.state.is_running)
         clone[e5] = false
         me.setState({is_running: clone})
+        me.set_hash(e5, null)
         me.unlock_delete_pos_array(e5)
         me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
       });
@@ -20814,23 +20823,27 @@ class App extends Component {
   }
 
   load_rpc_times = async (e5) => {
-    var items = this.state.e5s[e5].web3
+    const items = this.state.e5s[e5].web3
     for(var i=0; i<items.length; i++){
-      var url = items[i]
+      const url = items[i]
       const web3 = new Web3(url);
-      var is_conn = true;
-      if(is_conn){
-        var now = Date.now()
-        await web3.eth.getBlockNumber()
-        var time = Date.now() - now;
-        var clone = structuredClone(this.state.rpc_times)
-        clone[url] = ''+time+' '+this.getLocale()['2725']/* milliseconds */
-        this.setState({rpc_times: clone})
-      }else{
-        var clone = structuredClone(this.state.rpc_times)
-        clone[url] = this.getLocale()['2726']/* 'offline' */
-        this.setState({rpc_times: clone})
+      const now = Date.now()
+      try{
+        const block = await web3.eth.getBlockNumber()
+        if(block != 0 && block != null){
+          const time = Date.now() - now;
+          const clone = structuredClone(this.state.rpc_times)
+          clone[url] = ''+time+' '+this.getLocale()['2725']/* milliseconds */
+          this.setState({rpc_times: clone})
+        }else{
+          const clone = structuredClone(this.state.rpc_times)
+          clone[url] = this.getLocale()['2726']/* 'offline' */
+          this.setState({rpc_times: clone})
+        }
+      }catch(e){
+        console.log('load_rpc_times', e)
       }
+      
     }
 
   }
@@ -21301,7 +21314,7 @@ class App extends Component {
 
         decrypt_seed={this.decrypt_seed.bind(this)} fail_to_set_password={this.fail_to_set_password.bind(this)} bridge_ether_into_l2={this.bridge_ether_into_l2.bind(this)} set_password_for_locking_wallet={this.set_password_for_locking_wallet.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} continue_with_sending_message={this.continue_with_sending_message.bind(this)} show_mint_certificate_bottomsheet={this.show_mint_certificate_bottomsheet.bind(this)} show_transfer_certificate_bottomsheet={this.show_transfer_certificate_bottomsheet.bind(this)} show_fractionalize_certificate_bottomsheet={this.show_fractionalize_certificate_bottomsheet.bind(this)} show_transfer_stake_bottomsheet={this.show_transfer_stake_bottomsheet.bind(this)} start_quick_transfer_action={this.start_quick_transfer_action.bind(this)}
 
-        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} show_select_certificate_bottomsheet={this.show_select_certificate_bottomsheet.bind(this)} show_certificate_chain_bottomsheet={this.show_certificate_chain_bottomsheet.bind(this)} get_blockexplorer_link={this.get_blockexplorer_link.bind(this)}
+        add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} show_select_certificate_bottomsheet={this.show_select_certificate_bottomsheet.bind(this)} show_certificate_chain_bottomsheet={this.show_certificate_chain_bottomsheet.bind(this)} get_blockexplorer_link={this.get_blockexplorer_link.bind(this)} lock_run={this.lock_run.bind(this)} set_hash={this.set_hash.bind(this)}
         />
       </div>
     )
@@ -21426,6 +21439,7 @@ class App extends Component {
       'confirm_swap_ether_dialog':550,
       'view_incoming_itransfer_transactions':500,
       'show_itransfer_search_transfers_item':450,
+      'cancel_current_transactions':250,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -36822,7 +36836,7 @@ class App extends Component {
 
       await this.wait(this.state.web3_delay)
       var first_block = await web3.eth.getBlock(1)
-      const first_block_time = parseInt(first_block.timestamp)
+      const first_block_time = parseInt(first_block?.timestamp || 0)
 
 
 
@@ -43016,7 +43030,7 @@ class App extends Component {
       var created_certificates_clone = structuredClone(this.state.created_certificates)
       const index = created_certificates_clone[e5].findIndex(item => item['e5_id'] === object['e5_id']);
       created_certificates_clone[e5][index] = object
-      
+
       const created_object_full_clone = structuredClone(this.state.created_object_full)
       created_object_full_clone[object['e5_id']] = object
 
@@ -53464,7 +53478,9 @@ class App extends Component {
     try{
       const web3 = new Web3(this.get_web3_url_from_e5(e5))
       var current_block_number = parseInt(await web3.eth.getBlockNumber())
+      await this.wait(1000)
       var round_down_value = await this.get_round_down_value(web3, current_block_number)
+      await this.wait(1000)
       var round_down_block = this.round_down(current_block_number, round_down_value)
       var current_block = await web3.eth.getBlock(round_down_block);
       var block_hash = current_block.hash.toString()
@@ -53487,6 +53503,7 @@ class App extends Component {
   get_round_down_value = async (web3, blockNumber) => {
     try{
       const currentBlock = await web3.eth.getBlock(blockNumber - 1);
+      await this.wait(1000)
       const previousBlock = await web3.eth.getBlock(blockNumber - 2);
       const miningTime = currentBlock.timestamp - previousBlock.timestamp;
       return Math.round(1 / (miningTime / 12000))

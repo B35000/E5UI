@@ -20,7 +20,6 @@ import React, { Component } from 'react';
 import ViewGroups from '../../components/view_groups'
 import Tags from '../../components/tags';
 import DurationPicker from '../../components/duration_picker';
-import { red } from '@mui/material/colors';
 
 var bigInt = require("big-integer");
 
@@ -62,7 +61,7 @@ class PayUpcomingSubscriptions extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['2896']/* 'upcoming-subscription' */], [1]
+                ['or','',0], ['e',this.props.app_state.loc['2896']/* 'upcoming-subscription' */], [1]
             ],
         };
     }

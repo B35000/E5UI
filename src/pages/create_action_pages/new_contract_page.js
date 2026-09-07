@@ -650,8 +650,8 @@ class NewContractPage extends Component {
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
 
-        var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
-        var spend_price = bigInt((Math.round(spend_mint_limit * 0.001)).toString())
+        var end_price = bigInt((Math.round(end_mint_limit * 0.15)).toString())
+        var spend_price = bigInt((Math.round(spend_mint_limit * 0.01)).toString())
 
         if(bigInt(end_price).lesser(this.get_minimum_contract_entry_amount(3))){
             end_price = this.get_minimum_contract_entry_amount(3).toString()
@@ -753,7 +753,7 @@ class NewContractPage extends Component {
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
 
-        var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
+        var end_price = bigInt((Math.round(end_mint_limit * 0.15)).toString())
         var spend_price = bigInt((Math.round(spend_mint_limit * 0.006)).toString())
 
         if(bigInt(end_price).lesser(this.get_minimum_contract_entry_amount(3))){
@@ -827,7 +827,7 @@ class NewContractPage extends Component {
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
         
-        var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
+        var end_price = bigInt((Math.round(end_mint_limit * 0.12)).toString())
         var spend_price = bigInt((Math.round(spend_mint_limit * 0.01)).toString())
 
         if(bigInt(end_price).lesser(this.get_minimum_contract_entry_amount(3))){
@@ -887,8 +887,8 @@ class NewContractPage extends Component {
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
 
-        var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
-        var spend_price = bigInt((Math.round(spend_mint_limit * 0.001)).toString())
+        var end_price = bigInt((Math.round(end_mint_limit * 0.2)).toString())
+        var spend_price = bigInt((Math.round(spend_mint_limit * 0.01)).toString())
 
         if(bigInt(end_price).lesser(this.get_minimum_contract_entry_amount(3))){
             end_price = this.get_minimum_contract_entry_amount(3).toString()
@@ -899,22 +899,22 @@ class NewContractPage extends Component {
 
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
         var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [2] ], };
-        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [2] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89']/* enabled */, this.props.app_state.loc['90']]/* disabled */, [2] ], };
         var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2] ], };
-        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89']/* enabled */, this.props.app_state.loc['90']/* disabled */], [2] ], };
         var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [1] ], };
         var price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
 
         var set_object = {
             new_contract_type_tags_object: contract_type,
             default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
-            max_extend_enter_contract_limit: (60*60*24*7*5),/* 1/2 year */
+            max_extend_enter_contract_limit: (60*60*24*7*53),/* 1 year */
             default_minimum_end_vote_bounty_amount: bigInt('0'),
             default_proposal_expiry_duration_limit: (60*60*24), /* 1 day */
-            max_enter_contract_duration: (60*60*24*7*53*2),/* 1 year */
+            max_enter_contract_duration: (60*60*24*7*53*2),/* 2 years */
 
             auto_wait_tags_object:auto_wait,
-            default_minimum_spend_vote_bounty_amount:bigInt('0'),
+            default_minimum_spend_vote_bounty_amount: bigInt('0'),
             proposal_modify_expiry_duration_limit: 0, /* 0 hrs */
             can_modify_contract_as_moderator: can_modify_contrac_as_mod,
             can_extend_enter_contract_at_any_time: can_extend_enter_contract_at_any_time,

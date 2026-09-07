@@ -234,7 +234,7 @@ class ExchangeDepositPage extends Component {
 
                 {this.load_account_suggestions('token_target')}
 
-                {classic_swap_exchange == true && authority == my_account && token_item['data'][2][18/* <18>classic_swap_exchange_parent_token */] == this.state.token_target && true == false && (
+                {classic_swap_exchange == true && authority == my_account && token_item['data'][2][18/* <18>classic_swap_exchange_parent_token */] == this.state.token_target && (
                     <div>
                         <div style={{height:10}}/>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3094f']/* 'Adjust Exchange Ratios' */, 'details':this.props.app_state.loc['3094g']/* 'You may optionally adjust the exchange ratio of the exchange\'s target if your depositing liquidity.' */, 'size':'l'})}
@@ -729,7 +729,7 @@ class ExchangeDepositPage extends Component {
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked2(item, index)}>
                             {this.render_detail_item('3', item['label'])}
                             {this.show_line_if_selected(item)}
                         </li>
@@ -784,7 +784,7 @@ class ExchangeDepositPage extends Component {
         return items;
     }
 
-    when_suggestion_clicked(item, index){
+    when_suggestion_clicked2(item, index){
         this.setState({selected_certificate_target: item['object']['e5_id'], selected_certificate: item['object']})
     }
 

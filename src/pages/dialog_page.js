@@ -777,6 +777,9 @@ class DialogPage extends Component {
         else if(option == 'show_itransfer_search_transfers_item'){
             return this.show_itransfer_search_transfers_item_ui()
         }
+        else if(option == 'cancel_current_transactions'){
+            return this.show_cancel_current_transactions_ui()
+        }
     }
 
 
@@ -18469,6 +18472,90 @@ return data['data']
 
 
 
+
+
+
+
+
+
+
+    show_cancel_current_transactions_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_cancel_current_transactions_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_cancel_current_transactions_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_cancel_current_transactions_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_cancel_current_transactions_data(){
+        const current_run_hash = this.props.app_state.current_run_hash[this.props.app_state.selected_e5]
+        const block_explorer_link = current_run_hash != null ? this.props.get_blockexplorer_link(this.props.app_state.selected_e5, current_run_hash) : null
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055tf']/* 'If the run is taking too long, you can forget it and try again.' */, 'details':this.props.app_state.loc['3055te']/* Forget Run? */, 'size':'l',})}
+
+                {block_explorer_link != null && (
+                    <div>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('4', {'text':block_explorer_link, 'textsize':'13px', 'font':'Sans-serif'})}
+                    </div>
+                )}
+
+                {block_explorer_link == null && (
+                    <div>
+                        <div style={{height: 10}}/>
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )}
+
+                <div style={{height: 10}}/>
+                <div onClick={()=>this.confirm_forget_run()}>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055tg']/* 'Forget' */, 'action': ''})}
+                </div>
+            </div>
+        )
+    }
+
+    confirm_forget_run(){
+        this.props.lock_run(false)
+        this.props.set_hash(this.props.app_state.selected_e5, null)
+        this.props.open_dialog_bottomsheet()
+    }
 
 
 

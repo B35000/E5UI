@@ -476,6 +476,8 @@ class SubscriptionDetailsSection extends Component {
                                     {index == 25 && this.render_moderator_button(object)}
 
                                     {index == 26 && this.render_pin_post_button(object)}
+
+                                    {/* {index == 26 && this.render_auto_stack_subscription_button(object)} */}
                                     
                                     {index == 27 && this.render_detail_item('0')}
                                     {index == 28 && this.render_detail_item('0')}
@@ -744,6 +746,23 @@ class SubscriptionDetailsSection extends Component {
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
         }
+    }
+
+    render_auto_stack_subscription_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2695p']/* 'Add subscription to my recurring monthly payments list.' */, 'title':this.props.app_state.loc['2695o']/* '🔁 Auto-Stack Subscription.' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_auto_stack_subscription_clicked(object)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2695q']/* 'Pin/Add Subscription' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_auto_stack_subscription_clicked(object){
+        this.props.auto_stack_subscription(object)
     }
 
     render_pin_post_button(object){

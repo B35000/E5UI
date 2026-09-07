@@ -10417,7 +10417,7 @@ return data['data']
                         {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['956']/* 'Set the amount of tokens your submitting for the mint/buy action.' */, 'title':this.props.app_state.loc['957']/* 'Amount for action' */})}
                         <div style={{height:10}}/>
                         
-                        {this.render_buy_token_uis(object, item.amount)}
+                        {this.render_buy_token_uis2(object, item.amount)}
                     </div>
                 )}
                 {action == this.props.app_state.loc['950']/* 'dump-sell' */ && (
@@ -10472,7 +10472,7 @@ return data['data']
         )
     }
 
-    render_buy_token_uis(object, amount){
+    render_buy_token_uis2(object, amount){
         var buy_tokens = [].concat(object['data'][3])
         var buy_amounts = [].concat(object['data'][4])
         var buy_depths = [].concat(object['data'][5])

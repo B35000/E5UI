@@ -121,7 +121,7 @@ class home_page extends Component {
         details_container_width:0, typed_tag:{}, search_visible:true, posts_container_width:0, 
         search_results:{}, searched_texts:{}, similar_posts:{}, 
 
-        current_load_time:{}, viewed_items_data:{'':{}}
+        current_load_time:{}, viewed_items_data:{'':{}}, auto_stack:[]
     };
 
     constructor(props) {
@@ -250,6 +250,10 @@ class home_page extends Component {
                 this.setState({current_load_time: cupcake_state.current_load_time})
             }
 
+            if(cupcake_state.auto_stack != null){
+                this.setState({auto_stack: cupcake_state.auto_stack})
+            }
+
             if(cupcake_state.preserved_state != null){
                 this.set_preserved_state_data(cupcake_state.preserved_state)
             }
@@ -287,6 +291,7 @@ class home_page extends Component {
             // tabs: this.state.tabs
             current_load_time:this.state.current_load_time,
             preserved_state: this.get_preserved_state(),
+            auto_stack: this.state.auto_stack,
         }
     }
 
@@ -381,7 +386,7 @@ class home_page extends Component {
         ]
 
         obj[this.props.app_state.loc['1200']/* 'subscriptions' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */, this.props.app_state.loc['1332f']/* 'history' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264b']/* upcoming */], [1],[1]
+            ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' *//*, this.props.app_state.loc['1264cb'] *//* 'auto-stacked 🔁' */, this.props.app_state.loc['1332f']/* 'history' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264b']/* upcoming */], [1],[1]
         ]
 
         obj[this.props.app_state.loc['1201']/* 'mail' */] = [
@@ -2282,6 +2287,9 @@ class home_page extends Component {
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264at']/* 'participated ✍' */)){
             posts_to_load = posts_to_load.concat(this.props.app_state.my_channels, this.props.app_state.my_objects)
         }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264cb']/* 'auto-stacked 🔁' */)){
+            posts_to_load = posts_to_load.concat(this.state.auto_stack)
+        }
 
         var me = this;
         setTimeout(function() {
@@ -2410,6 +2418,9 @@ class home_page extends Component {
                     targeted_accounts.push(e5_id)
                 }
             });
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264cb']/* 'auto-stacked 🔁' */)){
+            posts_to_load = posts_to_load.concat(this.state.auto_stack)
         }
         
         const page_id = this.get_page_id()
@@ -6626,7 +6637,7 @@ class home_page extends Component {
                 load_token_certificate_chain={this.props.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.props.load_nft_certificate_parent_objects.bind(this)} get_objects_showcased_certificates={this.props.get_objects_showcased_certificates.bind(this)} fetch_uploaded_files_for_object={this.props.fetch_uploaded_files_for_object.bind(this)}
 
                 get_ether_blockexplorer_link={this.props.get_ether_blockexplorer_link.bind(this)}
-
+                auto_stack_subscription={this.auto_stack_subscription.bind(this)}
 
 
                 />
@@ -7408,6 +7419,27 @@ class home_page extends Component {
             this.update_cookies()
         }
         this.props.when_update_pinns_tapped(item)
+    }
+
+    auto_stack_subscription(item){
+        if(!this.props.app_state.has_wallet_been_set && !this.props.app_state.has_account_been_loaded_from_storage){
+            this.render_top_notification(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
+        const id = item['e5_id']
+        const auto_stack_clone = this.state.auto_stack.slice()
+        var pos = auto_stack_clone.indexOf(id)
+        if(pos == -1){
+            auto_stack_clone.push(id)
+            this.setState({auto_stack: auto_stack_clone})
+            this.update_cookies()
+            this.render_top_notification(this.props.app_state.loc['2695r']/* 'Subscription Added.' */, 5000)
+        }else{
+            auto_stack_clone.splice(pos, 1)
+            this.setState({auto_stack: auto_stack_clone})
+            this.update_cookies()
+            this.render_top_notification(this.props.app_state.loc['2695s']/* 'Subscription Removed.' */, 5000)
+        }
     }
 
 

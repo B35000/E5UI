@@ -50,4 +50,6 @@ Contributions are welcome. If you have a particular idea or request, feel free t
 
 ### License
 
-All the source code in this repository is released under the terms of the MIT license. Copyright (c) 2025, Bry Onyoni.
+All the source code in this repository is released under the terms of the General Public License (GPL). See the LICENSE file for details. 
+
+Copyright © 2023 - Present, Bry Onyoni.
