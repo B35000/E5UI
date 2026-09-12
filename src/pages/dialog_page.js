@@ -18665,6 +18665,14 @@ return data['data']
                 {this.render_detail_item('0')}
 
                 {this.render_all_items()}
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055ts']/* 'Change the basic details of the bag.' */, 'title':this.props.app_state.loc['3055tr']/* '✏️ Edit Bag.' */, 'size':'l',})}
+                <div style={{height: 10}}/>
+                <div onClick={()=>this.edit_bag()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055tt']/* 'Edit.' */, 'action': ''})}
+                </div>
+
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'details':this.props.app_state.loc['3055tn']/* 'Broadcast the bag as is via Indexers instead of the blockchain for faster indexing and response times.' */, 'title':this.props.app_state.loc['3055tm']/* Broadcast Bag via Indexer. */, 'size':'l',})}
@@ -18914,6 +18922,16 @@ return data['data']
         }
         const state_object = this.state.data['bag']
         this.props.emit_new_object_confirmed(state_object, false)
+    }
+
+    edit_bag(){
+        if(this.props.app_state.has_wallet_been_set == false){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
+        const state_object = this.state.data['bag']
+        this.props.open_dialog_bottomsheet();
+        this.props.open_edit_object_uis(state_object)
     }
 
 

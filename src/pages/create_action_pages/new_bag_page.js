@@ -112,8 +112,8 @@ class NewBagPage extends Component {
 
 
 
-    set_data(object){
-        this.setState({e5: object['e5']})
+    set_data(e5){
+        this.setState({e5: e5})
     }
 
     componentDidMount(){

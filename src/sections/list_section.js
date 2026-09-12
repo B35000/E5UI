@@ -5864,6 +5864,10 @@ class PostListSection extends Component {
     }
 
     when_bag_clicked(item){
+        if(this.props.app_state.has_wallet_been_set == false){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
         this.props.show_dialog_bottomsheet({'bag': item}, 'view_stacked_bag_details')
     }
 

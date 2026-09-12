@@ -258,7 +258,7 @@ class AddToBagPage extends Component {
     }
 
     open_create_bag_ui(){
-        this.props.show_new_bag_bottomsheet(this.state.storefront_item)
+        this.props.show_new_bag_bottomsheet(this.state.storefront_item['e5'])
     }
 
     get_created_bags(){

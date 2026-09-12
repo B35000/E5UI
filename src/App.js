@@ -8633,7 +8633,7 @@ class App extends Component {
 
           get_ether_gas_usage_chart_data={this.get_ether_gas_usage_chart_data.bind(this)} load_object_certificate_showcasing_events={this.load_object_certificate_showcasing_events.bind(this)} load_token_certificate_chain={this.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.load_nft_certificate_parent_objects.bind(this)}
 
-          get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)}
+          get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -18641,6 +18641,15 @@ class App extends Component {
         }
       }, (1 * 1100));
     }
+    else if(tx.type == this.getLocale()['3111']/* 'link-certificate' */){
+      this.open_new_bag_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.new_bag_page.current){
+          me.new_bag_page.current?.setState(tx)
+        }
+      }, (1 * 1100));
+    }
     
   }
 
@@ -21346,7 +21355,7 @@ class App extends Component {
 
         add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} show_select_certificate_bottomsheet={this.show_select_certificate_bottomsheet.bind(this)} show_certificate_chain_bottomsheet={this.show_certificate_chain_bottomsheet.bind(this)} get_blockexplorer_link={this.get_blockexplorer_link.bind(this)} lock_run={this.lock_run.bind(this)} set_hash={this.set_hash.bind(this)}
 
-        delete_bag_item={this.delete_bag_item.bind(this)}
+        delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)}
         />
       </div>
     )
@@ -32150,12 +32159,12 @@ class App extends Component {
     }
   }
 
-  show_new_bag_bottomsheet(object){
+  show_new_bag_bottomsheet(e5){
     this.open_new_bag_bottomsheet()
     var me = this;
     setTimeout(function() {
       if(me.new_bag_page.current != null){
-        me.new_bag_page.current.set_data(object)
+        me.new_bag_page.current.set_data(e5)
       }
     }, (1 * 1100));
   }
@@ -32176,6 +32185,10 @@ class App extends Component {
     }
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
+
+    if(this.add_to_bag_page.current != null){
+      this.add_to_bag_page.current.when_bag_clicked(state_obj)
+    }
   }
 
 

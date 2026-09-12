@@ -1600,6 +1600,9 @@ class home_page extends Component {
       }
       else if(this.state.page == 'e'){
         var selected_item = this.state.explore_page_tags_object['i'].active
+        if(selected_item == this.props.app_state.loc['1216']/* 'bags' */){
+            return 'bags'
+        }
         var data = {'storefront':'4','posts':'6','channels':'7', 'audioport':'10', 'videoport':'11', 'polls':'13'};
         data[this.props.app_state.loc['1215']/* storefront */] = '4'
         data[this.props.app_state.loc['1213']/* posts */] = '6'
@@ -1667,6 +1670,9 @@ class home_page extends Component {
         }
         else if(button_target == 'iTransfer'){
             this.props.show_view_contextual_transfer_bottomsheet('')
+        }
+        else if(button_target == 'bags'){
+            this.props.show_new_bag_bottomsheet(this.props.app_state.selected_e5)
         }
         else{
             if(button_target == '5' && this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active) == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
