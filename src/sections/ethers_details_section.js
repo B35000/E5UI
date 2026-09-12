@@ -280,7 +280,7 @@ class EthersDetailsSection extends Component {
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 15px 0px 15px'}}>
                 <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
-                    <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
+                    <div onClick={() => this.open_send_receive_ether_bottomsheet(item)}>
                         {this.render_detail_item('7', item['banner-icon'])}
                     </div>
                     {this.render_detail_item('1', item['tags'])}
@@ -763,13 +763,13 @@ class EthersDetailsSection extends Component {
             if(this.props.app_state.wallet_status[item['e5']] == 'synchronizing'){
                 return(
                     <div>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2463']/* 'Wallet Status' */, 'details':this.props.app_state.loc['2464']/* Syncronizing wallet, please wait...' */, 'size' :'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2463']/* 'Wallet Status' */, 'details':this.props.app_state.loc['2464']/* Syncronizing wallet, please wait...' */, 'size' :'l', 'footer':this.props.app_state.loc['2481br']/* 'Tap this to resync the wallet.' */})}
                     </div>
                 )
             }else{
                 return(
                     <div>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2463']/* 'Wallet Status' */, 'details':this.props.app_state.loc['2465']/* 'Wallet sync failed. Please reload the wallet.' */, 'size' :'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2463']/* 'Wallet Status' */, 'details':this.props.app_state.loc['2465']/* 'Wallet sync failed. Please reload the wallet.' */, 'size' :'l', 'footer':this.props.app_state.loc['2481br']/* 'Tap this to resync the wallet.' */})}
                     </div>
                 )
             }
@@ -777,7 +777,7 @@ class EthersDetailsSection extends Component {
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2466']/* 'Wallet Status' */, 'details':this.props.app_state.loc['2467']/* 'Syncronized.' */, 'size' :'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2466']/* 'Wallet Status' */, 'details':this.props.app_state.loc['2467']/* 'Syncronized.' */, 'size' :'l', 'footer':this.props.app_state.loc['2481br']/* 'Tap this to resync the wallet.' */})}
                 </div>
             )
         }

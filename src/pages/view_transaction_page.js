@@ -3367,6 +3367,7 @@ return data['data']
         var item = this.props.app_state.stack_items[this.state.transaction_index];
         var expiry_time_in_seconds = item.interactible_timestamp
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
+        // console.log('render_enter_contract_data', item.contract_item)
         return(
             <div>
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
@@ -8976,7 +8977,9 @@ return data['data']
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         const price_data = transaction_item.price_data
         const object = transaction_item.object
-        const payment_tags = object['ipfs'].entered_indexing_tags.concat(object['ipfs'].entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
+        const indexing_tags = object['ipfs'].entered_indexing_tags || object['ipfs']['tags'] || []
+        const indexing_title = object['ipfs'].entered_title_text || ''
+        const payment_tags = indexing_tags.concat(indexing_title.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => word.length >= 3))
 
         return(
             <div>

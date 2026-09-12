@@ -279,6 +279,8 @@ class ViewApplicationContractPage extends Component {
         return picked_item
     }
 
+
+
     render_expiry_time_data(){
         if(this.state.application_item['contract'] != null){
             var item = this.state.application_item

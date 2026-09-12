@@ -125,28 +125,28 @@ class BagDetailsSection extends Component {
         clearInterval(this.interval);
     }
 
-    check_for_new_responses_and_messages() {
+    async check_for_new_responses_and_messages() {
         if(this.props.selected_bag_item != null){
             var object = this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
             if(object == null) return;
-            this.perform_fetch_work(object)
+            await this.perform_fetch_work(object)
         }
     }
 
-    perform_fetch_work(object){
+    async perform_fetch_work(object){
         const active = this.state.navigate_view_bag_list_detail_tags_object['i'].active
         const selected_item = this.get_selected_item(this.state.navigate_view_bag_list_detail_tags_object, active)
 
 
         if(selected_item == this.props.app_state.loc['2030']/* 'activity' */){
-            this.props.get_objects_messages(object['id'], object['e5'])
+            await this.props.get_objects_messages(object['id'], object['e5'])
         }
         else if(active == this.props.app_state.loc['1693']/* 'responses' */){
-            this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
+            await this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
         }
         else if(selected_item == this.props.app_state.loc['2028']/* 'metadata' */){
-            this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
-            this.props.get_bag_sender_transfers_events(object)
+            await this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
+            await this.props.get_bag_sender_transfers_events(object)
         }
     }
 
@@ -315,9 +315,14 @@ class BagDetailsSection extends Component {
     }
 
 
+
+
+
+
+
     render_bag_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
-        var he = this.props.height-45
+        var he = this.props.height-55
         // var object = this.get_bag_items()[this.props.selected_bag_item];
         var item = this.get_bag_details_data(object)
         
@@ -710,18 +715,23 @@ class BagDetailsSection extends Component {
         if(object['ipfs'].device_city != null){
             tags = [object['ipfs'].device_city].concat(tags)
         }
-        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */
+        var title = object['ipfs'] == null ? '' : (object['ipfs'].entered_title_text || 'Stuff!')+' • '+object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var delivery_location = this.get_delivery_location_data_if_allowed(object)
 
-        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+        var objectid = object['id']
+        const is_socket_job = object['event']['nitro_e5_id'] != null
 
         const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
+        const id_to_show = is_socket_job == true ? this.format_account_balance_figure2(objectid) : number_with_commas(objectid)
+
+        const title_space = is_socket_job == true ? ' • ' : '• '
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags,'when_tapped':'select_deselect_tag'},
             'sender_account':{'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':this.props.app_state.loc['2045']/* 'Sender Account' */, 'size':'l'},
-            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
+            'id':{'title':title_space+id_to_show, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'delivery':{'title':this.props.app_state.loc['1058d']/* 'Delivery Address' */, 'details':delivery_location, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
         }
@@ -3299,6 +3309,19 @@ class BagDetailsSection extends Component {
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['34'] + s;
         }
+    }
+
+    format_account_balance_figure2(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 6
+            return number_with_commas(amount.toString().substring(0, 6)) +'e'+power
+        }
+        
     }
 
 }

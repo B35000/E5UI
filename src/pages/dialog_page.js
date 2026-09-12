@@ -780,6 +780,9 @@ class DialogPage extends Component {
         else if(option == 'cancel_current_transactions'){
             return this.show_cancel_current_transactions_ui()
         }
+        else if(option == 'view_stacked_bag_details'){
+            return this.show_view_stacked_bag_details_ui()
+        }
     }
 
 
@@ -3383,6 +3386,7 @@ return data['data']
             e5 = event['view']['target_e5'] == null ? e5 : event['view']['target_e5']
             const socket_jobs = this.props.app_state.socket_created_jobs[e5]
             const socket_posts = this.props.app_state.socket_created_posts[e5]
+            const socket_bags = this.props.app_state.socket_created_bags[e5]
             const dir = {
                 17/* 17(job object) */:this.props.app_state.created_jobs[e5], 
                 18/* 18(post object) */:this.props.app_state.created_posts[e5], 
@@ -3401,6 +3405,9 @@ return data['data']
             }
             else if(items != null && socket_posts != null && id_type == 18/* 18(post object) */){
                 items = items.concat(socket_posts)
+            }
+            else if(items != null && socket_bags != null && id_type == 25/* 25(storefront_bag_object) */){
+                items = items.concat(socket_bags)
             }
         }
         else if(type == 'post'){
@@ -3550,7 +3557,7 @@ return data['data']
 
         var details = object['ipfs'] == null ? 'Object ID' : object['ipfs'].entered_title_text
         if(this.state.data['type'] == 'bag'){
-            details = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+' • '+sender
+            details = object['ipfs'] == null ? '' : details+' • '+object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+' • '+sender
         }
         var title = '• '+object_id+' • '+sender
         if(this.state.data['type'] == 'message' || this.state.data['type'] == 'bill'){
@@ -3575,10 +3582,15 @@ return data['data']
             number = '????'
             relativepower = '????'
         }
+
+        const is_socket_job = object['event']['nitro_e5_id'] != null
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
         
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'when_tapped':''},
-            'id':{'details':details, 'title':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'id':{'details':details, 'title':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id']), 'text_image_border_radius':'6px'},
+
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':barwidth, 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, 'number_when_tapped':number == '????' ? '????' : `${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
         }
     }
@@ -3629,6 +3641,10 @@ return data['data']
                 }
                 if(extra_data['certificate_mint_events'] != null){
                     return_text.push(this.props.app_state.loc['2509dy']/* '$ mints' */.replace('$', this.format_count(extra_data['certificate_mint_events']['all_hits'])));
+                }
+
+                if(extra_data['finish_payments'] != null){
+                    return_text.push(this.props.app_state.loc['2509eq']/* '$ finalizations.' */.replace('$', this.format_count(extra_data['finish_payments']['all_hits'])));
                 }
             }
             const result_string = return_text.join(' • ')
@@ -4257,13 +4273,23 @@ return data['data']
             tags = [object['ipfs'].device_city].concat(tags)
         }
         var sender = this.get_senders_name(object['event'].returnValues.p3, object);
-        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
+        var title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text+' • '+object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+' • '+ object['responses']+this.props.app_state.loc['2509c']/* ' responses' */+sender
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         // var item_images = this.get_bag_images(object)
+
+        var objectid = object['id']
+        const is_socket_job = object['event']['nitro_e5_id'] != null
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
+        const id_to_show = is_socket_job == true ? this.format_account_balance_figure2(objectid) : number_with_commas(objectid)
+
+        const title_space = is_socket_job == true ? ' • ' : '• '
+
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'footer':this.get_object_views_text(object['e5_id'])},
+            'id':{'title':title_space+id_to_show, 'details':title, 'size':'l', 'title_image':title_image, 'footer':this.get_object_views_text(object['e5_id']), 'border_radius':'0%', 'text_image_border_radius':'6px'},
             // 'id_with_image':{'title':object['id'], 'details':title, 'size':'l', 'image':image},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`},
         }
@@ -18526,7 +18552,7 @@ return data['data']
         const block_explorer_link = current_run_hash != null ? this.props.get_blockexplorer_link(this.props.app_state.selected_e5, current_run_hash) : null
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055tf']/* 'If the run is taking too long, you can forget it and try again.' */, 'details':this.props.app_state.loc['3055te']/* Forget Run? */, 'size':'l',})}
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055tf']/* 'If the run is taking too long, you can forget it and try again.' */, 'title':this.props.app_state.loc['3055te']/* Forget Run? */, 'size':'l',})}
 
                 {block_explorer_link != null && (
                     <div>
@@ -18544,7 +18570,6 @@ return data['data']
 
                 <div style={{height: 10}}/>
                 <div onClick={()=>this.confirm_forget_run()}>
-                    <div style={{height:10}}/>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055tg']/* 'Forget' */, 'action': ''})}
                 </div>
             </div>
@@ -18558,6 +18583,338 @@ return data['data']
     }
 
 
+
+
+
+
+    show_view_stacked_bag_details_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_stacked_bag_details_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_stacked_bag_details_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_stacked_bag_details_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_view_stacked_bag_details_data(){
+        const transaction_item = this.state.data['bag']
+        const delete_after_broadcast = this.get_selected_item(transaction_item.get_delete_after_broadcast_object, 'e') == this.props.app_state.loc['1058o']/* 'enabled' */ ? this.props.app_state.loc['3114d']/* 'Enabled' */ : this.props.app_state.loc['3114e']/* 'Disabled' */
+
+        return(
+            <div>
+                <h5 style={{'margin':'0px 0px 0px 10px', 'color':this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font}}>{transaction_item.bag_name}</h5>
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055tj']/* 'Bag Description' */, 'description':transaction_item.bag_description, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['1058a']/* 'Bag City.' */, 'title':transaction_item.selected_device_city, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058d']/* 'Delivery Location' */, 'details':transaction_item.delivery_location, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3114b']/* 'Delete After Broadcast.' */, 'title':delete_after_broadcast, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058bf']/* 'Delivery Locations On Map.' */, 'details':this.props.app_state.loc['1058bg']/* 'The specified delivery locations as pins on a map.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_selected_pins3()}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':''+transaction_item.items_to_deliver.length+this.props.app_state.loc['1933']/* ' items' */, 'details':this.props.app_state.loc['1934']/* 'in your bag.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_time_between_deliveries_if_enabled()}
+
+                {this.render_bag_value()}
+                {this.render_detail_item('0')}
+
+                {this.render_all_items()}
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'details':this.props.app_state.loc['3055tn']/* 'Broadcast the bag as is via Indexers instead of the blockchain for faster indexing and response times.' */, 'title':this.props.app_state.loc['3055tm']/* Broadcast Bag via Indexer. */, 'size':'l',})}
+                <div style={{height: 10}}/>
+                <div onClick={()=>this.broadcast_bag()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055to']/* 'Broadcast Bag.' */, 'action': ''})}
+                </div>
+            </div>
+        )
+    }
+
+    render_selected_pins3(){
+        const transaction_item = this.state.data['bag']
+        var items = [].concat(transaction_item.pins)
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item2()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_pin_item3(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_pin_item3(item){
+        const title = item['id']
+        const details = item['description'] == '' ? this.props.app_state.loc['284q']/* 'latitude: $, longitude: %' */.replace('$', item['lat']).replace('%', item['lng']) : this.truncate(item['description'], 17)
+        return(
+            <div onClick={() => this.when_pin_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    when_pin_clicked(item){
+        this.props.show_view_map_location_pins([item])
+    }
+
+    render_time_between_deliveries_if_enabled(){
+        var transaction_item = this.state.data['bag']
+        if(transaction_item.frequency_enabled == true){
+            var time_in_days = Math.round(transaction_item.delivery_frequency_time / (60*60*24))
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.delivery_frequency_time), 'details':this.props.app_state.loc['1058u']/* 'Estimated time between deliveries.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':time_in_days+this.props.app_state.loc['32']+(time_in_days > 1 ? 's':''), 'details':this.props.app_state.loc['1058v']/* 'Estimated time in Days.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_bag_value(){
+        var transaction_item = this.state.data['bag']
+        var items_to_deliver = [].concat(transaction_item.items_to_deliver)
+        if(items_to_deliver.length != 0){
+            var total_amounts = this.get_total_bag_value2(items_to_deliver)
+
+            if(total_amounts != null){
+                console.log('view_transaction_page', total_amounts)
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2064a']/* 'Bag Value.' */, 'details':this.props.app_state.loc['2771']/* 'The value of all the items in your bag in their respective denominations.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                        {total_amounts.map((units, index) => (
+                            <div style={{'padding': '2px 0px 2px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[transaction_item.e5+units['id']], 'number':units['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[transaction_item.e5+units['id']], 'subtitle':this.format_power_figure(units['amount']), 'barwidth':this.calculate_bar_width(units['amount']), 'number':this.format_account_balance_figure(units['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )
+            }
+        }
+    }
+
+    get_total_bag_value2(items_to_deliver){
+        var transaction_item = this.state.data['bag']
+        var obj = {}
+        
+        items_to_deliver.forEach(item => {
+            var storefront = item.storefront_item
+            var variant_in_store = this.get_variant_object_from_storefront(storefront, item['selected_variant']['variant_id'])
+            
+
+            if(variant_in_store == null) return null
+            var price_items = variant_in_store['price_data']
+            
+            for(var i=0; i<price_items.length; i++){
+                var units = price_items[i];
+                var amount = this.get_amounts_to_be_paid2(units['amount'], item.purchase_unit_count)
+                var token_id = units['id']
+
+                if(obj[token_id] == null){
+                    obj[token_id] = bigInt(0);
+                }
+                obj[token_id] = bigInt(obj[token_id]).add(amount)
+            }
+
+            if(storefront['ipfs'] != null && storefront['ipfs'].option_groups != null && storefront['ipfs'].option_groups.length > 0){
+                var options = storefront['ipfs'].option_groups
+                console.log('view_transaction_page', 'obj', item.purchase_option_tags_array)
+                for(var i=0; i<item.purchase_option_tags_array.length; i++){
+                    var tag_obj = item.purchase_option_tags_array[i]
+                    var selected_items = []
+                    for(var j=0; j<tag_obj['e'][2].length; j++){
+                        var selected_item_pos = tag_obj['e'][2][j]
+                        if(selected_item_pos != 0){
+                            selected_items.push(selected_item_pos-1)
+                        }
+                    }
+                    for(var k=0; k<selected_items.length; k++){
+                        var selected_pos = selected_items[k]
+                        var option_prices = options[i]['options'][selected_pos]['price']
+                        option_prices.forEach(price => {
+                            if(obj[price['id']] == null){
+                                obj[price['id']] = bigInt(0)
+                            }
+                            obj[price['id']] = bigInt(obj[price['id']]).plus(price['amount'])
+                        });
+                    } 
+                }
+            }
+        });
+
+        var arr = []
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                arr.push({'id':key, 'amount':obj[key]})
+            }
+        }
+
+        return arr
+    }
+
+    render_all_items(){
+        var transaction_item = this.state.data['bag']
+        var items_to_deliver = [].concat(transaction_item.items_to_deliver)
+
+        return (
+            <div style={{}}>
+                <style>{`
+                    .swipeable-list-item__content {
+                        background-color: transparent !important;
+                    }
+                `}</style>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055tp']/* 'Bag Items.' */, 'details':this.props.app_state.loc['3055tq']/* 'The items in this bag are shown below. Tap to view the amount to be paid.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {items_to_deliver.map((item, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}}>
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () => this.props.delete_bag_item(item)
+                                    }}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>{this.render_picked_variants_for_each(item)}</div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    render_picked_variants_for_each(item){
+        var transaction_item = this.state.data['bag']
+        var selected_variant = item.selected_variant   
+        var storefront_item = item.storefront_item
+        var composition_type = storefront_item['ipfs'].composition_type == null ? this.props.app_state.loc['1935']/* 'items' */ : this.get_selected_item(storefront_item['ipfs'].composition_type, 'e') 
+        var items = selected_variant['price_data']
+        var image = selected_variant['image_data']['data'] != null && selected_variant['image_data']['data']['images'] != null && selected_variant['image_data']['data']['images'].length > 0 ? selected_variant['image_data']['data']['images'][0] : this.props.app_state.static_assets['empty_image']
+        return(
+            <div>
+                <div onClick={() => this.when_picked_variant_tapped(item)}>
+                    {this.render_detail_item('8', {'title':storefront_item['ipfs'].entered_title_text, 'details':selected_variant['variant_description'],  'footer':this.format_account_balance_figure(item.purchase_unit_count)+this.props.app_state.loc['1936']/* ' units in ' */+composition_type, 'size':'l', 'image':image, 'border_radius':'9px', 'image_width':'auto'})} 
+                </div> 
+                <div style={{height: 6}}/>
+                {this.render_picked_variant_prices(item, items)}
+                
+            </div>
+        )
+    }
+
+    render_picked_variant_prices(item, items){
+        if(this.state.picked_variant == item){
+            var transaction_item = this.state.data['bag']
+            return(
+                <div>
+                    <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((units, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[transaction_item.e5+units['id']], 'details':this.format_account_balance_figure(this.get_amounts_to_be_paid2(units['amount'], item.purchase_unit_count)) +' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], 'size':'s'})}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    when_picked_variant_tapped(item){
+        if(this.state.picked_variant == item){
+            this.setState({picked_variant: null})
+        }else{
+            this.setState({picked_variant: item})
+        }
+    }
+
+    get_amounts_to_be_paid2(amount, count){
+        return bigInt(amount).multiply(bigInt(count))
+    }
+
+    broadcast_bag(){
+        if(this.props.app_state.has_wallet_been_set == false){
+            this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
+            return;
+        }
+        const state_object = this.state.data['bag']
+        this.props.emit_new_object_confirmed(state_object, false)
+    }
 
 
 
@@ -18658,7 +19015,9 @@ return data['data']
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} show_images={this.props.show_images.bind(this)} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width}  />
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} show_images={this.props.show_images.bind(this)} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width}
+                
+                />
             </div>
         )
     }

@@ -143,7 +143,7 @@ class AddToBagPage extends Component {
                 <div>
                     {this.render_content()}
                     {this.render_detail_item('0')}
-                    {this.should_render_city_settings() && this.render_content2(false)}
+                    {this.render_content2(false)}
                     {this.render_city_settings()}
                     {this.should_render_city_settings() && this.render_detail_item('0')}
                     {this.render_city_settings2()}
@@ -165,7 +165,7 @@ class AddToBagPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.should_render_city_settings() && this.render_content2(true)}
+                        {this.render_content2(true)}
                         {this.render_city_settings2()}
                         {this.render_purchase_options()}
                         {this.render_set_storefront_prices_list_part()}
@@ -186,7 +186,7 @@ class AddToBagPage extends Component {
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.should_render_city_settings() && this.render_content2(true)}
+                        {this.render_content2(true)}
                         {this.render_city_settings2()}
                         {this.render_purchase_options()}
                         {this.render_set_storefront_prices_list_part()}
@@ -220,29 +220,121 @@ class AddToBagPage extends Component {
                     <TextInput height={30} placeholder={this.props.app_state.loc['1058f']/* 'Amount...' */} when_text_input_field_changed={this.when_purchase_unit_count_input_field_changed.bind(this)} text={this.state.purchase_unit_count.toString()} theme={this.props.theme}/>
 
 
-                    {!this.should_render_city_settings() && (
-                        <div>
-                            {this.render_detail_item('0')}
-                            {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1058k']/* 'You can specify some custom details for the order being placed.' */, 'size':'l'})}
-                            <div style={{height:10}}/>
-                            <TextInput height={60} placeholder={this.props.app_state.loc['1058i']/* 'Custom Specifications (Optional)' */} when_text_input_field_changed={this.when_order_specifications_input_field_changed.bind(this)} text={this.state.order_specifications} theme={this.props.theme}/>
-                        </div>
-                    )}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1058k']/* 'You can specify some custom details for the order being placed.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <TextInput height={60} placeholder={this.props.app_state.loc['1058i']/* 'Custom Specifications (Optional)' */} when_text_input_field_changed={this.when_order_specifications_input_field_changed.bind(this)} text={this.state.order_specifications} theme={this.props.theme}/>
                 </div>
             )
         }
     }
 
+    // render_content3(render_line=false){
+    //     if(this.state.storefront_item['ipfs'] == null) return;
+    //     return(
+    //         <div>
+    //             {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1058k']/* 'You can specify some custom details for the order being placed.' */, 'size':'l'})}
+    //             <div style={{height:10}}/>
+    //             <TextInput height={60} placeholder={this.props.app_state.loc['1058i']/* 'Custom Specifications (Optional)' */} when_text_input_field_changed={this.when_order_specifications_input_field_changed.bind(this)} text={this.state.order_specifications} theme={this.props.theme}/>
+    //             {render_line == true && this.render_detail_item('0')}
+    //         </div>
+    //     )
+    // }
+
     render_content2(render_line=false){
         if(this.state.storefront_item['ipfs'] == null) return;
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1058k']/* 'You can specify some custom details for the order being placed.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058ba']/* 'Preferred Bag.' */, 'details':this.props.app_state.loc['1058bb']/* 'Youll need to select a bag to add the selected variant into. If none exist, create one.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={60} placeholder={this.props.app_state.loc['1058i']/* 'Custom Specifications (Optional)' */} when_text_input_field_changed={this.when_order_specifications_input_field_changed.bind(this)} text={this.state.order_specifications} theme={this.props.theme}/>
+                <div onClick={()=>this.open_create_bag_ui()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1058bc']/* '✚ New Bag' */, 'action': ''})}
+                </div>
+                <div style={{height:10}}/>
+                {this.render_created_bags()}
                 {render_line == true && this.render_detail_item('0')}
             </div>
         )
+    }
+
+    open_create_bag_ui(){
+        this.props.show_new_bag_bottomsheet(this.state.storefront_item)
+    }
+
+    get_created_bags(){
+        const stack = this.props.app_state.stack_items;
+        const bags = []
+        for(var i=0; i<stack.length; i++){
+            const tx = stack[i]
+            if(tx.type == this.props.app_state.loc['1516']/* 'storefront-bag' */ && tx.e5 == this.state.e5){
+                bags.push(tx)
+            }
+        }
+        return bags
+    }
+
+    render_created_bags(){
+        var items = [].concat(this.get_created_bags())
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item2()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_bag_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_bag_item(item){
+        const title = item['bag_name']
+        const details = this.props.app_state.loc['1058bd']/* '$ items to deliver.' */.replace('$', item['items_to_deliver'].length)
+        const footer = item['id']
+        return(
+            <div onClick={() => this.when_bag_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s', 'footer': footer})}
+                {this.render_line_if_selected(item)}
+            </div>
+        )
+    }
+
+    render_line_if_selected(item){
+        if(this.state.selected_bag == item['id']){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }
+    }
+
+    when_bag_clicked(item){
+        if(this.state.selected_bag == item['id']){
+            this.setState({selected_bag: null})
+        }
+        else{
+            this.setState({selected_bag: item['id']})
+        }
     }
 
     when_purchase_unit_count_input_field_changed(text){
@@ -417,6 +509,7 @@ class AddToBagPage extends Component {
     }
 
     should_render_city_settings(){
+        return false
         var stack = this.props.app_state.stack_items.slice() 
         var pos = -1
         var storefront_item_content_channeling = this.state.storefront_item['ipfs'].content_channeling_setting
@@ -473,6 +566,11 @@ class AddToBagPage extends Component {
         this.setState({purchase_unit_count: amount})
     }
 
+
+
+
+
+
     get_variant_supply(){
         if(this.state.selected_variant != null){
             return this.state.selected_variant['available_unit_count']
@@ -480,7 +578,6 @@ class AddToBagPage extends Component {
             return bigInt('1e72')
         }
     }
-
 
     render_set_storefront_prices_list_part(){
         var middle = this.props.height-200;
@@ -508,11 +605,9 @@ class AddToBagPage extends Component {
         }
     }
 
-
     get_amounts_to_be_paid(amount){
         return bigInt(amount).multiply(bigInt(this.state.purchase_unit_count))
     }
-
 
     render_item_variants(){
         var items = [].concat(this.state.storefront_item['ipfs'].variants)
@@ -622,6 +717,9 @@ class AddToBagPage extends Component {
             )
         }
     }
+
+
+
 
 
     render_variant_price_data(variant){
@@ -859,6 +957,9 @@ class AddToBagPage extends Component {
         }
         else if(this.get_selected_item(this.state.get_frequency_bag_object, 'e') == this.props.app_state.loc['1058o']/* 'enabled' */ && this.should_render_city_settings() && this.state.delivery_frequency_time == 0){
             this.props.notify(this.props.app_state.loc['1058t']/* 'You need to specify a valid time frequency if frequency bag is enabled.' */, 6400)
+        }
+        else if(this.state.selected_bag == null){
+            this.props.notify(this.props.app_state.loc['1058be']/* 'You need to select a bag to add your order to.' */, 6400)
         }
         else{
             if(this.state.delivery_location != ''){

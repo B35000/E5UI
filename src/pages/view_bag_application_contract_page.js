@@ -106,6 +106,8 @@ class ViewBagApplicationContractPage extends Component {
                 <div>
                     {this.render_contract_part()}
                     {this.render_expiry_time_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -301,7 +303,7 @@ class ViewBagApplicationContractPage extends Component {
                     {this.render_detail_item('0')}
 
                     {this.render_accept_job_application_button()}
-
+                    
                 </div>
             )
         }

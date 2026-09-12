@@ -107,6 +107,8 @@ class ViewJobRequestContractPage extends Component {
                 <div>
                     {this.render_contract_part()}
                     {this.render_entered_contracts_data_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -299,7 +301,6 @@ class ViewJobRequestContractPage extends Component {
                     {this.show_entered_contract_data()}
                     <div style={{height:10}}/>
                     {this.render_enter_contract_button()}
-                    <div style={{height:20}}/>
                 </div>
             )
         }

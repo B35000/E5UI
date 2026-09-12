@@ -245,7 +245,9 @@ class CoinsDetailsSection extends Component {
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 15px 0px 15px'}}>
                 <div style={{ 'overflow-y': 'auto', 'overflow-x': 'hidden', height: he, padding:'0px 0px 0px 0px'}}>
-                    {this.render_detail_item('7', item['banner-icon'])}
+                    <div onClick={()=>this.open_send_receive_coin_page(item)}>
+                        {this.render_detail_item('7', item['banner-icon'])}
+                    </div>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 20}}/>
                     {this.show_moderator_note_if_any(item)}

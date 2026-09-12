@@ -336,7 +336,7 @@ class FulfilBagPage extends Component {
             if(myid == null){
                 myid = 1
             }
-            const contract_type = created_cons[i]['ipfs'].contract_type
+            const contract_type = created_cons[i]['ipfs']?.contract_type
             if(post_author.toString() == myid.toString() && contract_type == 'work'){
                 my_contracts.push(created_cons[i])
             }
@@ -577,7 +577,7 @@ class FulfilBagPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1143']/* 'Exchange ID' */, 'details':this.props.app_state.loc['1144']/* 'Select an exchange by its id, then the desired price and click add' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1143']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1154a']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 10}}/>

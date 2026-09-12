@@ -73,12 +73,16 @@ class ViewGroups extends Component {
         animate: false,
         screen_width:0,
         number_line_switch: false,
+        markdown_expanded: false,
+        markdown_needs_toggle: false,
     };
 
     constructor(props) {
         super(props);
         this.chart = React.createRef()
         this.screen = React.createRef();
+        this.markdown_content_ref = React.createRef();
+        this.markdown_collapsed_height = 250;
     }
 
     componentDidUpdate(prevProps){
@@ -94,11 +98,16 @@ class ViewGroups extends Component {
                     this.update_chart_plugins(this.props.object_data)
                 }
             }
+            // this.setState({ markdown_expanded: false }, this.check_markdown_overflow);
+        }
+        else {
+            this.check_markdown_overflow();
         }
     }
 
     componentDidMount(){
         this.setState({screen_width: this.screen.current.offsetWidth})
+        this.check_markdown_overflow();
     }
 
     render(){
@@ -178,6 +187,26 @@ class ViewGroups extends Component {
             <pre style={{ backgroundColor: this.props.theme['markdown_code_container_background'], padding: '12px', overflowX: 'auto', borderRadius: '10px' }}>{children}</pre>
         ),
     }
+
+    check_markdown_overflow = () => {
+        const el = this.markdown_content_ref.current;
+        if (!el) return;
+        const needs_toggle = el.scrollHeight > this.markdown_collapsed_height + 5;
+        if (needs_toggle !== this.state.markdown_needs_toggle) {
+            this.setState({ markdown_needs_toggle: needs_toggle });
+        }
+    };
+
+    toggle_markdown_expanded = () => {
+        this.setState(prev => ({ markdown_expanded: !prev.markdown_expanded }));
+    };
+
+
+
+
+
+
+
 
 
     /* renders the specific element in the post or detail object */
@@ -1155,9 +1184,48 @@ class ViewGroups extends Component {
             var source = object_data == null ? '' : this.process_markdown_source(object_data['source'])
             var padding = '10px 15px 10px 15px'
             var word_wrap_value = this.longest_word_length(source) > 53 ? 'break-word' : 'normal'
+            
+            const is_expanded = this.state.markdown_expanded;
+            const show_toggle = this.state.markdown_needs_toggle;
+            // return(
+            //     <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':this.props.theme['view_group_card_item_background']}}>
+            //         <Markdown components={this.markdown_components}>{source}</Markdown>
+            //     </div>
+            // )
             return(
                 <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':this.props.theme['view_group_card_item_background']}}>
-                    <Markdown components={this.markdown_components}>{source}</Markdown>
+                    <div style={{ position: 'relative' }}>
+                        <div ref={this.markdown_content_ref}
+                            style={{ maxHeight: is_expanded ? 'none' : this.markdown_collapsed_height + 'px', overflow: 'hidden', wordWrap: word_wrap_value, }}>
+                                <Markdown components={this.markdown_components}>{source}</Markdown>
+                        </div>
+
+                        {!is_expanded && show_toggle && (
+                            <div style={{
+                                position: 'absolute',
+                                bottom: 0, left: 0, right: 0,
+                                height: '50px',
+                                background: `linear-gradient(to bottom, transparent, ${this.props.theme['view_group_card_item_background']})`,
+                                pointerEvents: 'none',
+                            }} />
+                        )}
+                    </div>
+
+                    {show_toggle && (
+                        <div
+                            onClick={this.toggle_markdown_expanded}
+                            style={{
+                                cursor: 'pointer',
+                                color: this.props.theme['secondary_text_color'],
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                textAlign: 'center',
+                                marginTop: '4px',
+                            }}
+                        >
+                            {is_expanded ? '▬▬ ▬▬ ▬▬' : '• • •'}
+                        </div>
+                    )}
                 </div>
             )
         }

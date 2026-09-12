@@ -1087,7 +1087,7 @@ class ViewStorefrontRequestPage extends Component {
         console.log('get_contract_items', 'created_contracts', created_contracts)
         for(var i = 0; i < created_contracts.length; i++){
             var post_author = created_contracts[i]['event'] == null ? 0 : created_contracts[i]['event'].returnValues.p3
-            const contract_type = created_contracts[i]['ipfs'].contract_type
+            const contract_type = created_contracts[i]['ipfs']?.contract_type
             if(post_author.toString() == myid.toString() && contract_type == 'purchase'){
                 my_contracts.push(created_contracts[i])
             }

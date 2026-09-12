@@ -1375,6 +1375,9 @@ class PostListSection extends Component {
                 if(extra_data['ether_request_events'] != null){
                     return_text.push(this.props.app_state.loc['2509eb']/* '$ requests' */.replace('$', this.format_count(extra_data['ether_request_events']['all_hits'])));
                 }
+                if(extra_data['finish_payments'] != null){
+                    return_text.push(this.props.app_state.loc['2509eq']/* '$ finalizations.' */.replace('$', this.format_count(extra_data['finish_payments']['all_hits'])));
+                }
                 
             }
             const result_string = return_text.join(' • ')
@@ -5315,7 +5318,7 @@ class PostListSection extends Component {
         }
         var all_items = this.get_storefront_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
-
+        const list_height = this.get_created_bags().length > 0 ? middle - 60 : middle
         if(items.length == 0){
             items = ['0','1'];
             return ( 
@@ -5324,6 +5327,7 @@ class PostListSection extends Component {
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'storefront')}
                         {this.show_new_objects_message_if_any(all_items)}
+                        {this.render_created_bags()}
                         {items.map((item, index) => (
                             <div>
                                 {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
@@ -5340,9 +5344,10 @@ class PostListSection extends Component {
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'storefront')}
                     {this.show_new_objects_message_if_any(all_items)}
+                    {this.render_created_bags()}
                     <Virtuoso
                         ref={this.storefront_list}
-                        style={{ height: middle }}
+                        style={{ height: list_height }}
                         totalCount={items.length}
                         itemContent={(index) => {
                             const item = items[index];
@@ -5597,6 +5602,7 @@ class PostListSection extends Component {
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'bags')}
                         {this.show_new_objects_message_if_any(all_items)}
+                        {/* {this.render_created_bags()} */}
                         {items.map((item, index) => (
                             <div>
                                 {this.is_loading_object_data() == true ? this.render_skeleton_object() : this.render_empty_object()}
@@ -5613,6 +5619,7 @@ class PostListSection extends Component {
                     {this.render_line_loader_if_reloading()}
                     {this.show_load_metrics(items, 'bags')}
                     {this.show_new_objects_message_if_any(all_items)}
+                    {/* {this.render_created_bags()} */}
                     <Virtuoso
                         ref={this.bag_list}
                         style={{ height: middle }}
@@ -5693,7 +5700,6 @@ class PostListSection extends Component {
             </div>
         )
     }
-
     
     render_tags_or_images(item, object){
         var images = this.get_bag_images(object)
@@ -5763,15 +5769,25 @@ class PostListSection extends Component {
         if(object['responses'] == 0 || true){
             responses_text = ''
         }
-        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+ responses_text + sender
+        var title = object['ipfs'] == null ? '' : (object['ipfs'].entered_title_text || 'Stuff!')+' • '+object['ipfs']['bag_orders'].length + this.props.app_state.loc['2509b']/* ' items' */+ responses_text + sender
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var objectid = object['id']
+
+        const is_socket_job = object['event']['nitro_e5_id'] != null
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
+        const id_to_show = is_socket_job == true ? this.format_account_balance_figure2(objectid) : number_with_commas(objectid)
+
+        const title_space = is_socket_job == true ? ' • ' : '• '
+        const recurring = object['ipfs']['frequency_enabled'] == true ? this.props.app_state.loc['2509er']/* ' • recurring' */ : '';
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':'• '+number_with_commas(object['id']), 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'footer':this.get_object_views_text(object['e5_id'])},
+            'id':{'title':title_space+id_to_show+recurring, 'details':title, 'size':'l', 'title_image':title_image, 'footer':this.get_object_views_text(object['e5_id']), 'border_radius':'0%', 'text_image_border_radius':'6px'},
             // 'id_with_image':{'title':number_with_commas(object['id']), 'details':title, 'size':'l', 'image':image},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`,  'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
-            'min':{'details':'• '+number_with_commas(object['id']), 'title':title, 'size':'l', 'border_radius':'0%','title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
+            'min':{'details':title_space+id_to_show, 'title':title, 'size':'l', 'border_radius':'0%','title_image':title_image, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id']), 'border_radius':'0%', 'text_image_border_radius':'6px'}
         }
     }
 
@@ -5803,6 +5819,52 @@ class PostListSection extends Component {
         // });
         setTimeout(() => this.props.when_bag_post_item_clicked(index, object['id'], object['e5'], object), animate_time);
         
+    }
+
+
+    get_created_bags(){
+        const stack = this.props.app_state.stack_items;
+        const bags = []
+        for(var i=0; i<stack.length; i++){
+            const tx = stack[i]
+            if(tx.type == this.props.app_state.loc['1516']/* 'storefront-bag' */){
+                bags.push(tx)
+            }
+        }
+        return bags
+    }
+
+    render_created_bags(){
+        var items = [].concat(this.get_created_bags())
+        if(items.length == 0) return;
+        return(
+            <div>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_bag_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    render_bag_item(item){
+        const title = item['bag_name']
+        const details = this.props.app_state.loc['1058bd']/* '$ items to deliver.' */.replace('$', item['items_to_deliver'].length)
+        const footer = item['id']
+        return(
+            <div onClick={() => this.when_bag_clicked(item)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s', /* 'footer': footer */})}
+            </div>
+        )
+    }
+
+    when_bag_clicked(item){
+        this.props.show_dialog_bottomsheet({'bag': item}, 'view_stacked_bag_details')
     }
 
 

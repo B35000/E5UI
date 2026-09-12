@@ -2979,7 +2979,12 @@ class home_page extends Component {
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1216']/* 'bags' */|| all != null){
             // return this.get_all_sorted_objects(this.props.app_state.created_bags)
-            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_bags).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {})))
+            // return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_bags).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {})))
+
+            var chain_bags = this.get_all_sorted_objects(this.props.app_state.created_bags)
+            var socket_bags = this.get_all_sorted_objects(this.props.app_state.socket_created_bags)
+            const all_posts = this.sortByAttributeDescending(chain_bags.concat(socket_bags), 'timestamp')
+            return this.remove_duplicates(all_posts.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_bags || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -2987,7 +2992,8 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_bags = []
-            var all_bags = this.remove_duplicates(this.get_items_for_page2(id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {})))
+            // var all_bags = this.remove_duplicates(this.get_items_for_page2(id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {})))
+            var all_bags = this.remove_duplicates(this.get_items_for_page2(id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_bags || {})))
             for(var i=0; i<this.state.viewed_bags.length; i++){
                 var obj = this.get_item_in_array(this.state.viewed_bags[i], all_bags)
                 if(obj != null) my_viewed_bags.push(obj)
@@ -2996,7 +3002,8 @@ class home_page extends Component {
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_bags = []
-            var all_bags = this.remove_duplicates(this.get_items_for_page2(id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {})))
+            // var all_bags = this.remove_duplicates(this.get_items_for_page2(id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {})))
+            var all_bags = this.remove_duplicates(this.get_items_for_page2(id, selected_page).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_bags || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_bags || {})))
             for(var i=0; i<this.state.pinned_bags.length; i++){
                 var obj = this.get_item_in_array(this.state.pinned_bags[i], all_bags)
                 if(obj != null) my_viewed_bags.push(obj)
@@ -3409,7 +3416,7 @@ class home_page extends Component {
             var socket_jobs = this.get_all_sorted_objects(this.props.app_state.socket_created_jobs)
             const all_jobs = this.sortByAttributeDescending(chain_jobs.concat(socket_jobs), 'timestamp')
             // return all_jobs
-            return this.remove_duplicates(all_jobs.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_jobs || {})))
+            return this.remove_duplicates(all_jobs.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_jobs || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_jobs || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */ || selected_option_name == this.props.app_state.loc['1264bq']/* job-map 🗺️ */){
@@ -3614,8 +3621,8 @@ class home_page extends Component {
             var chain_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
             var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_posts)
             const all_posts = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
-            return all_posts;
-            return this.remove_duplicates(all_posts.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_posts || {})))
+            // return all_posts;
+            return this.remove_duplicates(all_posts.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_posts || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_posts || {})))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -5477,7 +5484,10 @@ class home_page extends Component {
             return this.get_all_sorted_objects(this.props.app_state.created_stores)
         }
         else if(selected_page == this.props.app_state.loc['1216']/* 'bags' */){
-            return this.get_all_sorted_objects(this.props.app_state.created_bags)
+            var chain_bags = this.get_all_sorted_objects(this.props.app_state.created_bags)
+            var socket_bags = this.get_all_sorted_objects(this.props.app_state.socket_created_bags)
+            const all_posts = this.sortByAttributeDescending(chain_bags.concat(socket_bags), 'timestamp')
+            return all_posts
         }
         else if(selected_page == this.props.app_state.loc['1218']/* 'ends' */){
             return this.get_all_sorted_objects(this.props.app_state.created_tokens)
@@ -5564,7 +5574,7 @@ class home_page extends Component {
         if(ignore_set_details_data == null){
             this.set_detail_data();
         }
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_direct_messages_read_receipts(object)
@@ -5579,7 +5589,7 @@ class home_page extends Component {
     async when_ether_object_clicked(index, id, e5){
         this.setState({selected_ether_item: id})
         this.set_detail_data()
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.get_wallet_data_for_specific_e5(e5, true)
@@ -5594,7 +5604,7 @@ class home_page extends Component {
     async when_coin_object_clicked(item, item_object){
         this.setState({selected_coin_item: item})
         this.set_detail_data()
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         const data = this.props.app_state.coin_data[item_object['symbol']] || {}
@@ -5641,7 +5651,7 @@ class home_page extends Component {
         
         this.reset_post_detail_object()
         this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1218']/* 'ends' */)
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         
@@ -5668,7 +5678,7 @@ class home_page extends Component {
             this.setState({viewed_tokens: viewed_tokens_clone})
             this.update_cookies()
         }
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1219']/* 'spends' */)
@@ -5686,7 +5696,7 @@ class home_page extends Component {
         this.setState({selected_e5_item: id})
         this.set_detail_data()
         this.props.load_burn_address_end_balance_events(id)
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -5713,7 +5723,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
 
@@ -5746,7 +5756,7 @@ class home_page extends Component {
         this.props.get_moderator_event_data(id, e5)
         this.props.load_contracts_exchange_interactions_data(id, e5)
         
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -5769,7 +5779,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
 
@@ -5812,7 +5822,7 @@ class home_page extends Component {
         this.props.get_objects_messages(id, e5)
         this.props.get_post_award_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -5837,7 +5847,7 @@ class home_page extends Component {
             this.setState({viewed_channels: viewed_channel_clone})
             this.update_cookies()
         }
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
 
@@ -5877,7 +5887,7 @@ class home_page extends Component {
         this.props.get_objects_messages(id, e5)
         this.props.get_proposal_event_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -5892,7 +5902,7 @@ class home_page extends Component {
         this.reset_post_detail_object()
         this.add_to_tab(object['e5_id'], object['id'], '?', this.props.app_state.loc['1201']/* 'mail' */)
         this.props.get_mail_messages(object)
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -5912,7 +5922,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
 
@@ -5955,13 +5965,13 @@ class home_page extends Component {
         this.props.get_tag_price_data_for_object(object, tags)
         this.props.get_object_censored_keywords_and_accounts(object)
         this.props.get_job_objects_responses(object['id'], object['e5'], 'bag')
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
         
-        await this.props.get_bag_sender_transfers_events(object)
         await this.props.load_bag_storefront_items(object)
+        await this.props.get_bag_sender_transfers_events(object)
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -5990,7 +6000,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         await this.props.fetch_uploaded_files_for_object(object)
@@ -6023,7 +6033,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
 
@@ -6043,7 +6053,7 @@ class home_page extends Component {
         this.setState({selected_audio_item: song['song_id']})
         this.set_detail_data()
         this.reset_post_detail_object()
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -6163,7 +6173,7 @@ class home_page extends Component {
             this.update_cookies()
         }
 
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
 
@@ -6265,7 +6275,7 @@ class home_page extends Component {
         this.props.get_nitro_purchases(object)
         this.props.get_nitro_telemetry_data(object)
         this.props.get_indexer_storage_acquisition_metrics(object)
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -6279,7 +6289,7 @@ class home_page extends Component {
         this.reset_post_detail_object()
         this.add_to_tab(object['e5_id'], object['id'], 'w', this.props.app_state.loc['1264ai']/* bills */)
         this.props.perform_bill_object_payment_search(object)
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -6302,7 +6312,7 @@ class home_page extends Component {
         this.props.get_objects_votes(id, e5, object)
         this.props.get_poll_results(id, e5, object)
         this.props.get_my_voter_weight(object)
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -6324,7 +6334,7 @@ class home_page extends Component {
         this.props.load_extra_token_data(object)
         this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1264bw']/* 'certificates' */)
         this.reset_post_detail_object()
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -6353,7 +6363,7 @@ class home_page extends Component {
         this.props.load_extra_token_data(object)
         this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1264bx']/* 'cross-exchanges' */)
         this.reset_post_detail_object()
-        if(this.props.screensize == 's'){
+        if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -6638,7 +6648,6 @@ class home_page extends Component {
 
                 get_ether_blockexplorer_link={this.props.get_ether_blockexplorer_link.bind(this)}
                 auto_stack_subscription={this.auto_stack_subscription.bind(this)}
-
 
                 />
             </div>
@@ -7616,7 +7625,10 @@ class home_page extends Component {
             }
         }
         else if(tem['selected_tag'] == this.props.app_state.loc['1216']/* 'bags' */){
-            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_bags))
+            var chain_bags = this.get_all_sorted_objects(this.props.app_state.created_bags)
+            var socket_bags = this.get_all_sorted_objects(this.props.app_state.socket_created_bags)
+            const all_posts = this.sortByAttributeDescending(chain_bags.concat(socket_bags), 'timestamp')
+            var object = this.get_item_in_array2(tem['e5_id'], all_posts)
             if(object != null && object['ipfs'] != null){
                 return object['ipfs'].delivery_location
             }else{

@@ -309,7 +309,7 @@ class RespondToJobPage extends Component {
             if(myid == null){
                 myid = 1
             }
-            const contract_type = created_contracts[i]['ipfs'].contract_type
+            const contract_type = created_contracts[i]['ipfs']?.contract_type
             // console.log('get_contract_items', 'contract_type', contract_type)
             if(post_author.toString() == myid.toString() && contract_type == 'work'){
                 my_contracts.push(created_contracts[i])

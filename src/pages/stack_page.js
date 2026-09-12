@@ -4270,6 +4270,7 @@ class StackPage extends Component {
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1516']/* 'storefront-bag' */){
+                    if(txs[i].items_to_deliver.length == 0) continue;
                     var storefront_bag_obj = this.format_storefront_bag_object(txs[i])
                     strs.push([])
                     adds.push([])
@@ -5419,7 +5420,9 @@ class StackPage extends Component {
                     ints.push(verify_obj.int)
                 }
                 
-                delete_pos_array.push(i)
+                const delete_after_broadcast = txs[i].get_delete_after_broadcast_object != null && this.get_selected_item(txs[i].get_delete_after_broadcast_object, 'e') == this.props.app_state.loc['1058o']/* 'enabled' */
+
+                if(delete_after_broadcast == true || txs[i].get_delete_after_broadcast_object == null) delete_pos_array.push(i)
                 pushed_txs.push(txs[i])
                 if(new_tx_index != -1) new_transaction_index_obj[txs[i].id] = new_tx_index
             }
@@ -6326,6 +6329,7 @@ class StackPage extends Component {
                     }  
                 }
                 else if(txs[i].type == this.props.app_state.loc['1516']/* 'storefront-bag' */){
+                    if(txs[i].items_to_deliver.length == 0) continue;
                     var t = txs[i]
                     const bag_variants = []
                     const bag_tags = []
@@ -6353,7 +6357,19 @@ class StackPage extends Component {
                     });
 
                     var final_bag_object = {
-                        'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country, 'tags': bag_tags, device_city: txs[i].selected_device_city, delivery_location: txs[i].delivery_location, pins: txs[i].pins, frequency_enabled: txs[i].frequency_enabled, delivery_frequency_time: txs[i].delivery_frequency_time, ecid_encryption_passwords: ecid_encryption_passwords
+                        'bag_orders':bag_variants, 
+                        'timestamp':Date.now(), 
+                        content_channeling_setting: txs[i].content_channeling_setting, 
+                        device_language_setting: txs[i].device_language_setting, 
+                        device_country: txs[i].device_country, 
+                        'tags': bag_tags, 
+                        device_city: txs[i].selected_device_city, 
+                        delivery_location: txs[i].delivery_location, 
+                        pins: txs[i].pins, 
+                        frequency_enabled: txs[i].frequency_enabled, 
+                        delivery_frequency_time: txs[i].delivery_frequency_time,
+                        ecid_encryption_passwords: ecid_encryption_passwords,
+                        entered_title_text: txs[i].bag_description,
                     }
 
                     const all_final_elements = []

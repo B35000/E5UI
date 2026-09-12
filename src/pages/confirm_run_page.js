@@ -22,7 +22,7 @@ import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 
 // import Letter from './../assets/letter.png';
-
+const { getDomain } = require("tldjs");
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -149,8 +149,7 @@ class ConfirmRunPage extends Component {
                 <div>
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1079']/* 'Transaction Confirmation' */, 'details':this.props.app_state.loc['1080']/* 'Are you sure you want to make this run?' */,'size':'l'})}
 
-                    {this.render_detail_item('0')}
-
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('3',{'title':txs.length, 'details':this.props.app_state.loc['1083']/* 'Transaction Stack Size' */,'size':'l'})}
                     <div style={{height: 10}}/>
 
@@ -162,7 +161,7 @@ class ConfirmRunPage extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1086']/* 'Estimated Gas to be Consumed' */, 'number':estimated_gas_to_be_consumed, 'relativepower':this.props.app_state.loc['1085']/* 'gas' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1086']/* 'Estimated Gas to be Consumed' */, 'subtitle':this.format_power_figure(estimated_gas_to_be_consumed), 'barwidth':this.calculate_bar_width(estimated_gas_to_be_consumed), 'number':this.format_account_balance_figure(estimated_gas_to_be_consumed), 'barcolor':'', 'relativepower':this.props.app_state.loc['1085']/* 'gas' */, })}
                     </div>
-                    <div style={{height: 10}}/>
+                    {this.render_detail_item('0')}
 
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1088']/* 'Gas Price in wei' */, 'number':gas_price, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
@@ -184,14 +183,20 @@ class ConfirmRunPage extends Component {
 
                     {this.should_ask_for_password() == true && (
                         <div>
-                            <div style={{height: 10}}/>
+                            {this.render_detail_item('0')}
                             {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'You locked your wallet. Please set the lock password used here.' */, 'size':'l'})}
                             <div style={{height: 10}}/>
     
                             <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
-                            <div style={{height: 10}}/>
+                            
                         </div>
                     )}
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1092c']/* 'Rpc To Use.' */, 'details':this.props.app_state.loc['1092d']/* 'You may change the RPC provider you wish to use for this run.' */,'size':'l'})}
+
+                    {this.render_select_rpc_list()}
                     
                     <div style={{height: 10}}/>
                     <div style={{'padding': '5px'}} onClick={()=> this.start_run()}>
@@ -203,6 +208,46 @@ class ConfirmRunPage extends Component {
                 </div>
             )
         }
+    }
+
+    render_select_rpc_list(){
+        var items = [].concat(this.props.app_state.e5s[this.props.app_state.selected_e5].web3)
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_rpc_item(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_rpc_item(item, index){
+        return(
+            <div onClick={()=> this.props.when_rpc_tapped2(item, index, this.props.app_state.selected_e5)}>
+                {this.render_detail_item('3', {'title':getDomain(item), 'details':''+this.get_rpc_url_data(item), 'size':'s'})}
+                {this.is_item_selected(item) == true && (
+                    <div>
+                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '5px 20px 2px 20px'}}/>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    is_item_selected(item){
+        var selected_rpc = this.props.app_state.e5s[this.props.app_state.selected_e5].url
+        var picked_rpc = this.props.app_state.e5s[this.props.app_state.selected_e5].web3[selected_rpc]
+        return item == picked_rpc
+    }
+
+    get_rpc_url_data(item){
+        var data = this.props.app_state.rpc_times[item]
+        if(data == null) return this.props.app_state.loc['1342']/* 'speed unkown' */
+        else return data
     }
 
     when_passcode_input_field_changed(text){

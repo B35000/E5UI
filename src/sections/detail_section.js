@@ -772,6 +772,9 @@ class PostDetailSection extends Component {
                 if(extra_data['ether_request_events'] != null){
                     return_text.push(this.props.app_state.loc['2509eb']/* '$ requests' */.replace('$', this.format_count(extra_data['ether_request_events']['all_hits'])));
                 }
+                if(extra_data['finish_payments'] != null){
+                    return_text.push(this.props.app_state.loc['2509eq']/* '$ finalizations.' */.replace('$', this.format_count(extra_data['finish_payments']['all_hits'])));
+                }
             }
             const result_string = return_text.join(' • ')
             return result_string
