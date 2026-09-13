@@ -218,7 +218,7 @@ class NewBagPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3114i']/* 'Bag Name.' */, 'details':this.props.app_state.loc['3114j']/* 'A description for your bag and what it is for.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <TextInput height={30} placeholder={this.props.app_state.loc['3055tl']/* 'Name...' */} when_text_input_field_changed={this.when_bag_description_input_field_changed.bind(this)} text={this.state.bag_description} theme={this.props.theme}/>
+                <TextInput height={60} placeholder={this.props.app_state.loc['3114m']/* 'Description...' */} when_text_input_field_changed={this.when_bag_description_input_field_changed.bind(this)} text={this.state.bag_description} theme={this.props.theme}/>
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.bag_description.length)})}
 
 

@@ -234,6 +234,21 @@ class NumberPicker extends Component {
   }
 
   process_text_input(text){
+    if(text.includes(' ')){
+      const values = text.split(' ')
+      let final_amount = bigInt(0)
+      values.forEach(value_text => {
+        const individual_value = this.process_individual_input_value(value_text)
+        final_amount = bigInt(final_amount).plus(individual_value)
+      });
+      return final_amount
+    }
+    else{
+      return this.process_individual_input_value(text)
+    }
+  }
+
+  process_individual_input_value(text){
     if(/^-?\d+$/.test(text) == true){
       //its a number
       console.log('number_picker', 'its a number')
@@ -264,6 +279,16 @@ class NumberPicker extends Component {
         //decimals specified are less than default, so remove extra places
         return number_string.slice(0, difference)
       }
+    }
+    else if(text.includes('e') && !text.includes('.')){
+      //its a powered number
+      if(text.split('e').length === 2){
+        return bigInt(text).toString();
+      }
+      else{
+        console.log('number_picker', 'its an incomplete power')
+        return text.replace('e','')
+      } 
     }
     else if(text.endsWith('.') && text.split('.').length === 2){
       console.log('number_picker', 'its an incomplete float')
