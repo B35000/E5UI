@@ -1905,6 +1905,9 @@ class ViewGroups extends Component {
         else if(action_id == 'when_obligation_country_selected'){
             this.props.when_obligation_country_selected(tag, pos)
         }
+        else if(action_id == 'when_language_selected'){
+            this.props.when_language_selected(tag, pos)
+        }
     }
 
     when_image_clicked(items, index){

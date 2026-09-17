@@ -2112,7 +2112,7 @@ class App extends Component {
     created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}, showcasing_events:{}, decentralization_metrics: this.get_decentralization_data(),
 
     objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}, 
-    ether_ages:{}, created_object_full:{}, current_run_hash:{}, socket_created_bags:{}
+    ether_ages:{}, created_object_full:{}, current_run_hash:{}, socket_created_bags:{}, translation_data:{}, performing_translation_indicator:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -5562,7 +5562,8 @@ class App extends Component {
     if(this.dissapearing_pip_interval != null) clearInterval(this.dissapearing_pip_interval);
     if(this.interval7 != null) clearInterval(this.interval7);
     if(this.interval8 != null) clearInterval(this.interval8);
-    if(this.coin_prices_interval != null) clearInterval(this.coin_prices_interval)
+    if(this.coin_prices_interval != null) clearInterval(this.coin_prices_interval);
+    if(this.translate_interval != null) clearInterval(this.translate_interval);
 
     this.set_cookies()
     this.delete_data_in_db_when_app_closed()
@@ -5594,7 +5595,8 @@ class App extends Component {
     if(this.interval6 != null) clearInterval(this.interval6);
     if(this.interval7 != null) clearInterval(this.interval7);
     if(this.interval8 != null) clearInterval(this.interval8);
-    if(this.coin_prices_interval != null) clearInterval(this.coin_prices_interval)
+    if(this.coin_prices_interval != null) clearInterval(this.coin_prices_interval);
+    if(this.translate_interval != null) clearInterval(this.translate_interval);
     
     var obj = {'sluggish':1000_000, 'slow':500_000, 'average':290_000, 'fast':90_000}
     obj[this.getLocale()['1421']/* sluggish */] = 1000_000
@@ -5613,6 +5615,12 @@ class App extends Component {
     obj3[this.getLocale()['1423']/* average */] = 195_000
     obj3[this.getLocale()['1424']/* fast */] = 100_000
 
+    var obj4 = {}
+    obj4[this.getLocale()['1421']/* sluggish */] = 53_000
+    obj4[this.getLocale()['1422']/* slow */] = 33_000
+    obj4[this.getLocale()['1423']/* average */] = 17_000
+    obj4[this.getLocale()['1424']/* fast */] = 7_000
+
     var me = this;
     setTimeout(function() {
       me.interval = setInterval(() => me.background_sync(), obj[me.state.refresh_speed]);
@@ -5626,6 +5634,8 @@ class App extends Component {
       me.interval7 = setInterval(() => me.load_and_notify_flash2(), 300_000)
       me.interval8 = setInterval(() => me.load_and_notify_flash3(), 270_000)
       me.coin_prices_interval = setInterval(() => me.load_coin_and_ether_coin_prices(), (1000*60*60))
+
+      me.translate_interval = setInterval(() => me.translate_loaded_messages(), obj4[me.state.refresh_speed]);
     }, (1 * 100));
     
     this.schedule_audio_pip_visibility_because_of_inactivity()
@@ -5790,6 +5800,7 @@ class App extends Component {
       xmr_restore_height: this.state.xmr_restore_height,
       coinlore_asset_mapping: this.state.coinlore_asset_mapping,
       password_tries:this.state.password_tries,
+      content_language: this.state.content_language,
     }
   }
 
@@ -5843,6 +5854,7 @@ class App extends Component {
       all_message_files: this.get_all_my_message_media_file_data(),
       preserved_state: this.get_preserved_state(),
       xmr_wallet_info: await this.store_xmr_wallet_data_in_db(),
+      translation_data: this.get_translation_data()
     }
   }
 
@@ -5876,6 +5888,7 @@ class App extends Component {
       var all_message_files = state.all_message_files
       var preserved_state = state.preserved_state || {}
       var xmr_wallet_info = state.xmr_wallet_info || null
+      var translation_data = state.translation_data || {}
 
       // if(cached_tracks != null){
       //   this.set_cached_tracks_data(cached_tracks)
@@ -5905,6 +5918,9 @@ class App extends Component {
       }
       if(xmr_wallet_info != null){
         this.setState({xmr_wallet_info: xmr_wallet_info})
+      }
+      if(translation_data != null){
+        this.setState({translation_data: translation_data})
       }
       
 
@@ -6048,6 +6064,7 @@ class App extends Component {
       var passcode_expiry_time = saved_cypher_seed_object.passcode_expiry_time
       var coinlore_asset_mapping = state.coinlore_asset_mapping || {}
       var password_tries = state.password_tries || 5
+      var content_language = state.content_language
 
       this.setState({
         theme: theme,
@@ -6146,7 +6163,8 @@ class App extends Component {
         seed_object: seed_object,
         passcode_expiry_time: passcode_expiry_time,
         coinlore_asset_mapping: coinlore_asset_mapping,
-        password_tries: password_tries
+        password_tries: password_tries,
+        content_language: content_language,
       })
       var me = this;
       setTimeout(function() {
@@ -6679,6 +6697,21 @@ class App extends Component {
     }
   }
 
+  get_translation_data(){
+    const translation_data = structuredClone(this.state.translation_data)
+    const keys = Object.keys(translation_data)
+    const accepted_types = ['job', 'contract']
+    const new_translation_data = {}
+    keys.forEach(key => {
+      const type = translation_data[key].type
+      if(accepted_types.includes(type)){
+        new_translation_data[key] = translation_data[key]
+      }
+    });
+
+    return new_translation_data
+  }
+
 
 
 
@@ -7026,190 +7059,335 @@ class App extends Component {
   }
 
   get_language_data_object(){
+    // return {
+    //   "ab": {"name": "Abkhaz", "nativeName": "аҧсуа"},
+    //   "aa": {"name": "Afar", "nativeName": "Afaraf"},
+    //   "af": {"name": "Afrikaans", "nativeName": "Afrikaans"},
+    //   "ak": {"name": "Akan", "nativeName": "Akan"},
+    //   "sq": {"name": "Albanian", "nativeName": "Shqip"},
+    //   "am": {"name": "Amharic", "nativeName": "አማርኛ"},
+    //   "ar": {"name": "Arabic", "nativeName": "العربية"},
+    //   "an": {"name": "Aragonese", "nativeName": "Aragonés"},
+    //   "hy": {"name": "Armenian", "nativeName": "Հայերեն"},
+    //   "as": {"name": "Assamese", "nativeName": "অসমীয়া"},
+    //   "av": {"name": "Avaric", "nativeName": "авар мацӀ, магӀарул мацӀ"},
+    //   "ae": {"name": "Avestan", "nativeName": "avesta"},
+    //   "ay": {"name": "Aymara", "nativeName": "aymar aru"},
+    //   "az": {"name": "Azerbaijani", "nativeName": "azərbaycan dili"},
+    //   "bm": {"name": "Bambara", "nativeName": "bamanankan"},
+    //   "ba": {"name": "Bashkir", "nativeName": "башҡорт теле"},
+    //   "eu": {"name": "Basque", "nativeName": "euskara, euskera"},
+    //   "be": {"name": "Belarusian", "nativeName": "Беларуская"},
+    //   "bn": {"name": "Bengali", "nativeName": "বাংলা"},
+    //   "bh": {"name": "Bihari", "nativeName": "भोजपुरी"},
+    //   "bi": {"name": "Bislama", "nativeName": "Bislama"},
+    //   "bs": {"name": "Bosnian", "nativeName": "bosanski jezik"},
+    //   "br": {"name": "Breton", "nativeName": "brezhoneg"},
+    //   "bg": {"name": "Bulgarian", "nativeName": "български език"},
+    //   "my": {"name": "Burmese", "nativeName": "ဗမာစာ"},
+    //   "ca": {"name": "Catalan; Valencian", "nativeName": "Català"},
+    //   "ch": {"name": "Chamorro", "nativeName": "Chamoru"},
+    //   "ce": {"name": "Chechen", "nativeName": "нохчийн мотт"},
+    //   "ny": {"name": "Chichewa; Chewa; Nyanja", "nativeName": "chiCheŵa, chinyanja"},
+    //   "zh": {"name": "Chinese", "nativeName": "中文 (Zhōngwén), 汉语, 漢語"},
+    //   "cv": {"name": "Chuvash", "nativeName": "чӑваш чӗлхи"},
+    //   "kw": {"name": "Cornish", "nativeName": "Kernewek"},
+    //   "co": {"name": "Corsican", "nativeName": "corsu, lingua corsa"},
+    //   "cr": {"name": "Cree", "nativeName": "ᓀᐦᐃᔭᐍᐏᐣ"},
+    //   "hr": {"name": "Croatian", "nativeName": "hrvatski"},
+    //   "cs": {"name": "Czech", "nativeName": "česky, čeština"},
+    //   "da": {"name": "Danish", "nativeName": "dansk"},
+    //   "dv": {"name": "Divehi; Dhivehi; Maldivian;", "nativeName": "ދިވެހި"},
+    //   "nl": {"name": "Dutch", "nativeName": "Nederlands, Vlaams"},
+    //   "en": {"name": "English", "nativeName": "English"},
+    //   "eo": {"name": "Esperanto", "nativeName": "Esperanto"},
+    //   "et": {"name": "Estonian", "nativeName": "eesti, eesti keel"},
+    //   "ee": {"name": "Ewe", "nativeName": "Eʋegbe"},
+    //   "fo": {"name": "Faroese", "nativeName": "føroyskt"},
+    //   "fj": {"name": "Fijian", "nativeName": "vosa Vakaviti"},
+    //   "fi": {"name": "Finnish", "nativeName": "suomi, suomen kieli"},
+    //   "fr": {"name": "French", "nativeName": "français, langue française"},
+    //   "ff": {"name": "Fula; Fulah; Pulaar; Pular", "nativeName": "Fulfulde, Pulaar, Pular"},
+    //   "gl": {"name": "Galician", "nativeName": "Galego"},
+    //   "ka": {"name": "Georgian", "nativeName": "ქართული"},
+    //   "de": {"name": "German", "nativeName": "Deutsch"},
+    //   "el": {"name": "Greek, Modern", "nativeName": "Ελληνικά"},
+    //   "gn": {"name": "Guaraní", "nativeName": "Avañeẽ"},
+    //   "gu": {"name": "Gujarati", "nativeName": "ગુજરાતી"},
+    //   "ht": {"name": "Haitian; Haitian Creole", "nativeName": "Kreyòl ayisyen"},
+    //   "ha": {"name": "Hausa", "nativeName": "Hausa, هَوُسَ"},
+    //   "he": {"name": "Hebrew (modern)", "nativeName": "עברית"},
+    //   "hz": {"name": "Herero", "nativeName": "Otjiherero"},
+    //   "hi": {"name": "Hindi", "nativeName": "हिन्दी, हिंदी"},
+    //   "ho": {"name": "Hiri Motu", "nativeName": "Hiri Motu"},
+    //   "hu": {"name": "Hungarian", "nativeName": "Magyar"},
+    //   "ia": {"name": "Interlingua", "nativeName": "Interlingua"},
+    //   "id": {"name": "Indonesian", "nativeName": "Bahasa Indonesia"},
+    //   "ie": {"name": "Interlingue", "nativeName": "Interlingue"},
+    //   "ga": {"name": "Irish", "nativeName": "Gaeilge"},
+    //   "ig": {"name": "Igbo", "nativeName": "Asụsụ Igbo"},
+    //   "ik": {"name": "Inupiaq", "nativeName": "Iñupiaq, Iñupiatun"},
+    //   "io": {"name": "Ido", "nativeName": "Ido"},
+    //   "is": {"name": "Icelandic", "nativeName": "Íslenska"},
+    //   "it": {"name": "Italian", "nativeName": "Italiano"},
+    //   "iu": {"name": "Inuktitut", "nativeName": "ᐃᓄᒃᑎᑐᑦ"},
+    //   "ja": {"name": "Japanese", "nativeName": "日本語 (にほんご／にっぽんご)"},
+    //   "jv": {"name": "Javanese", "nativeName": "basa Jawa"},
+    //   "kl": {"name": "Kalaallisut, Greenlandic", "nativeName": "kalaallisut, kalaallit oqaasii"},
+    //   "kn": {"name": "Kannada", "nativeName": "ಕನ್ನಡ"},
+    //   "kr": {"name": "Kanuri", "nativeName": "Kanuri"},
+    //   "ks": {"name": "Kashmiri", "nativeName": "कश्मीरी, كشميري‎"},
+    //   "kk": {"name": "Kazakh", "nativeName": "Қазақ тілі"},
+    //   "km": {"name": "Khmer", "nativeName": "ភាសាខ្មែរ"},
+    //   "ki": {"name": "Kikuyu, Gikuyu", "nativeName": "Gĩkũyũ"},
+    //   "rw": {"name": "Kinyarwanda", "nativeName": "Ikinyarwanda"},
+    //   "ky": {"name": "Kirghiz, Kyrgyz", "nativeName": "кыргыз тили"},
+    //   "kv": {"name": "Komi", "nativeName": "коми кыв"},
+    //   "kg": {"name": "Kongo", "nativeName": "KiKongo"},
+    //   "ko": {"name": "Korean", "nativeName": "한국어 (韓國語), 조선말 (朝鮮語)"},
+    //   "ku": {"name": "Kurdish", "nativeName": "Kurdî, كوردی‎"},
+    //   "kj": {"name": "Kwanyama, Kuanyama", "nativeName": "Kuanyama"},
+    //   "la": {"name": "Latin", "nativeName": "latine, lingua latina"},
+    //   "lb": {"name": "Luxembourgish, Letzeburgesch", "nativeName": "Lëtzebuergesch"},
+    //   "lg": {"name": "Luganda", "nativeName": "Luganda"},
+    //   "li": {"name": "Limburgish, Limburgan, Limburger", "nativeName": "Limburgs"},
+    //   "ln": {"name": "Lingala", "nativeName": "Lingála"},
+    //   "lo": {"name": "Lao", "nativeName": "ພາສາລາວ"},
+    //   "lt": {"name": "Lithuanian", "nativeName": "lietuvių kalba"},
+    //   "lu": {"name": "Luba-Katanga", "nativeName": ""},
+    //   "lv": {"name": "Latvian", "nativeName": "latviešu valoda"},
+    //   "gv": {"name": "Manx", "nativeName": "Gaelg, Gailck"},
+    //   "mk": {"name": "Macedonian", "nativeName": "македонски јазик"},
+    //   "mg": {"name": "Malagasy", "nativeName": "Malagasy fiteny"},
+    //   "ms": {"name": "Malay", "nativeName": "bahasa Melayu, بهاس ملايو‎"},
+    //   "ml": {"name": "Malayalam", "nativeName": "മലയാളം"},
+    //   "mt": {"name": "Maltese", "nativeName": "Malti"},
+    //   "mi": {"name": "Māori", "nativeName": "te reo Māori"},
+    //   "mr": {"name": "Marathi (Marāṭhī)", "nativeName": "मराठी"},
+    //   "mh": {"name": "Marshallese", "nativeName": "Kajin M̧ajeļ"},
+    //   "mn": {"name": "Mongolian", "nativeName": "монгол"},
+    //   "na": {"name": "Nauru", "nativeName": "Ekakairũ Naoero"},
+    //   "nv": {"name": "Navajo, Navaho", "nativeName": "Diné bizaad, Dinékʼehǰí"},
+    //   "nb": {"name": "Norwegian Bokmål", "nativeName": "Norsk bokmål"},
+    //   "nd": {"name": "North Ndebele", "nativeName": "isiNdebele"},
+    //   "ne": {"name": "Nepali", "nativeName": "नेपाली"},
+    //   "ng": {"name": "Ndonga", "nativeName": "Owambo"},
+    //   "nn": {"name": "Norwegian Nynorsk", "nativeName": "Norsk nynorsk"},
+    //   "no": {"name": "Norwegian", "nativeName": "Norsk"},
+    //   "ii": {"name": "Nuosu", "nativeName": "ꆈꌠ꒿ Nuosuhxop"},
+    //   "nr": {"name": "South Ndebele", "nativeName": "isiNdebele"},
+    //   "oc": {"name": "Occitan", "nativeName": "Occitan"},
+    //   "oj": {"name": "Ojibwe, Ojibwa", "nativeName": "ᐊᓂᔑᓈᐯᒧᐎᓐ"},
+    //   "cu": {"name": "Old Slavonic", "nativeName": "ѩзыкъ словѣньскъ"},
+    //   "om": {"name": "Oromo", "nativeName": "Afaan Oromoo"},
+    //   "or": {"name": "Oriya", "nativeName": "ଓଡ଼ିଆ"},
+    //   "os": {"name": "Ossetian, Ossetic", "nativeName": "ирон æвзаг"},
+    //   "pa": {"name": "Panjabi, Punjabi", "nativeName": "ਪੰਜਾਬੀ, پنجابی‎"},
+    //   "pi": {"name": "Pāli", "nativeName": "पाऴि"},
+    //   "fa": {"name": "Persian", "nativeName": "فارسی"},
+    //   "pl": {"name": "Polish", "nativeName": "polski"},
+    //   "ps": {"name": "Pashto, Pushto", "nativeName": "پښتو"},
+    //   "pt": {"name": "Portuguese", "nativeName": "Português"},
+    //   "qu": {"name": "Quechua", "nativeName": "Runa Simi, Kichwa"},
+    //   "rm": {"name": "Romansh", "nativeName": "rumantsch grischun"},
+    //   "rn": {"name": "Kirundi", "nativeName": "kiRundi"},
+    //   "ro": {"name": "Romanian, Moldavian, Moldovan", "nativeName": "română"},
+    //   "ru": {"name": "Russian", "nativeName": "русский язык"},
+    //   "sa": {"name": "Sanskrit (Saṁskṛta)", "nativeName": "संस्कृतम्"},
+    //   "sc": {"name": "Sardinian", "nativeName": "sardu"},
+    //   "sd": {"name": "Sindhi", "nativeName": "सिन्धी, سنڌي، سندھی‎"},
+    //   "se": {"name": "Northern Sami", "nativeName": "Davvisámegiella"},
+    //   "sm": {"name": "Samoan", "nativeName": "gagana faa Samoa"},
+    //   "sg": {"name": "Sango", "nativeName": "yângâ tî sängö"},
+    //   "sr": {"name": "Serbian", "nativeName": "српски језик"},
+    //   "gd": {"name": "Scottish Gaelic; Gaelic", "nativeName": "Gàidhlig"},
+    //   "sn": {"name": "Shona", "nativeName": "chiShona"},
+    //   "si": {"name": "Sinhala, Sinhalese", "nativeName": "සිංහල"},
+    //   "sk": {"name": "Slovak", "nativeName": "slovenčina"},
+    //   "sl": {"name": "Slovene", "nativeName": "slovenščina"},
+    //   "so": {"name": "Somali", "nativeName": "Soomaaliga, af Soomaali"},
+    //   "st": {"name": "Southern Sotho", "nativeName": "Sesotho"},
+    //   "es": {"name": "Spanish; Castilian", "nativeName": "español, castellano"},
+    //   "su": {"name": "Sundanese", "nativeName": "Basa Sunda"},
+    //   "sw": {"name": "Swahili", "nativeName": "Kiswahili"},
+    //   "ss": {"name": "Swati", "nativeName": "SiSwati"},
+    //   "sv": {"name": "Swedish", "nativeName": "svenska"},
+    //   "ta": {"name": "Tamil", "nativeName": "தமிழ்"},
+    //   "te": {"name": "Telugu", "nativeName": "తెలుగు"},
+    //   "tg": {"name": "Tajik", "nativeName": "тоҷикӣ, toğikī, تاجیکی‎"},
+    //   "th": {"name": "Thai", "nativeName": "ไทย"},
+    //   "ti": {"name": "Tigrinya", "nativeName": "ትግርኛ"},
+    //   "bo": {"name": "Tibetan Standard, Tibetan, Central", "nativeName": "བོད་ཡིག"},
+    //   "tk": {"name": "Turkmen", "nativeName": "Türkmen, Түркмен"},
+    //   "tl": {"name": "Tagalog", "nativeName": "Wikang Tagalog, ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔"},
+    //   "tn": {"name": "Tswana", "nativeName": "Setswana"},
+    //   "to": {"name": "Tonga (Tonga Islands)", "nativeName": "faka Tonga"},
+    //   "tr": {"name": "Turkish", "nativeName": "Türkçe"},
+    //   "ts": {"name": "Tsonga", "nativeName": "Xitsonga"},
+    //   "tt": {"name": "Tatar", "nativeName": "татарча, tatarça, تاتارچا‎"},
+    //   "tw": {"name": "Twi", "nativeName": "Twi"},
+    //   "ty": {"name": "Tahitian", "nativeName": "Reo Tahiti"},
+    //   "ug": {"name": "Uighur, Uyghur", "nativeName": "Uyƣurqə, ئۇيغۇرچە‎"},
+    //   "uk": {"name": "Ukrainian", "nativeName": "українська"},
+    //   "ur": {"name": "Urdu", "nativeName": "اردو"},
+    //   "uz": {"name": "Uzbek", "nativeName": "zbek, Ўзбек, أۇزبېك‎"},
+    //   "ve": {"name": "Venda", "nativeName": "Tshivenḓa"},
+    //   "vi": {"name": "Vietnamese", "nativeName": "Tiếng Việt"},
+    //   "vo": {"name": "Volapük", "nativeName": "Volapük"},
+    //   "wa": {"name": "Walloon", "nativeName": "Walon"},
+    //   "cy": {"name": "Welsh", "nativeName": "Cymraeg"},
+    //   "wo": {"name": "Wolof", "nativeName": "Wollof"},
+    //   "fy": {"name": "Western Frisian", "nativeName": "Frysk"},
+    //   "xh": {"name": "Xhosa", "nativeName": "isiXhosa"},
+    //   "yi": {"name": "Yiddish", "nativeName": "ייִדיש"},
+    //   "yo": {"name": "Yoruba", "nativeName": "Yorùbá"},
+    //   "za": {"name": "Zhuang, Chuang", "nativeName": "Saɯ cueŋƅ, Saw cuengh"}
+    // }
     return {
-      "ab": {"name": "Abkhaz", "nativeName": "аҧсуа"},
-      "aa": {"name": "Afar", "nativeName": "Afaraf"},
-      "af": {"name": "Afrikaans", "nativeName": "Afrikaans"},
-      "ak": {"name": "Akan", "nativeName": "Akan"},
-      "sq": {"name": "Albanian", "nativeName": "Shqip"},
-      "am": {"name": "Amharic", "nativeName": "አማርኛ"},
-      "ar": {"name": "Arabic", "nativeName": "العربية"},
-      "an": {"name": "Aragonese", "nativeName": "Aragonés"},
-      "hy": {"name": "Armenian", "nativeName": "Հայերեն"},
-      "as": {"name": "Assamese", "nativeName": "অসমীয়া"},
-      "av": {"name": "Avaric", "nativeName": "авар мацӀ, магӀарул мацӀ"},
-      "ae": {"name": "Avestan", "nativeName": "avesta"},
-      "ay": {"name": "Aymara", "nativeName": "aymar aru"},
-      "az": {"name": "Azerbaijani", "nativeName": "azərbaycan dili"},
-      "bm": {"name": "Bambara", "nativeName": "bamanankan"},
-      "ba": {"name": "Bashkir", "nativeName": "башҡорт теле"},
-      "eu": {"name": "Basque", "nativeName": "euskara, euskera"},
-      "be": {"name": "Belarusian", "nativeName": "Беларуская"},
-      "bn": {"name": "Bengali", "nativeName": "বাংলা"},
-      "bh": {"name": "Bihari", "nativeName": "भोजपुरी"},
-      "bi": {"name": "Bislama", "nativeName": "Bislama"},
-      "bs": {"name": "Bosnian", "nativeName": "bosanski jezik"},
-      "br": {"name": "Breton", "nativeName": "brezhoneg"},
-      "bg": {"name": "Bulgarian", "nativeName": "български език"},
-      "my": {"name": "Burmese", "nativeName": "ဗမာစာ"},
-      "ca": {"name": "Catalan; Valencian", "nativeName": "Català"},
-      "ch": {"name": "Chamorro", "nativeName": "Chamoru"},
-      "ce": {"name": "Chechen", "nativeName": "нохчийн мотт"},
-      "ny": {"name": "Chichewa; Chewa; Nyanja", "nativeName": "chiCheŵa, chinyanja"},
-      "zh": {"name": "Chinese", "nativeName": "中文 (Zhōngwén), 汉语, 漢語"},
-      "cv": {"name": "Chuvash", "nativeName": "чӑваш чӗлхи"},
-      "kw": {"name": "Cornish", "nativeName": "Kernewek"},
-      "co": {"name": "Corsican", "nativeName": "corsu, lingua corsa"},
-      "cr": {"name": "Cree", "nativeName": "ᓀᐦᐃᔭᐍᐏᐣ"},
-      "hr": {"name": "Croatian", "nativeName": "hrvatski"},
-      "cs": {"name": "Czech", "nativeName": "česky, čeština"},
-      "da": {"name": "Danish", "nativeName": "dansk"},
-      "dv": {"name": "Divehi; Dhivehi; Maldivian;", "nativeName": "ދިވެހި"},
-      "nl": {"name": "Dutch", "nativeName": "Nederlands, Vlaams"},
-      "en": {"name": "English", "nativeName": "English"},
-      "eo": {"name": "Esperanto", "nativeName": "Esperanto"},
-      "et": {"name": "Estonian", "nativeName": "eesti, eesti keel"},
-      "ee": {"name": "Ewe", "nativeName": "Eʋegbe"},
-      "fo": {"name": "Faroese", "nativeName": "føroyskt"},
-      "fj": {"name": "Fijian", "nativeName": "vosa Vakaviti"},
-      "fi": {"name": "Finnish", "nativeName": "suomi, suomen kieli"},
-      "fr": {"name": "French", "nativeName": "français, langue française"},
-      "ff": {"name": "Fula; Fulah; Pulaar; Pular", "nativeName": "Fulfulde, Pulaar, Pular"},
-      "gl": {"name": "Galician", "nativeName": "Galego"},
-      "ka": {"name": "Georgian", "nativeName": "ქართული"},
-      "de": {"name": "German", "nativeName": "Deutsch"},
-      "el": {"name": "Greek, Modern", "nativeName": "Ελληνικά"},
-      "gn": {"name": "Guaraní", "nativeName": "Avañeẽ"},
-      "gu": {"name": "Gujarati", "nativeName": "ગુજરાતી"},
-      "ht": {"name": "Haitian; Haitian Creole", "nativeName": "Kreyòl ayisyen"},
-      "ha": {"name": "Hausa", "nativeName": "Hausa, هَوُسَ"},
-      "he": {"name": "Hebrew (modern)", "nativeName": "עברית"},
-      "hz": {"name": "Herero", "nativeName": "Otjiherero"},
-      "hi": {"name": "Hindi", "nativeName": "हिन्दी, हिंदी"},
-      "ho": {"name": "Hiri Motu", "nativeName": "Hiri Motu"},
-      "hu": {"name": "Hungarian", "nativeName": "Magyar"},
-      "ia": {"name": "Interlingua", "nativeName": "Interlingua"},
-      "id": {"name": "Indonesian", "nativeName": "Bahasa Indonesia"},
-      "ie": {"name": "Interlingue", "nativeName": "Interlingue"},
-      "ga": {"name": "Irish", "nativeName": "Gaeilge"},
-      "ig": {"name": "Igbo", "nativeName": "Asụsụ Igbo"},
-      "ik": {"name": "Inupiaq", "nativeName": "Iñupiaq, Iñupiatun"},
-      "io": {"name": "Ido", "nativeName": "Ido"},
-      "is": {"name": "Icelandic", "nativeName": "Íslenska"},
-      "it": {"name": "Italian", "nativeName": "Italiano"},
-      "iu": {"name": "Inuktitut", "nativeName": "ᐃᓄᒃᑎᑐᑦ"},
-      "ja": {"name": "Japanese", "nativeName": "日本語 (にほんご／にっぽんご)"},
-      "jv": {"name": "Javanese", "nativeName": "basa Jawa"},
-      "kl": {"name": "Kalaallisut, Greenlandic", "nativeName": "kalaallisut, kalaallit oqaasii"},
-      "kn": {"name": "Kannada", "nativeName": "ಕನ್ನಡ"},
-      "kr": {"name": "Kanuri", "nativeName": "Kanuri"},
-      "ks": {"name": "Kashmiri", "nativeName": "कश्मीरी, كشميري‎"},
-      "kk": {"name": "Kazakh", "nativeName": "Қазақ тілі"},
-      "km": {"name": "Khmer", "nativeName": "ភាសាខ្មែរ"},
-      "ki": {"name": "Kikuyu, Gikuyu", "nativeName": "Gĩkũyũ"},
-      "rw": {"name": "Kinyarwanda", "nativeName": "Ikinyarwanda"},
-      "ky": {"name": "Kirghiz, Kyrgyz", "nativeName": "кыргыз тили"},
-      "kv": {"name": "Komi", "nativeName": "коми кыв"},
-      "kg": {"name": "Kongo", "nativeName": "KiKongo"},
-      "ko": {"name": "Korean", "nativeName": "한국어 (韓國語), 조선말 (朝鮮語)"},
-      "ku": {"name": "Kurdish", "nativeName": "Kurdî, كوردی‎"},
-      "kj": {"name": "Kwanyama, Kuanyama", "nativeName": "Kuanyama"},
-      "la": {"name": "Latin", "nativeName": "latine, lingua latina"},
-      "lb": {"name": "Luxembourgish, Letzeburgesch", "nativeName": "Lëtzebuergesch"},
-      "lg": {"name": "Luganda", "nativeName": "Luganda"},
-      "li": {"name": "Limburgish, Limburgan, Limburger", "nativeName": "Limburgs"},
-      "ln": {"name": "Lingala", "nativeName": "Lingála"},
-      "lo": {"name": "Lao", "nativeName": "ພາສາລາວ"},
-      "lt": {"name": "Lithuanian", "nativeName": "lietuvių kalba"},
-      "lu": {"name": "Luba-Katanga", "nativeName": ""},
-      "lv": {"name": "Latvian", "nativeName": "latviešu valoda"},
-      "gv": {"name": "Manx", "nativeName": "Gaelg, Gailck"},
-      "mk": {"name": "Macedonian", "nativeName": "македонски јазик"},
-      "mg": {"name": "Malagasy", "nativeName": "Malagasy fiteny"},
-      "ms": {"name": "Malay", "nativeName": "bahasa Melayu, بهاس ملايو‎"},
-      "ml": {"name": "Malayalam", "nativeName": "മലയാളം"},
-      "mt": {"name": "Maltese", "nativeName": "Malti"},
-      "mi": {"name": "Māori", "nativeName": "te reo Māori"},
-      "mr": {"name": "Marathi (Marāṭhī)", "nativeName": "मराठी"},
-      "mh": {"name": "Marshallese", "nativeName": "Kajin M̧ajeļ"},
-      "mn": {"name": "Mongolian", "nativeName": "монгол"},
-      "na": {"name": "Nauru", "nativeName": "Ekakairũ Naoero"},
-      "nv": {"name": "Navajo, Navaho", "nativeName": "Diné bizaad, Dinékʼehǰí"},
-      "nb": {"name": "Norwegian Bokmål", "nativeName": "Norsk bokmål"},
-      "nd": {"name": "North Ndebele", "nativeName": "isiNdebele"},
-      "ne": {"name": "Nepali", "nativeName": "नेपाली"},
-      "ng": {"name": "Ndonga", "nativeName": "Owambo"},
-      "nn": {"name": "Norwegian Nynorsk", "nativeName": "Norsk nynorsk"},
-      "no": {"name": "Norwegian", "nativeName": "Norsk"},
-      "ii": {"name": "Nuosu", "nativeName": "ꆈꌠ꒿ Nuosuhxop"},
-      "nr": {"name": "South Ndebele", "nativeName": "isiNdebele"},
-      "oc": {"name": "Occitan", "nativeName": "Occitan"},
-      "oj": {"name": "Ojibwe, Ojibwa", "nativeName": "ᐊᓂᔑᓈᐯᒧᐎᓐ"},
-      "cu": {"name": "Old Slavonic", "nativeName": "ѩзыкъ словѣньскъ"},
-      "om": {"name": "Oromo", "nativeName": "Afaan Oromoo"},
-      "or": {"name": "Oriya", "nativeName": "ଓଡ଼ିଆ"},
-      "os": {"name": "Ossetian, Ossetic", "nativeName": "ирон æвзаг"},
-      "pa": {"name": "Panjabi, Punjabi", "nativeName": "ਪੰਜਾਬੀ, پنجابی‎"},
-      "pi": {"name": "Pāli", "nativeName": "पाऴि"},
-      "fa": {"name": "Persian", "nativeName": "فارسی"},
-      "pl": {"name": "Polish", "nativeName": "polski"},
-      "ps": {"name": "Pashto, Pushto", "nativeName": "پښتو"},
-      "pt": {"name": "Portuguese", "nativeName": "Português"},
-      "qu": {"name": "Quechua", "nativeName": "Runa Simi, Kichwa"},
-      "rm": {"name": "Romansh", "nativeName": "rumantsch grischun"},
-      "rn": {"name": "Kirundi", "nativeName": "kiRundi"},
-      "ro": {"name": "Romanian, Moldavian, Moldovan", "nativeName": "română"},
-      "ru": {"name": "Russian", "nativeName": "русский язык"},
-      "sa": {"name": "Sanskrit (Saṁskṛta)", "nativeName": "संस्कृतम्"},
-      "sc": {"name": "Sardinian", "nativeName": "sardu"},
-      "sd": {"name": "Sindhi", "nativeName": "सिन्धी, سنڌي، سندھی‎"},
-      "se": {"name": "Northern Sami", "nativeName": "Davvisámegiella"},
-      "sm": {"name": "Samoan", "nativeName": "gagana faa Samoa"},
-      "sg": {"name": "Sango", "nativeName": "yângâ tî sängö"},
-      "sr": {"name": "Serbian", "nativeName": "српски језик"},
-      "gd": {"name": "Scottish Gaelic; Gaelic", "nativeName": "Gàidhlig"},
-      "sn": {"name": "Shona", "nativeName": "chiShona"},
-      "si": {"name": "Sinhala, Sinhalese", "nativeName": "සිංහල"},
-      "sk": {"name": "Slovak", "nativeName": "slovenčina"},
-      "sl": {"name": "Slovene", "nativeName": "slovenščina"},
-      "so": {"name": "Somali", "nativeName": "Soomaaliga, af Soomaali"},
-      "st": {"name": "Southern Sotho", "nativeName": "Sesotho"},
-      "es": {"name": "Spanish; Castilian", "nativeName": "español, castellano"},
-      "su": {"name": "Sundanese", "nativeName": "Basa Sunda"},
-      "sw": {"name": "Swahili", "nativeName": "Kiswahili"},
-      "ss": {"name": "Swati", "nativeName": "SiSwati"},
-      "sv": {"name": "Swedish", "nativeName": "svenska"},
-      "ta": {"name": "Tamil", "nativeName": "தமிழ்"},
-      "te": {"name": "Telugu", "nativeName": "తెలుగు"},
-      "tg": {"name": "Tajik", "nativeName": "тоҷикӣ, toğikī, تاجیکی‎"},
-      "th": {"name": "Thai", "nativeName": "ไทย"},
-      "ti": {"name": "Tigrinya", "nativeName": "ትግርኛ"},
-      "bo": {"name": "Tibetan Standard, Tibetan, Central", "nativeName": "བོད་ཡིག"},
-      "tk": {"name": "Turkmen", "nativeName": "Türkmen, Түркмен"},
-      "tl": {"name": "Tagalog", "nativeName": "Wikang Tagalog, ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔"},
-      "tn": {"name": "Tswana", "nativeName": "Setswana"},
-      "to": {"name": "Tonga (Tonga Islands)", "nativeName": "faka Tonga"},
-      "tr": {"name": "Turkish", "nativeName": "Türkçe"},
-      "ts": {"name": "Tsonga", "nativeName": "Xitsonga"},
-      "tt": {"name": "Tatar", "nativeName": "татарча, tatarça, تاتارچا‎"},
-      "tw": {"name": "Twi", "nativeName": "Twi"},
-      "ty": {"name": "Tahitian", "nativeName": "Reo Tahiti"},
-      "ug": {"name": "Uighur, Uyghur", "nativeName": "Uyƣurqə, ئۇيغۇرچە‎"},
-      "uk": {"name": "Ukrainian", "nativeName": "українська"},
-      "ur": {"name": "Urdu", "nativeName": "اردو"},
-      "uz": {"name": "Uzbek", "nativeName": "zbek, Ўзбек, أۇزبېك‎"},
-      "ve": {"name": "Venda", "nativeName": "Tshivenḓa"},
-      "vi": {"name": "Vietnamese", "nativeName": "Tiếng Việt"},
-      "vo": {"name": "Volapük", "nativeName": "Volapük"},
-      "wa": {"name": "Walloon", "nativeName": "Walon"},
-      "cy": {"name": "Welsh", "nativeName": "Cymraeg"},
-      "wo": {"name": "Wolof", "nativeName": "Wollof"},
-      "fy": {"name": "Western Frisian", "nativeName": "Frysk"},
-      "xh": {"name": "Xhosa", "nativeName": "isiXhosa"},
-      "yi": {"name": "Yiddish", "nativeName": "ייִדיש"},
-      "yo": {"name": "Yoruba", "nativeName": "Yorùbá"},
-      "za": {"name": "Zhuang, Chuang", "nativeName": "Saɯ cueŋƅ, Saw cuengh"}
-    }
+      "ab": { name: "Abkhaz", nativeName: "аҧсуа", marian: "abk", listed: true  },
+      "af": { name: "Afrikaans", nativeName: "Afrikaans", marian: "afr", listed: true  },
+      "sq": { name: "Albanian", nativeName: "Shqip", marian: "sqi", listed: true  },
+      "am": { name: "Amharic", nativeName: "አማርኛ", marian: "amh", listed: true  },
+      "ar": { name: "Arabic", nativeName: "العربية", marian: "ara", listed: true  },
+      "an": { name: "Aragonese", nativeName: "Aragonés", marian: "arg", listed: true  },
+      "hy": { name: "Armenian", nativeName: "Հայերեն", marian: "hye", listed: true  },
+      "as": { name: "Assamese", nativeName: "অসমীয়া", marian: "asm", listed: true  },
+      "az": { name: "Azerbaijani", nativeName: "azərbaycan dili", marian: "aze_Latn", listed: false },
+      "bm": { name: "Bambara", nativeName: "bamanankan", marian: "bam_Latn", listed: false },
+      "ba": { name: "Bashkir", nativeName: "башҡорт теле", marian: "bak", listed: true  },
+      "eu": { name: "Basque", nativeName: "euskara, euskera", marian: "eus", listed: true  },
+      "be": { name: "Belarusian", nativeName: "Беларуская", marian: "bel", listed: true  },
+      "bn": { name: "Bengali", nativeName: "বাংলা", marian: "ben", listed: true  },
+      "bs": { name: "Bosnian", nativeName: "bosanski jezik", marian: "bos_Latn", listed: false },
+      "br": { name: "Breton", nativeName: "brezhoneg", marian: "bre", listed: true  },
+      "bg": { name: "Bulgarian", nativeName: "български език", marian: "bul", listed: true  },
+      "my": { name: "Burmese", nativeName: "ဗမာစာ", marian: "mya", listed: true  },
+      "ca": { name: "Catalan; Valencian", nativeName: "Català", marian: "cat", listed: true  },
+      "ch": { name: "Chamorro", nativeName: "Chamoru", marian: "cha", listed: true  },
+      "ce": { name: "Chechen", nativeName: "нохчийн мотт", marian: "che", listed: true  },
+      "ny": { name: "Chichewa; Chewa; Nyanja", nativeName: "chiCheŵa, chinyanja", marian: "nya", listed: true  },
+      "zh": { name: "Chinese", nativeName: "中文 (Zhōngwén), 汉语, 漢語", marian: "cmn_Hans", listed: true  },
+      "cv": { name: "Chuvash", nativeName: "чӑваш чӗлхи", marian: "chv", listed: true  },
+      "kw": { name: "Cornish", nativeName: "Kernewek", marian: "cor", listed: true  },
+      "co": { name: "Corsican", nativeName: "corsu, lingua corsa", marian: "cos", listed: true  },
+      "hr": { name: "Croatian", nativeName: "hrvatski", marian: "hrv", listed: true  },
+      "cs": { name: "Czech", nativeName: "česky, čeština", marian: "ces", listed: true  },
+      "da": { name: "Danish", nativeName: "dansk", marian: "dan", listed: true  },
+      "nl": { name: "Dutch", nativeName: "Nederlands, Vlaams", marian: "nld", listed: true  },
+      "en": { name: "English", nativeName: "English", marian: "en", listed: true   },
+      "eo": { name: "Esperanto", nativeName: "Esperanto", marian: "epo", listed: true  },
+      "et": { name: "Estonian", nativeName: "eesti, eesti keel", marian: "est", listed: true  },
+      "ee": { name: "Ewe", nativeName: "Eʋegbe", marian: "ewe", listed: true  },
+      "fo": { name: "Faroese", nativeName: "føroyskt", marian: "fao", listed: true  },
+      "fj": { name: "Fijian", nativeName: "vosa Vakaviti", marian: "fij", listed: true  },
+      "fi": { name: "Finnish", nativeName: "suomi, suomen kieli", marian: "fin", listed: true  },
+      "fr": { name: "French", nativeName: "français, langue française", marian: "fra", listed: true  },
+      "gl": { name: "Galician", nativeName: "Galego", marian: "glg", listed: true  },
+      "ka": { name: "Georgian", nativeName: "ქართული", marian: "kat", listed: true  },
+      "de": { name: "German", nativeName: "Deutsch", marian: "deu", listed: true  },
+      "el": { name: "Greek, Modern", nativeName: "Ελληνικά", marian: "ell", listed: true  },
+      "gn": { name: "Guaraní", nativeName: "Avañeẽ", marian: "grn", listed: true  },
+      "gu": { name: "Gujarati", nativeName: "ગુજરાતી", marian: "guj", listed: true  },
+      "ht": { name: "Haitian; Haitian Creole", nativeName: "Kreyòl ayisyen", marian: "hat", listed: true  },
+      "ha": { name: "Hausa", nativeName: "Hausa, هَوُسَ", marian: "hau_Latn", listed: false },
+      "he": { name: "Hebrew (modern)", nativeName: "עברית", marian: "heb", listed: true  },
+      "hi": { name: "Hindi", nativeName: "हिन्दी, हिंदी", marian: "hin", listed: true  },
+      "hu": { name: "Hungarian", nativeName: "Magyar", marian: "hun", listed: true  },
+      "ia": { name: "Interlingua", nativeName: "Interlingua", marian: "ina_Latn", listed: false },
+      "id": { name: "Indonesian", nativeName: "Bahasa Indonesia", marian: "ind", listed: true  },
+      "ie": { name: "Interlingue", nativeName: "Interlingue", marian: "ile_Latn", listed: false },
+      "ga": { name: "Irish", nativeName: "Gaeilge", marian: "gle", listed: true  },
+      "ig": { name: "Igbo", nativeName: "Asụsụ Igbo", marian: "ibo", listed: true  },
+      "io": { name: "Ido", nativeName: "Ido", marian: "ido", listed: true  },
+      "is": { name: "Icelandic", nativeName: "Íslenska", marian: "isl", listed: true  },
+      "it": { name: "Italian", nativeName: "Italiano", marian: "ita", listed: true  },
+      "iu": { name: "Inuktitut", nativeName: "ᐃᓄᒃᑎᑐᑦ", marian: "ike_Latn", listed: false },
+      "ja": { name: "Japanese", nativeName: "日本語 (にほんご／にっぽんご)", marian: "jpn", listed: true  },
+      "jv": { name: "Javanese", nativeName: "basa Jawa", marian: "jav", listed: true  },
+      "kl": { name: "Kalaallisut, Greenlandic", nativeName: "kalaallisut, kalaallit oqaasii", marian: "kal", listed: true  },
+      "kn": { name: "Kannada", nativeName: "ಕನ್ನಡ", marian: "kan", listed: true  },
+      "kk": { name: "Kazakh", nativeName: "Қазақ тілі", marian: "kaz_Cyrl", listed: false },
+      "km": { name: "Khmer", nativeName: "ភាសាខ្មែរ", marian: "khm", listed: true  },
+      "rw": { name: "Kinyarwanda", nativeName: "Ikinyarwanda", marian: "kin", listed: true  },
+      "ky": { name: "Kirghiz, Kyrgyz", nativeName: "кыргыз тили", marian: "kir_Cyrl", listed: false },
+      "kv": { name: "Komi", nativeName: "коми кыв", marian: "kpv", listed: false },
+      "ku": { name: "Kurdish", nativeName: "Kurdî, كوردی‎", marian: "kur_Latn", listed: false },
+      "la": { name: "Latin", nativeName: "latine, lingua latina", marian: "lat_Latn", listed: false },
+      "lb": { name: "Luxembourgish, Letzeburgesch", nativeName: "Lëtzebuergesch", marian: "ltz", listed: true  },
+      "lg": { name: "Luganda", nativeName: "Luganda", marian: "lug", listed: true  },
+      "li": { name: "Limburgish, Limburgan, Limburger", nativeName: "Limburgs", marian: "lij", listed: false },
+      "ln": { name: "Lingala", nativeName: "Lingála", marian: "lin", listed: true  },
+      "lo": { name: "Lao", nativeName: "ພາສາລາວ", marian: "lao", listed: true  },
+      "lt": { name: "Lithuanian", nativeName: "lietuvių kalba", marian: "lit", listed: true  },
+      "lv": { name: "Latvian", nativeName: "latviešu valoda", marian: "lav", listed: true  },
+      "gv": { name: "Manx", nativeName: "Gaelg, Gailck", marian: "glv", listed: true  },
+      "mk": { name: "Macedonian", nativeName: "македонски јазик", marian: "mkd", listed: true  },
+      "mg": { name: "Malagasy", nativeName: "Malagasy fiteny", marian: "mlg", listed: true  },
+      "ms": { name: "Malay", nativeName: "bahasa Melayu, بهاس ملايو‎", marian: "zsm_Latn", listed: false },
+      "ml": { name: "Malayalam", nativeName: "മലയാളം", marian: "mal", listed: true  },
+      "mt": { name: "Maltese", nativeName: "Malti", marian: "mlt", listed: true  },
+      "mi": { name: "Māori", nativeName: "te reo Māori", marian: "mri", listed: true  },
+      "mr": { name: "Marathi (Marāṭhī)", nativeName: "मराठी", marian: "mar", listed: true  },
+      "mh": { name: "Marshallese", nativeName: "Kajin M̧ajeļ", marian: "mah", listed: true  },
+      "mn": { name: "Mongolian", nativeName: "монгол", marian: "mon", listed: true  },
+      "na": { name: "Nauru", nativeName: "Ekakairũ Naoero", marian: "nau", listed: true  },
+      "nv": { name: "Navajo, Navaho", nativeName: "Diné bizaad, Dinékʼehǰí", marian: "nav", listed: true  },
+      "nb": { name: "Norwegian Bokmål", nativeName: "Norsk bokmål", marian: "nob", listed: true  },
+      "ne": { name: "Nepali", nativeName: "नेपाली", marian: "npi", listed: false },
+      "nn": { name: "Norwegian Nynorsk", nativeName: "Norsk nynorsk", marian: "nno", listed: true  },
+      "oc": { name: "Occitan", nativeName: "Occitan", marian: "oci", listed: true  },
+      "or": { name: "Oriya", nativeName: "ଓଡ଼ିଆ", marian: "ori", listed: true  },
+      "os": { name: "Ossetian, Ossetic", nativeName: "ирон æвзаг", marian: "oss", listed: true  },
+      "pa": { name: "Panjabi, Punjabi", nativeName: "ਪੰਜਾਬੀ, پنجابی‎", marian: "pan_Guru", listed: false },
+      "fa": { name: "Persian", nativeName: "فارسی", marian: "pes", listed: false },
+      "pl": { name: "Polish", nativeName: "polski", marian: "pol", listed: true  },
+      "ps": { name: "Pashto, Pushto", nativeName: "پښتو", marian: "pus", listed: true  },
+      "pt": { name: "Portuguese", nativeName: "Português", marian: "por", listed: true  },
+      "rm": { name: "Romansh", nativeName: "rumantsch grischun", marian: "roh", listed: true  },
+      "rn": { name: "Kirundi", nativeName: "kiRundi", marian: "run", listed: true  },
+      "ro": { name: "Romanian, Moldavian, Moldovan", nativeName: "română", marian: "ron", listed: true  },
+      "ru": { name: "Russian", nativeName: "русский язык", marian: "rus", listed: true  },
+      "sa": { name: "Sanskrit (Saṁskṛta)", nativeName: "संस्कृतम्", marian: "san_Deva", listed: false },
+      "sd": { name: "Sindhi", nativeName: "सिन्धी, سنڌي، سندھی‎", marian: "snd_Arab", listed: false },
+      "se": { name: "Northern Sami", nativeName: "Davvisámegiella", marian: "sme", listed: true  },
+      "sm": { name: "Samoan", nativeName: "gagana faa Samoa", marian: "smo", listed: true  },
+      "sg": { name: "Sango", nativeName: "yângâ tî sängö", marian: "sag", listed: true  },
+      "sr": { name: "Serbian", nativeName: "српски језик", marian: "srp_Cyrl", listed: false },
+      "gd": { name: "Scottish Gaelic; Gaelic", nativeName: "Gàidhlig", marian: "gla", listed: true  },
+      "sn": { name: "Shona", nativeName: "chiShona", marian: "sna", listed: true  },
+      "si": { name: "Sinhala, Sinhalese", nativeName: "සිංහල", marian: "sin", listed: true  },
+      "sl": { name: "Slovene", nativeName: "slovenščina", marian: "slv", listed: true  },
+      "so": { name: "Somali", nativeName: "Soomaaliga, af Soomaali", marian: "som", listed: true  },
+      "es": { name: "Spanish; Castilian", nativeName: "español, castellano", marian: "spa", listed: true  },
+      "su": { name: "Sundanese", nativeName: "Basa Sunda", marian: "sun", listed: true  },
+      "sw": { name: "Swahili", nativeName: "Kiswahili", marian: "swh", listed: false },
+      "sv": { name: "Swedish", nativeName: "svenska", marian: "swe", listed: true  },
+      "ta": { name: "Tamil", nativeName: "தமிழ்", marian: "tam", listed: true  },
+      "te": { name: "Telugu", nativeName: "తెలుగు", marian: "tel", listed: true  },
+      "tg": { name: "Tajik", nativeName: "тоҷикӣ, toğikī, تاجیکی‎", marian: "tgk_Cyrl", listed: false },
+      "th": { name: "Thai", nativeName: "ไทย", marian: "tha", listed: true  },
+      "ti": { name: "Tigrinya", nativeName: "ትግርኛ", marian: "tir", listed: true  },
+      "bo": { name: "Tibetan Standard, Tibetan, Central", nativeName: "བོད་ཡིག", marian: "bod", listed: true  },
+      "tk": { name: "Turkmen", nativeName: "Türkmen, Түркмен", marian: "tuk", listed: true  },
+      "to": { name: "Tonga (Tonga Islands)", nativeName: "faka Tonga", marian: "ton", listed: true  },
+      "tr": { name: "Turkish", nativeName: "Türkçe", marian: "tur", listed: true  },
+      "ts": { name: "Tsonga", nativeName: "Xitsonga", marian: "tso", listed: true  },
+      "tt": { name: "Tatar", nativeName: "татарча, tatarça, تاتارچا‎", marian: "tat", listed: true  },
+      "ty": { name: "Tahitian", nativeName: "Reo Tahiti", marian: "tah", listed: true  },
+      "ug": { name: "Uighur, Uyghur", nativeName: "Uyƣurqə, ئۇيغۇرچە‎", marian: "uig_Arab", listed: false },
+      "uk": { name: "Ukrainian", nativeName: "українська", marian: "ukr", listed: true  },
+      "ur": { name: "Urdu", nativeName: "اردو", marian: "urd", listed: true  },
+      "uz": { name: "Uzbek", nativeName: "zbek, Ўзбек, أۇزبېك‎", marian: "uzb_Latn", listed: false },
+      "vi": { name: "Vietnamese", nativeName: "Tiếng Việt", marian: "vie", listed: true  },
+      "wa": { name: "Walloon", nativeName: "Walon", marian: "wln", listed: true  },
+      "cy": { name: "Welsh", nativeName: "Cymraeg", marian: "cym", listed: true  },
+      "wo": { name: "Wolof", nativeName: "Wollof", marian: "wol", listed: true  },
+      "fy": { name: "Western Frisian", nativeName: "Frysk", marian: "fry", listed: true  },
+      "xh": { name: "Xhosa", nativeName: "isiXhosa", marian: "xho", listed: true  },
+      "yi": { name: "Yiddish", nativeName: "ייִדיש", marian: "yid", listed: true  },
+      "yo": { name: "Yoruba", nativeName: "Yorùbá", marian: "yor", listed: true  },
+      "zu": { name: "Zulu", nativeName: "isiZulu", marian: "zul", listed: true },
+    };
   }
 
 
@@ -8633,7 +8811,7 @@ class App extends Component {
 
           get_ether_gas_usage_chart_data={this.get_ether_gas_usage_chart_data.bind(this)} load_object_certificate_showcasing_events={this.load_object_certificate_showcasing_events.bind(this)} load_token_certificate_chain={this.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.load_nft_certificate_parent_objects.bind(this)}
 
-          get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)}
+          get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)} perform_translation_of_specific_object={this.perform_translation_of_specific_object.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -8687,7 +8865,7 @@ class App extends Component {
     this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
-  add_channel_message_to_stack_object(message){
+  async add_channel_message_to_stack_object(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'channel')
     }
@@ -8699,6 +8877,9 @@ class App extends Component {
         break;
       }
     }
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1510']/* 'channel-messages' */, entered_indexing_tags:[this.getLocale()['1369']/* 'send' */, this.getLocale()['109']/* 'channel' */,this.getLocale()['2094']/* 'messages' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
@@ -8708,10 +8889,10 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
-  add_post_reply_to_stack(message){
+  async add_post_reply_to_stack(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'post')
     }
@@ -8723,6 +8904,9 @@ class App extends Component {
         break;
       }
     }
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1511']/* 'post-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['297']/* 'post' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
@@ -8732,10 +8916,10 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
-  add_job_message_to_stack_object(message){
+  async add_job_message_to_stack_object(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'job')
     }
@@ -8747,6 +8931,9 @@ class App extends Component {
         break;
       }
     }
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1514']/* 'job-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['1309']/* 'job' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
@@ -8756,10 +8943,10 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
-  add_proposal_message_to_stack_object(message){
+  async add_proposal_message_to_stack_object(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'proposal')
     }
@@ -8771,6 +8958,9 @@ class App extends Component {
         break;
       }
     }
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1515']/* 'proposal-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['1309']/* 'job' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
@@ -8780,10 +8970,10 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
-  add_bag_message_to_stack_object(message){
+  async add_bag_message_to_stack_object(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'bag')
     }
@@ -8795,6 +8985,9 @@ class App extends Component {
         break;
       }
     }
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1501']/* 'bag-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['1045']/* 'bag' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
@@ -8804,10 +8997,10 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
-  add_storefront_message_to_stack_object(message){
+  async add_storefront_message_to_stack_object(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'storefront')
     }
@@ -8819,6 +9012,9 @@ class App extends Component {
         break;
       }
     }
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1502']/* 'storefront-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['1215']/* 'storefront' */,this.getLocale()['1158']/* 'message' */,this.getLocale()['2697']/* 'review' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
@@ -8828,10 +9024,10 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
-  add_audio_reply_to_stack(message){
+  async add_audio_reply_to_stack(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'audio')
     }
@@ -8843,6 +9039,9 @@ class App extends Component {
         break;
       }
     }
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1593cc']/* 'audio-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['a311a']/* 'audio' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
@@ -8852,10 +9051,10 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
-  add_video_reply_to_stack(message){
+  async add_video_reply_to_stack(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'video')
     }
@@ -8867,6 +9066,9 @@ class App extends Component {
         break;
       }
     }
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1593ct']/* 'video-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['b311a']/* 'video' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
@@ -8876,10 +9078,10 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
-  add_nitro_reply_to_stack(message){
+  async add_nitro_reply_to_stack(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'nitro')
     }
@@ -8891,6 +9093,9 @@ class App extends Component {
         break;
       }
     }
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1593cu']/* 'nitro-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['a273a']/* 'nitro' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
@@ -8900,10 +9105,10 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
-  add_video_message_to_stack_object(message){
+  async add_video_message_to_stack_object(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'video-comment')
     }
@@ -8915,6 +9120,9 @@ class App extends Component {
         break;
       }
     }
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['3030b']/* 'video-comment-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['3030c']/* 'video' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
@@ -8924,7 +9132,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    
   }
 
   block_post(object){
@@ -11563,7 +11771,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)} when_language_selected={this.when_language_selected.bind(this)} remove_content_languag_setting={this.remove_content_languag_setting.bind(this)}
       />
     )
   }
@@ -12731,6 +12939,28 @@ class App extends Component {
 
   when_preserve_state_option_changed(item){
     this.setState({preserve_state: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_language_selected(item){
+    if(!this.do_i_have_an_account() || !this.do_i_have_a_minimum_number_of_txs_in_account()){
+      this.prompt_top_notification(this.getLocale()['1593mz']/* 'First run a transaction to enable this setting.' */, 6300)
+      return;
+    }
+    this.setState({content_language: item, translation_data: {}})
+    this.prompt_top_notification(this.getLocale()['1593na']/* 'e will translate your content to that language.' */, 8300)
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  remove_content_languag_setting(){
+    this.setState({content_language: null, translation_data: {}})
+    this.prompt_top_notification(this.getLocale()['1593nb']/* 'Youll see everything in its original form.' */, 8300)
     var me = this;
     setTimeout(function() {
       me.set_cookies()
@@ -14074,13 +14304,17 @@ class App extends Component {
     this.set_cookies_after_stack_action(stack_clone)
   }
 
-  when_add_new_object_to_stack(state_obj){
+  async when_add_new_object_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()
     var edit_id = -1
     for(var i=0; i<stack_clone.length; i++){
       if(stack_clone[i].id == state_obj.id){
         edit_id = i
       }
+    }
+    if(state_obj.content_channeling_setting == this.getLocale()['1233']/* 'international' */){
+      const translation_data = await this.translate_new_object_into_english(state_obj)
+      state_obj.translation_data = translation_data
     }
     if(edit_id != -1){
       stack_clone[edit_id] = state_obj
@@ -14351,6 +14585,503 @@ class App extends Component {
     const words_to_check = text.toLowerCase().split(' ')
     const foundWords = all_reserved_keywords.filter(word => words_to_check.includes(word));
     return foundWords.length != 0
+  }
+
+
+
+  extract_payload_for_translation(state_obj, lan){
+    const payload = []
+    const payload_data = {}
+
+    const entered_title_text = state_obj.entered_title_text || ''
+    const entered_indexing_tags = state_obj.entered_indexing_tags || []
+    const entered_objects = state_obj.entered_objects || []
+    const markdown = state_obj.markdown || ''
+    const message = state_obj.message || ''
+    
+    //title
+    payload_data.entered_title_text = {
+      entries:[
+        { position: payload.length, }
+      ]
+    }
+    payload.push({
+      text: entered_title_text, 
+      target_lang: lan
+    });
+
+    //tags
+    payload_data.entered_indexing_tags = {
+      entries: []
+    }
+
+    entered_indexing_tags.forEach(tag => {
+      payload_data.entered_indexing_tags.entries.push({
+        position: payload.length,
+      })
+      payload.push({ 
+        text: tag, 
+        target_lang: lan
+      });
+    });
+
+    //text-objects
+    payload_data.entered_objects = {
+      entries: []
+    }
+
+    entered_objects.forEach(text_obj => {
+      payload_data.entered_objects.entries.push({
+        position: payload.length,
+      })
+      const type = text_obj['type']
+      const text_object_text = type == '11' ? text_obj['data']['caption']['text'] : text_obj['data']['text']
+      payload.push({ 
+        text: text_object_text, 
+        target_lang: lan
+      });
+    });
+
+    payload_data.markdown = {
+      entries: []
+    }
+    const markdown_entries = this.extractMarkdownElements(markdown)
+    markdown_entries.forEach(element => {
+      payload_data.markdown.entries.push({
+        position: payload.length,
+      })
+
+      payload.push({ 
+        text: element.content, 
+        target_lang: lan
+      });
+    });
+
+    //message
+    payload_data.message = {
+      entries:[
+        { position: payload.length, }
+      ]
+    }
+    payload.push({
+      text: message, 
+      target_lang: lan
+    });
+
+    return { payload, payload_data }
+  }
+
+  extractMarkdownElements(markdown) {
+    const elements = [];
+
+    elements.push(...this.extractHeadings(markdown));
+    elements.push(...this.extractParagraphs(markdown));
+    elements.push(...this.extractLinks(markdown));
+    elements.push(...this.extractBold(markdown));
+    elements.push(...this.extractItalics(markdown));
+    elements.push(...this.extractBlockquotes(markdown));
+    elements.push(...this.extractListItems(markdown));
+
+    // Sort everything by its position in the original Markdown
+    elements.sort((a, b) => a.start - b.start);
+    return elements;
+  }
+
+  extractHeadings(markdown){
+    const regex = /^(#{1,6})[ \t]+(.+?)[ \t]*$/gm;
+
+    const headings = [];
+    let match;
+
+    while ((match = regex.exec(markdown)) !== null) {
+      const raw = match[0];
+
+      // Remove the # symbols and whitespace
+      const content = match[2].trim();
+
+      // Find the content position inside the original heading
+      const contentStart = match.index + raw.indexOf(content);
+
+      headings.push({
+        type: "heading",
+        level: match[1].length,
+        content,
+        start: contentStart,
+        end: contentStart + content.length,
+        raw,
+        elementStart: match.index,
+        elementEnd: match.index + raw.length
+      });
+    }
+
+    return headings;
+  }
+
+  extractParagraphs(markdown){
+    const regex = /^(?!#{1,6}[ \t]+|>[ \t]?|[-*+][ \t]+|\d+\.[ \t]+)(?=\S)(.*(?:\n(?!\s*$).*)*)/gm;
+
+    const paragraphs = [];
+    let match;
+
+    while ((match = regex.exec(markdown)) !== null) {
+      const raw = match[0];
+
+      // Skip lines that are part of other Markdown structures
+      if (
+        /^#{1,6}[ \t]+/.test(raw) ||
+        /^>[ \t]?/.test(raw) ||
+        /^[-*+][ \t]+/.test(raw) ||
+        /^\d+\.[ \t]+/.test(raw)
+      ) {
+        continue;
+      }
+
+      var content = raw.trim()
+      if (!content) continue;
+      const contentStart = match.index + raw.indexOf(content);
+      
+      const links = this.extractLinks(content)
+      for(var i=0; i<links.length; i++){
+          const index = i
+          const link_item = links[i]
+          const p = '%775833$435656%'+index+'%775833$435656%'
+          content = (content.replace(link_item.raw, p))
+          link_item.place = p
+      }
+
+      const bolds = this.extractBold(content)
+      for(var j=0; j<bolds.length; j++){
+          const index = j
+          const bold_item = bolds[j]
+          const q = '%^47378$47837%'+index+'%^47378$47837%'
+          content = (content.replace(bold_item.raw, q))
+          bold_item.place = q
+      }
+
+      const italics = this.extractItalics(content)
+      for(var k=0; k<italics.length; k++){
+          const index = k
+          const italic_item = italics[k]
+          const r = '%538337$937292%'+index+'%538337$937292%'
+          content = (content.replace(italic_item.raw, r))
+          italic_item.place = r
+      }
+      const internals = links.concat(bolds, italics)
+
+      paragraphs.push({
+        type: "paragraph",
+        content: content,
+        start: contentStart,
+        end: contentStart + content.length,
+        raw,
+        elementStart: match.index,
+        elementEnd: match.index + raw.length,
+        internals,
+      });
+    }
+
+    return paragraphs;
+  }
+
+  extractLinks(markdown){
+    const regex = /\[([^\]]+)\]\((<[^>]+>|[^)\s]+)(?:\s+["']([^"']*)["'])?\)/g;
+
+    const links = [];
+    let match;
+
+    while ((match = regex.exec(markdown)) !== null) {
+      const raw = match[0];
+
+      const text = match[1];
+      const url = match[2];
+      const title = match[3] || null;
+
+      // Text position inside the original Markdown
+      const textStart = match.index + raw.indexOf(text);
+
+      links.push({
+        type: "link",
+        content: text,
+        url,
+        title,
+        start: textStart,
+        end: textStart + text.length,
+        raw,
+        elementStart: match.index,
+        elementEnd: match.index + raw.length,
+        place: '%775833$435656%'+links.length+'%775833$435656%',
+      });
+    }
+
+    return links;
+  }
+
+  extractBold(markdown){
+    const regex = /(\*\*|__)(?!\s)(.+?)(?<!\s)\1/g;
+
+    const bold = [];
+    let match;
+
+    while ((match = regex.exec(markdown)) !== null) {
+      const raw = match[0];
+      const content = match[2];
+
+      const contentStart = match.index + raw.indexOf(content);
+
+      bold.push({
+        type: "bold",
+        content,
+        start: contentStart,
+        end: contentStart + content.length,
+        raw,
+        elementStart: match.index,
+        elementEnd: match.index + raw.length,
+        place: '%^47378$47837%'+bold.length+'%^47378$47837%',
+      });
+    }
+
+    return bold;
+  }
+
+  extractItalics(markdown){
+    const regex = /(?<!\*)\*(?!\*)(?!\s)(.+?)(?<!\s)\*(?!\*)|(?<!_)_(?!_)(?!\s)(.+?)(?<!\s)_(?!_)/g;
+
+    const italics = [];
+    let match;
+
+    while ((match = regex.exec(markdown)) !== null) {
+      const raw = match[0];
+      const content = match[2];
+
+      // Avoid extracting bold as italic
+      if (
+        raw.startsWith("**") ||
+        raw.startsWith("__")
+      ) {
+        continue;
+      }
+
+      const contentStart = match.index + raw.indexOf(content);
+
+      italics.push({
+        type: "italic",
+        content,
+        start: contentStart,
+        end: contentStart + content.length,
+        raw,
+        elementStart: match.index,
+        elementEnd: match.index + raw.length,
+        place: '%538337$937292%'+italics.length+'%538337$937292%'
+      });
+    }
+
+    return italics;
+  }
+
+  extractBlockquotes(markdown){
+    const regex = /^(>[ \t]?.*(?:\n>[ \t]?.*)*)/gm;
+
+    const blockquotes = [];
+    let match;
+
+    while ((match = regex.exec(markdown)) !== null) {
+      const raw = match[0];
+
+      // Remove > and optional whitespace from each line
+      const content = raw
+        .split("\n")
+        .map(line => line.replace(/^>[ \t]?/, ""))
+        .join("\n");
+
+      blockquotes.push({
+        type: "blockquote",
+        content,
+        start: match.index,
+        end: match.index + raw.length,
+        raw,
+        elementStart: match.index,
+        elementEnd: match.index + raw.length
+      });
+    }
+
+    return blockquotes;
+  }
+
+  extractListItems(markdown){
+    const regex = /^([ \t]*)([-*+]|\d+\.)[ \t]+(.+)$/gm;
+
+    const listItems = [];
+    let match;
+
+    while ((match = regex.exec(markdown)) !== null) {
+      const raw = match[0];
+
+      const indentation = match[1];
+      const marker = match[2];
+      const content = match[3];
+
+      const contentStart = match.index + raw.indexOf(content);
+
+      listItems.push({
+        type: "list-item",
+        content,
+        marker,
+        ordered: /^\d+\.$/.test(marker),
+        indentation: indentation.length,
+        start: contentStart,
+        end: contentStart + content.length,
+        raw,
+        elementStart: match.index,
+        elementEnd: match.index + raw.length
+      });
+    }
+
+    return listItems;
+  }
+
+  async translate_new_object_into_english(state_obj){
+    const lan = 'en'
+    const { payload, payload_data } = this.extract_payload_for_translation(state_obj, lan);
+    const payload_result = await this.translate_payload(payload, 'to_en');
+
+    if(payload_result != null){
+      const payload_data_translated = this.inject_translation_result_into_payload_data(payload_data, payload_result, lan, state_obj)
+      return payload_data_translated
+    }
+    else{
+      return {}
+    }
+  }
+
+  async translate_payload(payload, direction, updated_signature=false){
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = ''
+    if(this.state.beacon_chain_url != ''){
+      beacon_node = this.state.beacon_chain_url;
+    }
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+      beacon_e5_id = this.state.my_preferred_nitro
+    }
+    
+    const arg_obj = {
+      payload,
+      direction,
+    }
+
+    const body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
+    }
+
+    const request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'bulk_translate')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      console.log('translate_payload', 'response', obj)
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return await this.translate_payload(payload, direction, true)
+      }else{
+        if(obj['success'] == true){
+          return obj['data']
+        }
+      }
+    }
+    catch(e){
+      console.log('apppage', 'translate_payload', 'something went wrong with translate_payload', e)
+    }
+  }
+
+  inject_translation_result_into_payload_data(original_payload_data, payload_result, lan, state_obj){
+    const payload_data = structuredClone(original_payload_data)
+    //object title
+    payload_data.entered_title_text[lan] = payload_result[payload_data.entered_title_text.entries[0].position]
+
+    //object tags
+    payload_data.entered_indexing_tags[lan] = []
+    payload_data.entered_indexing_tags.entries.forEach(entry => {
+      payload_data.entered_indexing_tags[lan].push(payload_result[entry.position])
+    });
+
+    //object text objects
+    payload_data.entered_objects[lan] = []
+    payload_data.entered_objects.entries.forEach(entry => {
+      payload_data.entered_objects[lan].push(payload_result[entry.position])
+    });
+
+    //object markdown
+    const markdown = state_obj.markdown || ''
+    const markdown_entries = this.extractMarkdownElements(markdown)
+    const new_markdown_entries = []
+    payload_data.markdown.entries.forEach((entry, index) => {
+      const original_entry = markdown_entries[index]
+      original_entry.translatedContent = payload_result[entry.position]
+      new_markdown_entries.push(original_entry)
+    });
+
+    const translated_markdown = this.replaceMarkdownElements(markdown, new_markdown_entries);
+    payload_data.markdown[lan] = translated_markdown
+
+    //object message (if message)
+    payload_data.message[lan] = payload_result[payload_data.message.entries[0].position]
+
+    return payload_data
+  }
+
+  replaceMarkdownElements(markdown, translatedElements) {
+    let result = markdown;
+
+    // Replace elements from right to left
+    const sorted = [...translatedElements].sort((a, b) => b.start - a.start);
+
+    for (var s=0; s<sorted.length; s++) {
+      const element = sorted[s]
+      if(element.type == 'paragraph'){
+          let translated_content = element.translatedContent
+          element.internals.forEach(link_element => {
+              const object = translatedElements.find((e) => {
+                  return e.raw == link_element.raw
+              })
+              if(object != null){
+                  if(object.type == 'link'){
+                      const new_link = `[${object.translatedContent}](${object.url})`
+                      translated_content = translated_content.replace(link_element.place, new_link)
+                  }
+                  else if(object.type == 'bold'){
+                      const new_bold = `**${object.translatedContent}**`
+                      translated_content = translated_content.replace(link_element.place, new_bold)
+                  }
+                  else if(object.type == 'italic'){
+                      const new_italic = `*${object.translatedContent}*`
+                      translated_content = translated_content.replace(link_element.place, new_italic)
+                  }
+              }else{
+                  translated_content = translated_content.replace(link_element.place, link_element.raw)
+              }
+          });
+          result =
+              result.slice(0, element.start) +
+              translated_content +
+              result.slice(element.start+translated_content.length);
+      }
+      else if(element.type != 'link' && element.type != 'bold' && element.type != 'italic'){
+        result =
+          result.slice(0, element.start) +
+          element.translatedContent +
+          result.slice(element.start+element.translatedContent.length);
+      }
+    }
+
+    return result;
   }
 
   
@@ -15565,13 +16296,17 @@ class App extends Component {
     }
   }
 
-  when_add_edit_object_to_stack(state_obj){
+  async when_add_edit_object_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()
     var edit_id = -1
     for(var i=0; i<stack_clone.length; i++){
       if(stack_clone[i].id == state_obj.id){
         edit_id = i
       }
+    }
+    if(state_obj.content_channeling_setting == this.getLocale()['1233']/* 'international' */){
+      const translation_data = await this.translate_new_object_into_english(state_obj)
+      state_obj.translation_data = translation_data
     }
     if(edit_id != -1){
       stack_clone[edit_id] = state_obj
@@ -19614,7 +20349,7 @@ class App extends Component {
     this.set_cookies_after_stack_action(stack_clone)
   }
 
-  add_job_request_message_to_stack_object(message){
+  async add_job_request_message_to_stack_object(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'request')
     }
@@ -19626,6 +20361,9 @@ class App extends Component {
         break;
       }
     }
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1505']/* 'job-request-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */,this.getLocale()['1309']/* 'job' */,this.getLocale()['1366']/* 'request' */], messages_to_deliver:[], e5: message['e5']}
       tx.messages_to_deliver.push(message)
@@ -19635,7 +20373,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
   add_id_to_contacts(account_id, item){
@@ -29893,7 +30631,7 @@ class App extends Component {
     this.load_my_contracts()
   }
 
-  add_storefront_request_message_to_stack_object(message){
+  async add_storefront_request_message_to_stack_object(message){
     if(this.direct_message_via_socket_enabled(message)){
       return this.emit_new_message_or_comment(message, 'purchase_request')
     }
@@ -29905,6 +30643,9 @@ class App extends Component {
         break;
       }
     }
+    const translation_data = await this.translate_new_object_into_english(message)
+    message.translation_data = translation_data
+    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:this.getLocale()['3097e']/* 'purchase-request-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */,this.getLocale()['3097a']/* 'storefront' */,this.getLocale()['1366']/* 'request' */], messages_to_deliver:[], e5: message['e5']}
       tx.messages_to_deliver.push(message)
@@ -29914,7 +30655,7 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
-    this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
+    // this.propmt_top_notification(this.getLocale()['1697']/* 'Message added to stack.' */, 1600)
   }
 
 
@@ -41121,6 +41862,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('subscriptions')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects(this.state.created_subscriptions[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(created_subscriptions.slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -41130,6 +41872,7 @@ class App extends Component {
         await this.get_alias_data_for_accounts(E52contractInstance, e5, alias_accounts, web3)
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects(this.state.created_subscriptions[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(created_subscriptions.slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(created_subscriptions.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -41643,6 +42386,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('contracts')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects(this.state.created_contracts[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(created_contracts.slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(created_contracts.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -41653,6 +42397,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects(this.state.created_contracts[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(created_contracts.slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(created_contracts.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -42288,6 +43033,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('proposals')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects(this.state.my_proposals[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(my_proposal_ids.slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -42298,6 +43044,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects(this.state.my_proposals[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(my_proposal_ids.slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(my_proposal_ids.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -42798,6 +43545,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('tokens')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects([].concat(this.state.created_tokens[e5], this.state.created_certificates[e5], this.state.created_crossexchanges[e5]))
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(created_tokens.slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(created_tokens.slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'exchange_objects_data')
@@ -42808,6 +43556,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects([].concat(this.state.created_tokens[e5], this.state.created_certificates[e5], this.state.created_crossexchanges[e5]))
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(created_tokens.slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(created_tokens.slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -43908,6 +44657,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('posts')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects(this.state.created_posts[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         // console.log('get_post_data', 'slice', created_post_events.slice(i+1, end))
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_post_events).slice(i+1, end), e5)
@@ -43921,6 +44671,7 @@ class App extends Component {
         // console.log('get_post_data', 'loaded more ipfs data...', all_data)
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects(this.state.created_posts[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_post_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -44082,6 +44833,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('channels')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects(this.state.created_channels[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_channel_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -44092,6 +44844,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects(this.state.created_channels[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_channel_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_channel_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -44290,6 +45043,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('jobs')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects(this.state.created_jobs[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_job_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events).slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'job_objects_data')
@@ -44300,6 +45054,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects(this.state.created_jobs[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_job_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_job_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -44732,6 +45487,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('storefronts')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects(this.state.created_stores[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_store_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -44742,6 +45498,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects(this.state.created_stores[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_store_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_store_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -44953,6 +45710,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('bags')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects(this.state.created_bags[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events3(created_bag_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -44963,6 +45721,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects(this.state.created_bags[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events3(created_bag_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events3(created_bag_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -45209,6 +45968,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('contractor')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects(this.state.created_contractors[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_contractor_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -45219,6 +45979,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects(this.state.created_contractors[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_contractor_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_contractor_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -45423,6 +46184,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('audio')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        //  await this.perform_bulk_translation_of_objects(this.state.created_audios[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
@@ -45432,6 +46194,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        //  await this.perform_bulk_translation_of_objects(this.state.created_audios[e5])
         await this.wait(1000)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_audio_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
@@ -45628,6 +46391,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('videos')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        //  await this.perform_bulk_translation_of_objects(this.state.created_videos[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
 
@@ -45637,6 +46401,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        //  await this.perform_bulk_translation_of_objects(this.state.created_videos[e5])
         await this.wait(1000)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_video_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
 
@@ -45853,6 +46618,7 @@ class App extends Component {
       // await this.pause_load_if_should_not_continue_loading('nitros')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        //  await this.perform_bulk_translation_of_objects(this.state.created_nitros[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_nitro_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events).slice(i+1, end), web3, e5, contract_addresses, pre_launch_data, 'nitro_objects_data')
@@ -45863,6 +46629,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        //  await this.perform_bulk_translation_of_objects(this.state.created_nitros[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_nitro_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_nitro_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -46012,6 +46779,7 @@ class App extends Component {
       await this.pause_load_if_should_not_continue_loading('polls')
 
       if(i+1 >= load_pos && i < all_return_data_loaded_event_count){
+        // await this.perform_bulk_translation_of_objects(this.state.created_polls[e5])
         const end = load_pos+this.state.sliced_object_load_increment_count > all_return_data_loaded_event_count ? all_return_data_loaded_event_count : load_pos+this.state.sliced_object_load_increment_count
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_post_events).slice(i+1, end), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, end), web3, e5, contract_addresses, all_return_data, 'objects_data')
@@ -46022,6 +46790,7 @@ class App extends Component {
         load_pos += this.state.sliced_object_load_increment_count
       }else
       if(i+1 >= load_pos){
+        // await this.perform_bulk_translation_of_objects(this.state.created_polls[e5])
         await this.wait(1000)
         await this.fetch_and_set_loaded_object_views(this.get_ids_from_events(created_post_events).slice(i+1, i+this.state.event_load_chunk_size), e5)
         all_data = await this.fetch_multiple_objects_data(this.get_ids_from_events(created_post_events).slice(i+1, i+this.state.event_load_chunk_size), web3, e5, contract_addresses)
@@ -47139,6 +47908,189 @@ class App extends Component {
 
     await run_function(all_objects);
     this.setState({is_safe_to_load_focused_items_into_memory: true})
+  }
+
+
+
+  async perform_bulk_translation_of_objects(objects, tranlsating_messages=false){
+    const lan = this.state.content_language?.marian
+    if(lan == null) return;
+    const filtered_objects = objects.filter((object_item) => {
+      if(tranlsating_messages == true){
+        const used_message_id = object_item['id']+object_item['message_id']
+        return this.state.translation_data[used_message_id] == null
+      }
+      return (this.state.translation_data[object_item['e5_id']] == null && object_item['ipfs'] != null && object_item['ipfs'].content_channeling_setting == this.getLocale()['1233']/* 'international' */)
+    })
+    if(filtered_objects.length == 0) return;
+    const { payload, payload_data } = tranlsating_messages == true ? this.extract_payload_for_secondary_message_translation(filtered_objects, lan) : this.extract_payload_for_secondary_title_translation(filtered_objects, lan);
+    const payload_result = lan == 'en' ? payload.map(e => e.text) : await this.translate_payload(payload, 'from_en');
+    
+    if(payload_result != null){
+      if(tranlsating_messages == true){
+        this.inject_translation_result_into_payload_data_for_multile_messages(payload_data, payload_result, lan, filtered_objects) 
+      }else{
+        this.inject_translation_result_into_payload_data_for_multile_objects(payload_data, payload_result, lan, filtered_objects)
+      }
+    }
+  }
+
+  extract_payload_for_secondary_title_translation(objects, lan){
+    const payload = []
+    const payload_data = {}
+
+    for(var i=0; i<objects.length; i++){
+      const object = objects[i];
+      const state_obj = object['ipfs'];
+      const object_id = object['e5_id'];
+
+      const entered_title_text = state_obj.translation_data?.entered_title_text['en'] || state_obj.entered_title_text || '';
+      const entered_indexing_tags = state_obj.translation_data?.entered_indexing_tags['en'] || state_obj.entered_indexing_tags || [];
+
+      payload_data[object_id] = {}
+      
+      //title
+      payload_data[object_id].entered_title_text = {
+        entries:[
+          { position: payload.length, }
+        ]
+      }
+      payload.push({
+        text: entered_title_text, 
+        target_lang: lan
+      });
+
+      //tags
+      payload_data[object_id].entered_indexing_tags = {
+        entries: []
+      }
+
+      entered_indexing_tags.forEach(tag => {
+        payload_data[object_id].entered_indexing_tags.entries.push({
+          position: payload.length,
+        })
+        payload.push({ 
+          text: tag, 
+          target_lang: lan
+        });
+      });
+    }
+
+    return { payload, payload_data }
+  }
+
+  extract_payload_for_secondary_message_translation(objects, lan){
+    const payload = []
+    const payload_data = {}
+
+    for(var i=0; i<objects.length; i++){
+      const object = objects[i];
+      const state_obj = object;
+      const object_id = state_obj['id']+state_obj['message_id'];
+
+      const message = state_obj.translation_data?.message['en'] || state_obj.message || '';
+      const markdown = state_obj.translation_data?.markdown['en'] || state_obj.markdown || '';
+
+      payload_data[object_id] = {}
+      
+      //title
+      payload_data[object_id].message = {
+        entries:[
+          { position: payload.length, }
+        ]
+      }
+      payload.push({
+        text: message, 
+        target_lang: lan
+      });
+
+      //markdown
+      payload_data[object_id].markdown = {
+        entries: []
+      }
+      const markdown_entries = this.extractMarkdownElements(markdown)
+      markdown_entries.forEach(element => {
+        payload_data[object_id].markdown.entries.push({
+          position: payload.length,
+        })
+
+        payload.push({ 
+          text: element.content, 
+          target_lang: lan
+        });
+      });
+    }
+
+    return { payload, payload_data }
+  }
+
+  inject_translation_result_into_payload_data_for_multile_objects(payload_data, payload_result, lan, objects){
+    const translation_data = structuredClone(this.state.translation_data)
+    for(var i=0; i<objects.length; i++){
+      const object = objects[i];
+      const state_obj = object['ipfs'];
+      const e5_id = object['e5_id'];
+
+      if(translation_data[e5_id] == null){
+        translation_data[e5_id] = {}
+      }
+
+      translation_data[e5_id].type = object['object_type']
+
+      if(translation_data[e5_id].entered_title_text == null){
+        translation_data[e5_id].entered_title_text = {}
+      }
+      translation_data[e5_id].entered_title_text = payload_result[payload_data[e5_id].entered_title_text.entries[0].position]
+
+
+      if(translation_data[e5_id].entered_indexing_tags == null){
+        translation_data[e5_id].entered_indexing_tags = []
+      }
+      payload_data[e5_id].entered_indexing_tags.entries.forEach(entry => {
+        translation_data[e5_id].entered_indexing_tags.push(payload_result[entry.position])
+      });
+    }
+
+    this.setState({translation_data: translation_data})
+  }
+
+  inject_translation_result_into_payload_data_for_multile_messages(payload_data, payload_result, lan, objects){
+    const translation_data = structuredClone(this.state.translation_data)
+    for(var i=0; i<objects.length; i++){
+      const object = objects[i];
+      const state_obj = object;
+      const e5_id = state_obj['id']+state_obj['message_id'];
+
+      if(translation_data[e5_id] == null){
+        translation_data[e5_id] = {}
+      }
+
+      translation_data[e5_id].type = 'm'
+      //message
+      if(translation_data[e5_id].message == null){
+        translation_data[e5_id].message = {}
+      }
+      translation_data[e5_id].message = payload_result[payload_data[e5_id].message.entries[0].position]
+
+
+      //markdown
+      if(translation_data[e5_id].markdown == null){
+        translation_data[e5_id].markdown = {}
+      }
+      const markdown = state_obj.markdown || ''
+      const markdown_entries = this.extractMarkdownElements(markdown)
+      const new_markdown_entries = []
+      payload_data[e5_id].markdown.entries.forEach((entry, index) => {
+        const original_entry = markdown_entries[index]
+        original_entry.translatedContent = payload_result[entry.position]
+        new_markdown_entries.push(original_entry)
+      });
+
+      const translated_markdown = this.replaceMarkdownElements(markdown, new_markdown_entries);
+      translation_data[e5_id].markdown = translated_markdown
+    }
+
+    this.setState({translation_data: translation_data})
   }
 
 
@@ -58085,6 +59037,157 @@ class App extends Component {
     this.setState({loaded_nft_certificate_parents: clone})
   }
 
+  async perform_translation_of_specific_object(object){
+    const lan = this.state.content_language?.marian
+    if(lan == null) return;
+    if(this.state.translation_data[object['e5_id']].entered_objects != null) return;
+    const set_loading = (value) => {
+      const clone = structuredClone(this.state.performing_translation_indicator)
+      clone[object['e5_id']] = value;
+      this.setState({performing_translation_indicator: clone})
+    }
+    set_loading(true)
+    const { payload, payload_data } = this.extract_payload_for_secondary_translation(object, lan);
+    const payload_result = lan == 'en' ? payload.map(e => e.text) : await this.translate_payload(payload, 'from_en');
+    if(payload_result != null){
+      this.inject_translation_result_into_payload_data_for_object(payload_data, payload_result, lan, object)
+    }
+    set_loading(false)
+  }
+
+  extract_payload_for_secondary_translation(object, lan){
+    const payload = []
+    const payload_data = {}
+    const state_obj = object['ipfs'];
+
+    const entered_objects = state_obj.translation_data?.entered_objects['en'] || state_obj.entered_objects || [];
+    const markdown = state_obj.translation_data?.markdown['en'] || state_obj.markdown || '';
+
+    payload_data[object['e5_id']] = {}
+
+    //text-objects
+    payload_data[object['e5_id']].entered_objects = {
+      entries: []
+    }
+
+    entered_objects.forEach(text_obj => {
+      payload_data[object['e5_id']].entered_objects.entries.push({
+        position: payload.length,
+      })
+      const type = text_obj['type']
+      const text_object_text = type == '11' ? text_obj['data']['caption']['text'] : text_obj['data']['text']
+      payload.push({ 
+        text: text_object_text, 
+        target_lang: lan
+      });
+    });
+
+    payload_data[object['e5_id']].markdown = {
+      entries: []
+    }
+    const markdown_entries = this.extractMarkdownElements(markdown)
+    markdown_entries.forEach(element => {
+      payload_data[object['e5_id']].markdown.entries.push({
+        position: payload.length,
+      })
+
+      payload.push({ 
+        text: element.content, 
+        target_lang: lan
+      });
+    });
+
+    return { payload, payload_data }
+  }
+
+  inject_translation_result_into_payload_data_for_object(payload_data, payload_result, lan, object){
+    const translation_data = structuredClone(this.state.translation_data)
+    
+    const state_obj = object['ipfs'];
+    const e5_id = object['e5_id'];
+
+    if(translation_data[e5_id] == null){
+      translation_data[e5_id] = {}
+    }
+
+    //entered_objects
+    if(translation_data[e5_id].entered_objects == null){
+      translation_data[e5_id].entered_objects = []
+    }
+    payload_data[e5_id].entered_objects.entries.forEach(entry => {
+      translation_data[e5_id].entered_objects.push(payload_result[entry.position])
+    });
+
+
+    //markdown
+    const markdown = state_obj.markdown || ''
+    const markdown_entries = this.extractMarkdownElements(markdown)
+    const new_markdown_entries = []
+    payload_data[e5_id].markdown.entries.forEach((entry, index) => {
+      const original_entry = markdown_entries[index]
+      original_entry.translatedContent = payload_result[entry.position]
+      new_markdown_entries.push(original_entry)
+    });
+
+    const translated_markdown = this.replaceMarkdownElements(markdown, new_markdown_entries);
+    translation_data[e5_id].markdown = translated_markdown
+
+    this.setState({translation_data: translation_data})
+  }
+
+  async translate_loaded_messages(){
+    //
+    //messages
+    const objects = []
+    const add_all_messages = (state_object) => {
+      Object.values(state_object).forEach(message_array => {
+        message_array.forEach(message => {
+          objects.push(message)
+        });
+      });
+    }
+    add_all_messages(this.state.socket_object_messages)
+    add_all_messages(this.state.object_messages)
+
+    //
+    //objects
+    const objects2 = []
+    const add_all_objects = (state_object) => {
+      Object.values(state_object).forEach(message_array => {
+        message_array.forEach(message => {
+          if(message['ipfs'] != null){
+            objects2.push(message)
+          }
+        });
+      });
+    }
+    //socket objects
+    add_all_objects(this.state.socket_created_jobs)
+    add_all_objects(this.state.socket_created_posts)
+    add_all_objects(this.state.socket_created_bags)
+
+    //main objects
+    add_all_objects(this.state.created_polls)
+    add_all_objects(this.state.created_nitros)
+    add_all_objects(this.state.created_videos)
+    add_all_objects(this.state.created_audios)
+    add_all_objects(this.state.created_contractors)
+    add_all_objects(this.state.created_bags)
+    add_all_objects(this.state.created_stores)
+    add_all_objects(this.state.created_jobs)
+    add_all_objects(this.state.created_channels)
+    add_all_objects(this.state.created_posts)
+    add_all_objects(this.state.created_tokens)
+    add_all_objects(this.state.created_certificates)
+    add_all_objects(this.state.created_crossexchanges)
+    add_all_objects(this.state.my_proposals)
+    add_all_objects(this.state.created_contracts)
+    add_all_objects(this.state.created_subscriptions)
+
+    await this.perform_bulk_translation_of_objects(objects2)
+    await this.perform_bulk_translation_of_objects(objects, true)
+  }
+
 
 
 
@@ -62079,6 +63182,9 @@ class App extends Component {
 
 
   async prepare_object_message(state_object, show_job_after_broadcast, roomId){
+    const translation_data = await this.translate_new_object_into_english(state_object)
+    state_object.translation_data = translation_data
+
     const extra_tags = state_object.entered_title_text.replace(/[^\w\s]|_/g, '').trim().split(/\s+/).filter(word => (word.length >= 3 && !state_object.entered_indexing_tags.includes(word.toLowerCase())))
 
     const all_elements = extra_tags.concat(state_object.entered_indexing_tags)
@@ -62115,6 +63221,8 @@ class App extends Component {
     const channeling = web3.utils.keccak256(identifier)
     const lan = state_object.device_language_setting
     const state = this.hash_data_with_randomizer(this.state.device_country)
+
+    
 
     const object_as_string = JSON.stringify(state_object, (key, value) => typeof value === 'bigint' ? value.toString() : value )
     const data = await this.encrypt_storage_object(object_as_string, {})
@@ -62340,6 +63448,9 @@ class App extends Component {
   }
 
   async prepare_channel_message(message_obj){
+    const translation_data = await this.translate_new_object_into_english(message_obj)
+    message_obj.translation_data = translation_data
+
     const state_object = await this.encrypt_channel_message(message_obj)
     const tags = []
     const id = this.make_number_id(12)
@@ -62422,6 +63533,9 @@ class App extends Component {
     const channeling = ''
     const lan = ''
     const state = ''
+
+    const translation_data = await this.translate_new_object_into_english(message_obj)
+    message_obj.translation_data = translation_data
 
     const object_as_string = JSON.stringify(message_obj, (key, value) =>
       typeof value === 'bigint' ? value.toString() : value
@@ -63341,6 +64455,9 @@ class App extends Component {
 
 
   async prepare_call_message(message_obj){
+    const translation_data = await this.translate_new_object_into_english(message_obj)
+    message_obj.translation_data = translation_data
+
     const state_object = await this.encrypt_call_message(message_obj)
     const tags = []
     const id = this.make_number_id(12)
@@ -64591,12 +65708,12 @@ class App extends Component {
     });
 
     const final_bag_object = {
-      'bag_orders':bag_variants, 
-      'timestamp':Date.now(), 
+      bag_orders:bag_variants, 
+      timestamp:Date.now(), 
       content_channeling_setting: state_object.content_channeling_setting, 
       device_language_setting: state_object.device_language_setting, 
       device_country: state_object.device_country, 
-      'tags': bag_tags, 
+      tags: bag_tags, 
       device_city:state_object.selected_device_city, 
       delivery_location: state_object.delivery_location, 
       pins: state_object.pins, 
@@ -64744,6 +65861,7 @@ class App extends Component {
         this.setState({socket_created_jobs: created_jobs_clone, created_job_mappings: created_jobs_mapping_clone })
 
         this.fetch_and_set_loaded_object_views([job['e5_id']], e5)
+        // this.perform_bulk_translation_of_objects([job])
         // if(am_I_the_author == true){
         //   await this.wait(300)
         //   this.homepage.current?.setState({detail_page: '?', detail_selected_tag: this.getLocale()['1196']/* 'jobs' */})
@@ -64804,7 +65922,7 @@ class App extends Component {
         this.setState({socket_created_posts: created_posts_clone });
 
         this.fetch_and_set_loaded_object_views([obj['e5_id']], e5)
-
+        // this.perform_bulk_translation_of_objects([obj])
         // if(am_I_the_author == true){
         //   await this.wait(300)
         //   this.homepage.current?.setState({detail_page: 'e', detail_selected_tag: this.getLocale()['1213']/* 'posts' */})
@@ -67630,6 +68748,7 @@ class App extends Component {
         this.setState({socket_created_bags: created_posts_clone });
 
         this.fetch_and_set_loaded_object_views([bag['e5_id']], e5)
+        // this.perform_bulk_translation_of_objects([bag])
       }
     }
 

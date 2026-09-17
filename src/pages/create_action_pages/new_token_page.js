@@ -610,7 +610,7 @@ class NewTokenPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a273t']/* 'Specify State Limits.' */, 'details':this.props.app_state.loc['a273u']/* 'You can restrict your nitro object to specific states.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Search filter country'} when_text_input_field_changed={this.when_spend_country_input_field_changed.bind(this)} text={this.state.typed_spend_country_name} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['1593mx']/* 'Search filter country...' */} when_text_input_field_changed={this.when_spend_country_input_field_changed.bind(this)} text={this.state.typed_spend_country_name} theme={this.props.theme}/>
                 <div style={{height:5}}/>
                 {this.render_detail_item('1',{'active_tags':this.get_countries_from_typed_text2(), 'indexed_option':'indexed', 'when_tapped':'when_spend_country_selected'})}
                 <div style={{height:15}}/>

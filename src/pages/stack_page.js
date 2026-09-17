@@ -210,7 +210,7 @@ class StackPage extends Component {
         default_upload_limit:(0), custom_gateway_text:'', follow_account_text:'', censor_keyword_text:'', search_identifier:'', stack_size_in_bytes:{}, is_calculating_stack:{}, can_switch_e5s:true, 
         setting_text:'', 
         
-        selected_obligation_year: new Date().getFullYear(),
+        selected_obligation_year: new Date().getFullYear(), typed_content_language:''
     };
 
     constructor(props) {
@@ -16230,9 +16230,82 @@ class StackPage extends Component {
 
                     {this.render_lock_wallet_setting_if_wallet_set()}
 
+                    {this.render_content_language_setting()}
                 </div>
             </div>
         )
+    }
+
+    render_content_language_setting(){
+        const content_language = this.props.app_state.content_language
+        const alpha = this.props.do_i_have_an_account() && this.props.do_i_have_a_minimum_number_of_txs_in_account() ? 1.0 : 0.5
+        return(
+            <div style={{opacity: alpha}}>
+                {this.does_title_details_contain_searched_text('1593mv', '1593mw') && (
+                        <div>
+                            {this.render_detail_item('3',{'title':this.props.app_state.loc['1593mv']/* '㊗ Content Translation' */, 'details':this.props.app_state.loc['1593mw']/* 'You may change the language setting used to translate the intenational channel content you see.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+
+                            <TextInput height={30} placeholder={this.props.app_state.loc['1593my']/* 'Search/Filter Language...' */} when_text_input_field_changed={this.when_content_language_input_field_changed.bind(this)} text={this.state.typed_content_language} theme={this.props.theme}/>
+                            <div style={{height:10}}/>
+
+                            {this.render_detail_item('1',{'active_tags':this.get_lanaguages_from_typed_text(), 'indexed_option':'indexed', 'when_tapped':'when_language_selected'})}
+
+                            {content_language != null && (
+                                <div onClick={() => this.remove_content_languag_setting()}>
+                                    <div style={{height:10}}/>
+                                    {this.render_detail_item('4', {'text':content_language['name'], 'textsize':'13px', 'font':this.props.app_state.font})}
+                                </div>
+                            )}
+
+                            {this.render_detail_item('0')}
+                        </div>
+                    )}
+            </div>
+        )
+    }
+
+    when_content_language_input_field_changed(text){
+        this.setState({typed_content_language: text})
+    }
+
+    get_lanaguages_from_typed_text(){
+        const all_languages = this.props.app_state.language_data
+        const typed_text = this.state.typed_content_language.toLowerCase()
+
+        if(typed_text != ''){
+            const selected_languages = Object.keys(all_languages).filter(function (el) {
+                return (all_languages[el]['listed'] == true && all_languages[el]['nativeName'].toLowerCase().includes(typed_text))
+            });
+            const languages_to_show = selected_languages.slice(0, 7);
+            const objects = languages_to_show.map(e => {
+                return all_languages[e]['nativeName']
+            })
+            return objects
+        }else{
+            const selected_languages = Object.keys(all_languages).filter(function (el) {
+                return (all_languages[el]['listed'] == true && all_languages[el]['nativeName'].toLowerCase().includes(typed_text))
+            });
+            const languages_to_show = selected_languages.slice(0, 7);
+            const objects = languages_to_show.map(e => {
+                return all_languages[e]['nativeName']
+            })
+            return objects
+        }
+    }
+
+    when_language_selected(tag, pos){
+        if(tag != 'e'){
+            const all_languages = this.props.app_state.language_data
+            const selected_value = Object.values(all_languages).find((el) => {
+                return el['nativeName'] == tag
+            })
+            this.props.when_language_selected(selected_value)
+        }
+    }
+
+    remove_content_languag_setting(){
+        this.props.remove_content_languag_setting()
     }
 
     render_disable_moderation_setting(){
@@ -23333,7 +23406,9 @@ class StackPage extends Component {
         if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_add_word_button_tapped={this.when_add_word_button_tapped.bind(this)} delete_entered_seed_word={this.delete_entered_seed_word.bind(this)} when_set_wallet_button_tapped={this.when_set_wallet_button_tapped.bind(this)}/>
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_add_word_button_tapped={this.when_add_word_button_tapped.bind(this)} delete_entered_seed_word={this.delete_entered_seed_word.bind(this)} when_set_wallet_button_tapped={this.when_set_wallet_button_tapped.bind(this)}
+                when_language_selected={this.when_language_selected.bind(this)}
+                />
             </div>
         )
     }

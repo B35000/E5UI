@@ -3782,12 +3782,27 @@ return data['data']
                 const e5_object = is_tag_id == true ? items.find(e => e['ipfs'].id == id) : items.find(e => e['id'] == id)
                 if(e5_object != null && object_type != null && object_type != 0){
                     //found an object
-                    link_items.push(e5_object)
+                    link_items.push(this.inject_translations_if_any(e5_object))
                     link_item_types.push(object_type)
                 }
             }
         }
         return { link_items, link_item_types }
+    }
+
+    inject_translations_if_any(object_arg){
+        const object = structuredClone(object_arg);
+        const e5_id = object['e5_id'];
+        if(this.props.app_state.translation_data[e5_id] != null && object['ipfs'] != null){
+            object['ipfs'].entered_title_text = this.props.app_state.translation_data[e5_id].entered_title_text || object['ipfs'].entered_title_text;
+
+            object['ipfs'].entered_indexing_tags = this.props.app_state.translation_data[e5_id].entered_indexing_tags || object['ipfs'].entered_indexing_tags;
+
+            object['ipfs'].entered_objects = this.props.app_state.translation_data[e5_id].entered_objects || object['ipfs'].entered_objects;
+
+            object['ipfs'].markdown = this.props.app_state.translation_data[e5_id].markdown || object['ipfs'].markdown;
+        }
+        return object
     }
 
     render_link_object_item(object, index, type){
@@ -10819,7 +10834,7 @@ return data['data']
     render_storefront_item(object){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var item = this.format_storefront_item(object)
+        var item = this.format_storefront_item(this.inject_translations_if_any(object))
 
         return(
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
@@ -11753,7 +11768,7 @@ return data['data']
     }
 
     render_contract(object){
-        const item = this.format_contract_item(object)
+        const item = this.format_contract_item(this.inject_translations_if_any(object))
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
 
@@ -16173,7 +16188,7 @@ return data['data']
         }
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var item = this.format_contract_item(object)
+        var item = this.format_contract_item(this.inject_translations_if_any(object))
         if(this.is_object_sender_blocked(object) || object == null){
             return(
                 <div>

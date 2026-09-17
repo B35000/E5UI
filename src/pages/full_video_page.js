@@ -2773,7 +2773,25 @@ class FullVideoPage extends Component {
         const chain_messages = this.props.app_state.object_messages[video['video_id']] == null ? [] : this.props.app_state.object_messages[video['video_id']]
         const socket_messages = this.props.app_state.socket_object_messages[video['video_id']+video['object']['e5_id']] == null ? [] : this.props.app_state.socket_object_messages[video['video_id']+video['object']['e5_id']]
         const all_messages = this.sortByAttributeDescending(chain_messages.concat(socket_messages), 'time')
-        return this.filter_messages_for_blocked_accounts(all_messages)
+        return this.inject_translations_if_any(this.filter_messages_for_blocked_accounts(all_messages))
+    }
+
+    inject_translations_if_any(all_messages){
+        const new_all_messages = []
+
+        for(var i=0; i<all_messages.length; i++){
+            const message = all_messages[i]
+            const e5_id = message['id']+message['message_id'];
+
+            if(this.props.app_state.translation_data[e5_id] != null){
+                message.message = this.props.app_state.translation_data[e5_id].message || message.message;
+
+                message.markdown = this.props.app_state.translation_data[e5_id].markdown || message.markdown;
+            }
+            new_all_messages.push(message)
+        }
+
+        return new_all_messages
     }
 
     filter_messages_for_blocked_accounts(objects){

@@ -516,7 +516,6 @@ class home_page extends Component {
         var size = this.props.screensize;
         var top_bar = 50;
         var middle = this.props.height-126;
-        var bottom_bar = 65;
         var width = this.props.width;
         var navbar_color = this.props.theme['nav_bar_color'];
         var background_color = this.props.theme['homepage_background_color'];
@@ -548,6 +547,16 @@ class home_page extends Component {
         }
         else if(size == 'm'){
             var middle = this.props.height-126;
+            var bottom_bar = 65;
+            var radius = '0px'
+            var navbar_margin = '0px 0px 0px 0px'
+            var navbar_width = this.props.width
+            if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
+                bottom_bar = 61
+                radius = '20px'
+                navbar_margin = '0px 10px 4px 10px'
+                navbar_width = this.props.width - 20
+            }
             return (
                 <div className="row" style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'padding':'0px', 'margin':'0px'}}>
                     <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px', 'margin':'0px'}}>
@@ -560,8 +569,8 @@ class home_page extends Component {
                         {this.render_post_details_with_orientation(middle, width, size)}
                         <div style={{height:5}}/>
                         
-                        <div style={{height:bottom_bar, width: '100%', 'background-color':  navbar_color, 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
-                            {this.render_navbar_button_group(size)}
+                        <div style={{height:bottom_bar, width: navbar_width, 'background-color':  navbar_color, 'border-radius': radius, 'padding':'0px 0px 0px 0px', 'margin':navbar_margin, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
+                            {this.render_navbar_button_group(size, navbar_width)}
                         </div>
                         
                     </div>
@@ -575,14 +584,23 @@ class home_page extends Component {
         }
         else if(size == 's'){
             var bottom_bar = 80;
+            var radius = '0px'
+            var navbar_margin = '0px 0px 0px 0px'
+            var navbar_width = this.props.width
+            if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
+                bottom_bar = 72
+                radius = '20px'
+                navbar_margin = '0px 10px 8px 10px'
+                navbar_width = this.props.width - 20
+            }
             return(
                 <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                     <div style={{height: this.props.height, width:'100%', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                         {this.render_small_screen_size_ui(size, top_bar, width)}
                         
                         {/* <div style={{height:5}}/> */}
-                        <div style={{height:bottom_bar, width:width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 15px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
-                            {this.render_navbar_button_group(size)}
+                        <div style={{height:bottom_bar, width:navbar_width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': radius, 'padding':'0px 0px 0px 0px', 'margin':navbar_margin, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
+                            {this.render_navbar_button_group(size, navbar_width)}
                         </div>
 
                         {this.render_view_object_bottomsheet()}
@@ -685,6 +703,8 @@ class home_page extends Component {
 
     render_small_screen_size_ui(size, top_bar, width){
         var orientation = this.props.app_state.homepage_tags_position
+        const selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+        const x = selected_item == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */ || selected_item == 'e' ? 133 : 129
 
         if(orientation == this.props.app_state.loc['1593k']/* top */){
             return(
@@ -693,16 +713,16 @@ class home_page extends Component {
                         {this.render_top_tag_bar(size)}
                     </div>
                     
-                    <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}>
-                        {this.render_post_list_group(size, this.props.height-129)}
+                    <div style={{height:this.props.height-x, width:width, 'padding':'0px 5px 0px 5px'}}>
+                        {this.render_post_list_group(size, this.props.height-x)}
                     </div>
                 </div>
             )
         }else{
             return(
                 <div>
-                    <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}>
-                        {this.render_post_list_group(size, this.props.height-129)}
+                    <div style={{height:this.props.height-x, width:width, 'padding':'0px 5px 0px 5px'}}>
+                        {this.render_post_list_group(size, this.props.height-x)}
                     </div>
                     <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
                         {this.render_top_tag_bar(size)}
@@ -1034,11 +1054,11 @@ class home_page extends Component {
     //     }
     // }
 
-    render_navbar_button_group(size){
+    render_navbar_button_group(size, navbar_width){
         var line_margin = '0px '+this.get_navbar_line_margin_percentage()+' 0px 0px'
         if(size == 'm'){
           return ( 
-              <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:'100%'}}>
+              <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:navbar_width}}>
                     <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px', position: 'relative'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
                         {this.render_navbar_button('l','4px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */, this.get_notification_count('?'))}
                     </div>
@@ -1059,7 +1079,7 @@ class home_page extends Component {
         }
         else if(size == 's'){
           return(
-            <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:'103%'}}>
+            <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:navbar_width}}>
                   <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 0px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'border-radius': '1px 0px 0px 0px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
                       {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['JobIcon'], 'auto', '38px','5px 0px 0px 0px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */, this.get_notification_count('?'))}
                   </div>
@@ -2909,11 +2929,11 @@ class home_page extends Component {
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1197']/* 'contracts' */|| all != null){
             // return this.get_all_sorted_objects(this.props.app_state.created_contracts)
-            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_contracts).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_contracts || {})))
+            return this.set_objects_translations(this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_contracts).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_contracts || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            var all_objects =  this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_contracts)))))
+            var all_objects = this.set_objects_translations(this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_contracts))))))
 
             return all_objects.filter((object) => {
                 return (object['ipfs'] == null || (object['ipfs'].contract_type != 'personal' && object['ipfs'].contract_type != 'work'))
@@ -2926,7 +2946,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_contracts[i], all_contracts)
                 if(obj != null) my_viewed_contracts.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_contracts)))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_contracts))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_contracts = []
@@ -2935,7 +2955,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_contract[i], all_contracts)
                 if(obj != null) my_viewed_contracts.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_contracts)))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_contracts))))
         }
         else if(selected_option_name == this.props.app_state.loc['1206']/* 'entered' */){
             var my_entered_contracts = []
@@ -2948,7 +2968,7 @@ class home_page extends Component {
                     my_entered_contracts.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_entered_contracts)))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_entered_contracts))))
         }
         else if(selected_option_name == this.props.app_state.loc['1332e']/* 'main' */){
             var my_contracts = []
@@ -2973,7 +2993,7 @@ class home_page extends Component {
                     my_contracts.push(all_contracts[i])
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_contracts)))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_contracts))))
         }
     }
 
@@ -2990,11 +3010,12 @@ class home_page extends Component {
             var chain_bags = this.get_all_sorted_objects(this.props.app_state.created_bags)
             var socket_bags = this.get_all_sorted_objects(this.props.app_state.socket_created_bags)
             const all_posts = this.sortByAttributeDescending(chain_bags.concat(socket_bags), 'timestamp')
-            return this.remove_duplicates(all_posts.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_bags || {})))
+
+            return this.set_objects_translations(this.remove_duplicates(all_posts.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_bags || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.filter_using_searched_text(this.get_items_for_page2(id, selected_page))))))
+            return this.set_objects_translations(this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.filter_using_searched_text(this.get_items_for_page2(id, selected_page)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_bags = []
@@ -3004,7 +3025,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_bags[i], all_bags)
                 if(obj != null) my_viewed_bags.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_bags)))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_bags))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_bags = []
@@ -3014,7 +3035,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_bags[i], all_bags)
                 if(obj != null) my_viewed_bags.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_bags)))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_bags))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ae']/* 'my-responses' */){
             var my_applied_bags = []
@@ -3024,7 +3045,7 @@ class home_page extends Component {
                     my_applied_bags.push(all_bags[i])
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_applied_bags)))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_applied_bags))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -3038,10 +3059,10 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.sort_feed_based_on_my_section_tags2(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(id, selected_page)))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags2(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(id, selected_page))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -3054,7 +3075,7 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))))
         }
         else {
             var my_bags = []
@@ -3067,7 +3088,7 @@ class home_page extends Component {
                     my_bags.push(all_bags[i])
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_bags)))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_bags))))))
         }
     }
 
@@ -3079,11 +3100,11 @@ class home_page extends Component {
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1214']/* 'channels' */|| all != null){
             // return this.get_all_sorted_objects(this.props.app_state.created_channels)
-            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_channels).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_channels || {})))
+            return this.set_objects_translations(this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_channels).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_channels || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_channels = []
@@ -3092,7 +3113,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_channels[i], created_channels)
                 if(obj != null) my_viewed_channels.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_channels))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_channels)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_channels = []
@@ -3101,7 +3122,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_channels[i], created_channels)
                 if(obj != null) my_viewed_channels.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_channels))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_channels)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -3115,10 +3136,10 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_trending_metric(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_trending_metric(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -3131,7 +3152,7 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
         }
         else {
             var my_channels = []
@@ -3145,7 +3166,7 @@ class home_page extends Component {
                     my_channels.push(created_channels[i])
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_channels))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_channels)))))
         }
     }
 
@@ -3157,11 +3178,11 @@ class home_page extends Component {
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1198']/* 'contractors' */|| all != null){
             // return this.get_all_sorted_objects(this.props.app_state.created_contractors)
-            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_contractors).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_contractors || {})))
+            return this.set_objects_translations(this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_contractors).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_contractors || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */ || selected_option_name == this.props.app_state.loc['1264br']/* contractor-map 🗺️ */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_contractors = []
@@ -3170,7 +3191,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_contractors[i], all_contractors)
                 if(obj != null) my_viewed_contractors.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_contractors))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_contractors)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_contractors = []
@@ -3179,7 +3200,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_contractor[i], all_contractors)
                 if(obj != null) my_viewed_contractors.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_contractors))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_contractors)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -3193,10 +3214,10 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
         }
         else {
             var my_contractors = []
@@ -3210,7 +3231,7 @@ class home_page extends Component {
                     my_contractors.push(all_contractors[i])
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_contractors))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_contractors)))))
         }
     }
 
@@ -3292,7 +3313,7 @@ class home_page extends Component {
             return sorted_token_exchange_data
         }
 
-        return this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(sorted_token_exchange_data)))
+        return this.set_objects_translations(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(sorted_token_exchange_data))))
     }
 
     get_spend_token_items(all){
@@ -3422,11 +3443,11 @@ class home_page extends Component {
             var socket_jobs = this.get_all_sorted_objects(this.props.app_state.socket_created_jobs)
             const all_jobs = this.sortByAttributeDescending(chain_jobs.concat(socket_jobs), 'timestamp')
             // return all_jobs
-            return this.remove_duplicates(all_jobs.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_jobs || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_jobs || {})))
+            return this.set_objects_translations(this.remove_duplicates(all_jobs.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_jobs || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_jobs || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */ || selected_option_name == this.props.app_state.loc['1264bq']/* job-map 🗺️ */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_jobs = []
@@ -3436,7 +3457,7 @@ class home_page extends Component {
                 if(obj != null) my_viewed_jobs.push(obj)
             }
             
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_jobs)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_jobs))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_jobs = []
@@ -3446,7 +3467,7 @@ class home_page extends Component {
                 if(obj != null) my_viewed_jobs.push(obj)
             }
             
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_jobs)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_jobs))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1205']/* 'applied' */){
             var my_applied_jobs = []
@@ -3461,7 +3482,7 @@ class home_page extends Component {
                     my_applied_jobs.push(job_obj)
                 }
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_applied_jobs)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_applied_jobs))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -3475,10 +3496,10 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -3491,7 +3512,7 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
         }
         else {
             var my_jobs = []
@@ -3505,7 +3526,7 @@ class home_page extends Component {
                     my_jobs.push(all_jobs[i])
                 }
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_jobs)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_jobs))))))
         }
     }
 
@@ -3628,11 +3649,11 @@ class home_page extends Component {
             var socket_posts = this.get_all_sorted_objects(this.props.app_state.socket_created_posts)
             const all_posts = this.sortByAttributeDescending(chain_posts.concat(socket_posts), 'timestamp')
             // return all_posts;
-            return this.remove_duplicates(all_posts.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_posts || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_posts || {})))
+            return this.set_objects_translations(this.remove_duplicates(all_posts.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_posts || {}), this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.socket_created_posts || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_views_and_reposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))
+            return this.set_objects_translations(this.sort_feed_based_on_views_and_reposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_posts = []
@@ -3641,7 +3662,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_posts[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
             }
-            return this.filter_out_delisted_objects(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_posts))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_posts)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_posts = []
@@ -3650,7 +3671,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_post[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_posts)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_posts))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -3666,10 +3687,10 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_trending_metric(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_trending_metric(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -3682,7 +3703,7 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
         }
         else {
             var my_posts = []
@@ -3696,7 +3717,7 @@ class home_page extends Component {
                     my_posts.push(all_posts[i])
                 }
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_posts)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_posts))))))
         }
     }
 
@@ -3708,7 +3729,7 @@ class home_page extends Component {
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1199']/* 'proposals' */|| all != null){
             // return this.get_all_sorted_objects(this.props.app_state.my_proposals)
-            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.my_proposals).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.my_proposals || {})))
+            return this.set_objects_translations(this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.my_proposals).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.my_proposals || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1211']/* 'my-proposals' */){
@@ -3720,7 +3741,7 @@ class home_page extends Component {
                     main_contract_proposals.push(all_proposals[i])
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(main_contract_proposals))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(main_contract_proposals)))
         }
         else if(selected_option_name == this.props.app_state.loc['1264aa']/* 'main-contract' */){
             var all_proposals = this.get_items_for_page2(page_id, selected_page)
@@ -3731,7 +3752,7 @@ class home_page extends Component {
                     main_contract_proposals.push(all_proposals[i])
                 }
             }
-            return main_contract_proposals
+            return this.set_objects_translations(main_contract_proposals)
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_proposals = []
@@ -3740,7 +3761,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_proposals[i], all_proposals)
                 if(obj != null) my_viewed_proposals.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(my_viewed_proposals))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(my_viewed_proposals)))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_proposals = []
@@ -3749,7 +3770,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_proposal[i], all_proposals)
                 if(obj != null) my_viewed_proposals.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(my_viewed_proposals))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(my_viewed_proposals)))
         }
         else {
             var proposals = []
@@ -3765,7 +3786,7 @@ class home_page extends Component {
                     console.log('sender not proposal author: author->'+proposal_author+', sender id->'+myid)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(proposals))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(proposals)))
         }
     }
 
@@ -3777,11 +3798,11 @@ class home_page extends Component {
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1215']/* 'storefront' */|| all != null){
             // return this.get_all_sorted_objects(this.props.app_state.created_stores)
-            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_stores).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_stores || {})))
+            return this.set_objects_translations(this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_stores).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_stores || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_stores = []
@@ -3790,7 +3811,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_stores[i], all_stores)
                 if(obj != null) my_viewed_stores.push(obj)
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_stores)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_stores))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_stores = []
@@ -3799,7 +3820,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_item[i], all_stores)
                 if(obj != null) my_viewed_stores.push(obj)
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_stores)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_stores))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -3813,10 +3834,10 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264az']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -3829,7 +3850,7 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
         }
         else {
             var my_stores = []
@@ -3844,7 +3865,7 @@ class home_page extends Component {
                     my_stores.push(all_stores[i])
                 }
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_stores)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_stores))))))
         }
     }
 
@@ -3856,11 +3877,11 @@ class home_page extends Component {
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1200']/* 'subscriptions' */|| all != null){
             // return this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
-            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_subscriptions).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_subscriptions || {})))
+            return this.set_objects_translations(this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_subscriptions).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_subscriptions || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_views_and_reposts(this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
+            return this.set_objects_translations(this.sort_feed_based_on_views_and_reposts(this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_subscriptions = []
@@ -3869,7 +3890,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_subscriptions[i], all_subscriptions)
                 if(obj != null) my_viewed_subscriptions.push(obj)
             }
-            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_subscriptions))))
+            return this.set_objects_translations(this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_subscriptions)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_subscriptions = []
@@ -3878,7 +3899,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_subscriptions[i], all_subscriptions)
                 if(obj != null) my_viewed_subscriptions.push(obj)
             }
-            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_subscriptions))))
+            return this.set_objects_translations(this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_subscriptions)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1207']/* 'paid' */){
             var my_paid_subscriptions = []
@@ -3889,7 +3910,7 @@ class home_page extends Component {
                     my_paid_subscriptions.push(object)
                 }
             }
-            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions))))
+            return this.set_objects_translations(this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264b']/* upcoming */){
             var my_paid_subscriptions = []
@@ -3905,7 +3926,7 @@ class home_page extends Component {
                     my_paid_subscriptions.push(object)
                 }
             }
-            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions))))
+            return this.set_objects_translations(this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1332f']/* 'history' */){
             var my_paid_subscriptions = []
@@ -3916,7 +3937,7 @@ class home_page extends Component {
                     my_paid_subscriptions.push(object)
                 }
             }
-            return this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions))))
+            return this.set_objects_translations(this.filter_by_content_channeling(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions)))))
         }
         else {
             var my_subscriptions = []
@@ -3930,7 +3951,7 @@ class home_page extends Component {
                     my_subscriptions.push(all_subscriptions[i])
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_subscriptions)))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_subscriptions))))
         }
     }
 
@@ -3945,12 +3966,13 @@ class home_page extends Component {
         }
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264k']/* 'audioport' */ || all != null){
-            const existing =  this.get_all_sorted_objects(this.props.app_state.created_audios).concat(this.props.app_state.my_playlists)
-            return this.remove_duplicates(existing.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_audios || {})))
+            const existing = this.get_all_sorted_objects(this.props.app_state.created_audios).concat(this.props.app_state.my_playlists)
+
+            return this.set_objects_translations(this.remove_duplicates(existing.concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_audios || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_audios = []
@@ -3959,7 +3981,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_audios[i], all_audios)
                 if(obj != null) my_viewed_audios.push(obj)
             }
-            return this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_audios))))))
+            return this.set_objects_translations(this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_audios)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_audios = []
@@ -3968,7 +3990,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_audios[i], all_audios)
                 if(obj != null) my_viewed_audios.push(obj)
             }
-            return this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_audios))))))
+            return this.set_objects_translations(this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_audios)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
             var my_added_album_ids = this.get_stack_albums().reverse()
@@ -3979,7 +4001,7 @@ class home_page extends Component {
                 if(obj != null) my_acquired_albums_in_stack.push(obj)
             }
             var my_acquired_albums = my_acquired_albums_in_stack.concat(this.props.app_state.my_acquired_audios.reverse())
-            return this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags((this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums))))))
+            return this.set_objects_translations(this.filter_for_hidden_audioposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags((this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264m']/* 'playlists' */){
             return this.props.app_state.my_playlists
@@ -3998,10 +4020,10 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_trending_metric(this.filter_for_hidden_audioposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_trending_metric(this.filter_for_hidden_audioposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.filter_out_delisted_objects(this.filter_for_hidden_audioposts(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.filter_for_hidden_audioposts(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */){
             const all_audios = this.get_items_for_page2(page_id, selected_page)
@@ -4009,7 +4031,7 @@ class home_page extends Component {
             const final_all_audios = all_audios.filter(function (object) {
                 return (hidden_audioposts_ids.includes(object['e5_id']))
             })
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(final_all_audios)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(final_all_audios))))))
         }
         else {
             var my_audios = []
@@ -4023,7 +4045,7 @@ class home_page extends Component {
                     my_audios.push(all_audios[i])
                 }
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_audios)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_audios))))))
         }
     }
 
@@ -4063,11 +4085,11 @@ class home_page extends Component {
         
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264p']/* 'videoport' */ || all != null){
             // return this.get_all_sorted_objects(this.props.app_state.created_videos)
-            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_videos).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_videos || {})))
+            return this.set_objects_translations(this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_videos).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_videos || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_videos = []
@@ -4076,7 +4098,8 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_videos[i], all_videos)
                 if(obj != null) my_viewed_videos.push(obj)
             }
-            return this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos))))))
+
+            return this.set_objects_translations(this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_videos = []
@@ -4085,7 +4108,8 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_videos[i], all_videos)
                 if(obj != null) my_viewed_videos.push(obj)
             }
-            return this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos))))))
+
+            return this.set_objects_translations(this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_videos)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264l']/* 'acquired' */){
             var my_added_videopost_ids = this.get_stack_videposts().reverse()
@@ -4096,7 +4120,8 @@ class home_page extends Component {
                 if(obj != null) my_stacked_videoposts.push(obj)
             }
             var my_acquired_albums = my_stacked_videoposts.concat(this.props.app_state.my_acquired_videos.reverse())
-            return this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags((this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums))))))
+
+            return this.set_objects_translations(this.filter_for_hidden_videoposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags((this.filter_using_searched_text(this.filter_for_blocked_accounts(my_acquired_albums)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -4111,10 +4136,10 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_trending_metric(this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_trending_metric(this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ah']/* 'tag-targeted' */){
-            return this.filter_out_delisted_objects(this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags2(this.filter_by_content_channeling(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -4127,7 +4152,7 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
+            return this.set_objects_translations(this.filter_for_hidden_videoposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))))
         }
         else if(selected_option_name == this.props.app_state.loc['c311ct']/* 'hidden 🗑️' */){
             var all_videos = this.get_items_for_page2(page_id, selected_page)
@@ -4135,7 +4160,7 @@ class home_page extends Component {
             const final_all_videos = all_videos.filter(function (object) {
                 return (hidden_videoposts_ids.includes(object['e5_id']))
             })
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(final_all_videos)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(final_all_videos))))))
         }
         else {
             var my_videos = []
@@ -4149,7 +4174,7 @@ class home_page extends Component {
                     my_videos.push(all_videos[i])
                 }
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_videos)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_videos))))))
         }
     }
 
@@ -4185,10 +4210,10 @@ class home_page extends Component {
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1264s']/* 'nitro' */|| all != null){
             // return this.get_all_sorted_objects(this.props.app_state.created_nitros)
-            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_nitros).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {})))
+            return this.set_objects_translations(this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_nitros).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_nitros || {}))))
         }
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page)))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_items_for_page2(page_id, selected_page))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_nitros = []
@@ -4198,7 +4223,7 @@ class home_page extends Component {
                 if(obj != null) my_viewed_nitros.push(obj)
             }
             
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_nitros))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_nitros)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264t']/* 'bought' */){
             var my_bought_nitros = []
@@ -4207,7 +4232,7 @@ class home_page extends Component {
                 var obj = all_nitros[i]
                 if(obj['bought'] == true) my_bought_nitros.push(obj)
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_bought_nitros))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_bought_nitros)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_nitros = []
@@ -4217,7 +4242,7 @@ class home_page extends Component {
                 if(obj != null) my_viewed_nitros.push(obj)
             }
             
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_nitros))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_nitros)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264at']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -4230,7 +4255,7 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling2(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
         }
         else {
             var my_nitros = []
@@ -4244,7 +4269,7 @@ class home_page extends Component {
                     my_nitros.push(all_nitros[i])
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_nitros))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_nitros)))))
         }
     }
 
@@ -4317,13 +4342,13 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1264ao']/* 'polls' */
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1264ao']/* 'polls' */ || all != null){
-            return this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_polls).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_polls || {})))
+            return this.set_objects_translations(this.remove_duplicates(this.get_all_sorted_objects(this.props.app_state.created_polls).concat(this.get_all_sorted_objects(this.props.app_state.cached_pinns_and_viewed_objects.created_polls || {}))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
             var items = this.get_items_for_page2(page_id, selected_page)
             
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(items)))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_views_and_reposts(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(items))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_posts = []
@@ -4332,7 +4357,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.viewed_polls[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_posts)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_posts))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var my_viewed_posts = []
@@ -4341,7 +4366,7 @@ class home_page extends Component {
                 var obj = this.get_item_in_array(this.state.pinned_polls[i], all_posts)
                 if(obj != null) my_viewed_posts.push(obj)
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_posts)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_viewed_posts))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){
             var my_following_objects = []
@@ -4358,7 +4383,7 @@ class home_page extends Component {
                     my_following_objects.push(object)
                 }
             }
-            return this.filter_out_delisted_objects(this.sort_feed_based_on_trending_metric(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.sort_feed_based_on_trending_metric(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_following_objects)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264bn']/* 'participated ✍' */){
             var my_participated_objects = []
@@ -4371,7 +4396,7 @@ class home_page extends Component {
                     my_participated_objects.push(object)
                 }
             }
-            return this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects))))
+            return this.set_objects_translations(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_participated_objects)))))
         }
         else {
             var my_posts = []
@@ -4385,7 +4410,7 @@ class home_page extends Component {
                     my_posts.push(all_posts[i])
                 }
             }
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_posts)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_posts))))))
         }
     }
 
@@ -4396,20 +4421,20 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1264bw']/* 'certificates' */
 
         if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1264bw']/* 'certificates' */ || all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_certificates)
+            return this.set_objects_translations(this.get_all_sorted_objects(this.props.app_state.created_certificates))
         }
         
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
             var items = this.get_items_for_page2(page_id, selected_page)
             
-            return this.filter_out_delisted_objects(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(items))))))
+            return this.set_objects_translations(this.set_objects_translations(this.filter_out_delisted_objects(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(items))))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264t']/* 'bought 👩‍💻' */){
             var all_tokens = this.get_items_for_page2(page_id, selected_page)
             var main_tokens = all_tokens.filter(function (object) {
                 return (object['balance'] != 0 || object['interacted'] == true)
             })
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var all_tokens = this.get_items_for_page2(page_id, selected_page)
@@ -4417,7 +4442,7 @@ class home_page extends Component {
             var main_tokens = all_tokens.filter(function (object) {
                 return (viewed.includes(object['id']))
             })
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var all_tokens = this.get_items_for_page2(page_id, selected_page)
@@ -4425,7 +4450,7 @@ class home_page extends Component {
             var main_tokens = all_tokens.filter(function (object) {
                 return (pinned.includes(object['id']))
             })
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens))))))
         }
         else {
             var all_tokens = this.get_items_for_page2(page_id, selected_page)
@@ -4433,7 +4458,7 @@ class home_page extends Component {
             var main_tokens = all_tokens.filter(function (object) {
                 return (me[object['e5']] == object['author'])
             })
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens))))))
         }
     }
 
@@ -4444,13 +4469,13 @@ class home_page extends Component {
         var selected_page = this.props.app_state.loc['1264bx']/* 'cross-exchanges' */
 
         if(this.state.wallet_page_tags_object['i'].active != this.props.app_state.loc['1264bx']/* 'cross-exchanges' */ || all != null){
-            return this.get_all_sorted_objects(this.props.app_state.created_crossexchanges)
+            return this.set_objects_translations(this.get_all_sorted_objects(this.props.app_state.created_crossexchanges))
         }
         
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
             var items = this.get_items_for_page2(page_id, selected_page)
             
-            return this.filter_out_delisted_objects(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(items))))))
+            return this.set_objects_translations(this.filter_out_delisted_objects(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(items)))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var all_tokens = this.get_items_for_page2(page_id, selected_page)
@@ -4458,7 +4483,7 @@ class home_page extends Component {
             var main_tokens = all_tokens.filter(function (object) {
                 return (viewed.includes(object['id']))
             })
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1222']/* 'pinned' */){
             var all_tokens = this.get_items_for_page2(page_id, selected_page)
@@ -4466,7 +4491,7 @@ class home_page extends Component {
             var main_tokens = all_tokens.filter(function (object) {
                 return (pinned.includes(object['id']))
             })
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens))))))
         }
         else {
             var all_tokens = this.get_items_for_page2(page_id, selected_page)
@@ -4474,7 +4499,7 @@ class home_page extends Component {
             var main_tokens = all_tokens.filter(function (object) {
                 return (me[object['e5']] == object['author'])
             })
-            return this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens)))))
+            return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(main_tokens))))))
         }
     }
 
@@ -4761,7 +4786,7 @@ class home_page extends Component {
         objects.forEach(object => {
             var ipfs = object['ipfs'] == null ? {} : object['ipfs']
             var object_country = ipfs.device_country
-            var object_content_channeling_setting = ipfs.content_channeling_setting
+            var object_content_channeling_setting = ipfs.get_content_channeling_object == null ? 3 : this.get_selected_item2(ipfs.get_content_channeling_object, 'e')
             var object_language = ipfs.device_language_setting
 
             if(object['id'] == 2 || object['id'] == 3 || object['id'] == 5 ){
@@ -4769,17 +4794,17 @@ class home_page extends Component {
             }
        
             if(content_channeling_setting == this.props.app_state.loc['1231']/* 'local' */){
-                if(device_country == object_country && object_content_channeling_setting == this.props.app_state.loc['1231']/* 'local' */){
+                if(device_country == object_country && object_content_channeling_setting == 1){
                     return_objs.push(object)
                 }
             }
             else if(content_channeling_setting == this.props.app_state.loc['1232']/* 'language' */){
-                if(device_language == object_language && object_content_channeling_setting == this.props.app_state.loc['1232']/* 'language' */){
+                if(device_language == object_language && object_content_channeling_setting == 2){
                     return_objs.push(object)
                 }
             }
             else if(content_channeling_setting == this.props.app_state.loc['1233']/* 'international' */){
-                if(object_content_channeling_setting == this.props.app_state.loc['1233']/* 'international' */){
+                if(object_content_channeling_setting == 3){
                     return_objs.push(object)
                 }
             }
@@ -4823,6 +4848,35 @@ class home_page extends Component {
         return objects.filter((object) => {
             return (object['ipfs'].get_object_delisted_setting_tags_option == null || this.get_selected_item(object['ipfs'].get_object_delisted_setting_tags_option, 'e') == 'e')
         })
+    }
+
+    set_objects_translations(objects){
+        const new_objects = []
+        for(var i=0; i<objects.length; i++){
+            const object = structuredClone(objects[i]);
+            const e5_id = object['e5_id'];
+
+            if(this.props.app_state.translation_data[e5_id] != null && object['ipfs'] != null){
+                object['ipfs'].entered_title_text = this.props.app_state.translation_data[e5_id].entered_title_text || object['ipfs'].entered_title_text;
+
+                object['ipfs'].entered_indexing_tags = this.props.app_state.translation_data[e5_id].entered_indexing_tags || object['ipfs'].entered_indexing_tags;
+
+                if(this.props.app_state.translation_data[e5_id].entered_objects != null){
+                    object['ipfs'].entered_objects.forEach((entered_object, index) => {
+                        const type = entered_object['type']
+                        if(type == '11'){
+                            object['ipfs'].entered_objects[index]['data']['caption']['text'] = this.props.app_state.translation_data[e5_id].entered_objects[index]
+                        }else{
+                            object['ipfs'].entered_objects[index]['data']['text'] = this.props.app_state.translation_data[e5_id].entered_objects[index]
+                        }
+                    });
+                }
+
+                object['ipfs'].markdown = this.props.app_state.translation_data[e5_id].markdown || object['ipfs'].markdown;
+            }
+            new_objects.push(object)
+        }
+        return new_objects;
     }
 
 
@@ -5141,8 +5195,7 @@ class home_page extends Component {
         var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height
         var subtract2 = this.should_show_line() == true ? 10 : 0
         h -= subtract2;
-        if(size == 'm') h-= 4;
-
+        if(size == 'm') h-=4;
         return(
             <div>
                 {this.render_line_if_enabled()}
@@ -5738,6 +5791,7 @@ class home_page extends Component {
         this.props.get_tag_price_data_for_object(object)
         this.props.get_object_censored_keywords_and_accounts(object)
         
+        await this.props.perform_translation_of_specific_object(object)
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
         this.props.set_audio_pip_opacity_because_of_inactivity()
@@ -5831,9 +5885,10 @@ class home_page extends Component {
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
-        this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.perform_translation_of_specific_object(object)
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     async when_channel_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -5869,9 +5924,10 @@ class home_page extends Component {
             await this.props.get_room_participant_count(object['ipfs'].voice_call_number_id)
         }
         
-        this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.perform_translation_of_specific_object(object)
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     async when_proposal_item_clicked(index, id, e5, object, ignore_set_details_data){
@@ -5897,6 +5953,7 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.perform_translation_of_specific_object(object)
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -5943,6 +6000,7 @@ class home_page extends Component {
         
         this.props.set_audio_pip_opacity_because_of_inactivity()
         this.update_audio_video_recommended_items(this.props.app_state.loc['1215']/* 'storefront' */, object['e5_id'])
+        await this.props.perform_translation_of_specific_object(object)
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -6017,6 +6075,7 @@ class home_page extends Component {
         await this.props.get_object_censored_keywords_and_accounts(object)
         
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.perform_translation_of_specific_object(object)
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -6046,6 +6105,7 @@ class home_page extends Component {
         await this.props.start_object_file_viewcount_fetch(object, 'audio')
         await this.props.fetch_uploaded_files_for_object(object, true)
         this.props.get_object_censored_keywords_and_accounts(object)
+        await this.props.perform_translation_of_specific_object(object)
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
         await this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
@@ -6188,7 +6248,7 @@ class home_page extends Component {
         // this.props.get_objects_messages(id, e5)
         // this.props.get_post_award_data(id, e5)
         this.props.get_object_censored_keywords_and_accounts(object)
-        
+        await this.props.perform_translation_of_specific_object(object)
         this.props.set_audio_pip_opacity_because_of_inactivity()
 
         await this.props.fetch_objects_to_load_from_searched_tags(object['ipfs'].entered_indexing_tags, this.get_selected_page(), '', [object['e5']+':'+object['author']])
@@ -6285,6 +6345,7 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.perform_translation_of_specific_object(object)
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -6322,6 +6383,7 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        await this.props.perform_translation_of_specific_object(object)
         await this.props.emit_view_object_event(id+e5)
         await this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -6350,6 +6412,7 @@ class home_page extends Component {
         await this.props.get_certificate_bond_coupon_stagings(object)
         await this.props.load_exchanges_royalty_payout_event_data(object['id'], object['e5'])
         await this.props.load_target_or_object_accounts_obligation_data([object['id']], object['e5'])
+        await this.props.perform_translation_of_specific_object(object)
         this.props.get_verified_certificate_data(object)
         this.props.emit_view_object_event(id+e5)
         this.props.fetch_and_set_loaded_object_views([id], e5)
@@ -6375,6 +6438,7 @@ class home_page extends Component {
         this.props.set_audio_pip_opacity_because_of_inactivity()
         await this.props.fetch_uploaded_files_for_object(object)
         await this.props.get_objects_showcased_certificates(object)
+        await this.props.perform_translation_of_specific_object(object)
         this.props.emit_view_object_event(id+e5)
         this.props.fetch_and_set_loaded_object_views([id], e5)
     }
