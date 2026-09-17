@@ -48000,7 +48000,7 @@ class App extends Component {
         ]
       }
       payload.push({
-        text: message, 
+        text: this.replace_kaomojis_in_payload_with_placeholders(message), 
         target_lang: lan
       });
 
@@ -48070,7 +48070,7 @@ class App extends Component {
       if(translation_data[e5_id].message == null){
         translation_data[e5_id].message = {}
       }
-      translation_data[e5_id].message = payload_result[payload_data[e5_id].message.entries[0].position]
+      translation_data[e5_id].message = this.replace_kaomoji_placeholders_with_kaomojis(payload_result[payload_data[e5_id].message.entries[0].position])
 
 
       //markdown
@@ -59077,7 +59077,7 @@ class App extends Component {
       const type = text_obj['type']
       const text_object_text = type == '11' ? text_obj['data']['caption']['text'] : text_obj['data']['text']
       payload.push({ 
-        text: text_object_text, 
+        text: this.replace_kaomojis_in_payload_with_placeholders(text_object_text), 
         target_lang: lan
       });
     });
@@ -59100,6 +59100,15 @@ class App extends Component {
     return { payload, payload_data }
   }
 
+  replace_kaomojis_in_payload_with_placeholders(text){
+    var return_text = text+''
+    var kaomojis = this.state.kaomojis
+    kaomojis.forEach((kaomoji, index) => {
+      return_text = return_text.replaceAll(kaomoji, `22333$${index}$22333`)
+    });
+    return return_text
+  }
+
   inject_translation_result_into_payload_data_for_object(payload_data, payload_result, lan, object){
     const translation_data = structuredClone(this.state.translation_data)
     
@@ -59115,7 +59124,7 @@ class App extends Component {
       translation_data[e5_id].entered_objects = []
     }
     payload_data[e5_id].entered_objects.entries.forEach(entry => {
-      translation_data[e5_id].entered_objects.push(payload_result[entry.position])
+      translation_data[e5_id].entered_objects.push(this.replace_kaomoji_placeholders_with_kaomojis(payload_result[entry.position]))
     });
 
 
@@ -59133,6 +59142,16 @@ class App extends Component {
     translation_data[e5_id].markdown = translated_markdown
 
     this.setState({translation_data: translation_data})
+  }
+
+  replace_kaomoji_placeholders_with_kaomojis(text){
+    var return_text = text+''
+    var kaomojis = this.state.kaomojis
+    kaomojis.forEach((kaomoji, index) => {
+      const replace_text = `22333$${index}$22333`+''
+      return_text = return_text.replaceAll(replace_text, kaomoji)
+    });
+    return return_text
   }
 
   async translate_loaded_messages(){
