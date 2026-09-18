@@ -651,10 +651,11 @@ class CertificateDetailsSection extends Component {
             else{
                 var text = '⚫ '+this.props.app_state.loc['1233']/* 'international' */
                 const from = this.props.app_state.performing_translation_indicator[object['e5_id']] != true ? this.props.app_state.loc['a2527cr']/* 'Translated From $' */.replace('$', this.props.app_state.language_data[(object['ipfs']?.device_language_setting || this.props.app_state.loc['a2527cs']/* 'English' */)]?.nativeName || this.props.app_state.loc['a2527cs']/* 'English' */): this.props.app_state.loc['a2527cq']/* '㊗ Translating text...' */
+                const footer = this.props.app_state.translation_percentage_data[object['e5_id']] != null ? this.props.app_state.loc['1593nc']/* '$% translated' */.replace('$', (this.props.app_state.translation_percentage_data[object['e5_id']] * 100).toFixed(2)) : null
                 return(
-                    <div>
+                    <div onClick={() => this.props.perform_translation_of_specific_object(object)}>
                         {/* {this.render_detail_item('3', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})} */}
-                        {this.render_detail_item('3', {'title':text, 'details':from, 'size':'l'})}
+                        {this.render_detail_item('3', {'title':text, 'details':from, 'size':'l', 'footer':footer})}
                         <div style={{height:10}}/>
                     </div>
                 )

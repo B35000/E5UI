@@ -4704,8 +4704,8 @@ class PostListSection extends Component {
     }
 
     check_if_sender_has_paid_subscriptions(object){
-        var required_subscriptions = object['ipfs'].selected_subscriptions
-        var creator_group_subscriptions = object['ipfs'].creator_group_subscriptions
+        var required_subscriptions = object['ipfs']?.selected_subscriptions
+        var creator_group_subscriptions = object['ipfs']?.creator_group_subscriptions
         
         if(creator_group_subscriptions != null && creator_group_subscriptions.length > 0){
             var has_sender_paid_all_subs = false

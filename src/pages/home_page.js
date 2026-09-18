@@ -121,7 +121,9 @@ class home_page extends Component {
         details_container_width:0, typed_tag:{}, search_visible:true, posts_container_width:0, 
         search_results:{}, searched_texts:{}, similar_posts:{}, 
 
-        current_load_time:{}, viewed_items_data:{'':{}}, auto_stack:[]
+        current_load_time:{}, viewed_items_data:{'':{}}, auto_stack:[],
+
+        dragProgress: 0, isDragging: false
     };
 
     constructor(props) {
@@ -137,6 +139,11 @@ class home_page extends Component {
         this.details_container = React.createRef()
         this.posts_container = React.createRef()
         this.detail_section = React.createRef();
+
+        this.rowRef = React.createRef();
+        this.pointerId = null;
+        this.edgeZone = 72;
+        this.commitThreshold = 0.5;
     }
 
 
@@ -557,6 +564,7 @@ class home_page extends Component {
                 navbar_margin = '0px 10px 4px 10px'
                 navbar_width = this.props.width - 20
             }
+            const os = getOS();
             return (
                 <div className="row" style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'padding':'0px', 'margin':'0px'}}>
                     <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px', 'margin':'0px'}}>
@@ -566,7 +574,7 @@ class home_page extends Component {
                         </div>
                         
                         <div style={{height:5}}/>
-                        {this.render_post_details_with_orientation(middle, width, size)}
+                        {os != 'Android' && os != 'iOS' ? this.render_post_details_with_orientation_for_non_touch_screens(middle, width, size) : this.render_post_details_with_orientation(middle, width, size)}
                         <div style={{height:5}}/>
                         
                         <div style={{height:bottom_bar, width: navbar_width, 'background-color':  navbar_color, 'border-radius': radius, 'padding':'0px 0px 0px 0px', 'margin':navbar_margin, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
@@ -755,7 +763,7 @@ class home_page extends Component {
         )
     }
 
-    render_post_details_with_orientation(middle, width, size){
+    render_post_details_with_orientation_for_non_touch_screens(middle, width, size){
         var orientation = this.props.details_orientation;
         var h = middle
         var w = this.props.width/2
@@ -786,6 +794,178 @@ class home_page extends Component {
                 </div>
             );
         }
+    }
+
+    isRightOriented = () => {
+        return this.props.details_orientation === this.props.app_state.loc['1419']/* 'right' */;
+    };
+
+    handlePointerDown = (e) => {
+        const row = this.rowRef.current;
+        if (!row) return;
+        const rect = row.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+
+        const nearLeft = x <= this.edgeZone;
+        const nearRight = x >= rect.width - this.edgeZone;
+        // console.log('dragger', 'nearLeft', nearLeft, 'nearRight', nearRight)
+        if (!nearLeft && !nearRight) return; // only start the gesture from an edge
+
+        this.pointerId = e.pointerId;
+        this.startX = e.clientX;
+        this.startY = e.clientY;
+        this.startedFromLeft = nearLeft;
+        this.startedFromRight = nearRight;
+        this.rowWidth = rect.width;
+
+        row.setPointerCapture(e.pointerId);
+        this.setState({ isDragging: true, dragProgress: 0 });
+    };
+
+    handlePointerMove = (e) => {
+        if (this.pointerId === null || e.pointerId !== this.pointerId) return;
+        const dx = e.clientX - this.startX;
+        const dy = e.clientY - this.startY;
+
+        // mostly-vertical movement -> let it be a scroll, not a flip
+        if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 10) return;
+
+        const validDirection = (this.startedFromLeft && dx > 0) || (this.startedFromRight && dx < 0);
+
+        const progress = validDirection ? Math.min(Math.abs(dx) / (this.rowWidth / 2), 1) : 0;
+
+        // if (progress > this.commitThreshold) {
+        //     const next = this.isRightOriented() ? this.props.app_state.loc['1420'] : this.props.app_state.loc['1419'];
+        //     console.log( 'dragger', 'setting orientation to', next );
+        //     this.props.when_details_orientation_changed(next);
+        // }
+
+        // console.log('dragger', 'progress', progress)
+        this.setState({ dragProgress: progress });
+    };
+
+    handlePointerUp = (e) => {
+        if (this.pointerId === null || e.pointerId !== this.pointerId) return;
+        this.pointerId = null;
+
+        if (this.state.dragProgress > this.commitThreshold) {
+            const next = this.isRightOriented()
+                ? this.props.app_state.loc['1420']/* 'left' */
+                : this.props.app_state.loc['1419']/* 'right' */;//original
+            console.log('dragger', 'setting orientation to ', next)
+            this.props.when_details_orientation_changed(next);
+        }
+        this.setState({ isDragging: false, dragProgress: 0 });
+    };
+
+    render_post_details_with_orientation(middle, width, size) {
+        const h = middle;
+        const w = this.props.width / 2;
+        const isRight = this.isRightOriented();
+        const { dragProgress, isDragging } = this.state;
+
+        const listTranslate = (isRight ? dragProgress : -dragProgress) * 100;
+        const detailTranslate = (isRight ? -dragProgress : dragProgress) * 100;
+        const transition = isDragging ? 'none' : 'transform 0.25s ease';
+
+        if(isRight == true){
+            return (
+                <div
+                    className="row"
+                    ref={this.rowRef}
+                    onPointerDown={this.handlePointerDown}
+                    onPointerMove={this.handlePointerMove}
+                    onPointerUp={this.handlePointerUp}
+                    onPointerCancel={this.handlePointerUp}
+                    style={{
+                        height: middle,
+                        width: width - 10,
+                        margin: '0px',
+                        position: 'relative',
+                        touchAction: 'pan-y',
+                    }}>
+                        <div
+                            className="col-6" 
+                            style={{ 
+                                transform: `translateX(${listTranslate}%)`, 
+                                transition 
+                            }}
+                        >
+                            {this.render_post_list_group(size, h + 10)}
+                        </div>
+
+                        <div
+                            className="col-6"
+                            style={{
+                                padding: '3px 1px 0px 0px',
+                                backgroundColor: this.props.theme['nav_bar_color'],
+                                backdropFilter: 'blur(5px)',
+                                WebkitBackdropFilter: 'blur(5px)',
+                                borderRadius: '15px',
+                                height: middle,
+                                backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`,
+                                backgroundRepeat: 'no-repeat',
+                                backgroundSize: 'cover',
+                                boxShadow: '0px 0px 1px 1px ' + this.props.theme['card_shadow_color'],
+                                transform: `translateX(${detailTranslate}%)`,
+                                transition,
+                            }}
+                        >
+                            {this.render_post_detail_object(size, h, w)}
+                        </div>
+                </div>
+            );
+        }
+
+        //its left oriented now.
+        return (
+            <div
+                className="row"
+                ref={this.rowRef}
+                onPointerDown={this.handlePointerDown}
+                onPointerMove={this.handlePointerMove}
+                onPointerUp={this.handlePointerUp}
+                onPointerCancel={this.handlePointerUp}
+                style={{
+                    height: middle,
+                    width: width - 10,
+                    margin: '0px',
+                    position: 'relative',
+                    touchAction: 'pan-y',
+                    padding: '0px 0px 0px 15px'
+                }}>
+
+                    <div
+                        className="col-6"
+                        style={{
+                            padding: '3px 1px 0px 0px',
+                            backgroundColor: this.props.theme['nav_bar_color'],
+                            backdropFilter: 'blur(5px)',
+                            WebkitBackdropFilter: 'blur(5px)',
+                            borderRadius: '15px',
+                            height: middle,
+                            backgroundImage: `${this.props.linear_gradient_text(this.props.theme['nav_bar_color'])}, url(${this.props.get_default_background()})`,
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: 'cover',
+                            boxShadow: '0px 0px 1px 1px ' + this.props.theme['card_shadow_color'],
+                            transform: `translateX(${detailTranslate}%)`,
+                            transition,
+                        }}
+                    >
+                        {this.render_post_detail_object(size, h, w)}
+                    </div>
+
+                    <div 
+                        className="col-6" 
+                        style={{ 
+                            transform: `translateX(${listTranslate}%)`, 
+                            transition 
+                        }}
+                    >
+                        {this.render_post_list_group(size, h + 10)}
+                    </div>
+            </div>
+        );
     }
 
     renderBottomSheet(view, open, onOpenChange, height) {
@@ -1057,47 +1237,55 @@ class home_page extends Component {
     render_navbar_button_group(size, navbar_width){
         var line_margin = '0px '+this.get_navbar_line_margin_percentage()+' 0px 0px'
         if(size == 'm'){
-          return ( 
-              <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:navbar_width}}>
-                    <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px', position: 'relative'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
-                        {this.render_navbar_button('l','4px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */, this.get_notification_count('?'))}
-                    </div>
+            var padding_object_width = '5px 0px 0px 30px'
+            if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
+                padding_object_width = '5px 0px 0px 40px'
+            }
+            return ( 
+                <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:navbar_width}}>
+                        <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding': padding_object_width, 'border-radius': '0px 0px 0px 0px', position: 'relative'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
+                            {this.render_navbar_button('l','4px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */, this.get_notification_count('?'))}
+                        </div>
 
-                    <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                        {this.render_navbar_button('l','5px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */, this.get_notification_count('e'))}
-                    </div>
+                        <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
+                            {this.render_navbar_button('l','5px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */, this.get_notification_count('e'))}
+                        </div>
 
-                    <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                        {this.render_navbar_button('l','5px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
-                    </div>
-                    
-                    <div className="col" style={{'padding':'5px 0px 0px 30px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                        {this.render_navbar_button('l','5px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */, this.get_notification_count('s'))}
-                    </div>
-              </div>
-          );
+                        <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
+                            {this.render_navbar_button('l','5px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
+                        </div>
+                        
+                        <div className="col" style={{'padding':'5px 0px 0px 30px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
+                            {this.render_navbar_button('l','5px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */, this.get_notification_count('s'))}
+                        </div>
+                </div>
+            );
         }
         else if(size == 's'){
-          return(
-            <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:navbar_width}}>
-                  <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 0px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'border-radius': '1px 0px 0px 0px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
-                      {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['JobIcon'], 'auto', '38px','5px 0px 0px 0px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */, this.get_notification_count('?'))}
-                  </div>
+            var padding_object_width = '0px 0px 0px 15px'
+            if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
+                padding_object_width = '0px 0px 0px 30px'
+            }
+            return(
+                <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:navbar_width}}>
+                    <div className="col" style={{height: '100%', width:'100%', padding: padding_object_width, 'background-color': this.get_navbar_normal_or_highlighted_button_background('?'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
+                        {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['JobIcon'], 'auto', '38px','5px 0px 0px 0px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */, this.get_notification_count('?'))}
+                    </div>
 
-                  <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('e'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                      {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['ExploreIcon'], 'auto', '30px','5px 0px 0px 0px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */, this.get_notification_count('e'))}
-                  </div>
+                    <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('e'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
+                        {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['ExploreIcon'], 'auto', '30px','5px 0px 0px 0px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */, this.get_notification_count('e'))}
+                    </div>
 
-                  <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '46px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
-                      
-                  </div>
+                    <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
+                        {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '46px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
+                        
+                    </div>
 
-                  <div className="col" style={{height: '100%', width:'100%', padding:'5px 0px 0px 1px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                    {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['StackIcon'], 'auto', '31px','4px 0px 0px 0px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */, this.get_notification_count('s'))}
-                  </div>
-              </div>
-          );
+                    <div className="col" style={{height: '100%', width:'100%', padding:'5px 0px 0px 1px', position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
+                        {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['StackIcon'], 'auto', '31px','4px 0px 0px 0px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */, this.get_notification_count('s'))}
+                    </div>
+                </div>
+            );
         }
         else if(size == 'l' || size == 'xl'){
             return ( 
@@ -6717,7 +6905,7 @@ class home_page extends Component {
                 load_token_certificate_chain={this.props.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.props.load_nft_certificate_parent_objects.bind(this)} get_objects_showcased_certificates={this.props.get_objects_showcased_certificates.bind(this)} fetch_uploaded_files_for_object={this.props.fetch_uploaded_files_for_object.bind(this)}
 
                 get_ether_blockexplorer_link={this.props.get_ether_blockexplorer_link.bind(this)}
-                auto_stack_subscription={this.auto_stack_subscription.bind(this)}
+                auto_stack_subscription={this.auto_stack_subscription.bind(this)} perform_translation_of_specific_object={this.props.perform_translation_of_specific_object.bind(this)}
 
                 />
             </div>

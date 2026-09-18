@@ -2112,7 +2112,7 @@ class App extends Component {
     created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}, showcasing_events:{}, decentralization_metrics: this.get_decentralization_data(),
 
     objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}, 
-    ether_ages:{}, created_object_full:{}, current_run_hash:{}, socket_created_bags:{}, translation_data:{}, performing_translation_indicator:{}
+    ether_ages:{}, created_object_full:{}, current_run_hash:{}, socket_created_bags:{}, translation_data:{}, performing_translation_indicator:{}, translation_percentage_data:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -8812,6 +8812,7 @@ class App extends Component {
           get_ether_gas_usage_chart_data={this.get_ether_gas_usage_chart_data.bind(this)} load_object_certificate_showcasing_events={this.load_object_certificate_showcasing_events.bind(this)} load_token_certificate_chain={this.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.load_nft_certificate_parent_objects.bind(this)}
 
           get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)} perform_translation_of_specific_object={this.perform_translation_of_specific_object.bind(this)}
+          when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -12137,6 +12138,10 @@ class App extends Component {
 
   when_details_orientation_changed(orientation){
     this.setState({details_orientation: orientation})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
   }
 
   when_selected_e5_changed(e5){
@@ -14598,6 +14603,7 @@ class App extends Component {
     const entered_objects = state_obj.entered_objects || []
     const markdown = state_obj.markdown || ''
     const message = state_obj.message || ''
+    const my_lan = this.state.device_language
     
     //title
     payload_data.entered_title_text = {
@@ -14607,7 +14613,9 @@ class App extends Component {
     }
     payload.push({
       text: entered_title_text, 
-      target_lang: lan
+      target_lang: lan,
+      langCode: my_lan,
+      direction: 'to_en'
     });
 
     //tags
@@ -14621,7 +14629,9 @@ class App extends Component {
       })
       payload.push({ 
         text: tag, 
-        target_lang: lan
+        target_lang: lan,
+        langCode: my_lan,
+        direction: 'to_en'
       });
     });
 
@@ -14638,7 +14648,9 @@ class App extends Component {
       const text_object_text = type == '11' ? text_obj['data']['caption']['text'] : text_obj['data']['text']
       payload.push({ 
         text: text_object_text, 
-        target_lang: lan
+        target_lang: lan,
+        langCode: my_lan,
+        direction: 'to_en'
       });
     });
 
@@ -14653,7 +14665,9 @@ class App extends Component {
 
       payload.push({ 
         text: element.content, 
-        target_lang: lan
+        target_lang: lan,
+        langCode: my_lan,
+        direction: 'to_en'
       });
     });
 
@@ -14665,7 +14679,9 @@ class App extends Component {
     }
     payload.push({
       text: message, 
-      target_lang: lan
+      target_lang: lan,
+      langCode: my_lan,
+      direction: 'to_en'
     });
 
     return { payload, payload_data }
@@ -14736,51 +14752,86 @@ class App extends Component {
         continue;
       }
 
-      var content = raw.trim()
-      if (!content) continue;
-      const contentStart = match.index + raw.indexOf(content);
-      
-      const links = this.extractLinks(content)
-      for(var i=0; i<links.length; i++){
-          const index = i
-          const link_item = links[i]
-          const p = '%775833$435656%'+index+'%775833$435656%'
-          content = (content.replace(link_item.raw, p))
-          link_item.place = p
-      }
+      var pcontent = raw.trim()
+      if (!pcontent) continue;
 
-      const bolds = this.extractBold(content)
-      for(var j=0; j<bolds.length; j++){
-          const index = j
-          const bold_item = bolds[j]
-          const q = '%^47378$47837%'+index+'%^47378$47837%'
-          content = (content.replace(bold_item.raw, q))
-          bold_item.place = q
-      }
+      const sentences = this.extractSentences(pcontent)
+      console.log('extractParagraphs', 'sentences', sentences)
+      for(var sent=0; sent<sentences.length; sent++){
+        var content = sentences[sent]
+        const contentStart = match.index + raw.indexOf(content);
+        const contentEnd = contentStart + content.length;
 
-      const italics = this.extractItalics(content)
-      for(var k=0; k<italics.length; k++){
-          const index = k
-          const italic_item = italics[k]
-          const r = '%538337$937292%'+index+'%538337$937292%'
-          content = (content.replace(italic_item.raw, r))
-          italic_item.place = r
-      }
-      const internals = links.concat(bolds, italics)
+        const links = this.extractLinks(content)
+        for(var i=0; i<links.length; i++){
+            const index = i
+            const link_item = links[i]
+            const p = '%775833$435656%'+index+'%775833$435656%'
+            content = (content.replace(link_item.raw, p))
+            link_item.place = p
+        }
 
-      paragraphs.push({
-        type: "paragraph",
-        content: content,
-        start: contentStart,
-        end: contentStart + content.length,
-        raw,
-        elementStart: match.index,
-        elementEnd: match.index + raw.length,
-        internals,
-      });
+        const bolds = this.extractBold(content)
+        for(var j=0; j<bolds.length; j++){
+            const index = j
+            const bold_item = bolds[j]
+            const q = '%^47378$47837%'+index+'%^47378$47837%'
+            content = (content.replace(bold_item.raw, q))
+            bold_item.place = q
+        }
+
+        const italics = this.extractItalics(content)
+        for(var k=0; k<italics.length; k++){
+            const index = k
+            const italic_item = italics[k]
+            const r = '%538337$937292%'+index+'%538337$937292%'
+            content = (content.replace(italic_item.raw, r))
+            italic_item.place = r
+        }
+        const internals = links.concat(bolds, italics)
+
+        paragraphs.push({
+          type: "paragraph",
+          content: content,
+          start: contentStart,
+          end: contentEnd,
+          content,
+          elementStart: match.index,
+          elementEnd: contentEnd,
+          internals,
+        });
+      }
     }
 
     return paragraphs;
+  }
+
+  extractSentences(paragraph) {
+    const urls = [];
+
+    // Protect URLs
+    const protectedText = paragraph.replace(
+        /https?:\/\/[^\s]+/g,
+        url => {
+            const index = urls.length;
+            urls.push(url);
+
+            return `___URL_${index}___`;
+        }
+    );
+
+    // Split after punctuation OR at newline
+    const sentences = protectedText
+      .split(/(?<=[.,;:])(?=\s|$)|(?=\n)/)
+      .filter(sentence => sentence.length > 0);
+
+    // Restore URLs
+    return sentences.map(sentence =>
+        sentence.replace(
+            /___URL_(\d+)___/g,
+            (_, index) => urls[Number(index)]
+        )
+    );
   }
 
   extractLinks(markdown){
@@ -14941,8 +14992,9 @@ class App extends Component {
 
   async translate_new_object_into_english(state_obj){
     const lan = 'en'
+    const my_lan = this.state.device_language
     const { payload, payload_data } = this.extract_payload_for_translation(state_obj, lan);
-    const payload_result = await this.translate_payload(payload, 'to_en');
+    const payload_result = my_lan == 'en' ? payload.map(e => payload.text) : await this.translate_payload(payload, 'to_en');
 
     if(payload_result != null){
       const payload_data_translated = this.inject_translation_result_into_payload_data(payload_data, payload_result, lan, state_obj)
@@ -14953,7 +15005,54 @@ class App extends Component {
     }
   }
 
-  async translate_payload(payload, direction, updated_signature=false){
+  async translate_payload(payload, direction, id){
+    const chunks = this.split_into_chunks(payload, 35)
+    const set_percentage_done = (pos) => {
+      if(id != null){
+        const clone = structuredClone(this.state.translation_percentage_data)
+        clone[id] = pos / chunks.length
+        this.setState({translation_percentage_data: clone})
+      }
+    }
+    var return_payload = []
+    var failed = false
+    for(var i=0; i<chunks.length; i++){
+      const chunk = chunks[i]
+      const return_data = await this.translate_payload_as_chunk(chunk, direction, false)
+      if(return_data != null){
+        return_payload = return_payload.concat(return_data)
+        set_percentage_done(i+1)
+        await this.wait(1000)
+      }
+      else{
+        await this.wait(2000)
+        const return_data2 = await this.translate_payload_as_chunk(chunk, direction, false)
+        if(return_data2 != null){
+          return_payload = return_payload.concat(return_data2)
+          set_percentage_done(i+1)
+          await this.wait(1000)
+        }else{
+          await this.wait(3500)
+          const return_data3 = await this.translate_payload_as_chunk(chunk, direction, false)
+          if(return_data3 != null){
+            return_payload = return_payload.concat(return_data3)
+            set_percentage_done(i+1)
+            await this.wait(1000)
+          }else{
+            failed = true
+          }
+        }
+      }
+    }
+
+    if(failed == true){
+      return null
+    }else{
+      return return_payload;
+    }
+  }
+
+  async translate_payload_as_chunk(payload, direction, updated_signature=false){
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
@@ -14963,9 +15062,44 @@ class App extends Component {
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
       beacon_e5_id = this.state.my_preferred_nitro
     }
+
+    const remove_whitespaces = (items) => {
+      const new_payload = []
+      const leading_ws = []
+      const trailing_ws = []
+      items.forEach(content => {
+        const leadingWS = content.text.match(/^\s*/)[0];
+        const trailingWS = content.text.match(/\s*$/)[0];
+        const core = content.text.slice(leadingWS.length, content.text.length - trailingWS.length);
+        const content_clone = {
+          text: core,
+          direction: content.direction,
+          langCode: content.langCode,
+          target_lang: content.target_lang
+        }
+
+        new_payload.push(content_clone)
+        leading_ws.push(leadingWS)
+        trailing_ws.push(trailingWS)
+      });
+      return { new_payload, leading_ws, trailing_ws }
+    }
+
+    const return_whitespaces = (items, leading_ws, trailing_ws) => {
+      const return_data = []
+      items.forEach((content, index) => {
+        const leadingWS = leading_ws[index]
+        const trailingWS = trailing_ws[index]
+        const translated_content = leadingWS + content + trailingWS;
+        return_data.push(translated_content)
+      });
+      return return_data
+    }
     
+    const { new_payload, leading_ws, trailing_ws } = remove_whitespaces(payload)
+
     const arg_obj = {
-      payload,
+      payload: new_payload,
       direction,
     }
 
@@ -14989,10 +15123,10 @@ class App extends Component {
       if(obj['message'] == 'Invalid signature' && updated_signature != true){
         await this.update_nitro_privacy_signature(false)
         await this.wait(300)
-        return await this.translate_payload(payload, direction, true)
+        return await this.translate_payload_as_chunk(payload, direction, true)
       }else{
         if(obj['success'] == true){
-          return obj['data']
+          return return_whitespaces(obj['data'], leading_ws, trailing_ws)
         }
       }
     }
@@ -15071,13 +15205,13 @@ class App extends Component {
           result =
               result.slice(0, element.start) +
               translated_content +
-              result.slice(element.start+translated_content.length);
+              result.slice(element.end);
       }
       else if(element.type != 'link' && element.type != 'bold' && element.type != 'italic'){
         result =
           result.slice(0, element.start) +
           element.translatedContent +
-          result.slice(element.start+element.translatedContent.length);
+          result.slice(element.end);
       }
     }
 
@@ -47923,8 +48057,10 @@ class App extends Component {
       return (this.state.translation_data[object_item['e5_id']] == null && object_item['ipfs'] != null && object_item['ipfs'].content_channeling_setting == this.getLocale()['1233']/* 'international' */)
     })
     if(filtered_objects.length == 0) return;
+
     const { payload, payload_data } = tranlsating_messages == true ? this.extract_payload_for_secondary_message_translation(filtered_objects, lan) : this.extract_payload_for_secondary_title_translation(filtered_objects, lan);
-    const payload_result = lan == 'en' ? payload.map(e => e.text) : await this.translate_payload(payload, 'from_en');
+
+    const payload_result = lan == 'en' ? payload.map(e => e.text) : await this.translate_payload(payload, 'from_en')
     
     if(payload_result != null){
       if(tranlsating_messages == true){
@@ -47957,7 +48093,9 @@ class App extends Component {
       }
       payload.push({
         text: entered_title_text, 
-        target_lang: lan
+        target_lang: lan,
+        langCode: lan,
+        direction: "from_en",
       });
 
       //tags
@@ -47971,7 +48109,9 @@ class App extends Component {
         })
         payload.push({ 
           text: tag, 
-          target_lang: lan
+          target_lang: lan,
+          langCode: lan,
+          direction: "from_en",
         });
       });
     }
@@ -48001,7 +48141,9 @@ class App extends Component {
       }
       payload.push({
         text: this.replace_kaomojis_in_payload_with_placeholders(message), 
-        target_lang: lan
+        target_lang: lan,
+        langCode: lan,
+        direction: "from_en",
       });
 
       //markdown
@@ -48016,7 +48158,9 @@ class App extends Component {
 
         payload.push({ 
           text: element.content, 
-          target_lang: lan
+          target_lang: lan,
+          langCode: lan,
+          direction: "from_en",
         });
       });
     }
@@ -59047,8 +59191,11 @@ class App extends Component {
       this.setState({performing_translation_indicator: clone})
     }
     set_loading(true)
+    const secondary_languages = ['ko', 'sk']
     const { payload, payload_data } = this.extract_payload_for_secondary_translation(object, lan);
-    const payload_result = lan == 'en' ? payload.map(e => e.text) : await this.translate_payload(payload, 'from_en');
+    
+    const payload_result = lan == 'en' ? payload.map(e => e.text) : await this.translate_payload(payload, 'from_en', object['e5_id'])
+
     if(payload_result != null){
       this.inject_translation_result_into_payload_data_for_object(payload_data, payload_result, lan, object)
     }
@@ -59078,7 +59225,9 @@ class App extends Component {
       const text_object_text = type == '11' ? text_obj['data']['caption']['text'] : text_obj['data']['text']
       payload.push({ 
         text: this.replace_kaomojis_in_payload_with_placeholders(text_object_text), 
-        target_lang: lan
+        target_lang: lan,
+        langCode: lan,
+        direction: "from_en",
       });
     });
 
@@ -59093,7 +59242,9 @@ class App extends Component {
 
       payload.push({ 
         text: element.content, 
-        target_lang: lan
+        target_lang: lan,
+        langCode: lan,
+        direction: "from_en",
       });
     });
 
@@ -59203,8 +59354,27 @@ class App extends Component {
     add_all_objects(this.state.created_contracts)
     add_all_objects(this.state.created_subscriptions)
 
-    await this.perform_bulk_translation_of_objects(objects2)
-    await this.perform_bulk_translation_of_objects(objects, true)
+    const sorted_objects2 = this.sortByAttributeDescending(objects2, 'timestamp')
+    const chunks = this.split_into_chunks(objects, 10);
+    const chunks2 = this.split_into_chunks(sorted_objects2, 7);
+
+    for(var i=0; i<chunks2.length; i++){
+      const chunk = chunks2[i]
+      await this.perform_bulk_translation_of_objects(chunk)
+    }
+
+    for(var i=0; i<chunks.length; i++){
+      const chunk = chunks[i]
+      await this.perform_bulk_translation_of_objects(chunk, true)
+    }
+  }
+
+  split_into_chunks(arr, chunkSize) {
+    const result = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+      result.push(arr.slice(i, i + chunkSize));
+    }
+    return result;
   }
 
 
