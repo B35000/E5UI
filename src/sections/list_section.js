@@ -99,6 +99,12 @@ class PostListSection extends Component {
         this.setState({screen_width: this.screen.current.offsetWidth})
     }
 
+    componentDidUpdate(prevProps){
+        if(prevProps.width != this.props.width){
+            this.setState({screen_width: this.screen.current.offsetWidth})
+        }
+    }
+
     componentWillUnmount(){
         if(this.interval != null) clearInterval(this.interval);
     }
@@ -129,7 +135,7 @@ class PostListSection extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [6]
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [2]
             ],
         };
     }
@@ -1413,26 +1419,46 @@ class PostListSection extends Component {
 
     render_job_map(){
         var middle = this.props.height
+        const width = this.state.screen_width
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        middle -= 220
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+80
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
+        }
+        // middle -= 220
         const job_location_pins = this.get_location_pins(this.get_job_items(), this.get_filter_end_time(this.state.selected_jobs_time_filter_chart_tags_object))
         return(
             <div>
-                <LocationViewer ref={this.locationPickerRef} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={job_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_job_pin_clicked.bind(this)}
-                />
-                <div style={{height:20}}/>
-                <div onClick={()=> this.show_my_location_on_map(this.locationPickerRef)}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1264bs']/* My Location ⚲ */, 'action':''})}
+                <div style={{'position': 'relative'}}>
+                    <div style={{height: middle, width: width, 'z-index':'0', 'position': 'absolute'}}>
+                        <LocationViewer ref={this.locationPickerRef} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={job_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_job_pin_clicked.bind(this)} />
+                    </div>
+                    <div style={{height: 32, width: width-90, 'z-index':'1', 'position': 'absolute', 'margin':'10px 0px 0px 100px'}}>
+                        <div style={{'display': 'flex','flex-direction': 'row', 'padding':'10px 20px 0px 20px'}}>
+                            <div style={{width: width - 30}}/>
+                            <img alt="" onClick={()=>this.show_my_location_on_map(this.locationPickerRef)} src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:35, width:'auto'}} />
+                        </div>
+                    </div>
                 </div>
+                
+                {/* <div style={{height:20}}/>
+                <div onClick={()=> this.show_my_location_on_map(this.locationPickerRef)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1264bs'] My Location ⚲ , 'action':''})}
+                </div> */}
 
-                {this.render_detail_item('0')}
+                {/* {this.render_detail_item('0')} */}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2509di']/* 'Filter Time' */, 'details':this.props.app_state.loc['2509dj']/* 'Filter the pins by the time they were created or their age. */, 'size':'l'})}
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['2509di'] 'Filter Time' , 'details':this.props.app_state.loc['2509dj'] 'Filter the pins by the time they were created or their age. , 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_jobs_time_filter_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_jobs_time_filter_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_jobs_time_filter_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_jobs_time_filter_chart_tags_object_updated.bind(this)} theme={this.props.theme}/> */}
 
                 {this.state.selected_map_job != null && this.render_object_bottomsheet(this.render_job_object(this.state.selected_map_job), this.state.render_selected_map_job_bottomsheet, this.when_pin_job_closed, 200)}
             </div>
@@ -2714,28 +2740,48 @@ class PostListSection extends Component {
     }
 
     render_contractor_map(){
-        var middle = this.props.height
+        var middle = this.props.height;
+        var width = this.state.screen_width;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        middle -= 220
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+80
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
+        }
+        // middle -= 220
+
         const contractor_location_pins = this.get_location_pins(this.get_contractor_items(), this.get_filter_end_time(this.state.selected_contractors_time_filter_chart_tags_object))
         return(
             <div>
-                <LocationViewer ref={this.locationPickerRef2} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={contractor_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_contractor_pin_clicked.bind(this)}
-                />
-
-                <div style={{height:20}}/>
-                <div onClick={()=> this.show_my_location_on_map(this.locationPickerRef)}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1264bs']/* My Location ⚲ */, 'action':''})}
+                <div style={{'position': 'relative'}}>
+                    <div style={{height: middle, width: width, 'z-index':'0', 'position': 'absolute'}}>
+                        <LocationViewer ref={this.locationPickerRef2} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={contractor_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_contractor_pin_clicked.bind(this)}/>
+                    </div>
+                    <div style={{height: 32, width: width-90, 'z-index':'1', 'position': 'absolute', 'margin':'10px 0px 0px 100px'}}>
+                        <div style={{'display': 'flex','flex-direction': 'row', 'padding':'10px 20px 0px 20px'}}>
+                            <div style={{width: width - 30}}/>
+                            <img alt="" onClick={()=>this.show_my_location_on_map(this.locationPickerRef2)} src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:35, width:'auto'}} />
+                        </div>
+                    </div>
                 </div>
 
-                {this.render_detail_item('0')}
+                {/* <div style={{height:20}}/>
+                <div onClick={()=> this.show_my_location_on_map(this.locationPickerRef)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1264bs'] My Location ⚲, 'action':''})}
+                </div> */}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2509di']/* 'Filter Time' */, 'details':this.props.app_state.loc['2509dj']/* 'Filter the pins by the time they were created or their age. */, 'size':'l'})}
+                {/* {this.render_detail_item('0')} */}
+
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['2509di'] 'Filter Time' , 'details':this.props.app_state.loc['2509dj'] 'Filter the pins by the time they were created or their age. , 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_contractors_time_filter_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_contractors_time_filter_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_contractors_time_filter_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_contractors_time_filter_chart_tags_object_updated.bind(this)} theme={this.props.theme}/> */}
 
                 {this.state.selected_map_contractor != null && this.render_object_bottomsheet(this.render_contractor_object(this.state.selected_map_contractor), this.state.render_selected_map_contractor_bottomsheet, this.when_pin_contractor_closed, 200)}
             </div>

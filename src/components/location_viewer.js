@@ -17,7 +17,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React, { useImperativeHandle, forwardRef, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvent, CircleMarker } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvent, CircleMarker, AttributionControl } from 'react-leaflet'
 import "leaflet/dist/leaflet.css";
 
 import L from 'leaflet';
@@ -125,7 +125,7 @@ const LocationPicker = forwardRef((props, ref) => {
     const my_location_marker_icon = L.icon({
         iconUrl: my_location_icons[theme], // Path to your custom image
         iconSize: [icon_size2, icon_size2], // Size of the icon [width, height]
-        iconAnchor: [icon_size2/2, icon_size2], // Point of the icon which will correspond to marker's location [x, y]
+        iconAnchor: [icon_size2/2, icon_size2 / 2], // Point of the icon which will correspond to marker's location [x, y]
         popupAnchor: [0, -icon_size2] // Point from which the popup should open relative to the iconAnchor
     });
 
@@ -138,8 +138,9 @@ const LocationPicker = forwardRef((props, ref) => {
 
     const url_object = {
         'light': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        'black': 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        'dark': 'https://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+        'black': `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`,
+        // 'dark': 'https://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+        'dark':`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`
     }
     const url = url_object[theme]
 
@@ -148,7 +149,7 @@ const LocationPicker = forwardRef((props, ref) => {
     const my_location_circle_colors = {
         'light': 'black',
         'black': 'white',
-        'dark': 'black',
+        'dark': 'white',
     }
     const my_location_circle_color = my_location_circle_colors[theme]
 
@@ -158,8 +159,21 @@ const LocationPicker = forwardRef((props, ref) => {
     if(pins.length == 0){
         return (
             <div style={{ height: height, width: '100%' }}>
-                <MapContainer zoomControl={input_enabled} scrollWheelZoom={false} dragging={input_enabled} touchZoom={input_enabled} doubleClickZoom={input_enabled} boxZoom={input_enabled} keyboard={input_enabled} ref={mapRef} center={[center.lat, center.lon]} zoom={15} style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px'}}>
+                <MapContainer 
+                    zoomControl={input_enabled} 
+                    scrollWheelZoom={false} 
+                    dragging={input_enabled} 
+                    touchZoom={input_enabled} 
+                    doubleClickZoom={input_enabled} 
+                    boxZoom={input_enabled} 
+                    keyboard={input_enabled} 
+                    ref={mapRef} 
+                    center={[center.lat, center.lon]} 
+                    zoom={15} 
+                    attributionControl={false}
+                    style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px'}}>
                     <TileLayer attribution={attribution} url={url} />
+                    <AttributionControl position="topright" />
                     {my_location != null && (
                         <div>
                             <Marker position={[my_location.lat, my_location.lon]} icon={my_location_marker_icon}/>

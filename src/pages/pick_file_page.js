@@ -105,7 +105,7 @@ class PickFilePage extends Component {
     }
 
     async set_data(type, function_name, max){
-        const selected_nitro_item = this.props.app_state.my_preferred_nitro == '' ? this.props.app_state.default_nitro_e5_id : this.props.app_state.my_preferred_nitro
+        const selected_nitro_item = this.props.app_state.my_preferred_nitro == '' ? this.props.default_nitro_option : this.props.app_state.my_preferred_nitro
         const all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
         const nitro_object = this.get_item_in_array2(selected_nitro_item, all_nitros)
 
@@ -114,6 +114,8 @@ class PickFilePage extends Component {
         await this.props.load_nitro_node_details(nitro_object, false)
         await this.props.load_my_account_storage_info(nitro_object)
     }
+
+    
 
     constructor(props) {
         super(props);
@@ -217,7 +219,7 @@ class PickFilePage extends Component {
                 <div style={{height:10}}/>
 
                 <div className="row">
-                    <div className="col-8" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-8" onClick={() => this.reload_my_account_storage_balance()} style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['1593bc']/* 'File Upload Limit.' */, 'details':`~ ${fs}`, 'size':'l'})}
                     </div>
                     <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
@@ -226,9 +228,10 @@ class PickFilePage extends Component {
                         </div>
                     </div>
                 </div>
-                <div style={{height:10}}/>
-
-                <div style={{ 'margin': '5px 5px 5px 5px'}}>
+                <div style={{'padding': '5px'}} onClick={() => this.open_purchase_storage_space()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2961c']/* 'Purchase Storage 💾' */, 'action':''})}
+                </div>
+                <div style={{'margin': '5px 5px 5px 5px'}}>
                     <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2961a']/* 'Filter Files...' */} when_text_input_field_changed={this.when_search_text_input_field_changed.bind(this)} text={this.state.search_text} theme={this.props.theme} />
                 </div>
 
@@ -240,6 +243,32 @@ class PickFilePage extends Component {
                 {this.render_uploaded_files()}
             </div>
         )
+    }
+
+    async reload_my_account_storage_balance(){
+        if(this.is_loading == true) return;
+        this.is_loading = true
+
+        this.props.notify(this.props.app_state.loc['3115n']/* 'Refreshing your storage balance...' */)
+        const selected_nitro_item = this.props.app_state.my_preferred_nitro == '' ? this.props.default_nitro_option : this.props.app_state.my_preferred_nitro
+        const all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+        const nitro_object = this.get_item_in_array2(selected_nitro_item, all_nitros)
+        await this.props.load_my_account_storage_info(nitro_object)
+        this.is_loading = false
+    }
+
+    open_purchase_storage_space(){
+        const object = this.fetch_my_active_nitro()
+        this.props.show_quick_purchase_storage_bottomsheet(object)
+    }
+
+    fetch_my_active_nitro(){
+        const all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+        const object = all_nitros.find((search_obj) => {
+            const search_e5_id = this.props.app_state.my_preferred_nitro == '' ? this.props. default_nitro_option : this.props.app_state.my_preferred_nitro
+            return (search_obj['e5_id'] == search_e5_id)
+        })
+        return object
     }
 
     get_upload_file_size_limit(){

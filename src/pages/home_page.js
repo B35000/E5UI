@@ -538,7 +538,7 @@ class home_page extends Component {
 
                         <div className="col-11" style={{}} >
                             <div style={{height:top_bar, 'padding':'9px 0px 0px 5px'}}>
-                                {this.render_top_tag_bar(size)}
+                                {this.render_top_tag_bar(size, this.props.width)}
                             </div>
                             
                             {this.render_large_screen_ui(middle, size)}
@@ -570,7 +570,7 @@ class home_page extends Component {
                     <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px', 'margin':'0px'}}>
                         
                         <div style={{height:top_bar, 'width': '100%', 'padding':'9px 0px 0px 15px', 'overflow-y': 'hidden', 'overflow-x': 'hidden', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
-                            {this.render_top_tag_bar(size)}
+                            {this.render_top_tag_bar(size, this.props.width)}
                         </div>
                         
                         <div style={{height:5}}/>
@@ -593,14 +593,18 @@ class home_page extends Component {
         else if(size == 's'){
             var bottom_bar = 80;
             var radius = '0px'
+            const selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+            
             var navbar_margin = '0px 0px 0px 0px'
             var navbar_width = this.props.width
             if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
                 bottom_bar = 72
                 radius = '20px'
-                navbar_margin = '0px 10px 8px 10px'
+                
+                navbar_margin = '0px 10px 15px 10px'
                 navbar_width = this.props.width - 20
             }
+            
             return(
                 <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
                     <div style={{height: this.props.height, width:'100%', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
@@ -712,13 +716,23 @@ class home_page extends Component {
     render_small_screen_size_ui(size, top_bar, width){
         var orientation = this.props.app_state.homepage_tags_position
         const selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
-        const x = selected_item == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */ || selected_item == 'e' ? 133 : 129
+        let x = selected_item == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */ || selected_item == 'e' ? 136 : 129
 
         if(orientation == this.props.app_state.loc['1593k']/* top */){
+            var navbar_margin = '0px 0px 0px 0px'
+            var radius = '0px'
+            var w = this.props.width
+            var tag_width = width
+            if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
+                navbar_margin = '8px 10px 0px 10px'
+                var radius = '20px'
+                w = this.props.width-20
+                tag_width = this.props.width-20
+            }
             return(
                 <div>
-                    <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
-                        {this.render_top_tag_bar(size)}
+                    <div style={{height:top_bar, width:tag_width, 'padding':'7px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'border-radius': radius, 'margin':navbar_margin,}}>
+                        {this.render_top_tag_bar(size, w)}
                     </div>
                     
                     <div style={{height:this.props.height-x, width:width, 'padding':'0px 5px 0px 5px'}}>
@@ -727,13 +741,23 @@ class home_page extends Component {
                 </div>
             )
         }else{
+            var navbar_margin = '0px 0px 0px 0px'
+            var radius = '0px'
+            var w = this.props.width
+            var tag_width = width
+            if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
+                navbar_margin = '0px 10px 8px 10px'
+                var radius = '20px'
+                w = this.props.width-20
+                tag_width = this.props.width-20
+            }
             return(
                 <div>
                     <div style={{height:this.props.height-x, width:width, 'padding':'0px 5px 0px 5px'}}>
                         {this.render_post_list_group(size, this.props.height-x)}
                     </div>
-                    <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
-                        {this.render_top_tag_bar(size)}
+                    <div style={{height:top_bar, width:tag_width, 'padding':'7px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'border-radius': radius, 'margin':navbar_margin,}}>
+                        {this.render_top_tag_bar(size, w)}
                     </div>
                 </div>
             )
@@ -1264,7 +1288,7 @@ class home_page extends Component {
         else if(size == 's'){
             var padding_object_width = '0px 0px 0px 15px'
             if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
-                padding_object_width = '0px 0px 0px 30px'
+                padding_object_width = '0px 0px 0px 25px'
             }
             return(
                 <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:navbar_width}}>
@@ -1577,18 +1601,18 @@ class home_page extends Component {
 
 
     /* render the top bar tags with the create object button */
-    render_top_tag_bar(size){
-        var width = this.props.width-10;
+    render_top_tag_bar(size, width_arg){
+        var width = width_arg-10;
         if(size == 'l'){
-            var w = this.props.width
+            var w = width_arg
             if(w < 1100){
-                width = this.props.width - 130;
+                width = width_arg - 130;
             }else{
-                width = this.props.width - 140;
+                width = width_arg - 140;
             }
         } 
-        if(size == 'xl') width = this.props.width - 130;
-        if(size == 's') width = this.props.width
+        if(size == 'xl') width = width_arg - 130;
+        if(size == 's') width = width_arg
 
         const color = this.props.app_state.socket_online == true ? (this.props.app_state.is_device_online == true ? this.props.app_state.theme['online_dot_color'] : this.props.app_state.theme['offline_dot_color']) : this.props.app_state.theme['unset_dot_color'];
         return(
@@ -5034,7 +5058,7 @@ class home_page extends Component {
 
     filter_out_delisted_objects(objects){
         return objects.filter((object) => {
-            return (object['ipfs'].get_object_delisted_setting_tags_option == null || this.get_selected_item(object['ipfs'].get_object_delisted_setting_tags_option, 'e') == 'e')
+            return (object['ipfs']?.get_object_delisted_setting_tags_option == null || this.get_selected_item(object['ipfs'].get_object_delisted_setting_tags_option, 'e') == 'e')
         })
     }
 

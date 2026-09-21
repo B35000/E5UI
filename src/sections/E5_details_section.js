@@ -841,6 +841,7 @@ class E5DetailsSection extends Component {
 
 
     render_spend_bottom_80_dominance(obj){
+        return;
         const e5_chart_data = this.props.app_state.all_data[obj['id']]
         if(e5_chart_data != null){
             var proportion = null;

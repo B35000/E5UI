@@ -315,6 +315,17 @@ class NitroDetailsSection extends Component {
     }
 
 
+
+
+
+
+
+
+
+
+
+    
+
     render_post_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-50

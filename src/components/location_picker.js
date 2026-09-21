@@ -17,7 +17,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React, { useImperativeHandle, forwardRef, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvent, CircleMarker } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvent, CircleMarker, AttributionControl } from 'react-leaflet'
 import "leaflet/dist/leaflet.css";
 
 import L from 'leaflet';
@@ -134,16 +134,18 @@ const LocationPicker = forwardRef((props, ref) => {
 
     const url_object = {
         'light': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        'black': 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        'dark': 'https://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+        'black': `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`,
+        // 'dark': 'https://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+        'dark':`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`
     }
     const url = url_object[theme]
 
     const my_location_circle_colors = {
         'light': 'black',
         'black': 'white',
-        'dark': 'black',
+        'dark': 'white',
     }
+    
     const my_location_circle_color = my_location_circle_colors[theme]
 
     const circle_size_obj = { 's':50, 'm':80, 'l':100 };
@@ -151,8 +153,15 @@ const LocationPicker = forwardRef((props, ref) => {
 
     return (
         <div style={{ height: height, width: '100%' }}>
-            <MapContainer ref={mapRef} center={[center.lat, center.lon]} zoom={15} scrollWheelZoom={false} style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
+            <MapContainer 
+                ref={mapRef} 
+                center={[center.lat, center.lon]} 
+                zoom={15} 
+                scrollWheelZoom={false}
+                attributionControl={false} 
+                style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
                 <TileLayer attribution={attribution} url={url} />
+                <AttributionControl position="topright" />
                 {pins.map((pin, index) => (
                     <Marker position={[pin['lat'], pin['lng']]} icon={customIcon}>
                         <Popup>

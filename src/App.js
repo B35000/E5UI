@@ -764,6 +764,7 @@ import BridgeCoinPage from './pages/bridge_coin_page'
 import SwapEtherPage from './pages/swap_ether_page'
 import SelectCertificatePage from './pages/select_certificate_page'
 import CertificateChainPage from './pages/view_certificate_chain_page'
+import QuickPurchaseStoragePage from './pages/quick_purchase_storage_page'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -1997,6 +1998,7 @@ class App extends Component {
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
     fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
     quick_send_bottomsheet:false, edit_crossexchange_bottomsheet: false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false,
+    quick_purchase_storage_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -2019,7 +2021,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(11), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:135, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:1400, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65, condition_title_size:65, bag_name_max_length:23,
+    sync_steps:(11), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:135, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:2700, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65, condition_title_size:65, bag_name_max_length:23,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -2190,7 +2192,7 @@ class App extends Component {
         end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true, id: null, changenow_object:null, external_swappers:[]
       },
       'E25':{
-        web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link', 'https://0xrpc.io/etc'], 
+        web3:['https://0xrpc.io/etc', 'https://etc.etcdesktop.com', 'https://rpc.etcmc.xyz', 'https://geth-at.etc-network.info', 'https://rpc.swiftnodes.io/rpc/etc'], 
         token:'ETC',
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
         first_block:19151130, end_image:end25_image/* 'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4' */, spend_image:spend25_image/* 'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, 
@@ -2198,7 +2200,7 @@ class App extends Component {
         end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, masked_image:true, id: null, external_swappers:['changenow'], changenow_object: get_changenow_object("Ethereum Classic")
       },
       'E35':{
-        web3:['https://etc.etcdesktop.com', 'https://etc.rivet.link', 'https://0xrpc.io/etc'],
+        web3:['https://0xrpc.io/etc', 'https://etc.etcdesktop.com','https://rpc.etcmc.xyz', 'https://geth-at.etc-network.info', 'https://rpc.swiftnodes.io/rpc/etc'],
         token:'ETC',
         e5_address:'0xEBDDD02c5106143B0DfB10513DeEc546F90c2152',
         first_block:24411397, end_image:end35_image, spend_image:spend35_image, ether_image:ethereum_classic_logo, iteration:400_000, url:0, active:true, e5_img:E5_E35_image,
@@ -5243,6 +5245,7 @@ class App extends Component {
     this.swap_ether_page = React.createRef();
     this.select_certificate_page = React.createRef();
     this.certificate_chain_page = React.createRef();
+    this.quick_purchase_storage_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -6501,7 +6504,8 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false, quick_purchase_storage_bottomsheet:false,
+
       })
 
       return cached_state_obj
@@ -7921,7 +7925,7 @@ class App extends Component {
         'number_picker_power_color':'rgb(185, 247, 198,.9)','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#02f902', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#03a003','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'#13190c', 'text_input_color':'#04e504', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
+        'slider_color':'#03a003','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_green, 'add_icon':add_icon_green, 'text_input_background':'#13190c', 'text_input_color':'#04e504', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'black',
 
 
         'background':background_green, 'JobIcon':job_icon_green, 'ExploreIcon': explore_icon_green, 'WalletIcon':wallet_icon_green, 'StackIcon': stack_icon_green,
@@ -8022,7 +8026,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#3f0101','number_picker_label_text_color':'#f90202', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#ad0101','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'#190c0c', 'text_input_color':'#f70404', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
+        'slider_color':'#ad0101','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_red, 'add_icon':add_icon_red, 'text_input_background':'#190c0c', 'text_input_color':'#f70404', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'black',
 
 
         'background':background_red, 'JobIcon':job_icon_red, 'ExploreIcon': explore_icon_red, 'WalletIcon':wallet_icon_red, 'StackIcon': stack_icon_red,
@@ -8124,7 +8128,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#183651','number_picker_label_text_color':'#0079ff', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#014a9e','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'#0d0c19', 'text_input_color':'#0079ff', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
+        'slider_color':'#014a9e','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_blue, 'add_icon':add_icon_blue, 'text_input_background':'#0d0c19', 'text_input_color':'#0079ff', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'black',
 
 
         'background':background_blue, 'JobIcon':job_icon_blue, 'ExploreIcon': explore_icon_blue, 'WalletIcon':wallet_icon_blue, 'StackIcon': stack_icon_blue,
@@ -8227,7 +8231,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#505118','number_picker_label_text_color':'#efec4c', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#aaad01','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_yellow, 'add_icon':add_icon_yellow, 'text_input_background':'#19190c', 'text_input_color':'#efec4c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
+        'slider_color':'#aaad01','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_yellow, 'add_icon':add_icon_yellow, 'text_input_background':'#19190c', 'text_input_color':'#efec4c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'black',
 
 
         'background':background_yellow, 'JobIcon':job_icon_yellow, 'ExploreIcon': explore_icon_yellow, 'WalletIcon':wallet_icon_yellow, 'StackIcon': stack_icon_yellow,
@@ -8328,7 +8332,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#491851','number_picker_label_text_color':'#dc4cef', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#9001ad','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'#160c19', 'text_input_color':'#c94cef', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
+        'slider_color':'#9001ad','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_pink, 'add_icon':add_icon_pink, 'text_input_background':'#160c19', 'text_input_color':'#c94cef', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'black',
 
 
         'background':background_pink, 'JobIcon':job_icon_pink, 'ExploreIcon': explore_icon_pink, 'WalletIcon':wallet_icon_pink, 'StackIcon': stack_icon_pink,
@@ -8429,7 +8433,7 @@ class App extends Component {
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#513a18','number_picker_label_text_color':'#ef964c', 'number_picker_picked_label_text_color':'white',
         'number_picker_power_label_text_color':'#afafaf','number_picker_picked_power_label_text_color':'#444444',
         
-        'slider_color':'#ad6001','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'#19130c', 'text_input_color':'#efa04c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'dark',
+        'slider_color':'#ad6001','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':alert_icon_orange, 'add_icon':add_icon_orange, 'text_input_background':'#19130c', 'text_input_color':'#efa04c', 'messsage_reply_background':'black', 'markdown_theme':'dart','pdf_theme':'dark','json_view_theme':'summerfruit', 'map_theme':'black',
 
 
         'background':background_orange, 'JobIcon':job_icon_orange, 'ExploreIcon': explore_icon_orange, 'WalletIcon':wallet_icon_orange, 'StackIcon': stack_icon_orange,
@@ -8671,6 +8675,7 @@ class App extends Component {
           {this.render_view_iframe_link_bottomsheet()}
           {this.render_add_comment_bottomsheet()}
           {this.render_pick_file_bottomsheet()}
+          {this.render_quick_purchase_storage_bottomsheet()}
           {this.render_view_number_bottomsheet()}
 
           {this.render_synchronizing_bottomsheet()}
@@ -8801,7 +8806,7 @@ class App extends Component {
 
           get_indexer_storage_acquisition_metrics={this.get_indexer_storage_acquisition_metrics.bind(this)} get_my_voter_weight={this.get_my_voter_weight.bind(this)} get_storefront_availability_status={this.get_storefront_availability_status.bind(this)} show_bridge_ether_bottomsheet={this.show_bridge_ether_bottomsheet.bind(this)} set_page_objects_that_should_be_in_focus={this.set_page_objects_that_should_be_in_focus.bind(this)} set_details_focused_item={this.set_details_focused_item.bind(this)} open_send_purchase_request_ui={this.open_send_purchase_request_ui.bind(this)} get_storefron_purchase_requests={this.get_storefron_purchase_requests.bind(this)} open_view_storefront_request_ui={this.open_view_storefront_request_ui.bind(this)} get_storefront_bag_payment_update_messages={this.get_storefront_bag_payment_update_messages.bind(this)}
 
-          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.reload_all_messages.bind(this)} reload_all_my_direct_messages={this.reload_all_my_direct_messages.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} show_add_stake_bottomsheet={this.show_add_stake_bottomsheet.bind(this)}
+          reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} fetch_gas_figures={this.fetch_gas_figures.bind(this)} get_bag_sender_transfers_events={this.get_bag_sender_transfers_events.bind(this)} reload_all_messages={this.reload_all_messages.bind(this)} reload_all_my_direct_messages={this.reload_all_my_direct_messages.bind(this)} show_add_stake_bottomsheet={this.show_add_stake_bottomsheet.bind(this)}
 
           show_coupon_payment_bottomsheet={this.show_coupon_payment_bottomsheet.bind(this)} get_certificate_bond_coupon_stagings={this.get_certificate_bond_coupon_stagings.bind(this)} show_staged_coupon_bottomsheet={this.show_staged_coupon_bottomsheet.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} 
 
@@ -14214,7 +14219,7 @@ class App extends Component {
     else if(target == '4'/* storefront */){
       return(
         <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} set_local_storage_data_if_enabled={this.set_local_storage_data_if_enabled.bind(this)}get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} 
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)} show_images={this.show_images.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} load_obligation_contract={this.load_obligation_contract.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} load_obligation_contract={this.load_obligation_contract.bind(this)}
         />
       )
     }
@@ -14822,8 +14827,19 @@ class App extends Component {
 
     // Split after punctuation OR at newline
     const sentences = protectedText
-      .split(/(?<=[.,;:])(?=\s|$)|(?=\n)/)
-      .filter(sentence => sentence.length > 0);
+        .split(/([.,;:](?=\s|$)|\n)/)
+        .reduce((result, part, index, array) => {
+            if (index % 2 === 0) {
+                // Text before the punctuation
+                result.push(part);
+            } else {
+                // Punctuation or newline
+                result[result.length - 1] += part;
+            }
+
+            return result;
+        }, [])
+        .filter(sentence => sentence.length > 0);
 
     // Restore URLs
     return sentences.map(sentence =>
@@ -14867,67 +14883,71 @@ class App extends Component {
     return links;
   }
 
-  extractBold(markdown){
-    const regex = /(\*\*|__)(?!\s)(.+?)(?<!\s)\1/g;
+  extractBold(markdown) {
+    // **bold**: content must not start with whitespace
+    const regex = /\*\*(\S.*?)\*\*/g;
 
     const bold = [];
     let match;
 
     while ((match = regex.exec(markdown)) !== null) {
-      const raw = match[0];
-      const content = match[2];
+        const raw = match[0];
+        const content = match[1];
+        const contentStart = match.index + 2; // skip the opening **
 
-      const contentStart = match.index + raw.indexOf(content);
-
-      bold.push({
-        type: "bold",
-        content,
-        start: contentStart,
-        end: contentStart + content.length,
-        raw,
-        elementStart: match.index,
-        elementEnd: match.index + raw.length,
-        place: '%^47378$47837%'+bold.length+'%^47378$47837%',
-      });
+        bold.push({
+            type: "bold",
+            content,
+            start: contentStart,
+            end: contentStart + content.length,
+            raw,
+            elementStart: match.index,
+            elementEnd: match.index + raw.length,
+            place: '%^47378$47837%' + bold.length + '%^47378$47837%',
+        });
     }
 
     return bold;
   }
 
-  extractItalics(markdown){
-    const regex = /(?<!\*)\*(?!\*)(?!\s)(.+?)(?<!\s)\*(?!\*)|(?<!_)_(?!_)(?!\s)(.+?)(?<!\s)_(?!_)/g;
+  extractItalics(markdown) {
+    // *italic*: a single * not adjacent to another *.
+    // The prefix group stands in for a lookbehind.
+    const regex = /(^|[^*])\*([^*\s](?:[^*]*?[^*\s])?)\*(?!\*)/g;
 
     const italics = [];
     let match;
 
     while ((match = regex.exec(markdown)) !== null) {
-      const raw = match[0];
-      const content = match[2];
+        const content = match[2];
+        const prefixLength = match[1].length;
 
-      // Avoid extracting bold as italic
-      if (
-        raw.startsWith("**") ||
-        raw.startsWith("__")
-      ) {
-        continue;
-      }
+        const elementStart = match.index + prefixLength;
+        const contentStart = elementStart + 1; // skip the opening *
 
-      const contentStart = match.index + raw.indexOf(content);
-
-      italics.push({
-        type: "italic",
-        content,
-        start: contentStart,
-        end: contentStart + content.length,
-        raw,
-        elementStart: match.index,
-        elementEnd: match.index + raw.length,
-        place: '%538337$937292%'+italics.length+'%538337$937292%'
-      });
+        italics.push({
+            type: "italic",
+            content,
+            start: contentStart,
+            end: contentStart + content.length,
+            raw: match[0].slice(prefixLength),
+            elementStart,
+            elementEnd: match.index + match[0].length,
+            place: '%538337$937292%' + italics.length + '%538337$937292%'
+        });
     }
 
     return italics;
   }
+
+  /* 
+    try {
+      new RegExp("");
+      console.log("Lookbehind supported");
+    } catch (error) {
+      console.log("Lookbehind NOT supported");
+    }
+  */
 
   extractBlockquotes(markdown){
     const regex = /^(>[ \t]?.*(?:\n>[ \t]?.*)*)/gm;
@@ -21438,7 +21458,7 @@ class App extends Component {
     var os = getOS();
     
     return this.renderBottomSheet(
-      <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)} get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}
+      <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)} get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)}
       />,
       this.state.searched_account_bottomsheet,
       this.open_searched_account_bottomsheet,
@@ -21727,6 +21747,7 @@ class App extends Component {
       const now = Date.now()
       try{
         const block = await web3.eth.getBlockNumber()
+        await this.wait(2300)
         if(block != 0 && block != null){
           const time = Date.now() - now;
           const clone = structuredClone(this.state.rpc_times)
@@ -21740,9 +21761,7 @@ class App extends Component {
       }catch(e){
         console.log('load_rpc_times', e)
       }
-      
     }
-
   }
 
 
@@ -24827,6 +24846,56 @@ class App extends Component {
             obligation_object['data'].push(obligation_promise_data)
         }
     }
+    else if(type == this.getLocale()['3031']/* 'buy-storage' */){
+      const object = tx.nitro_object
+      const amount_data = tx.amounts_to_transfer
+      const final_object_value_transfer_data = []
+      amount_data.forEach(price_item => {
+          final_object_value_transfer_data.push({'exchange':price_item['exchange'], 'amount':price_item['amount']})
+      });
+      const node_details = this.state.nitro_node_details[object['e5_id']]
+      const purchase_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][e5]
+      const object_obligation_fulfiller = purchase_recipient;
+      await this.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
+      const address_key = this.state.author_address_mapping[object['e5']][object_obligation_fulfiller]
+      const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
+      const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+      if(authors_obligation_contracts.length > 0){
+          const obligation_promise_data = { 
+              'id': tx.type, 
+              'identifier':tx.id,
+              'city':this.state.city,
+              'region':this.state.region,
+              'hard_id':'buy-storage', 
+              'confirm_transfers':true,
+              'obligation_fulfiller':object_obligation_fulfiller, 
+              'e5':object['e5'],
+              'obligation_fulfiller_address':address_key,
+              'promises':{},
+          }
+          authors_obligation_contracts.forEach(contract => {
+              const configuration = this.state.my_contract_obligation_subscription_data[contract];
+
+              const default_obligation_proportion = configuration['ipfs'].default_liquidity_deposit_withdraw_obligation
+
+              const progressive_proportions = {}
+              final_object_value_transfer_data.forEach((transfer_item, index) => {
+                  const exchange_id = transfer_item['exchange']
+                  const amount = transfer_item['amount']
+                  progressive_proportions[index] = {}
+                  progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+              });
+
+              obligation_promise_data['promises'][contract] = {
+                  'proportions':[default_obligation_proportion],
+                  'transfers':final_object_value_transfer_data,
+                  progressive_proportions
+              }
+          });
+          obligation_object['data'].push(obligation_promise_data)
+      }
+    }
 
     let obligation_inclusive = false;
     if(obligation_object['data'].length > 0){
@@ -25056,19 +25125,19 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <div /* style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
-            <PickFilePage ref={this.pick_file_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} return_selected_files={this.return_selected_files.bind(this)} default_nitro_option={default_nitro_option} 
+            <PickFilePage ref={this.pick_file_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} return_selected_files={this.return_selected_files.bind(this)} default_nitro_option={default_nitro_option} 
             load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} 
             encrypt_data_string={this.encrypt_data_string.bind(this)} 
             hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} 
             get_file_extension={this.get_file_extension.bind(this)} 
-            get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)} 
+            get_encrypted_file_size_from_uintarray={this.get_encrypted_file_size_from_uintarray.bind(this)}
             process_encrypted_file={this.process_encrypted_file.bind(this)} 
             get_encrypted_file_size={this.get_encrypted_file_size.bind(this)}
             process_encrypted_chunks={this.process_encrypted_chunks.bind(this)}
             encrypt_singular_file={this.encrypt_singular_file.bind(this)}
             encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)}
             encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)}
-            upload_multiple_encrypted_files_to_nitro_node={this.upload_multiple_encrypted_files_to_nitro_node.bind(this)}
+            upload_multiple_encrypted_files_to_nitro_node={this.upload_multiple_encrypted_files_to_nitro_node.bind(this)} show_quick_purchase_storage_bottomsheet={this.show_quick_purchase_storage_bottomsheet.bind(this)}
 
             />
       </div>
@@ -33077,6 +33146,264 @@ class App extends Component {
 
 
 
+  render_quick_purchase_storage_bottomsheet(){
+    if(this.state.quick_purchase_storage_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <QuickPurchaseStoragePage ref={this.quick_purchase_storage_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} show_images={this.show_images.bind(this)} begin_quick_purchase_for_storage={this.begin_quick_purchase_for_storage.bind(this)} forget_quick_run={this.forget_quick_run.bind(this)} get_blockexplorer_link={this.get_blockexplorer_link.bind(this)} open_hash={this.open_hash.bind(this)}
+      />,
+      this.state.quick_purchase_storage_bottomsheet,
+      this.open_quick_purchase_storage_bottomsheet,
+      600
+    )
+  }
+
+  open_quick_purchase_storage_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_quick_purchase_storage_bottomsheet')
+    if(this.state.quick_purchase_storage_bottomsheet == true){
+      //closing
+      this.quick_purchase_storage_bottomsheet = this.quick_purchase_storage_page.current?.state;
+
+      this.setState({quick_purchase_storage_bottomsheet: !this.state.quick_purchase_storage_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({quick_purchase_storage_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({quick_purchase_storage_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({quick_purchase_storage_bottomsheet: !me.state.quick_purchase_storage_bottomsheet});
+
+          if(me.quick_purchase_storage_bottomsheet != null){
+            me.quick_purchase_storage_page.current?.setState(me.quick_purchase_storage_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_quick_purchase_storage_bottomsheet(object){
+    this.open_quick_purchase_storage_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.quick_purchase_storage_page.current != null){
+        me.quick_purchase_storage_page.current.set_data(object)
+      }
+    }, (1 * 1100));
+  }
+
+  forget_quick_run(){
+    this.lock_run_in_stack(false);
+    this.setState({is_confirming_storage_purchase: false, quick_purchase_transaction_hash: null, quick_purchase_waiting_for_indexer_confirmation: false})
+  }
+
+  async begin_quick_purchase_for_storage(object, selected_gas_prices, amounts_to_transfer){
+    this.prompt_top_notification(this.getLocale()['3115d']/* 'Running your Purchase...' */, 4600);
+    this.lock_run_in_stack(true);
+    this.setState({is_confirming_storage_purchase: true, quick_purchase_transaction_hash: null, quick_purchase_waiting_for_indexer_confirmation: false})
+    const e5 = this.state.selected_e5
+    const web3_url = this.get_selected_web3_url()
+    const web3 = new Web3(web3_url);
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.get_selected_E5_contract()
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
+    const me = this
+
+    const node_storage_details = this.state.nitro_node_storage_payment_info[object['e5_id']]
+    const acquired_space = node_storage_details['acquired_space']
+
+    const now = await contractInstance.methods.f147(2).call((error, result) => {})
+    const run_expiry_time = parseInt(now) + parseInt(60*60*5)
+
+    const v5/* t_limits */ = [100000000000000, run_expiry_time];
+    var network_run_gas_price = await web3.eth.getGasPrice()
+    var run_gas_price = selected_gas_prices.run_gas_price == 0 ? network_run_gas_price : selected_gas_prices.run_gas_price
+    console.log("gasPrice: "+run_gas_price);
+    const gasLimit = 600_000;
+    const nonce = await web3.eth.getTransactionCount(me.state.accounts[e5].address, 'pending');
+
+    const adds = []
+    const ints = []
+    const strs = []
+
+    const tx = {
+      'amounts_to_transfer': amounts_to_transfer,
+      'id': Date.now().toString(),
+      'type': this.getLocale()['3031']/* 'buy-storage' */,
+      'nitro_object':object,
+    }
+
+    const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['3031']/* 'buy-storage' */, e5, false)
+    const ipfs_index = ipfs_index_data.link
+    const obligation_inclusive = ipfs_index_data.obligation_inclusive
+
+    const node_details = this.state.nitro_node_details[object['e5_id']]
+    var purchase_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][e5]
+    var post_id = object['id'];
+
+    const transfers_obj = [/* send tokens to another account */
+      [30000, 1, 0],
+      [], [],/* exchanges */
+      [], [],/* receivers */
+      [],/* amounts */
+      []/* depths */
+    ]
+    const obj = [ /* add data */
+      [20000, 13, 0],
+      [23], [23],/* 23(nitro node storage sale) */
+      [post_id], /* contexts */
+      [purchase_recipient] /* int_data */
+    ]
+
+    const string_obj = [[]]
+
+    const data = amounts_to_transfer
+    for(var i=0; i<data.length; i++){
+      const exchange = data[i]['exchange']
+      const amount = (data[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+
+      transfers_obj[1].push(exchange.toString().toLocaleString('fullwide', {useGrouping:false}))
+      transfers_obj[2].push(23)
+      transfers_obj[3].push(purchase_recipient.toString().toLocaleString('fullwide', {useGrouping:false}))
+      transfers_obj[4].push(23)
+      transfers_obj[5].push(amount.toString().toLocaleString('fullwide', {useGrouping:false}))
+      transfers_obj[6].push(0)
+    }
+    
+    var string_data = 'storage'
+    string_obj[0].push(string_data)
+
+
+    if(obligation_inclusive == true){
+      obj[1].push(32)
+      obj[2].push(23)
+      obj[3].push(35/* context */)
+      obj[4].push(0)
+      string_obj[0].push(ipfs_index)
+    }
+
+    //the transfers
+    strs.push([])
+    adds.push([])
+    ints.push(transfers_obj)
+
+    //the records and obligations
+    strs.push(string_obj)
+    adds.push([])
+    ints.push(obj)
+
+
+
+
+
+    console.log('begin_quick_purchase_for_storage', adds, ints, strs)
+    const encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
+
+    var run_tx = {
+      nonce,
+      gas: gasLimit,
+      value: '0',
+      to: contractAddress,
+      data: encoded,
+      gasPrice: run_gas_price.toString(),
+    }
+
+    if(this.state.e5s[this.state.selected_e5].type == '1559'){
+      const block = await web3.eth.getBlock('pending');
+      run_gas_price = selected_gas_prices.picked_max_priority_per_gas_amount == 0 ?  Number(block.baseFeePerGas) : selected_gas_prices.picked_max_priority_per_gas_amount
+      const maxPriorityFeePerGas = ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price);
+      const maxFeePerGas = selected_gas_prices.picked_max_fee_per_gas_amount == 0 ? (maxPriorityFeePerGas * 2) : selected_gas_prices.picked_max_fee_per_gas_amount
+
+      run_tx = {
+        nonce,
+        gas: gasLimit,
+        value: '0',
+        to: contractAddress,
+        data: encoded,
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        type: '0x2', // explicitly mark as EIP-1559
+      }
+    }
+    
+    web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey).then(signed => {
+      web3.eth.sendSignedTransaction(signed.rawTransaction)
+      .on('transactionHash', (hash) => {
+        console.log('TX broadcasted to mempool:', hash);
+        this.setState({quick_purchase_transaction_hash: hash})
+      })
+      .on('receipt', (receipt) => {
+        me.prompt_top_notification(me.getLocale()['3115e']/* 'Run Complete! Waiting for the Indexer\'s confirmation' */, 4600)
+        me.lock_run_in_stack(false)
+        me.reload_my_balances()
+        me.get_wallet_data_for_specific_e5(e5, true)
+        me.wait_for_my_storage_space_amount_to_change(object, acquired_space)
+      })
+      .on('error', (error) => {
+        console.error('Transaction error:', error);
+        me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
+        me.lock_run_in_stack(false)
+        this.setState({is_confirming_storage_purchase: false, quick_purchase_transaction_hash: null})
+        me.get_wallet_data_for_specific_e5(e5, true)
+      });
+    })
+
+  }
+
+  async wait_for_my_storage_space_amount_to_change(object, original_space){
+    this.setState({quick_purchase_waiting_for_indexer_confirmation: true})
+    await this.check_if_my_storage_space_amount_has_changed(object, original_space)
+    this.setState({is_confirming_storage_purchase: false, quick_purchase_transaction_hash: null, quick_purchase_waiting_for_indexer_confirmation: false})
+    this.prompt_top_notification(this.getLocale()['3115f']/* 'Purchase Confirmation Complete.' */, 6600)
+    if(this.state.quick_purchase_storage_bottomsheet == true){
+      this.open_quick_purchase_storage_bottomsheet()
+    }
+  }
+
+  check_if_my_storage_space_amount_has_changed(object, original_space){
+    return new Promise((resolve, reject) => {
+      const checkReady = async () => {
+        try {
+          const transaction_status = await this.load_my_account_storage_info(object);
+          const node_details = this.state.nitro_node_storage_payment_info[object['e5_id']]
+          const acquired_space = node_details['acquired_space']
+          if(original_space != acquired_space){
+            await this.wait(1000);
+            resolve();
+            return;
+          }
+          setTimeout(checkReady, 7_000);
+        } 
+        catch (error) {
+          reject(error);
+        }
+      };
+      checkReady();
+    });
+  }
+
+  open_hash(){
+    const current_run_hash = this.state.quick_purchase_transaction_hash
+    const block_explorer_link = current_run_hash != null ? this.get_blockexplorer_link(this.state.selected_e5, current_run_hash) : null
+    if(block_explorer_link != null) window.open(block_explorer_link, "_blank", "noopener,noreferrer");
+  }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -37772,7 +38099,7 @@ class App extends Component {
 
     try{
       this.load_rpc_times(e5)
-
+      await this.wait(2500)
       var s = JSON.stringify(this.state.account_balance, (key, value) =>
               typeof value === 'bigint'
                   ? value.toString()
@@ -37793,7 +38120,7 @@ class App extends Component {
       clone[e5] = bigInt(balance.toString())
       this.setState({account_balance: clone});
       if(is_syncing)this.inc_synch_progress()
-    
+      await this.wait(2500)
 
       // this.load_ether_history(e5, address_account.address)
 
@@ -37803,6 +38130,7 @@ class App extends Component {
       this.setState({gas_price: clone})
       if(is_syncing)this.inc_synch_progress()
 
+      await this.wait(2500)
       var id = await web3.eth.net.getId()
       var clone = structuredClone(this.state.chain_id)
       clone[e5] = id
@@ -37818,6 +38146,7 @@ class App extends Component {
       // console.log('number of peers: ', peers)
       // this.inc_synch_progress()
 
+      await this.wait(2500)
       var blockNumber = await web3.eth.getBlockNumber()
       await this.wait(this.state.web3_delay)
       var last_blocks = [];
