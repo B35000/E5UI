@@ -30,6 +30,7 @@ import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+const Web3 = require('web3');
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -53,6 +54,13 @@ function makeid(length) {
     return result;
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 class ConfigureObligationsPage extends Component {
     
     state = {
@@ -74,7 +82,9 @@ class ConfigureObligationsPage extends Component {
 
         selected_e5: this.props.app_state.selected_e5, typed_contract_account:'', contract_beneficiaries:{}, progressive_obligation_proportion:0, 
         
-        typed_certificate_account:'', verified_certificates:[]
+        typed_certificate_account:'', verified_certificates:[], throttled_address:'', throttled_addresses:[], throttled_account: '', throttled_accounts:[],
+
+        device_city: '', selected_device_cities:[],
     };
 
     get_configure_obligations_title_tags_object(){
@@ -83,7 +93,7 @@ class ConfigureObligationsPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' *//* , this.props.app_state.loc['3093e'] *//* 'obligation-children ↪️' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' *//* , this.props.app_state.loc['3093er'] *//* 'beneficiaries 🔗' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */, this.props.app_state.loc['3093er']/* 'sub-contracts 🔗' */, this.props.app_state.loc['3093gf']/* 'throttled-accounts ☣️' */], [0]
             ],
         };
 
@@ -101,6 +111,17 @@ class ConfigureObligationsPage extends Component {
 
     set_data(object){
         this.setState({contract: object, e5: object['e5']})
+        if(object['obligation_configurations'] != null){
+            const items = [].concat(this.sortByAttributeDescending(object['obligation_configurations'], 'time'))
+            if(items.length > 0){
+                const default_setting = items[0]
+                setTimeout(() => {
+                    this.when_obligation_configuration_item_clicked(default_setting, true)
+                }, (1000));
+                
+            }
+        }
+        
     }
 
 
@@ -183,13 +204,6 @@ class ConfigureObligationsPage extends Component {
                 </div>
             )
         }
-        // else if(active == 'e' && selected_item == this.props.app_state.loc['3093e']/* 'obligation-children ↪️' */){
-        //     return(
-        //         <div>
-                    
-        //         </div>
-        //     )
-        // }
         else if(active == 'e' && selected_item == this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */){
             return(
                 <div>
@@ -197,12 +211,15 @@ class ConfigureObligationsPage extends Component {
                 </div>
             )
         }
-        else if(active == 'e' && selected_item == this.props.app_state.loc['3093er']/* 'beneficiaries 🔗' */){
+        else if(active == 'e' && selected_item == this.props.app_state.loc['3093er']/* 'sub-contracts 🔗' */){
             return(
                 <div>
                     {this.render_contract_beneficiaries_ui()}
                 </div>
             )
+        }
+        else if(active == 'e' && selected_item == this.props.app_state.loc['3093gf']/* 'throttled-accounts ☣️' */){
+            return this.render_throttled_accounts_ui()
         }
     }
 
@@ -255,6 +272,8 @@ class ConfigureObligationsPage extends Component {
         const locale = navigator.language || navigator.userLanguage || 'en-US'
         return(
             <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gr']/* 'Configure Obligations Information.' */, 'details': this.props.app_state.loc['3093gs']/* 'Configure the obligation details for this public contract for its subscribers.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
                 {this.render_contract(this.state.contract)}
                 
                 <div style={{ height:15 }}/>
@@ -497,7 +516,8 @@ class ConfigureObligationsPage extends Component {
 
     render_restore_from_previous_data(){
         const contract = this.state.contract
-        const items = [].concat(this.sortByAttributeDescending(contract['obligation_configurations'], 'time'))
+
+        const items = [].concat((contract['obligation_configurations'] == null ? [] : this.sortByAttributeDescending(contract['obligation_configurations'], 'time')))
         const items2 = [0, 1]
         return(
             <div>
@@ -547,13 +567,14 @@ class ConfigureObligationsPage extends Component {
         )
     }
 
-    when_obligation_configuration_item_clicked(item){
+    when_obligation_configuration_item_clicked(item, silently=false){
         const contract = this.state.contract;
         const new_state = {}
         Object.assign(new_state, item['ipfs'])
         new_state.contract = contract;
+        new_state.get_configure_obligations_title_tags_object = this.get_configure_obligations_title_tags_object();
         this.setState(new_state)
-        this.props.notify(this.props.app_state.loc['3093ej']/* 'Configuration set from history item.' */, 6000)
+        if(silently == false) this.props.notify(this.props.app_state.loc['3093ej']/* 'Configuration set from history item.' */, 6000)
     }
 
 
@@ -1656,7 +1677,7 @@ class ConfigureObligationsPage extends Component {
     render_contract_beneficiaries_data(){
         return(
             <div>
-                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ff']/* 'Contract Beneficiaries.' */, 'details': this.props.app_state.loc['3093es']/* 'Specify obligation fulfilments for payments made in the other E5s.' */, 'size': 'l' })}
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ff']/* 'Sub-Contract Delegations' */, 'details': this.props.app_state.loc['3093es']/* 'Specify sub-contracts that may also be bundled with this contract during subscription.' */, 'size': 'l' })}
                 <div style={{ height:10 }}/>
 
                 {this.load_e5_selector_ui()}
@@ -1672,9 +1693,23 @@ class ConfigureObligationsPage extends Component {
                         </div>
                     </div>
                 </div>
-                <div style={{height:10}}/>
 
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gt']/* 'Delegation Qualifiers (Optional).' */, 'details': this.props.app_state.loc['3093gu']/* 'You may optionally specify a administrative region qualifier that the specified public contract\'s obligations will also apply for each subscriber.' */, 'size': 'l' })}
+
+                <div style={{ height:10 }}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['3093gx']/* 'Administrative Region...' */} when_text_input_field_changed={this.when_device_city_input_field_changed.bind(this)} text={this.state.device_city} theme={this.props.theme}/>
+
+                <div style={{height:5}}/>
+                {this.render_detail_item('1',{'active_tags':this.get_cities_from_typed_text(), 'indexed_option':'indexed', 'when_tapped':'when_city_selected'})}
+                
+                <div style={{height:5}}/>
+                {this.render_currently_set_cities_for_contract()}
+
+                <div style={{ height:10 }}/>
                 {this.render_searched_contract()}
+
             </div>
         )
     }
@@ -1776,6 +1811,8 @@ class ConfigureObligationsPage extends Component {
         }else{
             return(
                 <div onClick={() => this.when_searched_contract_clicked(matching_contract[0])}>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gv']/* 'Matching Contract Found.' */, 'details': this.props.app_state.loc['3093gw']/* 'A contract matching the Id youve specified has been found. Tap it to add it together with the qualifier cities set above to your sub-contract list.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
                     {this.render_contract(matching_contract[0])}
                 </div>
             )
@@ -1792,8 +1829,11 @@ class ConfigureObligationsPage extends Component {
         }
         else{
             const clone = structuredClone(this.state.contract_beneficiaries)
-            clone[object['e5']] = object['e5_id']
-            this.setState({contract_beneficiaries: clone})
+            clone[object['e5_id']] = {
+                'time': Date.now(),
+                'cities': this.state.selected_device_cities
+            }
+            this.setState({contract_beneficiaries: clone, selected_device_cities:[]})
         }
         
     }
@@ -1803,7 +1843,7 @@ class ConfigureObligationsPage extends Component {
         if(items.length == 0){
             return(
                 <div>
-                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ez']/* 'Added Beneficiaries.' */, 'details': this.props.app_state.loc['3093fa']/* 'When you set a contract beneficiary, it will show here.' */, 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ez']/* 'Added Sub-Contracts.' */, 'details': this.props.app_state.loc['3093fa']/* 'When you set a sub-contract, it will show here.' */, 'size': 'l' })}
                     <div style={{ height:10 }}/>
                     {this.render_empty_object()}
                 </div>
@@ -1811,7 +1851,7 @@ class ConfigureObligationsPage extends Component {
         }
         return(
             <div style={{}}>
-                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ez']/* 'Added Beneficiaries' */, 'details': this.props.app_state.loc['3093fb']/* 'All the contract beneficiaries set for the obligations fulfilments on other E5s.' */, 'size': 'l' })}
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ez']/* 'Added Sub-Contracts.' */, 'details': this.props.app_state.loc['3093fb']/* 'All the sub-contract set to be included when subscribing to this public contract\'s obligations.' */, 'size': 'l' })}
                 <div style={{ height:10 }}/>
                 <ul style={{ 'padding': '0px 5px 0px 5px'}}>
                     <SwipeableList>
@@ -1823,8 +1863,8 @@ class ConfigureObligationsPage extends Component {
                                         content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3093eq']/* Delete */}</p>,
                                         action: () =>this.when_beneficiary_item_clicked(item)
                                         }}>
-                                        <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
-                                            {this.render_contract(this.get_contract_object(this.state.contract_beneficiaries[item], item))}
+                                        <div style={{width:'100%'}}>
+                                            {this.render_contract_data(item)}
                                         </div>
                                     </SwipeableListItem>
                                 </div>
@@ -1832,6 +1872,40 @@ class ConfigureObligationsPage extends Component {
                         ))}
                     </SwipeableList>
                     
+                </ul>
+            </div>
+        )
+    }
+
+    render_contract_data(item){
+        const object = this.get_contract_object(item)
+        const time_added = this.state.contract_beneficiaries[item]['time']
+        const cities_added = this.state.contract_beneficiaries[item]['cities']
+        const time_message = new Date(time_added).toLocaleString()+' • '+ this.get_time_difference(time_added/1000)
+        return(
+            <div>
+                {this.render_contract(object)}
+                {this.render_currently_set_cities_in_subcontract(cities_added)}
+                {this.render_detail_item('4', {'text':time_message, 'textsize':'11px', 'font':this.props.app_state.font})}
+            </div>
+        )
+    }
+
+    render_currently_set_cities_in_subcontract(items){
+        const items2 = [1, 2]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('4', {'text':item, 'textsize':'12px', 'font':this.props.app_state.font})}
+                        </li>
+                    ))}
+                    {items.length == 0 && items2.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
                 </ul>
             </div>
         )
@@ -1849,6 +1923,82 @@ class ConfigureObligationsPage extends Component {
         const clone = structuredClone(this.state.contract_beneficiaries)
         delete clone[item]
         this.setState({contract_beneficiaries: clone})
+    }
+
+
+
+    when_device_city_input_field_changed(text){
+        this.setState({device_city: text.toLowerCase()})
+    }
+
+    get_cities_from_typed_text(){
+        var typed_text = this.state.device_city.trim().toLowerCase()
+        var all_cities = this.props.app_state.all_cities
+        var specific_cities = []
+        var device_country = this.props.app_state.device_country_code
+
+        if(typed_text != ''){
+            specific_cities = all_cities.filter(function (el) {
+                return (el['admin'].toLowerCase().startsWith(typed_text) || el['admin'].toLowerCase() == typed_text) && el['country'].startsWith(device_country)
+            });
+        }else{
+            specific_cities = all_cities.filter(function (el) {
+                return el['country'].startsWith(device_country)
+            });
+        }
+        
+
+        const selected_cities = []
+        specific_cities.forEach(city_obj => {
+            const city = city_obj['admin']
+            if(!selected_cities.includes(city)){
+                selected_cities.push(city)
+            }
+        });
+        
+
+        return selected_cities.slice(0, 7);
+    }
+
+    when_city_selected(tag, pos){
+        if(tag != 'e'){
+            const clone = this.state.selected_device_cities.slice()
+            if(!clone.includes(tag)){
+                clone.push(tag)
+            }
+            this.setState({selected_device_cities: clone, device_city:''})
+        } 
+    }
+
+    render_currently_set_cities_for_contract(){
+        const items = [].concat(this.state.selected_device_cities)
+        const items2 = [1, 2]
+
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_city_clicked(item)}>
+                            {this.render_detail_item('4', {'text':item, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        </li>
+                    ))}
+                    {items.length == 0 && items2.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_city_clicked(item){
+        const clone = this.state.selected_device_cities.slice()
+        const index = clone.indexOf(item)
+        if(index != -1){
+            clone.splice(index, 1)
+        }
+        this.setState({selected_device_cities: clone})
     }
 
 
@@ -2085,6 +2235,226 @@ class ConfigureObligationsPage extends Component {
 
 
 
+    render_throttled_accounts_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_throttled_accounts_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_throttled_addresses()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_throttled_accounts_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_throttled_addresses()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_throttled_accounts_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_throttled_addresses()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_throttled_accounts_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gg']/* 'Throttle An Address.' */, 'details': this.props.app_state.loc['3093gh']/* 'Substantially reduce an address\' spending and transaction capabilities on e.' */, 'size': 'l' })}
+                <div style={{ height: 10 }} />
+
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['3093gi']/* 'Address...' */} when_text_input_field_changed={this.when_throttled_address_input_field_changed.bind(this)} text={this.state.throttled_address} theme={this.props.theme}/>
+
+                <div style={{ height: 10 }} />
+                <div onClick={() => this.add_throttled_address()}>
+                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['3093gj']/* 'Add Address.' */, 'action': '' })}
+                </div>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055ug']/* 'Restrict Object Accounts.' */, 'details': this.props.app_state.loc['3055uh']/* 'You may also restrict access to specific objects such as contracts and subscriptions.' */, 'size': 'l' })}
+                <div style={{ height: 10 }} />
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055ui']/* 'Account Id...' */} when_text_input_field_changed={this.when_throttled_account_input_field_changed.bind(this)} text={this.state.throttled_account} theme={this.props.theme}/>
+                <div style={{ height:10 }}/>
+
+                {this.load_e5_selector_ui()}
+                <div style={{ height:10 }}/>
+
+                <div style={{ height: 10 }} />
+                <div onClick={() => this.add_throttled_account()}>
+                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['3093gq']/* 'Add Account.' */, 'action': '' })}
+                </div>
+            </div>
+        )
+    }
+
+    when_throttled_address_input_field_changed(text){
+        this.setState({throttled_address: text})
+    }
+
+    when_throttled_account_input_field_changed(text){
+        this.setState({throttled_account: text})
+    }
+
+    add_throttled_address(){
+        const add = this.state.throttled_address
+        if(add == ''){
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
+        }
+        else if(!this.isValidAddress(add)){
+            this.props.notify(this.props.app_state.loc['3093gk']/* 'That address isnt valid.' */, 5400)
+        }else{
+            const clone = this.state.throttled_addresses.slice()
+            clone.push({'add':add, 'time': Date.now()})
+            this.setState({throttled_addresses: clone, throttled_address:''})
+        }
+    }
+
+    add_throttled_account(){
+        const account = this.state.throttled_account
+        const e5 = this.state.selected_e5 || this.state.e5
+        if(account == ''){
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
+        }
+        else if(isNaN(account) || parseInt(account) < 1000){
+            this.props.notify(this.props.app_state.loc['3055uj']/* 'That account isnt valid.' */, 5400)
+        }else{
+            const clone = this.state.throttled_accounts.slice()
+            clone.push({'acc':parseInt(account), 'time': Date.now(), 'e5':e5})
+            this.setState({throttled_accounts: clone, throttled_account:''})
+        }
+    }
+
+    isValidAddress = (adr) => {
+        try {
+            const web3 = new Web3()
+            web3.utils.toChecksumAddress(adr)
+            return true
+        } catch (e) {
+            return false
+        }
+    }
+
+    render_set_throttled_addresses(){
+        const all_items = [].concat(this.state.throttled_addresses, this.state.throttled_accounts)
+        const items = all_items.filter((keyword) => {
+            if(keyword['add'] != null){
+                return (keyword['add'].toString().startsWith(this.state.throttled_address.toLowerCase()) || this.state.throttled_address == '')
+            }else{
+                return (keyword['acc'].toString().startsWith(this.state.throttled_account.toLowerCase()) || this.state.throttled_account == '')
+            }
+        }).slice(0, 15);
+
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gl']/* 'Throttled Addresses.' */, 'details': this.props.app_state.loc['3093gm']/* 'When you throttle an address, it will show here.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+
+        return(
+            <div style={{}}>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gl']/* 'Throttled Addresses.' */, 'details': this.props.app_state.loc['3093gn']/* 'All the throttled addresses that have been set.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    <SwipeableList>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    <SwipeableListItem
+                                        swipeLeft={{
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3093eq']/* Delete */}</p>,
+                                        action: () =>this.when_throttled_address_target_clicked(item)
+                                        }}>
+                                        <div style={{width:'100%'}}>
+                                            {this.render_account_or_address(item)}
+                                        </div>
+                                    </SwipeableListItem>
+                                </div>
+                            </li> 
+                        ))}
+                    </SwipeableList>
+                    
+                </ul>
+            </div>
+        )
+    }
+
+    render_account_or_address(item){
+        if(item['add'] != null){
+            return (
+                <div onClick={() => this.copy_to_clipboard(item['add'])}>
+                    {this.render_detail_item('3', {'title':start_and_end(item['add']), 'details':this.props.app_state.loc['3093go']/* 'Throttled on $' */.replace('$', (new Date(item['time']).toLocaleString())), 'size':'l'})}
+                </div>
+            )
+        }else{
+            var image = this.props.app_state.e5s[item['e5']].e5_img
+            return (
+                <div onClick={() => this.copy_to_clipboard(item['acc'])}>
+                    {this.render_detail_item('3', {'title':number_with_commas(item['acc']), 'details':this.props.app_state.loc['3093go']/* 'Throttled on $' */.replace('$', (new Date(item['time']).toLocaleString())), 'size':'l', 'title_image':image})}
+                </div>
+            )
+        }
+    }
+
+    when_throttled_address_target_clicked(item){
+        if(item['add'] != null){
+            const clone = this.state.throttled_addresses.slice()
+            const index = clone.findIndex((value) => {
+                return value['add'] == item['add']
+            })
+            if(index != -1){
+                clone.splice(index, 1)
+            }
+            this.setState({throttled_addresses: clone})
+        }else{
+            const clone = this.state.throttled_accounts.slice()
+            const index = clone.findIndex((value) => {
+                return value['acc'] == item['acc']
+            })
+            if(index != -1){
+                clone.splice(index, 1)
+            }
+            this.setState({throttled_accounts: clone})
+        }
+    }
+
+    copy_to_clipboard(text){
+        navigator.clipboard.writeText(text)
+        this.props.notify(this.props.app_state.loc['3093gp']/* 'Copied to Clipboard.' */, 1500)
+    }
+
+
+
+
+
+
+
 
 
 
@@ -2263,7 +2633,9 @@ class ConfigureObligationsPage extends Component {
         if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12')uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} show_view_iframe_link_bottomsheet={this.props.show_view_iframe_link_bottomsheet.bind(this)} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} 
+                when_city_selected={this.when_city_selected.bind(this)}
+                />
             </div>
         )
     }

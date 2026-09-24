@@ -799,7 +799,7 @@ class ContractDetailsSection extends Component {
                 const footer = this.props.app_state.translation_percentage_data[object['e5_id']] != null ? this.props.app_state.loc['1593nc']/* '$% translated' */.replace('$', (this.props.app_state.translation_percentage_data[object['e5_id']] * 100).toFixed(2)) : null
                 return(
                     <div>
-                        {this.render_detail_item('3', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
                         {/* {this.render_detail_item('3', {'title':text, 'details':from, 'size':'l', 'footer':footer})} */}
                         <div style={{height:10}}/>
                     </div>
@@ -1845,12 +1845,12 @@ class ContractDetailsSection extends Component {
         if(interacted_exchange_data.length == 0) return;
         var selected_exchange = this.get_selected_interacted_exchange(object, data)[0]
         var event_data = this.get_selected_exchange_data(data, selected_exchange)
-        if(event_data.length < 5) return;
+        // console.log('show_contract_token_balances_data_chart', 'data', data, 'selected_exchange', selected_exchange);
+        if(event_data == null || event_data.length < 5) return;
         const datapoints = this.get_deposit_amount_data_points(event_data)
         return(
             <div>
                 <div style={{height: 10}}/>
-                {/* {this.render_detail_item('1', {'active_tags':interacted_exchange_data, 'index_option':'indexed', 'when_tapped': 'when_contract_exchange_tapped', 'selected_tags':this.get_selected_interacted_exchange(object, data)}, object)} */}
                 {this.load_my_used_exchange_objects(interacted_exchange_data, object, selected_exchange)}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214a']/* 'Balance Changes.' */, 'details':this.props.app_state.loc['2214b']/* `The changes in balance for the selected token.` */, 'size':'l'})}
@@ -1955,6 +1955,7 @@ class ContractDetailsSection extends Component {
 
     get_selected_exchange_data(data, selected_exchange_name){
         var id = parseInt(this.get_token_id_from_symbol(selected_exchange_name))
+        // console.log('get_selected_exchange_data', 'token_id_from_symbol', id)
         return data[id]
     }
 

@@ -715,7 +715,7 @@ class SubscriptionDetailsSection extends Component {
                 const footer = this.props.app_state.translation_percentage_data[object['e5_id']] != null ? this.props.app_state.loc['1593nc']/* '$% translated' */.replace('$', (this.props.app_state.translation_percentage_data[object['e5_id']] * 100).toFixed(2)) : null
                 return(
                     <div>
-                        {this.render_detail_item('3', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        {this.render_detail_item('4', {'text':text, 'textsize':'13px', 'font':this.props.app_state.font})}
                         {/* {this.render_detail_item('3', {'title':text, 'details':from, 'size':'l', 'footer':footer})} */}
                         <div style={{height:10}}/>
                     </div>

@@ -1811,8 +1811,10 @@ class StackPage extends Component {
 
     render_stack_run_settings_part(){
         var height = this.props.height-150
+        const is_throttled = this.get_throttled_data().length > 0
+        const alpha = is_throttled == true ? 0.5 : 1.0
         return(
-            <div style={{}}>
+            <div style={{opacity: alpha}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'details':this.props.app_state.loc['1431']/* 'The gas budget for your next run with E5. You can auto-set the value to be the estimated gas to be comsumed.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
@@ -1909,7 +1911,8 @@ class StackPage extends Component {
             gas_price = this.get_gas_price_from_runs()
         }
 
-        if(gas_price == null || isNaN(gas_price)) return;
+        const is_throttled = this.get_throttled_data().length > 0
+        if(gas_price == null || isNaN(gas_price) || is_throttled == true) return;
         
         var items = [
             {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price)},
@@ -1957,28 +1960,34 @@ class StackPage extends Component {
     }
 
     set_tx_gas_limit(){
+        if(this.get_throttled_data().length > 0) return;
         var estimated_gas = this.estimated_gas_consumed()
         this.setState({run_gas_limit: estimated_gas+80_000})
     }
 
     when_run_gas_limit(number){
+        if(this.get_throttled_data().length > 0) return;
         this.setState({run_gas_limit: number})
     }
 
     when_run_gas_price(number){
+        if(this.get_throttled_data().length > 0) return;
         this.setState({run_gas_price: number})
         this.props.when_run_gas_price_set(number)
     }
 
     when_max_priority_amount(number){
+        if(this.get_throttled_data().length > 0) return;
         this.setState({picked_max_priority_per_gas_amount: number+0})
     }
 
     when_max_fee_per_gas_amount(number){
+        if(this.get_throttled_data().length > 0) return;
         this.setState({picked_max_fee_per_gas_amount: number+0})
     }
 
     when_run_expiry_time_set(number){
+        if(this.get_throttled_data().length > 0) return;
         this.setState({run_time_expiry: number})
     }
 
@@ -2429,6 +2438,7 @@ class StackPage extends Component {
         var estimated_gas_consumption_proportion = ((parseFloat(this.estimated_gas_consumed()) * 100) / parseFloat(this.get_e5_run_limit(this.props.app_state.selected_e5)));
         estimated_gas_consumption_proportion = estimated_gas_consumption_proportion > 100 ? 100 : estimated_gas_consumption_proportion
 
+        const balance_e5 = this.props.app_state.selected_e5 == 'E25' ? 'E35' : this.props.app_state.selected_e5
         return(
             <div>
                 {this.render_now_calling_message_if_any()}
@@ -2437,10 +2447,10 @@ class StackPage extends Component {
 
                 {this.render_quick_send_end_spend()}
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'number':this.props.app_state.account_balance[this.props.app_state.selected_e5], 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'number':this.props.app_state.account_balance[balance_e5], 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'relativepower':this.props.app_state.loc['2738cx']/* wei */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[balance_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[balance_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[balance_e5]), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cx']/* wei */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1449']/* 'Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'number':(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1449']/* 'Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[balance_e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[balance_e5]/10**18), 'number':(this.props.app_state.account_balance[balance_e5]/10**18), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
@@ -2499,6 +2509,74 @@ class StackPage extends Component {
                 
                 <div style={{height:7}}/>
                 {this.show_e5_locked_message_if_locked()}
+                {this.show_throttled_message_if_throttled()}
+            </div>
+        )
+    }
+
+    get_throttled_data(){
+        const my_address = this.get_account_address()
+        var contracts_that_have_throttled_address = []
+        if(this.props.app_state.default_obligation_contract.length == 0) return []
+        const default_obligation_contract_ids = this.props.app_state.default_obligation_contract
+        default_obligation_contract_ids.forEach(contract => {
+            const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
+            if(configuration['ipfs'].e5 == this.props.app_state.selected_e5){
+                const throttled_addresses = configuration['ipfs'].throttled_addresses || []
+                const has_address_been_throttled = throttled_addresses.find((add_obj) => {
+                    return add_obj['add'].toLowerCase() == my_address.toLowerCase()
+                })
+                if(has_address_been_throttled != null){
+                    contracts_that_have_throttled_address.push({
+                        'contract':contract,
+                        'time': has_address_been_throttled['time']
+                    })
+                }
+            }
+        });
+        return contracts_that_have_throttled_address
+    }
+
+    show_throttled_message_if_throttled(){
+        var contracts_that_have_throttled_address = this.get_throttled_data()
+        if(contracts_that_have_throttled_address.length > 0){
+            const when_message_tapped = () => {
+                this.props.show_dialog_bottomsheet({ 'moving_end':0, 'moving_spend':0, 'last_transaction_time':0, 'restricted_accounts':[] }, 'throttled_address_transactions')
+            }
+            return(
+                    <div>
+                        <div onClick={() => when_message_tapped()}>
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['1593nd']/* ⚠️ Your Address Has Been Throttled.' */, 'details':this.props.app_state.loc['1593ne']/* Youre ability to make runs, spend tokens and consume gas has been substantially reduced by these contracts.' */, 'size':'l'})}
+                        </div>
+                        <div style={{height:3}}/>
+                        {this.render_throttle_contracts_and_times(contracts_that_have_throttled_address)}
+                        <div style={{height:7}}/>
+                    </div>
+                )
+        }
+    }
+
+    render_throttle_contracts_and_times(contract_data){
+        const render_contract_item = (object_item) => {
+            const e5_id = object_item['contract']
+            const id = e5_id.split('E')[0];
+            const contract_e5 = 'E'+e5_id.split('E')[1];
+            const e5_image = this.props.app_state.e5s[contract_e5].e5_img
+            return (
+                <div onClick={() => this.props.when_e5_link_tapped(parseInt(id))}>
+                    {this.render_detail_item('3', {'title':number_with_commas(id), 'details':this.props.app_state.loc['3093go']/* 'Throttled on $' */.replace('$', (new Date(object_item['time']).toLocaleString())), 'size':'l', 'title_image':e5_image})}
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {contract_data.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {render_contract_item(item)}
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
     }
@@ -3440,6 +3518,16 @@ class StackPage extends Component {
         this.run_transactions(true, false)
     }
 
+    get_mint_limit(token_id){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5] == null || this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][token_id] == null){
+            if(this.props.app_state.selected_e5 == 'E25') return bigInt('35000000')
+            else if(this.props.app_state.selected_e5 == 'E35') return bigInt('3500000')
+            else return bigInt('72000000')
+        }else{
+            return this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][token_id]['data'][1][0/* <0>default_exchange_amount_buy_limit */]
+        }
+    }
+
     //here-------------------------------------------------------------------------------------------
     run_transactions = async (calculate_gas, silently) => {
         const txs = this.props.app_state.stack_items
@@ -3484,6 +3572,7 @@ class StackPage extends Component {
         const ipfs_index_data = await this.get_ipfs_index_object(txs, now, calculate_gas)
         const ipfs_index = ipfs_index_data.link
         const obligation_inclusive = ipfs_index_data.obligation_inclusive
+        const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
         // var ipfs_index = await this.props.get_ipfs_index_object_max(now, calculate_gas)
         
         
@@ -3497,6 +3586,22 @@ class StackPage extends Component {
         if(ipfs_index == 'large'){
             if(!silently) this.props.show_dialog_bottomsheet({'stack_size':this.current_object_size}, 'invalid_stack_size_dialog_box')
             // this.setState({can_switch_e5s: true})
+            this.set_can_switch_e5_value(true)
+            this.props.lock_run(false)
+            return;
+        }
+
+
+        var end_mint_limit = this.get_mint_limit(3)
+        var spend_mint_limit = this.get_mint_limit(5)
+        var transaction_time_limit = (Date.now/1000) - (60*60*6)
+        if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
+            if(!silently) this.props.show_dialog_bottomsheet({ 
+                'moving_end':moving_end, 
+                'moving_spend':moving_spend, 
+                'last_transaction_time':last_transaction_time,
+                'restricted_accounts':restricted_accounts, 
+            }, 'throttled_address_transactions')
             this.set_can_switch_e5_value(true)
             this.props.lock_run(false)
             return;
@@ -6181,6 +6286,7 @@ class StackPage extends Component {
         var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*5/* 5 hours */) : this.state.run_time_expiry
 
         var gas_limit = this.get_latest_block_data(e5).gasLimit
+        if(is_throttled) gas_limit = 985_000
         var estimated_gas_to_be_consumed = this.estimated_gas_consumed()
 
         if(!calculate_gas){
@@ -7386,7 +7492,11 @@ class StackPage extends Component {
 
 
         //obligation records
-        const obligation_object = { 'data':[], 'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'e5':this.props.app_state.selected_e5 }
+        const obligation_object = { 
+            'data':[], 
+            'sender':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 
+            'e5':this.props.app_state.selected_e5 
+        }
         const calculate_final_progressive_obligation = (progressive_obligation_proportion, obligation_proportion, token_id, amount) => {
             if(progressive_obligation_proportion == null || progressive_obligation_proportion == 0) return 0;
             const e5 = this.props.app_state.selected_e5
@@ -7401,12 +7511,25 @@ class StackPage extends Component {
             if(final_proportion.greater(bigInt('51e16'))) return bigInt('51e16');
             return final_proportion
         }
+        var moving_end = bigInt(0)
+        var moving_spend = bigInt(0)
+        var is_restricted = false
+        const is_throttled = this.get_throttled_data().length > 0
+        const last_transaction_time = is_throttled == true ? await this.props.fetch_last_transaction_time() : 0
+        const restricted_accounts = []
         for(var i=0; i<txs.length; i++){
             const tx = txs[i]
             if(!this.props.app_state.hidden.includes(tx) && tx.e5 == this.props.app_state.selected_e5){
                 if(tx.type == this.props.app_state.loc['946']/* 'buy-sell' */){
                     const object = tx.token_item
                     if(object['id'] == 3 || object['id'] == 5) continue;
+                    else if(is_throttled){
+                        is_restricted = true
+                    }
+                    else if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
                     const buy_sell_recipient = tx.recipient_id == 53 ? this.props.app_state.user_account_id[this.props.app_state.selected_e5] : tx.recipient_id;
                     const buy_sell_amount = tx.amount
                     const action = this.get_action(tx)
@@ -7493,6 +7616,19 @@ class StackPage extends Component {
 
                     for(var e=0; e<amount_data.length; e++){
                         const final_object_value_transfer_data = [{'exchange':object['id'], 'amount':amount_data[e]['amount']}]
+
+                        final_object_value_transfer_data.forEach(transfer_object => {
+                            if(transfer_object['exchange'] == '3'){
+                                moving_end = moving_end.plus(transfer_object['amount'])
+                            }
+                            else if(transfer_object['exchange'] == '5'){
+                                moving_spend = moving_spend.plus(transfer_object['amount'])
+                            }
+                            else if(is_throttled){
+                                is_restricted = true
+                            }
+                        });
+                        
                         
                         const object_obligation_fulfiller = amount_data[e]['recipient'] == '53' ? this.props.app_state.user_account_id[this.props.app_state.selected_e5] : amount_data[e]['recipient'];
                         // await this.props.load_target_or_object_accounts_obligation_data([object_obligation_fulfiller], this.props.app_state.selected_e5)
@@ -7562,6 +7698,23 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = {
                             'id': tx.type, 
@@ -7616,6 +7769,18 @@ class StackPage extends Component {
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                        final_object_value_transfer_data.forEach(transfer_object => {
+                            if(transfer_object['exchange'] == '3'){
+                                moving_end = moving_end.plus(transfer_object['amount'])
+                            }
+                            else if(transfer_object['exchange'] == '5'){
+                                moving_spend = moving_spend.plus(transfer_object['amount'])
+                            }
+                            else if(is_throttled){
+                                is_restricted = true
+                            }
+                        });
+
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = {
                                 'id': this.props.app_state.loc['1']/* 'enter-contract' */, 
@@ -7665,6 +7830,18 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
@@ -7703,6 +7880,14 @@ class StackPage extends Component {
                 else if(tx.type == this.props.app_state.loc['783']/* 'submit' */){
                     const object = tx.proposal_item
                     const proposal_config = object['data'][1]
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(proposal_config[5]/* <5>target_contract_authority */)){
+                        is_restricted = true
+                        restricted_accounts.push(proposal_config[5])
+                    }
+                    else if(this.get_my_contract_subscriptions_that_have_throttled_account(proposal_config[9]/* <9>modify_target(0 if unused) */)){
+                        is_restricted = true
+                        restricted_accounts.push(proposal_config[9])
+                    }
                     if(proposal_config[0] == 0/* spend */){
                         const exchanges = object['data'][4]
                         const amounts = object['data'][5]
@@ -7719,6 +7904,18 @@ class StackPage extends Component {
                             const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
                             const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                             const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                            final_object_value_transfer_data.forEach(transfer_object => {
+                                if(transfer_object['exchange'] == '3'){
+                                    moving_end = moving_end.plus(transfer_object['amount'])
+                                }
+                                else if(transfer_object['exchange'] == '5'){
+                                    moving_spend = moving_spend.plus(transfer_object['amount'])
+                                }
+                                else if(is_throttled){
+                                    is_restricted = true
+                                }
+                            });
 
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
@@ -7770,6 +7967,18 @@ class StackPage extends Component {
                             const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
                             const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                             const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                            final_object_value_transfer_data.forEach(transfer_object => {
+                                if(transfer_object['exchange'] == '3'){
+                                    moving_end = moving_end.plus(transfer_object['amount'])
+                                }
+                                else if(transfer_object['exchange'] == '5'){
+                                    moving_spend = moving_spend.plus(transfer_object['amount'])
+                                }
+                                else if(is_throttled){
+                                    is_restricted = true
+                                }
+                            });
 
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
@@ -7825,6 +8034,23 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
@@ -7874,6 +8100,11 @@ class StackPage extends Component {
                     }
                     await this.props.load_target_or_object_accounts_obligation_data(recipients, object['e5'])
 
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     for(var f=0; f<amount_data.length; f++){
                         const action_object = amount_data[f]
                         const final_object_value_transfer_data = [{'exchange':action_object['token'], 'amount':action_object['amount']}]
@@ -7884,6 +8115,18 @@ class StackPage extends Component {
                         const address_key = object_obligation_fulfiller == 1 ? this.props.app_state.accounts[this.props.app_state.selected_e5].address : this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                        final_object_value_transfer_data.forEach(transfer_object => {
+                            if(transfer_object['exchange'] == '3'){
+                                moving_end = moving_end.plus(transfer_object['amount'])
+                            }
+                            else if(transfer_object['exchange'] == '5'){
+                                moving_spend = moving_spend.plus(transfer_object['amount'])
+                            }
+                            else if(is_throttled){
+                                is_restricted = true
+                            }
+                        });
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -7941,6 +8184,18 @@ class StackPage extends Component {
                         const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                        final_object_value_transfer_data.forEach(transfer_object => {
+                            if(transfer_object['exchange'] == '3'){
+                                moving_end = moving_end.plus(transfer_object['amount'])
+                            }
+                            else if(transfer_object['exchange'] == '5'){
+                                moving_spend = moving_spend.plus(transfer_object['amount'])
+                            }
+                            else if(is_throttled){
+                                is_restricted = true
+                            }
+                        });
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -8015,6 +8270,18 @@ class StackPage extends Component {
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                        final_object_value_transfer_data.forEach(transfer_object => {
+                            if(transfer_object['exchange'] == '3'){
+                                moving_end = moving_end.plus(transfer_object['amount'])
+                            }
+                            else if(transfer_object['exchange'] == '5'){
+                                moving_spend = moving_spend.plus(transfer_object['amount'])
+                            }
+                            else if(is_throttled){
+                                is_restricted = true
+                            }
+                        });
+
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': this.props.app_state.loc['c311de']/* 'messages-award' */,
@@ -8076,6 +8343,23 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
@@ -8130,6 +8414,18 @@ class StackPage extends Component {
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -8203,6 +8499,18 @@ class StackPage extends Component {
                             const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                             const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                            final_object_value_transfer_data.forEach(transfer_object => {
+                                if(transfer_object['exchange'] == '3'){
+                                    moving_end = moving_end.plus(transfer_object['amount'])
+                                }
+                                else if(transfer_object['exchange'] == '5'){
+                                    moving_spend = moving_spend.plus(transfer_object['amount'])
+                                }
+                                else if(is_throttled){
+                                    is_restricted = true
+                                }
+                            });
+
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
                                     'id': tx.type, 
@@ -8268,6 +8576,23 @@ class StackPage extends Component {
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                        final_object_value_transfer_data.forEach(transfer_object => {
+                            if(transfer_object['exchange'] == '3'){
+                                moving_end = moving_end.plus(transfer_object['amount'])
+                            }
+                            else if(transfer_object['exchange'] == '5'){
+                                moving_spend = moving_spend.plus(transfer_object['amount'])
+                            }
+                            else if(is_throttled){
+                                is_restricted = true
+                            }
+                        });
+
+                        if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                            is_restricted = true
+                            restricted_accounts.push(object['id'])
+                        }
+
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': tx.type,
@@ -8318,6 +8643,18 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
@@ -8366,6 +8703,18 @@ class StackPage extends Component {
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -8418,6 +8767,23 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
@@ -8466,6 +8832,18 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
@@ -8513,6 +8891,18 @@ class StackPage extends Component {
                     const address_key = this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -8575,6 +8965,18 @@ class StackPage extends Component {
                             const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                             const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                             const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                            final_object_value_transfer_data.forEach(transfer_object => {
+                                if(transfer_object['exchange'] == '3'){
+                                    moving_end = moving_end.plus(transfer_object['amount'])
+                                }
+                                else if(transfer_object['exchange'] == '5'){
+                                    moving_spend = moving_spend.plus(transfer_object['amount'])
+                                }
+                                else if(is_throttled){
+                                    is_restricted = true
+                                }
+                            });
 
                             if(authors_obligation_contracts.length > 0){
                                 const obligation_promise_data = { 
@@ -8646,6 +9048,18 @@ class StackPage extends Component {
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                        final_object_value_transfer_data.forEach(transfer_object => {
+                            if(transfer_object['exchange'] == '3'){
+                                moving_end = moving_end.plus(transfer_object['amount'])
+                            }
+                            else if(transfer_object['exchange'] == '5'){
+                                moving_spend = moving_spend.plus(transfer_object['amount'])
+                            }
+                            else if(is_throttled){
+                                is_restricted = true
+                            }
+                        });
+
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
                                 'id': tx.type, 
@@ -8698,12 +9112,29 @@ class StackPage extends Component {
                             final_object_value_transfer_data.push({'exchange':price_item['id'], 'amount':price_item['amount']})
                         });
                     }
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
                    
                     const object_obligation_fulfiller = object['ipfs'].target_receiver ||object['author'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -8758,6 +9189,23 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
@@ -8802,6 +9250,23 @@ class StackPage extends Component {
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -8866,6 +9331,25 @@ class StackPage extends Component {
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = {
                             'id': tx.type,
@@ -8960,6 +9444,23 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
@@ -9017,6 +9518,23 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
@@ -9068,6 +9586,23 @@ class StackPage extends Component {
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
                             'id': tx.type, 
@@ -9109,6 +9644,11 @@ class StackPage extends Component {
                     const fulfillers = Object.keys(tx.fractionalization_data)
                     await this.props.load_target_or_object_accounts_obligation_data(fulfillers, this.props.app_state.selected_e5)
 
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     for(var e=0; e<fulfillers.length; e++){
                         const recipient = fulfillers[e]
                         const proportion = tx.fractionalization_data[recipient]
@@ -9125,6 +9665,18 @@ class StackPage extends Component {
                         const address_key = object_obligation_fulfiller == 1 ? this.props.app_state.accounts[this.props.app_state.selected_e5].address :  this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                        final_object_value_transfer_data.forEach(transfer_object => {
+                            if(transfer_object['exchange'] == '3'){
+                                moving_end = moving_end.plus(transfer_object['amount'])
+                            }
+                            else if(transfer_object['exchange'] == '5'){
+                                moving_spend = moving_spend.plus(transfer_object['amount'])
+                            }
+                            else if(is_throttled){
+                                is_restricted = true
+                            }
+                        });
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -9168,6 +9720,11 @@ class StackPage extends Component {
                     const fulfillers = Object.keys(tx.fractionalization_data)
                     await this.props.load_target_or_object_accounts_obligation_data(fulfillers, this.props.app_state.selected_e5)
 
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
+
                     for(var e=0; e<fulfillers.length; e++){
                         const recipient = fulfillers[e]
                         const proportion = tx.fractionalization_data[recipient]
@@ -9184,6 +9741,18 @@ class StackPage extends Component {
                         const address_key = object_obligation_fulfiller == 1 ? this.props.app_state.accounts[this.props.app_state.selected_e5].address :  this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+                        
+                        final_object_value_transfer_data.forEach(transfer_object => {
+                            if(transfer_object['exchange'] == '3'){
+                                moving_end = moving_end.plus(transfer_object['amount'])
+                            }
+                            else if(transfer_object['exchange'] == '5'){
+                                moving_spend = moving_spend.plus(transfer_object['amount'])
+                            }
+                            else if(is_throttled){
+                                is_restricted = true
+                            }
+                        });
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -9238,6 +9807,23 @@ class StackPage extends Component {
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
                     const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                     const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                    final_object_value_transfer_data.forEach(transfer_object => {
+                        if(transfer_object['exchange'] == '3'){
+                            moving_end = moving_end.plus(transfer_object['amount'])
+                        }
+                        else if(transfer_object['exchange'] == '5'){
+                            moving_spend = moving_spend.plus(transfer_object['amount'])
+                        }
+                        else if(is_throttled){
+                            is_restricted = true
+                        }
+                    });
+
+                    if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'])){
+                        is_restricted = true
+                        restricted_accounts.push(object['id'])
+                    }
 
                     if(authors_obligation_contracts.length > 0){
                         const obligation_promise_data = { 
@@ -9306,6 +9892,18 @@ class StackPage extends Component {
                         const address_key = object_obligation_fulfiller == 1 ? this.props.app_state.accounts[this.props.app_state.selected_e5].address :  this.props.app_state.author_address_mapping[this.props.app_state.selected_e5][object_obligation_fulfiller]
                         const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[address_key] || {}
                         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+                        final_object_value_transfer_data.forEach(transfer_object => {
+                            if(transfer_object['exchange'] == '3'){
+                                moving_end = moving_end.plus(transfer_object['amount'])
+                            }
+                            else if(transfer_object['exchange'] == '5'){
+                                moving_spend = moving_spend.plus(transfer_object['amount'])
+                            }
+                            else if(is_throttled){
+                                is_restricted = true
+                            }
+                        });
 
                         if(authors_obligation_contracts.length > 0){
                             const obligation_promise_data = { 
@@ -9388,7 +9986,27 @@ class StackPage extends Component {
             this.props.calculate_arweave_data_fees(obj)
         }
         console.log('stack_page_ipfs', 'link', link)
-        return {link, obligation_inclusive}
+        return { link, obligation_inclusive, moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts }
+    }
+
+    get_my_contract_subscriptions_that_have_throttled_account(id){
+        var contracts_that_have_throttled_account = []
+        if(this.props.app_state.default_obligation_contract.length == 0) return []
+        const default_obligation_contract_ids = this.props.app_state.default_obligation_contract
+        default_obligation_contract_ids.forEach(contract => {
+            const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
+            const throttled_accounts = configuration['ipfs'].throttled_accounts || []
+            const has_account_been_throttled = throttled_accounts.find((acc_obj) => {
+                return acc_obj['acc'] == parseInt(id) && acc_obj['e5'] == this.props.app_state.selected_e5;
+            })
+            if(has_account_been_throttled != null){
+                contracts_that_have_throttled_account.push({
+                'contract':contract,
+                'time': has_account_been_throttled['time']
+                })
+            }
+        });
+        return contracts_that_have_throttled_account
     }
 
     can_log_file_in_channel(file, selected_object_identifier){
@@ -17279,11 +17897,11 @@ class StackPage extends Component {
                 <div style={{height: 10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
                 
-                {this.render_detail_item('0')}
+                {/* {this.render_detail_item('0')}
 
-                {this.render_detail_item('3',{'title':this.props.app_state.loc['1979r']/* 'Seed Randomizer.' */, 'details':this.props.app_state.loc['1979s']/* 'Append an extra text thats only known by the creator of this webapp. This is useful in preventing the loss of all your coin and ether through spoofing.' */, 'size':'l'})}
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1979r']'Seed Randomizer.' , 'details':this.props.app_state.loc['1979s'] 'Append an extra text thats only known by the creator of this webapp. This is useful in preventing the loss of all your coin and ether through spoofing.', 'size':'l'})}
                 <div style={{height: 10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_seed_randomizer_setting_object} tag_size={'l'} when_tags_updated={this.get_seed_randomizer_setting_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_seed_randomizer_setting_object} tag_size={'l'} when_tags_updated={this.get_seed_randomizer_setting_object_updated.bind(this)} theme={this.props.theme}/> */}
                 
                 {this.render_detail_item('0')}
                 {this.render_message_if_stack_not_empty()}
@@ -17291,8 +17909,6 @@ class StackPage extends Component {
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1593it']/* 'Please Note ⚠️' */, 'details':this.props.app_state.loc['1593iu']/* 'If you didnt know to keep these provided details private, or dont know why they should remain private, kindly stop using this webapp.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                
-                
                 <div style={{}}>
                     {this.render_when_set_wallet_button()}
                 </div>
@@ -17326,7 +17942,7 @@ class StackPage extends Component {
     }
 
     render_message_if_stack_not_empty(){
-        if(this.props.app_state.stacked_ids != null && this.props.app_state.accounts[this.props.app_state.selected_e5] == null && this.state.has_wallet_been_set == false){
+        if(this.props.app_state.stacked_ids != null && this.state.has_wallet_been_set == false){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1593hg']/* 'Some transactions were loaded from your previous stack. Please set the address that was used to make them, otherwise they will be deleted.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
@@ -17457,12 +18073,13 @@ class StackPage extends Component {
     }
 
     get_balance_amount_in_wei(){
+        const e5 = this.props.app_state.selected_e5 == 'E25' ? 'E35' : this.props.app_state.selected_e5
         return{
             'style':'s',
             'title':'',
             'subtitle':'',
-            'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]),
-            'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]),
+            'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]),
+            'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]),
             'barcolor':'#606060',
             'relativepower':this.props.app_state.loc['2738cx']/* wei */,
         }
@@ -17470,12 +18087,13 @@ class StackPage extends Component {
 
 
     get_balance_amount_in_ether(){
+        const e5 = this.props.app_state.selected_e5 == 'E25' ? 'E35' : this.props.app_state.selected_e5
         return{
             'style':'s',
             'title':'',
             'subtitle':'',
-            'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18),
-            'number':this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18,
+            'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18),
+            'number':this.props.app_state.account_balance[e5]/10**18,
             'barcolor':'#606060',
             'relativepower':this.props.app_state.loc['2738cw']/* ether */,
         }
@@ -21706,7 +22324,7 @@ class StackPage extends Component {
                 var details = data['name']
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':img, 'border_radius':'15%', 'image_width':'auto'})}
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':img, 'border_radius':'10px', 'image_width':'auto'})}
                     </div>
                 )
             }
@@ -21729,7 +22347,7 @@ class StackPage extends Component {
                 details = details + view_count_message
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'image_width':50})}
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'10px', 'image_width':50})}
                     </div>
                 )
             }

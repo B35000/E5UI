@@ -2103,7 +2103,7 @@ class App extends Component {
     
     received_coin_ether_sends:{}, direct_messages:{}, loaded_messages:[], watched_account_ids:[], tracked_contextual_transfer_identifiers:[], socket_connetcted:false, similar_searched_tags_data:{}, tag_trend_data:{}, is_searching_tag_price_data: false, object_view_data:{}, viewed_objects:[], queued_objects_to_emit_view:[], object_extra_data:{}, follow_unfollow_stack:{}, is_loading_repost_and_following_data:false, emit_record_data:{}, emit_record_data_view:{},
 
-    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:'', author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}, indexer_storage_trend_data:{},
+    obligation_subscriptions:{}, my_contract_obligation_subscription_data:{}, default_obligation_contract_ids:{}, default_obligation_contract:[], author_address_mapping:{}, user_obligation_data:{}, is_searching_user_obligation_data:false, my_fulfilled_obligation_data:{}, accounts_fulfilled_obligation_data:{}, loded_contract_datapoint_data:{}, loaded_contract_region_general_info_data:{}, indexer_storage_trend_data:{},
 
     e5_loading_data_object:{}, load_active_accepted_obligation_types:this.load_active_accepted_obligation_types(), my_voter_weight_data:{}, all_tagged_addresses_data: {}, updating_individual_coin:{}, seed_passcode: '', passcode_expiry_time: 0, saved_cypher_seed_object:{}, seed_object:{}, use_during_app_launch: false, is_setting_passcode: false,
 
@@ -2114,7 +2114,9 @@ class App extends Component {
     created_crossexchanges:{}, cached_pinns_and_viewed_objects:{}, token_name_thumbnail_directory:{}, asset_supply_data:{}, opened_bottomsheets2:[], connections_data:{}, coinlore_asset_mapping: {}, coin_ether_chart_info:{}, dominance_targets: this.get_all_dominance_targets(), password_tries:5, objects_showcased_certificates:{}, ether_usage_chart_info:{}, ether_gas_chart_info:{}, showcasing_events:{}, decentralization_metrics: this.get_decentralization_data(),
 
     objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}, 
-    ether_ages:{}, created_object_full:{}, current_run_hash:{}, socket_created_bags:{}, translation_data:{}, performing_translation_indicator:{}, translation_percentage_data:{}
+    ether_ages:{}, created_object_full:{}, current_run_hash:{}, socket_created_bags:{}, translation_data:{}, performing_translation_indicator:{}, translation_percentage_data:{},
+
+    focused_page:this.getLocale()['1196']/* 'jobs' */
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -6595,6 +6597,7 @@ class App extends Component {
         created_crossexchanges: this.state.created_crossexchanges,
         // non_fungible_token_data:this.state.non_fungible_token_data, 
         // fractionalized_assets:this.state.fractionalized_assets,
+        created_object_full: this.state.created_object_full,
 
 
         cached_pinns_and_viewed_objects: {
@@ -8818,12 +8821,17 @@ class App extends Component {
 
           get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)} perform_translation_of_specific_object={this.perform_translation_of_specific_object.bind(this)}
           when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}
+          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)}
         />
 
         {/* {this.render_toast_container()}
         {this.render_ios_page_toast_container()} */}
       </div>
     )
+  }
+
+  set_focused_page_in_homepage(page){
+    this.setState({focused_page: page})
   }
 
   set_cookies_after_stack_action(stack_items, should_keep_stack_open){
@@ -11777,7 +11785,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)} when_language_selected={this.when_language_selected.bind(this)} remove_content_languag_setting={this.remove_content_languag_setting.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)} when_language_selected={this.when_language_selected.bind(this)} remove_content_languag_setting={this.remove_content_languag_setting.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} fetch_last_transaction_time={this.fetch_last_transaction_time.bind(this)}
       />
     )
   }
@@ -13969,6 +13977,28 @@ class App extends Component {
 
   fetch_gas_figures(){
     this.stack_page.current?.fetch_gas_figures()
+  }
+
+  async fetch_last_transaction_time(){
+    const e5 = this.state.selected_e5
+    const account = this.state.user_account_id[e5]
+    if(this.state.e5s[e5].e5_address == '0xF3895fe95f423A4EBDdD16232274091a320c5284'){
+      const web3_url = this.get_web3_url_from_e5(e5)
+      const web3 = new Web3(web3_url);
+      const contractArtifact = require('./contract_abis_old/E5.json');
+      const contractAddress = '0xF3895fe95f423A4EBDdD16232274091a320c5284'
+      const contractInstance2 = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+      const basic_transaction_data = (await contractInstance2.methods.f287([account]).call((error, result) => {}))[0]
+      return basic_transaction_data[1]
+    }else{
+      const web3_url = this.get_web3_url_from_e5(e5)
+      const web3 = new Web3(web3_url);
+      const contractArtifact = require('./contract_abis/E5.json');
+      const contractAddress = this.state.e5s[e5].e5_address
+      const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+      const basic_transaction_data = (await contractInstance.methods.f287([account]).call((error, result) => {}))[0][0]
+      return basic_transaction_data[1]
+    }
   }
 
 
@@ -22373,6 +22403,7 @@ class App extends Component {
       'show_itransfer_search_transfers_item':450,
       'cancel_current_transactions':250,
       'view_stacked_bag_details':650,
+      'throttled_address_transactions':300,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -22880,6 +22911,7 @@ class App extends Component {
     if(this.state.dialog_bottomsheet == true) this.open_dialog_bottomsheet()
     if(this.state.view_job_request_bottomsheet == true) this.open_view_job_request_bottomsheet();
     if(this.state.view_notification_log_bottomsheet == true) this.open_view_notification_log_bottomsheet();
+    if(this.state.stack_bottomsheet == true) this.open_stack_bottomsheet();
   }
 
   show_post_item_preview_with_subscription(object, type){
@@ -23972,6 +24004,20 @@ class App extends Component {
     const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['862']/* 'pay-subscription' */, e5, false)
     const ipfs_index = ipfs_index_data.link
     const obligation_inclusive = ipfs_index_data.obligation_inclusive
+    const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
+
+    var end_mint_limit = this.get_mint_limit(3)
+    var spend_mint_limit = this.get_mint_limit(5)
+    var transaction_time_limit = (Date.now/1000) - (60*60*6)
+    if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
+      if(this.state.dialog_bottomsheet == true){
+        this.open_dialog_bottomsheet()
+        await this.wait(1200)
+      }
+      this.show_dialog_bottomsheet({ 'moving_end':moving_end, 'moving_spend':moving_spend, 'last_transaction_time':last_transaction_time, 'restricted_accounts':restricted_accounts }, 'throttled_address_transactions')
+      this.lock_run_in_stack(false)
+      return;
+    }
 
     const purchase_object = [/* pay subscription */
       [30000, 2, 0],
@@ -24156,6 +24202,20 @@ class App extends Component {
     const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['a2962a']/* 'buy-video' */, e5, false)
     const ipfs_index = ipfs_index_data.link
     const obligation_inclusive = ipfs_index_data.obligation_inclusive
+    const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
+
+    var end_mint_limit = this.get_mint_limit(3)
+    var spend_mint_limit = this.get_mint_limit(5)
+    var transaction_time_limit = (Date.now/1000) - (60*60*6)
+    if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
+      if(this.state.dialog_bottomsheet == true){
+        this.open_dialog_bottomsheet()
+        await this.wait(1200)
+      }
+      this.show_dialog_bottomsheet({ 'moving_end':moving_end, 'moving_spend':moving_spend, 'last_transaction_time':last_transaction_time, 'restricted_accounts':restricted_accounts }, 'throttled_address_transactions')
+      this.lock_run_in_stack(false)
+      return;
+    }
 
     const purchase_recipient = (object['ipfs'].purchase_recipient != null && object['ipfs'].purchase_recipient != '') ?  object['ipfs'].purchase_recipient : object['event'].returnValues.p5;
     const post_id = object['id'];
@@ -24317,6 +24377,29 @@ class App extends Component {
     })
   }
 
+  get_throttled_data(){
+    const my_address = this.get_account_address()
+    var contracts_that_have_throttled_address = []
+    if(this.state.default_obligation_contract.length == 0) return []
+    const default_obligation_contract_ids = this.state.default_obligation_contract
+    default_obligation_contract_ids.forEach(contract => {
+      const configuration = this.state.my_contract_obligation_subscription_data[contract];
+      if(configuration['ipfs'].e5 == this.state.selected_e5){
+        const throttled_addresses = configuration['ipfs'].throttled_addresses || []
+        const has_address_been_throttled = throttled_addresses.find((add_obj) => {
+          return add_obj['add'].toLowerCase() == my_address.toLowerCase()
+        })
+        if(has_address_been_throttled != null){
+          contracts_that_have_throttled_address.push({
+            'contract':contract,
+            'time': has_address_been_throttled['time']
+          })
+        }
+      }
+    });
+    return contracts_that_have_throttled_address
+  }
+
   async start_quick_audio_purchase_action(object, selected_gas_prices, song, preferred_audio_items, is_page_my_collection_page){
     this.prompt_top_notification(this.getLocale()['3055ro']/* 'Running your purchase...' */, 4600);
     this.lock_run_in_stack(true);
@@ -24353,6 +24436,20 @@ class App extends Component {
     const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['2962']/* 'buy-album' */, e5, false)
     const ipfs_index = ipfs_index_data.link
     const obligation_inclusive = ipfs_index_data.obligation_inclusive
+    const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
+
+    var end_mint_limit = this.get_mint_limit(3)
+    var spend_mint_limit = this.get_mint_limit(5)
+    var transaction_time_limit = (Date.now/1000) - (60*60*6)
+    if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
+      if(this.state.dialog_bottomsheet == true){
+        this.open_dialog_bottomsheet()
+        await this.wait(1200)
+      }
+      this.show_dialog_bottomsheet({ 'moving_end':moving_end, 'moving_spend':moving_spend, 'last_transaction_time':last_transaction_time, 'restricted_accounts':restricted_accounts }, 'throttled_address_transactions')
+      this.lock_run_in_stack(false)
+      return;
+    }
 
     const purchase_recipient = object['ipfs'].purchase_recipient
     const post_id = object['id'];
@@ -24582,6 +24679,7 @@ class App extends Component {
       ipfs_index_array.push({'id':'myvideo', 'data':data})
     }
 
+    
     const obligation_object = { 'data':[], 'sender':this.state.user_account_id[e5], 'e5':e5 }
     const calculate_final_progressive_obligation = (progressive_obligation_proportion, obligation_proportion, token_id, amount) => {
       if(progressive_obligation_proportion == null || progressive_obligation_proportion == 0) return 0;
@@ -24596,6 +24694,13 @@ class App extends Component {
       if(final_proportion.greater(bigInt('51e16'))) return bigInt('51e16');
       return final_proportion
     }
+
+    var moving_end = bigInt(0)
+    var moving_spend = bigInt(0)
+    var is_restricted = false
+    const is_throttled = this.get_throttled_data().length > 0
+    const last_transaction_time = is_throttled == true ? await this.fetch_last_transaction_time() : 0
+    const restricted_accounts = []
 
     if(type == this.getLocale()['1018']/* 'transfer' */){
       const amount_data = tx['price_data']
@@ -24615,6 +24720,18 @@ class App extends Component {
           const address_key = object_obligation_fulfiller == 1 ? this.state.accounts[e5].address :  this.state.author_address_mapping[e5][object_obligation_fulfiller]
           const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
           const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+          final_object_value_transfer_data.forEach(transfer_object => {
+            if(transfer_object['exchange'] == '3'){
+              moving_end = moving_end.plus(transfer_object['amount'])
+            }
+            else if(transfer_object['exchange'] == '5'){
+              moving_spend = moving_spend.plus(transfer_object['amount'])
+            }
+            else if(is_throttled){
+              is_restricted = true
+            }
+          });
 
           if(authors_obligation_contracts.length > 0){
               const obligation_promise_data = { 
@@ -24663,6 +24780,18 @@ class App extends Component {
       const address_key = this.state.author_address_mapping[e5][object_obligation_fulfiller]
       const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
       const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+      final_object_value_transfer_data.forEach(transfer_object => {
+        if(transfer_object['exchange'] == '3'){
+          moving_end = moving_end.plus(transfer_object['amount'])
+        }
+        else if(transfer_object['exchange'] == '5'){
+          moving_spend = moving_spend.plus(transfer_object['amount'])
+        }
+        else if(is_throttled){
+          is_restricted = true
+        }
+      });
 
       if(authors_obligation_contracts.length > 0){
           const obligation_promise_data = { 
@@ -24715,6 +24844,23 @@ class App extends Component {
       const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
       const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+      final_object_value_transfer_data.forEach(transfer_object => {
+        if(transfer_object['exchange'] == '3'){
+          moving_end = moving_end.plus(transfer_object['amount'])
+        }
+        else if(transfer_object['exchange'] == '5'){
+          moving_spend = moving_spend.plus(transfer_object['amount'])
+        }
+        else if(is_throttled){
+          is_restricted = true
+        }
+      });
+
+      if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'], object['e5'])){
+        is_restricted = true
+        restricted_accounts.push(object['id'])
+      }
+
       if(authors_obligation_contracts.length > 0){
           const obligation_promise_data = { 
               'id': tx.type, 
@@ -24763,6 +24909,18 @@ class App extends Component {
         const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
 
+        final_object_value_transfer_data.forEach(transfer_object => {
+          if(transfer_object['exchange'] == '3'){
+            moving_end = moving_end.plus(transfer_object['amount'])
+          }
+          else if(transfer_object['exchange'] == '5'){
+            moving_spend = moving_spend.plus(transfer_object['amount'])
+          }
+          else if(is_throttled){
+            is_restricted = true
+          }
+        });
+
         if(authors_obligation_contracts.length > 0){
             const obligation_promise_data = { 
                 'id': tx.type, 
@@ -24810,6 +24968,18 @@ class App extends Component {
         const address_key = this.state.author_address_mapping[object['e5']][object_obligation_fulfiller]
         const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+        final_object_value_transfer_data.forEach(transfer_object => {
+          if(transfer_object['exchange'] == '3'){
+            moving_end = moving_end.plus(transfer_object['amount'])
+          }
+          else if(transfer_object['exchange'] == '5'){
+            moving_spend = moving_spend.plus(transfer_object['amount'])
+          }
+          else if(is_throttled){
+            is_restricted = true
+          }
+        });
 
         if(authors_obligation_contracts.length > 0){
             const obligation_promise_data = { 
@@ -24860,6 +25030,23 @@ class App extends Component {
       const address_key = this.state.author_address_mapping[object['e5']][object_obligation_fulfiller]
       const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
       const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+      final_object_value_transfer_data.forEach(transfer_object => {
+        if(transfer_object['exchange'] == '3'){
+          moving_end = moving_end.plus(transfer_object['amount'])
+        }
+        else if(transfer_object['exchange'] == '5'){
+          moving_spend = moving_spend.plus(transfer_object['amount'])
+        }
+        else if(is_throttled){
+          is_restricted = true
+        }
+      });
+
+      if(this.get_my_contract_subscriptions_that_have_throttled_account(object['id'], object['e5'])){
+        is_restricted = true
+        restricted_accounts.push(object['id'])
+      }
 
       if(authors_obligation_contracts.length > 0){
           const obligation_promise_data = { 
@@ -24921,7 +25108,27 @@ class App extends Component {
     });
 
     const link = await this.get_object_ipfs_index(obj, calculate_gas);
-    return {link, obligation_inclusive}
+    return { link, obligation_inclusive, moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts }
+  }
+
+  get_my_contract_subscriptions_that_have_throttled_account(id, e5){
+    var contracts_that_have_throttled_account = []
+    if(this.state.default_obligation_contract.length == 0) return []
+    const default_obligation_contract_ids = this.state.default_obligation_contract
+    default_obligation_contract_ids.forEach(contract => {
+    const configuration = this.state.my_contract_obligation_subscription_data[contract];
+      const throttled_accounts = configuration['ipfs'].throttled_accounts || []
+      const has_account_been_throttled = throttled_accounts.find((acc_obj) => {
+        return acc_obj['acc'] == parseInt(id) && acc_obj['e5'] == e5
+      })
+      if(has_account_been_throttled != null){
+        contracts_that_have_throttled_account.push({
+        'contract':contract,
+        'time': has_account_been_throttled['time']
+        })
+      }
+    });
+    return contracts_that_have_throttled_account
   }
 
   get_device_color(){
@@ -28242,7 +28449,7 @@ class App extends Component {
 
   show_dialer_bottomsheet(){
     const my_id = this.state.user_account_id[root_e5]
-    if(!root_account.includes(my_id) || this.state.selected_e5 != root_e5){
+    if(!root_account.includes(parseInt(my_id)) || this.state.selected_e5 != root_e5){
       return;
     }
     this.open_dialer_bottomsheet()
@@ -31585,6 +31792,20 @@ class App extends Component {
       const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['1018']/* 'transfer' */, e5, estimate)
       const ipfs_index = ipfs_index_data.link
       const obligation_inclusive = ipfs_index_data.obligation_inclusive
+      const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
+
+      var end_mint_limit = this.get_mint_limit(3)
+      var spend_mint_limit = this.get_mint_limit(5)
+      var transaction_time_limit = (Date.now/1000) - (60*60*6)
+      if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
+        if(this.state.dialog_bottomsheet == true){
+          this.open_dialog_bottomsheet()
+          await this.wait(1200)
+        }
+        this.show_dialog_bottomsheet({ 'moving_end':moving_end, 'moving_spend':moving_spend, 'last_transaction_time':last_transaction_time, 'restricted_accounts':restricted_accounts }, 'throttled_address_transactions')
+        this.lock_run_in_stack(false)
+        return;
+      }
 
       const transfers_obj = [/* send tokens to another account */
         [30000, 1, 0],
@@ -31642,6 +31863,20 @@ class App extends Component {
       const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['3068ac']/* 'iTransfer' */, e5, estimate)
       const ipfs_index = ipfs_index_data.link
       const obligation_inclusive = ipfs_index_data.obligation_inclusive
+      const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
+
+      var end_mint_limit = this.get_mint_limit(3)
+      var spend_mint_limit = this.get_mint_limit(5)
+      var transaction_time_limit = (Date.now/1000) - (60*60*6)
+      if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
+        if(this.state.dialog_bottomsheet == true){
+          this.open_dialog_bottomsheet()
+          await this.wait(1200)
+        }
+        this.show_dialog_bottomsheet({ 'moving_end':moving_end, 'moving_spend':moving_spend, 'last_transaction_time':last_transaction_time, 'restricted_accounts':restricted_accounts }, 'throttled_address_transactions')
+        this.lock_run_in_stack(false)
+        return;
+      }
 
       const transfers_obj = [/* send awwards */
         [30000, 7, 0],
@@ -33243,6 +33478,16 @@ class App extends Component {
     const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['3031']/* 'buy-storage' */, e5, false)
     const ipfs_index = ipfs_index_data.link
     const obligation_inclusive = ipfs_index_data.obligation_inclusive
+    const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
+
+    var end_mint_limit = this.get_mint_limit(3)
+    var spend_mint_limit = this.get_mint_limit(5)
+    var transaction_time_limit = (Date.now/1000) - (60*60*6)
+    if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
+      this.prompt_top_notification(this.getLocale()['3055uf']/* 'You cant make this quick purchase, your address has been throttled.' */, 11000)
+      this.lock_run_in_stack(false)
+      return;
+    }
 
     const node_details = this.state.nitro_node_details[object['e5_id']]
     var purchase_recipient = node_details['target_storage_recipient_accounts'] == null ? node_details['target_storage_purchase_recipient_account'] : node_details['target_storage_recipient_accounts'][e5]
@@ -33724,9 +33969,20 @@ class App extends Component {
       console.log('location_info', 'sunrise_sunset_data', 'country', country)
       console.log('location_info', 'sunrise_sunset_data', 'user_region', user_region)
 
-      this.setState({sunrise: sunrise, sunset: sunset, city: user_city, region: user_region})
+      this.setState({
+        sunrise: sunrise, 
+        sunset: sunset, 
+        city: user_city, 
+        region: user_region,
+        admin: data.results.sunrise
+      })
       if(this.state.device_country == null || this.state.device_country == ''){
-        this.setState({device_country: country, device_city: user_city, device_region: user_region, device_country_code: this.get_country_code(country)})
+        this.setState({
+          device_country: country, 
+          device_city: user_city, 
+          device_region: user_region, 
+          device_country_code: this.get_country_code(country)
+        })
       }
     }catch(e){
       console.log('apppage', e)
@@ -37914,7 +38170,7 @@ class App extends Component {
 
         const default_obligation_contract_ids = root_data.default_obligation_contract_ids || {}
         const my_state = this.get_location_info().userCountry
-        const default_obligation_contract = default_obligation_contract_ids[my_state] || ''
+        const default_obligation_contract = default_obligation_contract_ids[my_state] || []
 
         const my_language = this.get_language() == null ? 'en' : this.get_language()
         if(my_language != 'en' && all_locales[my_language] != null){
@@ -37992,8 +38248,8 @@ class App extends Component {
           }
         }, (1 * 500));
 
-        if(default_obligation_contract != ''){
-          await this.load_my_accounts_obligation_data([default_obligation_contract])
+        if(default_obligation_contract.length > 0){
+          await this.load_my_accounts_obligation_data(default_obligation_contract)
         }
         if(Object.keys(default_obligation_contract_ids).length > 0){
           this.load_my_accounts_obligation_data(Object.values(default_obligation_contract_ids))
@@ -38427,11 +38683,19 @@ class App extends Component {
       for(var i=0; i<json_obj.length; i++){
         var city = json_obj[i]['name'].toLowerCase()
         var country = json_obj[i]['country']
+        var admin1 = json_obj[i]['admin1']
         var id = parseInt(json_obj[i]['id'])
         var lat = parseFloat(json_obj[i]['lat'])
         var lon = parseFloat(json_obj[i]['lon'])
         if(country.toLowerCase() == my_country_code.toLowerCase()){
-          storage_obj.push({'city':city, 'country':country, 'id':id, 'lat':lat, 'lon':lon})
+          storage_obj.push({
+            'city':city, 
+            'country':country, 
+            'id':id, 
+            'lat':lat, 
+            'lon':lon, 
+            'admin':admin1
+          })
         }
       }
       // console.log('apppage', 'finished up storage obj', storage_obj)
@@ -39104,17 +39368,23 @@ class App extends Component {
           this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'] != null && 
           this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].length > 0
         ){
-          if(this.state.default_obligation_contract != '' && !this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].includes(this.state.default_obligation_contract)){
-            this.add_my_default_subscription_to_my_obligation_list(this.state.default_obligation_contract)
-            await this.wait(500)
-            await this.emit_update_subscriptions_for_obligations_event()
+          if(this.state.default_obligation_contract.length > 0){
+            for(var c=0; c<this.state.default_obligation_contract.length; c++){
+              const default_obligation_contract = this.state.default_obligation_contract[c]
+              const should_emit = this.add_my_default_subscription_to_my_obligation_list(default_obligation_contract)
+              await this.wait(500)
+              if(should_emit == true) await this.emit_update_subscriptions_for_obligations_event()
+            }
           }
           await this.load_my_accounts_obligation_data(this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'])
         }else{
-          if(this.state.default_obligation_contract != ''){
-            this.add_my_default_subscription_to_my_obligation_list(this.state.default_obligation_contract)
-            await this.wait(500)
-            await this.emit_update_subscriptions_for_obligations_event()
+          if(this.state.default_obligation_contract.length > 0){
+            for(var c=0; c<this.state.default_obligation_contract.length; c++){
+              const default_obligation_contract = this.state.default_obligation_contract[c]
+              const should_emit = this.add_my_default_subscription_to_my_obligation_list(default_obligation_contract)
+              await this.wait(500)
+              if(should_emit == true) await this.emit_update_subscriptions_for_obligations_event()
+            }
           }
           
         }
@@ -43856,7 +44126,7 @@ class App extends Component {
       const is_crossexchange = created_token_data[i][2][18/* <18>classic_swap_exchange_parent_token */] != null && created_token_data[i][2][18/* <18>classic_swap_exchange_parent_token */] > 0
         
       var token_obj = {
-        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':is_certificate == true ? created_certificate_object_data.length : (is_crossexchange == true ? created_crossexchange_object_data.length: created_token_object_data.length), 'spend_balance':spend_balance, 'object_type':'token', 'interacted':exchanges_to_load_first.includes(token_id)
+        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':is_certificate == true ? created_certificate_object_data.length : (is_crossexchange == true ? created_crossexchange_object_data.length: created_token_object_data.length), 'spend_balance':spend_balance, 'object_type':is_certificate == true ? 'certificate': (is_crossexchange == true ? 'crossexchange' : 'token'), 'interacted':exchanges_to_load_first.includes(token_id)
       }
 
 
@@ -48565,7 +48835,6 @@ class App extends Component {
 
     this.setState({translation_data: translation_data})
   }
-
 
 
 
@@ -59683,9 +59952,13 @@ class App extends Component {
     add_all_objects(this.state.created_contracts)
     add_all_objects(this.state.created_subscriptions)
 
-    const sorted_objects2 = this.sortByAttributeDescending(objects2, 'timestamp')
+    const focused_objects_by_id = this.get_valid_object_type_to_filter_translation_objects_with()
+    const sorted_objects2 = this.sortByAttributeDescending(objects2, 'timestamp').filter((obj) => {
+      return (obj['object_type'] == focused_objects_by_id)
+    })
     const chunks = this.split_into_chunks(objects, 10);
     const chunks2 = this.split_into_chunks(sorted_objects2, 7);
+    
 
     for(var i=0; i<chunks2.length; i++){
       const chunk = chunks2[i]
@@ -59704,6 +59977,28 @@ class App extends Component {
       result.push(arr.slice(i, i + chunkSize));
     }
     return result;
+  }
+
+  get_valid_object_type_to_filter_translation_objects_with(){
+    const obj = {}
+    obj[this.getLocale()['1196']/* 'jobs' */] = 'job'
+    obj[this.getLocale()['1197']/* 'contracts' */] = 'contract'
+    obj[this.getLocale()['1199']/* 'proposals' */] = 'proposal'
+    obj[this.getLocale()['1198']/* 'contractors' */] = 'contractor'
+    obj[this.getLocale()['1200']/* 'subscriptions' */] = 'subscription'
+    obj[this.getLocale()['1213']/* 'posts' */] = 'post'
+    obj[this.getLocale()['1214']/* 'channels' */] = 'channel'
+    obj[this.getLocale()['1215']/* 'storefront' */] = 'storefront'
+    obj[this.getLocale()['1216']/* 'bags' */] = 'bag'
+    obj[this.getLocale()['1264k']/* 'audioport' */] = 'audiopost'
+    obj[this.getLocale()['1264p']/* videoport */] = 'videopost'
+    obj[this.getLocale()['1264s']/* 'nitro' */] = 'nitropost'
+    obj[this.getLocale()['1264ao']/* 'polls' */] = 'poll'
+    obj[this.getLocale()['1264bw']/* 'certificates' */] = 'certificate'
+    obj[this.getLocale()['1264bx']/* 'cross-exchanges' */] = 'crossexchange'
+    const focused_page = this.state.focused_page
+
+    return obj[focused_page] || 'e'
   }
 
 
@@ -63258,24 +63553,42 @@ class App extends Component {
     const my_data = my_object['data'] || []
     const obligation_subscriptions_array_clone = my_data.slice()
     const obligation_subscriptions_clone = structuredClone(this.state.obligation_subscriptions)
+    const subcontracts = this.fetch_contract_subcontract_subscriptions(object_e5_id)
+
+    if(this.state.default_obligation_contract.includes(object_e5_id)){
+      this.prompt_top_notification(this.getLocale()['2738da']/* 'You cant remove that subscription.' */, 6900)
+      return;
+    }
+
+    for(var c=0; c<subcontracts.length; c++){
+      if(this.state.default_obligation_contract.includes(subcontracts[c])){
+        this.prompt_top_notification(this.getLocale()['2738da']/* 'You cant remove that subscription.' */, 6900)
+        return;
+      }
+    }
+
     if(obligation_subscriptions_array_clone.includes(object_e5_id)){
       const index = obligation_subscriptions_array_clone.indexOf(object_e5_id)
       obligation_subscriptions_array_clone.splice(index, 1)
-      if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
-        obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now(), 'user_account_id':this.state.user_account_id}
-      }
-      obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
-      this.setState({obligation_subscriptions: obligation_subscriptions_clone })
+      subcontracts.forEach(subcontract => {
+        const sub_index = obligation_subscriptions_array_clone.indexOf(subcontract)
+        if(sub_index != -1) obligation_subscriptions_array_clone.splice(sub_index, 1)
+      });
       this.prompt_top_notification(this.getLocale()['2738cn']/* 'Removing obligation subscription... */, 1900)
     }else{
       obligation_subscriptions_array_clone.push(object_e5_id)
-      if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
-        obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now()}
-      }
-      obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
-      this.setState({obligation_subscriptions: obligation_subscriptions_clone })
+      subcontracts.forEach(subcontract => {
+        obligation_subscriptions_array_clone.push(subcontract)
+      });
       this.prompt_top_notification(this.getLocale()['2738co']/* 'Adding obligation subscription... */, 1900)
     }
+
+    if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
+      obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now(), 'user_account_id':this.state.user_account_id}
+    }
+    obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
+    this.setState({obligation_subscriptions: obligation_subscriptions_clone })
+
     const message_object = await this.prepare_obligation_subscription_object_message(obligation_subscriptions_array_clone)
 
     const room_id = 'obligation_subscription'
@@ -63284,6 +63597,18 @@ class App extends Component {
     this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
 
     await this.load_my_accounts_obligation_data([object_e5_id])
+  }
+
+  fetch_contract_subcontract_subscriptions(e5_id){
+    const configuration = this.state.my_contract_obligation_subscription_data[e5_id];
+    if(configuration != null){
+      const subcontracts = Object.keys(configuration['ipfs'].contract_beneficiaries);
+      const contract_ids = subcontracts.filter((subcontract_e5_id) => {
+        const cities = configuration['ipfs'].contract_beneficiaries[subcontract_e5_id]['cities'];
+        return (cities.length == 0 || cities.map(e => e.toLowerCase()).includes(this.state.admin.toLowerCase()))
+      });
+      return contract_ids
+    }else return []
   }
 
   async emit_update_subscriptions_for_obligations_event(){
@@ -63302,23 +63627,26 @@ class App extends Component {
     const my_object = this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] || {}
     const my_data = my_object['data'] || []
     const obligation_subscriptions_array_clone = my_data.slice()
+    const length = obligation_subscriptions_array_clone.length
     const obligation_subscriptions_clone = structuredClone(this.state.obligation_subscriptions)
-    if(obligation_subscriptions_array_clone.includes(object_e5_id)){
-      const index = obligation_subscriptions_array_clone.indexOf(object_e5_id)
-      obligation_subscriptions_array_clone.splice(index, 1)
-      if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
-        obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now(), 'user_account_id':this.state.user_account_id}
-      }
-      obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
-      this.setState({obligation_subscriptions: obligation_subscriptions_clone })
-    }else{
+    const subcontracts = this.fetch_contract_subcontract_subscriptions(object_e5_id)
+
+    if(!obligation_subscriptions_array_clone.includes(object_e5_id)){
       obligation_subscriptions_array_clone.push(object_e5_id)
-      if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
-        obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now()}
-      }
-      obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
-      this.setState({obligation_subscriptions: obligation_subscriptions_clone })
     }
+    subcontracts.forEach(subcontract => {
+      if(!obligation_subscriptions_array_clone.includes(subcontract)){
+        obligation_subscriptions_array_clone.push(subcontract)
+      }
+    });
+
+    if(obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] == null){
+      obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address] = {'data':[], 'time': Date.now(), 'user_account_id':this.state.user_account_id}
+    }
+    obligation_subscriptions_clone[this.state.accounts[this.state.selected_e5].address]['data'] = obligation_subscriptions_array_clone
+    this.setState({obligation_subscriptions: obligation_subscriptions_clone })
+    
+    return length != obligation_subscriptions_clone
   }
 
   async check_for_tags_if_exists_and_notify_receiver(object_e5_id, state_object){

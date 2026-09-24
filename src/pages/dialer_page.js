@@ -551,19 +551,16 @@ class DialerPage extends Component {
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Search filter country'} when_text_input_field_changed={this.when_country_input_field_changed.bind(this)} text={this.state.typed_country_name} theme={this.props.theme}/>
                 <div style={{height:5}}/>
-                {this.render_detail_item('1',{'active_tags':this.get_countries_from_typed_text(), 'indexed_option':'indexed', 'when_tapped':'when_obligation_country_selected'})}
+                {this.render_detail_item('1',{'active_tags':this.get_countries_from_typed_text3(), 'indexed_option':'indexed', 'when_tapped':'when_obligation_country_selected'})}
                 <div style={{height:15}}/>
 
                 <div style={{ height: 10 }} />
                 <div onClick={() => this.set_default_obligation_contract_for_country()}>
-                    {this.render_detail_item('5', { 'text': 'Set Contract.', 'action': '' })}
+                    {this.render_detail_item('5', { 'text': 'Add Contract.', 'action': '' })}
                 </div>
-
-                <div style={{ height: 10 }} />
-                {this.render_detail_item('4', {'text':'The default obligation configurations. Tap to delete one.', 'textsize':'14px', 'font':this.props.app_state.font})}
                 
                 <div style={{height:10}}/>
-                {this.set_default_obligation_contract_for_country()}
+                {this.render_country_obligation_contracts()}
 
             </div>
         )
@@ -662,6 +659,27 @@ class DialerPage extends Component {
         return (Math.round(number * 100) / 100)
     }
 
+    get_countries_from_typed_text3(){
+        var selected_countries = []
+        var all_countries = this.state.data['country_data']
+        var typed_text = this.state.typed_country_name
+
+        if(typed_text != ''){
+            selected_countries = all_countries.filter(function (el) {
+                return (el['name'].toLowerCase().includes(typed_text.toLowerCase()))
+            });
+        }else{
+            selected_countries = all_countries;
+        }
+
+        var selected = []
+        var l = selected_countries.length > 7 ? 7 : selected_countries.length
+        for(var i=0; i<l; i++){
+            selected.push(selected_countries[i]['name'])
+        }
+        return selected;
+    }
+
     when_obligation_country_selected(tag, pos){
         if(tag != 'e'){
             this.setState({typed_country_name: tag})
@@ -673,7 +691,10 @@ class DialerPage extends Component {
         const country_name = this.state.typed_country_name.trim()
 
         const clone = structuredClone(this.state.default_obligation_contract_ids)
-        clone[country_name] = contract_e5_id
+        if(clone[country_name] == null) clone[country_name] = []
+        if(!clone[country_name].includes(contract_e5_id)){
+            clone[country_name].push(contract_e5_id)
+        }
         this.setState({default_obligation_contract_ids: clone})
     }
 
@@ -683,18 +704,53 @@ class DialerPage extends Component {
             return (item_country.startsWith(this.state.typed_country_name))
         })
         const items2 = [1, 2]
+        const when_country_clicked = (country) => {
+            this.setState({selected_country_contracts: country})
+        }
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':'Tap a country to see its contracts, then tap a contract to delete it.', 'textsize':'14px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
+
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => when_country_clicked(item)}>
+                                {this.render_detail_item('4', {'text':item, 'textsize':'13px', 'font':this.props.app_state.font})}
+                                {this.state.selected_country_contracts == item && (
+                                    <div>
+                                        <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                                    </div>
+                                )}
+                            </li>
+                        ))}
+                        {items2.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                {this.state.selected_country_contracts != null && this.render_countrys_contracts(this.state.selected_country_contracts)}
+            </div>
+        )
+    }
+
+    render_countrys_contracts(country){
+        const items = this.state.default_obligation_contract_ids[country]
+        const items2 = [1, 2]
         return(
             <div>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_obligation_configuration_item(item)}
+                                {this.render_obligation_configuration_item(item, country)}
                             </li>
                         ))}
-                        {items2.map(() => (
+                        {items2.map((item, index) => (
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
-                                {this.render_empty_horizontal_list_item()}
+                                {this.render_empty_horizontal_list_item2()}
                             </li>
                         ))}
                     </ul>
@@ -703,22 +759,24 @@ class DialerPage extends Component {
         )
     }
 
-    render_obligation_configuration_item(item){
-        const contract_e5_id = this.state.default_obligation_contract_ids[item]
+    render_obligation_configuration_item(contract_e5_id, country){
         const contract_id = contract_e5_id.split('E')[0]
         const contract_e5 = 'E'+contract_e5_id.split('E')[1]
         const details = contract_id
-        const title = item
+        const title = country
         return(
-            <div onClick={() => this.when_obligation_configuration_item_clicked(item)}>
-                {this.render_detail_item('3', {'title':title, 'details':''+details, 'size':'l', 'title_image':this.props.app_state.e5s[contract_e5].e5_img, 'footer':contract_e5})}
+            <div onClick={() => this.when_obligation_configuration_item_clicked(contract_e5_id, country)}>
+                {this.render_detail_item('3', {'title':title, 'details':''+details+' • '+contract_e5, 'size':'l', 'title_image':this.props.app_state.e5s[contract_e5].e5_img,})}
             </div>
         )
     }
 
-    when_obligation_configuration_item_clicked(item){
+    when_obligation_configuration_item_clicked(item, country){
         const clone = structuredClone(this.state.default_obligation_contract_ids)
-        delete clone[item]
+        const index = clone[country].indexOf(item)
+        if(index != -1){
+            clone[country].splice(index, 1)
+        }
         this.setState({default_obligation_contract_ids: clone})
     }
 

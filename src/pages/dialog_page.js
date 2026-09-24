@@ -783,6 +783,9 @@ class DialogPage extends Component {
         else if(option == 'view_stacked_bag_details'){
             return this.show_view_stacked_bag_details_ui()
         }
+        else if(option == 'throttled_address_transactions'){
+            return this.throttled_address_transactions_ui()
+        }
     }
 
 
@@ -18950,6 +18953,142 @@ return data['data']
         this.props.open_dialog_bottomsheet();
         this.props.open_edit_object_uis(state_object)
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    throttled_address_transactions_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.throttled_address_transactions_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.throttled_address_transactions_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.throttled_address_transactions_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    throttled_address_transactions_data(){
+        const end_mint_limit = this.get_mint_limit(3)
+        const spend_mint_limit = this.get_mint_limit(5)
+        const end_move_limit = end_mint_limit * 0.01;
+        const spend_move_limit = spend_mint_limit * 0.01;
+        const moving_end = this.state.data['moving_end']
+        const moving_spend = this.state.data['moving_spend']
+        const last_transaction_time = this.state.data['last_transaction_time']
+        const restricted_accounts = this.state.data['restricted_accounts'] || []
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055tu']/* 'Your address has been throttled.' */, 'details':this.props.app_state.loc['3055tv']/* 'Some transactions have been restricted from your run and need to be ignored. Kindly follow the following requirements:' */, 'size':'l',})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>\
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055tw']/* 'The amount of END youre transacting.' */, 'subtitle':this.format_power_figure(end_move_limit), 'barwidth':this.calculate_bar_width(end_move_limit), 'number':this.format_account_balance_figure(end_move_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* 'END' */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055tx']/* 'The Limit.' */, 'subtitle':this.format_power_figure(moving_end), 'barwidth':this.calculate_bar_width(moving_end), 'number':this.format_account_balance_figure(moving_end), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* 'END' */, })}
+                </div>
+                <div style={{height: 10}}/>
+
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>\
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055ty']/* 'The amount of SPEND youre transacting.' */, 'subtitle':this.format_power_figure(spend_move_limit), 'barwidth':this.calculate_bar_width(spend_move_limit), 'number':this.format_account_balance_figure(spend_move_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055tx']/* 'The Limit.' */, 'subtitle':this.format_power_figure(moving_spend), 'barwidth':this.calculate_bar_width(moving_spend), 'number':this.format_account_balance_figure(moving_spend), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ua']/* 'Reserved' */, 'details':this.props.app_state.loc['3055tz']/* 'Minting Outside the END or SPEND Exchanges.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ua']/* 'Reserved' */, 'details':this.props.app_state.loc['3055ub']/* 'Transferring any token that is NOT END or SPEND.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ua']/* 'Reserved' */, 'details':this.props.app_state.loc['3055uc']/* 'Consuming more than 935,000 gas with custom gas fees.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ua']/* 'Reserved' */, 'details':this.props.app_state.loc['3055uc']/* 'Consuming more than 935,000 gas with custom gas fees.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ua']/* 'Reserved' */, 'details':this.props.app_state.loc['3055uc']/* 'Consuming more than 935,000 gas with custom gas fees.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ua']/* 'Reserved' */, 'details':this.props.app_state.loc['3055ud']/* 'Running a transaction before 6hrs have elapsed after your preceding run.' */, 'size':'l', 'footer':this.props.app_state.loc['3055ue']/* 'Last transaction time: $' */.replace('$', (new Date(last_transaction_time*1000).toLocaleString())).replace('%', this.get_time_difference(last_transaction_time)) })}
+
+                {restricted_accounts.length > 0 && this.render_restricted_accounts(restricted_accounts)}
+            </div>
+        )
+    }
+
+    get_mint_limit(token_id){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5] == null || this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][token_id] == null){
+            if(this.props.app_state.selected_e5 == 'E25') return bigInt('35000000')
+            else if(this.props.app_state.selected_e5 == 'E35') return bigInt('3500000')
+            else return bigInt('72000000')
+        }else{
+            return this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][token_id]['data'][1][0/* <0>default_exchange_amount_buy_limit */]
+        }
+    }
+
+    render_restricted_accounts(restricted_accounts){
+        return(
+            <div>
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ul']/* 'Reserved Accounts.' */, 'details':this.props.app_state.loc['3055uk']/* 'These accounts in your stack cannot be interacted with.' */, 'size':'l'})}
+                <div style={{'margin':'5px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {restricted_accounts.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_detail_item('4', {'text':number_with_commas(item), 'textsize':'12px', 'font':this.props.app_state.font})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+
 
 
 

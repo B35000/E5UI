@@ -1261,9 +1261,9 @@ class home_page extends Component {
     render_navbar_button_group(size, navbar_width){
         var line_margin = '0px '+this.get_navbar_line_margin_percentage()+' 0px 0px'
         if(size == 'm'){
-            var padding_object_width = '5px 0px 0px 30px'
+            var padding_object_width = '5px 0px 0px 35px'
             if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
-                padding_object_width = '5px 0px 0px 40px'
+                padding_object_width = '5px 0px 0px 45px'
             }
             return ( 
                 <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:navbar_width}}>
@@ -1536,7 +1536,42 @@ class home_page extends Component {
         var me = this;
         setTimeout(function() {
             me.update_scroll_position()
+            me.props.set_focused_page_in_homepage(me.get_page_from_tag_group_item())
         }, (1 * 10));
+    }
+
+    get_page_from_tag_group_item(){
+        var selected_page = ''
+        if(this.state.page == '?'){
+            const tag_group = this.state.work_page_tags_object
+            selected_page = tag_group['i'].active
+            if(selected_page == 'e') selected_page = this.props.app_state.loc['1196']/* 'jobs' */
+        }
+        else if(this.state.page == 'e'){
+            const tag_group = this.state.explore_page_tags_object
+            selected_page = tag_group['i'].active
+        }
+        else{
+            //wallet
+            const tag_group = this.state.wallet_page_tags_object
+            selected_page = 'w'
+            if(tag_group['i'].active == this.props.app_state.loc['1264ai']/* bills */){
+                selected_page = this.props.app_state.loc['1264ai']/* bills */
+            }
+            else if(tag_group['i'].active == this.props.app_state.loc['1218']/* 'ends' */){
+                selected_page = this.props.app_state.loc['1218']/* 'ends' */
+            }
+            else if(tag_group['i'].active == this.props.app_state.loc['1219']/* 'spends' */){
+                selected_page = this.props.app_state.loc['1219']/* 'spends' */
+            }
+            else if(tag_group['i'].active == this.props.app_state.loc['1264bw']/* 'certificates' */){
+                selected_page = this.props.app_state.loc['1264bw']/* 'certificates' */
+            }
+            else if(tag_group['i'].active == this.props.app_state.loc['1264bx']/* 'cross-exchanges' */){
+                selected_page = this.props.app_state.loc['1264bx']/* 'cross-exchanges' */
+            }
+        }
+        return selected_page
     }
 
     render_navbar_button(icontype, text_padding, img, img_height, img_width, img_padding, title, tabs, notification_count){
@@ -1617,7 +1652,7 @@ class home_page extends Component {
         const color = this.props.app_state.socket_online == true ? (this.props.app_state.is_device_online == true ? this.props.app_state.theme['online_dot_color'] : this.props.app_state.theme['offline_dot_color']) : this.props.app_state.theme['unset_dot_color'];
         return(
             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: width}}>
-                <div style={{'padding': '0px 0px 0px 10px', width:width-60}}>
+                <div style={{'padding': '0px 0px 0px 0px', width:width-60}}>
                     {this.render_tag_bar_group(this.get_tag_group_option(),'l')}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height:36}}>
@@ -2428,7 +2463,7 @@ class home_page extends Component {
             }
             
         }
-
+        this.props.set_focused_page_in_homepage(selected_page)
         var id = this.get_page_id()
         
         if(is_selecting_same_tag == true && clicked_tag_name != 'e' && clicked_tag_name != this.props.app_state.loc['1264j']/* 'coins 🪙' */ && clicked_tag_name != this.props.app_state.loc['1217']/* 'ethers ⚗️' */ && selected_page != this.props.app_state.loc['1212']/* 'E5s' */ && clicked_tag_name != this.props.app_state.loc['1593gf']/* 'iTransfer 💳' */ && clicked_tag_name != this.props.app_state.loc['1264bo']/* 'direct-message 💬' */ && clicked_tag_name != this.props.app_state.loc['1593kn']/* 'calls ☎️' */ && clicked_tag_name != this.props.app_state.loc['1593x']/* 'Watch 👁️' */ && clicked_tag_name != this.props.app_state.loc['1264bp']/* 'indexed-data 🔎' */){
