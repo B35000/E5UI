@@ -1126,7 +1126,8 @@ class CertificateDetailsSection extends Component {
     render_coupon_payment_button(object){
         var my_account = this.props.app_state.user_account_id[object['e5']]
         const coupon_data = this.props.app_state.non_fungible_token_balance_distribution[object['e5_id']]
-        if(object['author'] == my_account && coupon_data != null){
+        const is_bond = this.get_selected_item2(object['ipfs'].get_new_certificate_bond_enabled_tags_object, 'e') == 1
+        if(object['author'] == my_account && coupon_data != null && is_bond == true){
             return(
                 <div>
                     {this.render_detail_item('0')}

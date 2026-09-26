@@ -1,16 +1,16 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-restricted-globals */
-const version = '9.69(beta)';
+const version = '9.72(beta)';
 self.addEventListener('push', event => {
   const data = event.data.json();
   const get_language = () => {
-      var lang = navigator.language || navigator.userLanguage || 'en';
-      var language = lang.toString().toLowerCase()
-      if(language.includes('-')){
-      var ln = language.split('-')
-          language = ln[0]
-      }
-      return language
+    var lang = navigator.language || navigator.userLanguage || 'en';
+    var language = lang.toString().toLowerCase()
+    if(language.includes('-')){
+    var ln = language.split('-')
+      language = ln[0]
+    }
+    return language
   }
   const notification_data = {
     'en':{

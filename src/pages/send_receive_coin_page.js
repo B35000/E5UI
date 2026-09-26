@@ -568,7 +568,7 @@ class SendReceiveCoinPage extends Component {
             if(utxos['data'] == null) return 0;
             var should_add = true;
             utxos['data'].forEach(utxo => {
-               if(should_add) bal += parseInt(utxo['satoshis']);
+               if(should_add) bal += parseInt(utxo['value']);
                if(should_add) utxos_count++
                 if(bal >= transfer_amount){
                     should_add = false;

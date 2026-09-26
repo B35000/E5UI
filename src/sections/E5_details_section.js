@@ -41,8 +41,8 @@ function number_with_commas(x) {
 }
 
 function start_and_end(str) {
-  if (str.length > 13) {
-    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  if (str.length > 35) {
+    return str.substr(0, 20) + '...' + str.substr(str.length-10, str.length);
   }
   return str;
 }

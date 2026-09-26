@@ -10681,7 +10681,7 @@ class App extends Component {
     for (let utx of utxos['data']) {
       txb.addInput(utx['txid'], utx['vout']);
       input_count++;
-      input += parseInt(utx['satoshis']);
+      input += parseInt(utx['value']);
       if (input >= transfer_amount) break;
     }
 
@@ -35037,7 +35037,7 @@ class App extends Component {
     const wallet = await this.make_dogecoin_wallet(seed, network)
     const address = wallet.address
     
-    var utxos = await this.get_dogecoin_utxos(address)
+    const utxos = await this.get_dogecoin_utxos(address)
     const balance = this.get_total_dogecoin_balance_from_utxos(utxos)
 
     var fee_info = {'fee':await this.get_dogecoin_fees(), 'type':'variable', 'per':'byte'}
@@ -35062,26 +35062,57 @@ class App extends Component {
   }
 
   get_dogecoin_utxos = async (address) => {
-    var key = `${process.env.REACT_APP_DOGECOIN_API_KEY}`;
-    const request = `https://xdg-mainnet.gomaestro-api.org/v0/addresses/${address}/utxos?count=100`
-    var header = {
-      headers: {
-        'Accept': 'application/json',
-        'api-key': key
-      }
-    }
-    if(!this.is_address_set(address)) return {}
-    try{
-      const response = await fetch(request, header);
+    // var key = `${process.env.REACT_APP_DOGECOIN_API_KEY}`;
+    // const request = `https://xdg-mainnet.gomaestro-api.org/v0/addresses/${address}/utxos?count=100`
+    // var header = {
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'api-key': key
+    //   }
+    // }
+    // if(!this.is_address_set(address)) return {}
+    // try{
+    //   const response = await fetch(request, header);
+    //   if (!response.ok) {
+    //     console.log(response)
+    //     return {}
+    //     // throw new Error(`Failed to retrieve data. Status: ${response}`);
+    //   }
+    //   var data = await response.text();
+    //   return JSON.parse(data)
+    // }
+    // catch(e){
+    //   console.log(e)
+    //   return {}
+    // }
+    const key = `${process.env.REACT_APP_TATUM_API_KEY}`
+    const totalValue = 100_000_000_000;
+    const request = `https://api.tatum.io/v4/data/utxos?chain=doge-mainnet&address=${address}&totalValue=${totalValue}`;
+    if (!this.is_address_set(address)) return {}
+
+    try {
+      const response = await fetch(request, {
+        headers: {
+          'Accept': 'application/json',
+          'x-api-key': key
+        }
+      });
       if (!response.ok) {
         console.log(response)
         return {}
-        // throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       var data = await response.text();
-      return JSON.parse(data)
+      const normalized = JSON.parse(data).map((utxo) => ({
+        txid: utxo.txHash,
+        vout: utxo.index,
+        value: parseInt(utxo.value * 100000000),
+      }));
+      console.log('get_dogecoin_utxos', normalized)
+      return {
+        'data':normalized
+      }
     }
-    catch(e){
+    catch (e) {
       console.log(e)
       return {}
     }
@@ -35091,7 +35122,7 @@ class App extends Component {
     var bal = 0
     if(utxos['data'] == null) return 0;
     utxos['data'].forEach(utxo => {
-      bal += parseInt(utxo['satoshis']);
+      bal += parseInt(utxo['value']);
     });
     return bal;
   }
@@ -37484,7 +37515,7 @@ class App extends Component {
       var e5_address = this.state.e5s[e5].e5_address;
       var account_for_e5 = this.state.accounts[e5]
       const ether_object = state_list.find((obj) => obj['e5'] == e5)
-      if(web3_url != '' && ether_object != null && ether_object['disabled'] == false){
+      if((web3_url != '' && ether_object != null && ether_object['disabled'] == false) || e5 == 'E25'){
         if(is_syncing == false){
           await this.get_wallet_data2(account_for_e5, is_syncing, web3_url, e5_address, e5)
           await this.wait(1000)
