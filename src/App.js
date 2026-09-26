@@ -15044,7 +15044,7 @@ class App extends Component {
     const lan = 'en'
     const my_lan = this.state.device_language
     const { payload, payload_data } = this.extract_payload_for_translation(state_obj, lan);
-    const payload_result = my_lan == 'en' ? payload.map(e => payload.text) : await this.translate_payload(payload, 'to_en');
+    const payload_result = my_lan == 'en' ? payload.map(e => e.text) : await this.translate_payload(payload, 'to_en');
 
     if(payload_result != null){
       const payload_data_translated = this.inject_translation_result_into_payload_data(payload_data, payload_result, lan, state_obj)
@@ -15230,6 +15230,7 @@ class App extends Component {
     for (var s=0; s<sorted.length; s++) {
       const element = sorted[s]
       if(element.type == 'paragraph'){
+          // console.log('replacing element: ', element)
           let translated_content = element.translatedContent
           element.internals.forEach(link_element => {
               const object = translatedElements.find((e) => {
@@ -33974,12 +33975,11 @@ class App extends Component {
         sunset: sunset, 
         city: user_city, 
         region: user_region,
-        admin: data.results.sunrise
       })
       if(this.state.device_country == null || this.state.device_country == ''){
         this.setState({
           device_country: country, 
-          device_city: user_city, 
+          device_city: user_city,
           device_region: user_region, 
           device_country_code: this.get_country_code(country)
         })
@@ -38696,6 +38696,9 @@ class App extends Component {
             'lon':lon, 
             'admin':admin1
           })
+          if(city.toLowerCase() == this.state.city.toLowerCase()){
+            this.setState({admin: admin1})
+          }
         }
       }
       // console.log('apppage', 'finished up storage obj', storage_obj)

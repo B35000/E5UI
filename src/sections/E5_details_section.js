@@ -40,6 +40,13 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function start_and_end(str) {
+  if (str.length > 13) {
+    return str.substr(0, 6) + '...' + str.substr(str.length-6, str.length);
+  }
+  return str;
+}
+
 class E5DetailsSection extends Component {
     
     state = {
@@ -558,7 +565,7 @@ class E5DetailsSection extends Component {
             'label':{'header':obj['id'], 'subtitle':chain_message, 'size':'l', 'image': image},
             'tags':{'active_tags':[obj['id'],this.props.app_state.loc['2244']/* 'E5' */, this.props.app_state.loc['2245']/* 'Main' */, this.props.app_state.loc['361']/* 'Contract' */], 'index_option':'indexed'},
             
-            'address': {'title':this.props.app_state.loc['2246']/* 'E5 Address:' */, 'details':address, 'size':'l', 'footer':this.props.app_state.loc['2336cd']/* 'Deployed On $' */.replace('$', chain_name)},
+            'address': {'title':this.props.app_state.loc['2246']/* 'E5 Address:' */, 'details':start_and_end(address), 'size':'l', 'footer':this.props.app_state.loc['2336cd']/* 'Deployed On $' */.replace('$', chain_name)},
 
             'deployed_on': {'title':chain_name, 'details':this.props.app_state.loc['2336cd']/* 'Deployed On $' */, 'size':'l'},
 

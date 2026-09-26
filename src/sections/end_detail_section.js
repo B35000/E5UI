@@ -466,6 +466,15 @@ class EndDetailSection extends Component {
 
                                     {index == 2 && (<div style={{height:10}}/>)}
                                     {index == 2 && this.render_object_views(selected_object)}
+                                    
+                                    {index == 2 && (
+                                        <div>
+                                            {this.render_detail_item('3', item['token_name'])}
+                                            <div style={{height:10}}/>
+                                            {this.render_detail_item('3', item['token_symbol'])}
+                                            <div style={{height:10}}/>
+                                        </div>
+                                    )}
                                     {index == 2 && (
                                         <div onClick={() => this.copy_id_to_clipboard(selected_object)}>
                                             {this.render_detail_item('3', item['token_id'])}
@@ -1605,6 +1614,8 @@ class EndDetailSection extends Component {
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
+            'token_name':{'title':name, 'details':this.props.app_state.loc['2447bh']/* 'Token Name' */, 'size':'l'},
+            'token_symbol':{'title':symbol, 'details':this.props.app_state.loc['2447bi']/* 'Token Symbol' */, 'size':'l'},
             'token_id': {'title':'• '+number_with_commas(selected_object['id']), 'details':this.props.app_state.loc['2376']/* 'Token Identifier' */, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
             'token_type': {'title':this.props.app_state.loc['2377']/* 'Token Class' */, 'details':type, 'size':'l'},
             'age': { 'style': 'l', 'title': this.props.app_state.loc['2378']/* 'Block Number' */, 'subtitle': this.props.app_state.loc['2198']/* 'age' */, 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`},

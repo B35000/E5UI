@@ -28,7 +28,14 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 
 const hidePreloader = () => {
   const el = document.getElementById("preloader");
-  if (el) el.style.display = "none";
+  if (!el) return;
+
+  el.style.pointerEvents = "none"; // stop it eating clicks while it shrinks
+  el.classList.add("preloader-hide");
+
+  const remove = () => { el.style.display = "none"; };
+  el.addEventListener("transitionend", remove, { once: true });
+  setTimeout(remove, 650); // fallback in case transitionend doesn't fire
 };
 
 if (process.env.NODE_ENV === 'production') {
