@@ -378,7 +378,7 @@ import default_page_background_orange from './assets/default_page_background_ora
 // import  from './assets/'
 
 import ethereum_classic_logo from './assets/ethereum_testnet.png'
-import harmony_logo from './assets/harmony.png'
+// import harmony_logo from './assets/harmony.png'
 import celo_logo from './assets/celo.png'
 import flare_logo from './assets/flare.png'
 import xdai_logo from './assets/xdai.png'
@@ -548,6 +548,7 @@ import zcash_logo from './assets/zcash.png'
 import gram_logo from './assets/gram.png'
 import monero_logo from './assets/monero.png'
 import egld_logo from './assets/egld.png'
+import dogecoin2_logo from './assets/dogecoin2.png'
 
 import end25_image from './assets/E25.png'
 import spend25_image from './assets/325.png'
@@ -2378,7 +2379,7 @@ class App extends Component {
         web3:['https://api.harmony.one'],
         token:'ONE',
         e5_address:'', /* 0xC621A0305D1826AB1E24C7d78792035cD9204eD4 */
-        first_block:50166065, end_image:'https://nftstorage.link/ipfs/bafkreiehe7jgkkhkb6rwh6o3eirbi4hr6rvm256gxuxnpltbcjiymsnaji', spend_image:'https://nftstorage.link/ipfs/bafkreihyjmhty3kqxvicghsh2apwd4n2grvmhcadwuzfuqtpcm4c2h7jwm', ether_image:harmony_logo/* 'https://nftstorage.link/ipfs/bafkreidqivbjiabs2zcyj2qljx5u4wytvhoctjkq4kjrleuyxjrhz3xjl4' */, iteration:1_024/* this limit is horrible. bad blockchain. */, url:0, active:false, e5_img:null, id: ChainId.ONE, external_swappers:['lifi', 'changenow'], changenow_object: get_changenow_object("Harmony")
+        first_block:50166065, end_image:'https://nftstorage.link/ipfs/bafkreiehe7jgkkhkb6rwh6o3eirbi4hr6rvm256gxuxnpltbcjiymsnaji', spend_image:'https://nftstorage.link/ipfs/bafkreihyjmhty3kqxvicghsh2apwd4n2grvmhcadwuzfuqtpcm4c2h7jwm', ether_image:'harmony_logo'/* 'https://nftstorage.link/ipfs/bafkreidqivbjiabs2zcyj2qljx5u4wytvhoctjkq4kjrleuyxjrhz3xjl4' */, iteration:1_024/* this limit is horrible. bad blockchain. */, url:0, active:false, e5_img:null, id: ChainId.ONE, external_swappers:['lifi', 'changenow'], changenow_object: get_changenow_object("Harmony")
       },
       'E315':{
         web3:['https://rpc-mainnet.findora.org'],
@@ -3197,7 +3198,7 @@ class App extends Component {
       this.get_token('BTCN', 'Corn', 'E935', true),
       this.get_token('XTZE', 'Etherlink', 'E945'),
       this.get_token('FRAX', 'Fraxtal', 'E955'),
-      this.get_token('HSK', 'HashKey', 'E965'),
+      this.get_token('HSK', 'HashKey', 'E965', true),
       this.get_token('HETH', 'Hemi', 'E975'),
       this.get_token('IETH', 'Ink', 'E985'),
       this.get_token('GHO', 'Lens', 'E995', true),
@@ -3263,6 +3264,8 @@ class App extends Component {
   }
 
   get_coin_data(){
+    const dogecoin_balance = this.state?.coin_data?.['DOGE']?.['balance']
+    const doge_image = dogecoin_balance != null && !bigInt(dogecoin_balance).isZero() ? dogecoin2_logo : dogecoin_logo
     var list = {
       'BTC': this.get_coin_info('BTC', 'Bitcoin', bitcoin_logo, 'satoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113b']/* 'Proof Of Work' */, '10 min.', this.get_time_difference(1231006505), 3, 1, "Bitcoin", ['changenow']),
 
@@ -3270,7 +3273,7 @@ class App extends Component {
 
       'LTC': this.get_coin_info('LTC', 'Litecoin', litecoin_logo, 'litoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '2.5 min.', this.get_time_difference(1317972665), 56, 1, "Litecoin", ['changenow']),
 
-      'DOGE': this.get_coin_info('DOGE', 'Dogecoin', dogecoin_logo, 'koinu', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '1 min.', this.get_time_difference(1386338512), 30, 1, "Dogecoin", ['changenow']),
+      'DOGE': this.get_coin_info('DOGE', 'Dogecoin', doge_image, 'koinu', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '1 min.', this.get_time_difference(1386338512), 30, 1, "Dogecoin", ['changenow']),
 
       'DASH': this.get_coin_info('DASH', 'Dash', dash_logo, 'duff', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '2.5 min.', this.get_time_difference(1390083000), 56, 2, "Dash", ['changenow']),
 
@@ -3365,6 +3368,14 @@ class App extends Component {
       'external_swappers':supported_exchanges,
       'changenow_object':changenow_object
     }
+  }
+
+  set_dogecoin_logo_to_second(){
+    const clone = structuredClone(this.state.coins);
+    clone['DOGE']['image'] = dogecoin2_logo;
+    clone['DOGE']['label']['image'] = dogecoin2_logo;
+    clone['DOGE']['banner-icon']['image'] = dogecoin2_logo;
+    this.setState({coins: clone})
   }
 
   get_default_addresses(){
@@ -35048,6 +35059,9 @@ class App extends Component {
     // this.setState({coin_data: clone})
     // await this.wait(100)
     this.fetch_specific_coin_receipts(address)
+    if(!bigInt(balance).isZero()){
+      this.set_dogecoin_logo_to_second()
+    }
     return dogecoin_data
   }
 
@@ -35156,6 +35170,9 @@ class App extends Component {
     clone['DOGE']['utxos'] = utxos
     clone['DOGE']['fee']['fee'] = await this.get_dogecoin_fees()
     // this.setState({coin_data: clone})
+    if(!bigInt(balance).isZero()){
+      this.set_dogecoin_logo_to_second()
+    }
     return clone
   }
 

@@ -425,6 +425,11 @@ const currencies = [
     "name": "Sonic"
   },
   {
+    "id": "sophon",
+    "symbol": "soph",
+    "name": "Sophon"
+  },
+  {
     "id": "stellar",
     "symbol": "xlm",
     "name": "Stellar"
