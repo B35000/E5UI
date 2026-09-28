@@ -59660,11 +59660,13 @@ class App extends Component {
           const candle_timestamp = value_array[0]
           const gas = value_array[1]
           const proportion = value_array[2]
+          const gasprice = value_array[3] || 1
 
           candle_sticks.push({
             'time':parseInt(candle_timestamp),
             'gas':gas,
-            'proportion':proportion
+            'proportion':proportion,
+            'gasprice':gasprice
           })
         });
         const sorted_candle_sticks = this.sortByAttributeDescending(candle_sticks, 'time').reverse()

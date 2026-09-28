@@ -376,6 +376,8 @@ class EthersDetailsSection extends Component {
 
                     {this.render_ether_gas_chart_info(item)}
 
+                    {this.render_ether_gas_price_chart_info(item)}
+
                     {this.render_detail_item('0')}
 
                     {/* {this.render_detail_item('3', item['gas_used_chart_data_label'])} */}
@@ -404,6 +406,8 @@ class EthersDetailsSection extends Component {
                             </div>
                         </div>
                     )}
+
+                    
 
                     
                     <div style={{height:10}}/>
@@ -1403,6 +1407,72 @@ class EthersDetailsSection extends Component {
             if(yVal != null){
                 var indicator = data[i].toFixed(4)
                 var final_indicator = '$%'.replace('$', indicator)
+                
+                if(i == parseInt(0.35*noOfDps) || i == parseInt(0.65*noOfDps)){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return { dps, starting_time: starting_time }
+    }
+
+
+
+
+
+
+
+
+
+    render_ether_gas_price_chart_info(item){
+        const symbol = item['symbol']
+        const chart_data = this.props.app_state.ether_gas_chart_info[symbol];
+
+        if(chart_data != null && chart_data.length > 0){
+            const datapoints1 = this.get_ether_gasprice_chart_data(item);
+
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bs']/*  'Gas Prices.' */, 'details':this.props.app_state.loc['2481bt'] /* 'Chart containing the network\'s base gas prices over the last day or so.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'y_axis_units':' '+this.props.app_state.loc['2738db']/* wei */})}
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bu']/* 'Y-Axis: Gas Prices in Wei.' */ , 'details':this.props.app_state.loc['1461'] /* 'X-Axis: Time' */, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    get_ether_gasprice_chart_data(item){
+        const symbol = item['symbol'];
+        const chart_data = this.props.app_state.ether_gas_chart_info[symbol];
+        const data = []
+        const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time']*1000 : Date.now()
+
+        if(chart_data != null){
+            for(var j=0; j<chart_data.length; j++){
+                const data_point = chart_data[j];
+                const gasprice = data_point['gasprice'];
+                data.push((parseFloat(gasprice) / 1_000_000_000).toFixed(3))
+            }
+        }
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = data.length;
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[i]
+            
+            if(yVal != null){
+                var indicator = (parseFloat(data[i]) / 1_000_000_000).toFixed(3)
+                var final_indicator = '$ %'.replace('$', indicator).replace('%', this.props.app_state.loc['2738db']/* Gwei */)
                 
                 if(i == parseInt(0.35*noOfDps) || i == parseInt(0.65*noOfDps)){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
