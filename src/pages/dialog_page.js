@@ -16042,19 +16042,19 @@ return data['data']
         
         var items = [
             {'title':this.props.app_state.loc['3115h']/* 'sluggish' */, 'price':Math.round(0.75 * gas_price)},
-            {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price)},
-            {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.7 * gas_price)},
-            {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.6 * gas_price)},
-            {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.1 * gas_price)},
+            {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.01 * gas_price)},
+            {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.1 * gas_price)},
+            {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(1.5 * gas_price)},
+            {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(1.7 * gas_price)},
         ]
 
         if(this.props.app_state.e5s[e5].type == '1559'){
             items = [
-                {'title':this.props.app_state.loc['3115h']/* 'sluggish' */, 'price':Math.round(0.75 * gas_price), 'max_priority_fee':1_100_000_000 },
-                {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price), 'max_priority_fee':2_000_000_000 },
-                {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.8 * gas_price), 'max_priority_fee':3_000_000_000},
-                {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.9 * gas_price), 'max_priority_fee':4_000_000_000},
-                {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.6 * gas_price), 'max_priority_fee':5_000_000_000},
+                {'title':this.props.app_state.loc['3115h']/* 'sluggish' */, 'price':Math.round(0.75 * gas_price), 'max_priority_fee':Math.round(0.75 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.01 * gas_price), 'max_priority_fee': Math.round(1.01 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.1 * gas_price), 'max_priority_fee': Math.round(1.1 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(1.5 * gas_price), 'max_priority_fee': Math.round(1.5 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(1.7 * gas_price), 'max_priority_fee':Math.round(1.7 * gas_price) * 2},
             ]
         }
 
@@ -19023,18 +19023,18 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055tu']/* 'Your address has been throttled.' */, 'details':this.props.app_state.loc['3055tv']/* 'Some transactions have been restricted from your run and need to be ignored. Kindly follow the following requirements:' */, 'size':'l',})}
                 <div style={{height: 10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>\
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055tw']/* 'The amount of END youre transacting.' */, 'subtitle':this.format_power_figure(end_move_limit), 'barwidth':this.calculate_bar_width(end_move_limit), 'number':this.format_account_balance_figure(end_move_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* 'END' */, })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055tw']/* 'The amount of END youre transacting.' */, 'subtitle':this.format_power_figure(moving_end), 'barwidth':this.calculate_bar_width(moving_end), 'number':this.format_account_balance_figure(moving_end), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* 'END' */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055tx']/* 'The Limit.' */, 'subtitle':this.format_power_figure(moving_end), 'barwidth':this.calculate_bar_width(moving_end), 'number':this.format_account_balance_figure(moving_end), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* 'END' */, })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055tx']/* 'The Limit.' */, 'subtitle':this.format_power_figure(end_move_limit), 'barwidth':this.calculate_bar_width(end_move_limit), 'number':this.format_account_balance_figure(end_move_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* 'END' */, })}
                 </div>
                 <div style={{height: 10}}/>
 
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>\
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055ty']/* 'The amount of SPEND youre transacting.' */, 'subtitle':this.format_power_figure(spend_move_limit), 'barwidth':this.calculate_bar_width(spend_move_limit), 'number':this.format_account_balance_figure(spend_move_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055ty']/* 'The amount of SPEND youre transacting.' */, 'subtitle':this.format_power_figure(moving_spend), 'barwidth':this.calculate_bar_width(moving_spend), 'number':this.format_account_balance_figure(moving_spend), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055tx']/* 'The Limit.' */, 'subtitle':this.format_power_figure(moving_spend), 'barwidth':this.calculate_bar_width(moving_spend), 'number':this.format_account_balance_figure(moving_spend), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3055tx']/* 'The Limit.' */, 'subtitle':this.format_power_figure(spend_move_limit), 'barwidth':this.calculate_bar_width(spend_move_limit), 'number':this.format_account_balance_figure(spend_move_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, })}
                 </div>
                 <div style={{height: 10}}/>
 

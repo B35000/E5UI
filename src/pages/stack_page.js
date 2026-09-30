@@ -1915,19 +1915,21 @@ class StackPage extends Component {
         if(gas_price == null || isNaN(gas_price) || is_throttled == true) return;
         
         var items = [
-            {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price)},
-            {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.7 * gas_price)},
-            {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.6 * gas_price)},
-            {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.1 * gas_price)},
+            {'title':this.props.app_state.loc['3115h']/* 'sluggish' */, 'price':Math.round(0.75 * gas_price)},
+            {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.01 * gas_price)},
+            {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.1 * gas_price)},
+            {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(1.5 * gas_price)},
+            {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(1.7 * gas_price)},
         ]
 
         var e5 = this.props.app_state.selected_e5
         if(this.props.app_state.e5s[e5].type == '1559'){
             items = [
-                {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price), 'max_priority_fee':2_000_000_000 },
-                {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.8 * gas_price), 'max_priority_fee':3_000_000_000},
-                {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.9 * gas_price), 'max_priority_fee':4_000_000_000},
-                {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.6 * gas_price), 'max_priority_fee':5_000_000_000},
+                {'title':this.props.app_state.loc['3115h']/* 'sluggish' */, 'price':Math.round(0.75 * gas_price), 'max_priority_fee':Math.round(0.75 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.01 * gas_price), 'max_priority_fee': Math.round(1.01 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.1 * gas_price), 'max_priority_fee': Math.round(1.1 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(1.5 * gas_price), 'max_priority_fee': Math.round(1.5 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(1.7 * gas_price), 'max_priority_fee':Math.round(1.7 * gas_price) * 2},
             ]
         }
 
@@ -3595,7 +3597,7 @@ class StackPage extends Component {
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
         var transaction_time_limit = (Date.now/1000) - (60*60*6)
-        if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
+        if(is_throttled == true && (is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit)){
             if(!silently) this.props.show_dialog_bottomsheet({ 
                 'moving_end':moving_end, 
                 'moving_spend':moving_spend, 
@@ -3604,6 +3606,10 @@ class StackPage extends Component {
             }, 'throttled_address_transactions')
             this.set_can_switch_e5_value(true)
             this.props.lock_run(false)
+
+            const calculate_stack_clone = structuredClone(this.state.is_calculating_stack)
+            calculate_stack_clone[e5] = null
+            this.setState({is_calculating_stack: calculate_stack_clone})
             return;
         }
 
@@ -7515,7 +7521,6 @@ class StackPage extends Component {
         var moving_spend = bigInt(0)
         var is_restricted = false
         const is_throttled = this.get_throttled_data().length > 0
-        const last_transaction_time = is_throttled == true ? await this.props.fetch_last_transaction_time() : 0
         const restricted_accounts = []
         for(var i=0; i<txs.length; i++){
             const tx = txs[i]
@@ -9986,6 +9991,9 @@ class StackPage extends Component {
             this.props.calculate_arweave_data_fees(obj)
         }
         console.log('stack_page_ipfs', 'link', link)
+
+        const last_transaction_time = (is_throttled == true || is_restricted == true) ? await this.props.fetch_last_transaction_time() : 0
+
         return { link, obligation_inclusive, moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts }
     }
 

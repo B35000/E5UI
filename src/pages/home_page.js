@@ -591,7 +591,7 @@ class home_page extends Component {
             );
         }
         else if(size == 's'){
-            var bottom_bar = 80;
+            var bottom_bar = 85;
             var radius = '0px'
             const selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
             

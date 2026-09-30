@@ -1311,7 +1311,7 @@ class EthersDetailsSection extends Component {
                         <div style={{height: 10}}/>
                         {this.render_gas_or_proportion_tags()}
 
-                        {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'y_axis_units':'gas'})}
+                        {this.render_detail_item('6', {'dataPoints':datapoints1.dps, 'start_time':datapoints1.starting_time, 'y_axis_units':' gas'})}
 
                         <div style={{height: 10}}/>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['2481bl']/* Y-Axis: Gas' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
@@ -1348,8 +1348,11 @@ class EthersDetailsSection extends Component {
 
     get_ether_gas_chart_data(item){
         const symbol = item['symbol'];
-        const chart_data = this.props.app_state.ether_gas_chart_info[symbol];
+        const all_chart_data = this.props.app_state.ether_gas_chart_info[symbol] || [];
         const data = []
+        const chart_data = all_chart_data.filter((point) => {
+            return point['time']*1000 > Date.now()-(24*60*60*1000)
+        })
         const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time']*1000 : Date.now()
 
         if(chart_data != null){
@@ -1385,8 +1388,11 @@ class EthersDetailsSection extends Component {
 
     get_ether_gas_proportion_chart_data(item){
         const symbol = item['symbol'];
-        const chart_data = this.props.app_state.ether_gas_chart_info[symbol];
+        const all_chart_data = this.props.app_state.ether_gas_chart_info[symbol] || [];
         const data = []
+        const chart_data = all_chart_data.filter((point) => {
+            return point['time']*1000 > Date.now()-(24*60*60*1000)
+        })
         const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time']*1000 : Date.now()
 
         if(chart_data != null){
@@ -1452,17 +1458,20 @@ class EthersDetailsSection extends Component {
 
     get_ether_gasprice_chart_data(item){
         const symbol = item['symbol'];
-        const chart_data = this.props.app_state.ether_gas_chart_info[symbol];
+        const chart_data = this.props.app_state.ether_gas_chart_info[symbol] || []
         const data = []
-        const starting_time = chart_data != null && chart_data.length > 0 ? chart_data[0]['time']*1000 : Date.now()
+        const working_data = chart_data.filter((point) => {
+            return point['time']*1000 > Date.now()-(24*60*60*1000)
+        })
+        const starting_time = working_data.length > 0 ? working_data[0]['time']*1000 : Date.now()
 
-        if(chart_data != null){
-            for(var j=0; j<chart_data.length; j++){
-                const data_point = chart_data[j];
-                const gasprice = data_point['gasprice'];
-                data.push((parseFloat(gasprice) / 1_000_000_000).toFixed(3))
-            }
+        for(var j=0; j<working_data.length; j++){
+            const data_point = working_data[j];
+            const gasprice = data_point['gasprice'];
+            // data.push((parseFloat(gasprice) / 1_000_000_000).toFixed(6))
+            data.push(parseInt(gasprice))
         }
+
 
         var xVal = 1, yVal = 0;
         var dps = [];
@@ -1471,8 +1480,8 @@ class EthersDetailsSection extends Component {
             yVal = data[i]
             
             if(yVal != null){
-                var indicator = (parseFloat(data[i]) / 1_000_000_000).toFixed(3)
-                var final_indicator = '$ %'.replace('$', indicator).replace('%', this.props.app_state.loc['2738db']/* Gwei */)
+                const indicator = this.format_account_balance_figure(data[i]);
+                var final_indicator = '$ %'.replace('$', indicator).replace('%', this.props.app_state.loc['2738db']/* Wei */)
                 
                 if(i == parseInt(0.35*noOfDps) || i == parseInt(0.65*noOfDps)){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//

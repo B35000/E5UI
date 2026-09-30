@@ -365,18 +365,20 @@ class WithdrawEtherPage extends Component {
         if(gas_price == null || isNaN(gas_price)) return;
         
         var items = [
-            {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price)},
-            {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.7 * gas_price)},
-            {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.6 * gas_price)},
-            {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.1 * gas_price)},
+            {'title':this.props.app_state.loc['3115h']/* 'sluggish' */, 'price':Math.round(0.75 * gas_price)},
+            {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.01 * gas_price)},
+            {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.1 * gas_price)},
+            {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(1.5 * gas_price)},
+            {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(1.7 * gas_price)},
         ]
 
         if(this.props.app_state.e5s[e5].type == '1559'){
             items = [
-                {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.2 * gas_price), 'max_priority_fee':2_000_000_000 },
-                {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.8 * gas_price), 'max_priority_fee':3_000_000_000},
-                {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(2.9 * gas_price), 'max_priority_fee':4_000_000_000},
-                {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(4.6 * gas_price), 'max_priority_fee':5_000_000_000},
+                {'title':this.props.app_state.loc['3115h']/* 'sluggish' */, 'price':Math.round(0.75 * gas_price), 'max_priority_fee':Math.round(0.75 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593cg']/* 'slow' */, 'price':Math.round(1.01 * gas_price), 'max_priority_fee': Math.round(1.01 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593ch']/* 'average' */, 'price':Math.round(1.1 * gas_price), 'max_priority_fee': Math.round(1.1 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593ci']/* 'fast' */, 'price':Math.round(1.5 * gas_price), 'max_priority_fee': Math.round(1.5 * gas_price) * 2 },
+                {'title':this.props.app_state.loc['1593cj']/* 'asap' */, 'price':Math.round(1.7 * gas_price), 'max_priority_fee':Math.round(1.7 * gas_price) * 2},
             ]
         }
 

@@ -5281,10 +5281,20 @@ class App extends Component {
 
   componentDidMount() {
     console.log("mounted", 'os version: ', iOS());
-    // localforage.clear()
-    if (this.props.onReady) {
-      this.props.onReady();
+
+    const check_if_updated = async () => {
+      const shouldreload = await this.check_for_updates_and_reload_if_old()
+
+      if(shouldreload == true){
+        window.location.reload();
+      }else{
+        if (this.props.onReady) {
+          this.props.onReady();
+        }
+      }
     }
+
+    check_if_updated()
     
     /* listens for when the window is resized */
     window.addEventListener("resize", this.resize.bind(this));
@@ -7627,7 +7637,25 @@ class App extends Component {
 
 
 
+  async check_for_updates_and_reload_if_old(){
+    try {
+      const res = await fetch(`/index.html?_=${Date.now()}`, {
+        cache: 'no-store',
+      });
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const latestVersion = doc.querySelector('meta[name="version"]')?.getAttribute('content');
 
+      if(latestVersion != null && latestVersion != this.state.version){
+        return true
+      }
+      return false
+    } 
+    catch (err) {
+      console.error('Update check failed', err);
+      return false
+    }
+  }
 
   async check_for_updates() {
     try {
@@ -13172,7 +13200,9 @@ class App extends Component {
       }
     }
     
-    web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
+    const signed = await web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey)
+    const hash = signed.transactionHash
+    const broadcast = () => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
       .on('transactionHash', (hash) => {
         console.log('TX broadcasted to mempool:', hash);
@@ -13228,7 +13258,24 @@ class App extends Component {
         me.unlock_delete_pos_array(e5)
         me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
       });
-    })
+    }
+    const get_tx_status = async () => {
+      const [tx, receipt] = await Promise.all([
+        web3.eth.getTransaction(hash).catch(() => null),
+        web3.eth.getTransactionReceipt(hash).catch(() => null),
+      ]);
+
+      if (receipt) return receipt.status ? 'mined_success' : 'mined_reverted';
+      if (tx) return 'in_mempool'; 
+    }
+    broadcast()
+
+    setTimeout(async () => {
+      const status = await get_tx_status()
+      if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
+        broadcast()
+      }
+    }, (1 * 1900));
   }
 
   reset_gas_calculation_figure(me){
@@ -20824,18 +20871,35 @@ class App extends Component {
       }
     }
 
-    web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
-        web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
-          // me.get_accounts_data(me.state.account, false, this.state.web3, this.state.e5_address)
-          // this.start_get_accounts_data(false)
-          this.update_withdraw_balance(e5)
-          this.start_get_accounts_for_specific_e5(false, e5, false, {})
-          this.prompt_top_notification(this.getLocale()['2723']/* 'withdraw complete!' */, 4000)
-        }) .on('error', (error) => {
-          console.error('Transaction error:', error);
-          this.prompt_top_notification(this.getLocale()['2724']/* 'Withdraw failed. Something went wrong' */, 4500)
-        });
-    })
+    const signed = await web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey)
+    const hash = signed.transactionHash
+    const broadcast = () => {
+      web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
+        this.update_withdraw_balance(e5)
+        this.start_get_accounts_for_specific_e5(false, e5, false, {})
+        this.prompt_top_notification(this.getLocale()['2723']/* 'withdraw complete!' */, 4000)
+      }) .on('error', (error) => {
+        console.error('Transaction error:', error);
+        this.prompt_top_notification(this.getLocale()['2724']/* 'Withdraw failed. Something went wrong' */, 4500)
+      });
+    }
+    const get_tx_status = async () => {
+      const [tx, receipt] = await Promise.all([
+        web3.eth.getTransaction(hash).catch(() => null),
+        web3.eth.getTransactionReceipt(hash).catch(() => null),
+      ]);
+
+      if (receipt) return receipt.status ? 'mined_success' : 'mined_reverted';
+      if (tx) return 'in_mempool'; 
+    }
+    broadcast()
+
+    setTimeout(async () => {
+      const status = await get_tx_status()
+      if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
+        broadcast()
+      }
+    }, (1 * 1900));
 
   }
 
@@ -22415,7 +22479,7 @@ class App extends Component {
       'show_itransfer_search_transfers_item':450,
       'cancel_current_transactions':250,
       'view_stacked_bag_details':650,
-      'throttled_address_transactions':300,
+      'throttled_address_transactions':600,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -24096,8 +24160,10 @@ class App extends Component {
         type: '0x2', // explicitly mark as EIP-1559
       }
     }
-    
-    web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey).then(signed => {
+
+    const signed = await web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey)
+    const hash = signed.transactionHash
+    const broadcast = () => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
       .on('transactionHash', (hash) => {
         console.log('TX broadcasted to mempool:', hash);
@@ -24115,7 +24181,24 @@ class App extends Component {
         me.lock_run_in_stack(false)
         me.get_wallet_data_for_specific_e5(e5, true)
       });
-    })
+    }
+    const get_tx_status = async () => {
+      const [tx, receipt] = await Promise.all([
+        web3.eth.getTransaction(hash).catch(() => null),
+        web3.eth.getTransactionReceipt(hash).catch(() => null),
+      ]);
+
+      if (receipt) return receipt.status ? 'mined_success' : 'mined_reverted';
+      if (tx) return 'in_mempool'; 
+    }
+    broadcast()
+
+    setTimeout(async () => {
+      const status = await get_tx_status()
+      if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
+        broadcast()
+      }
+    }, (1 * 1900));
   }
 
   async update_my_paid_subscriptions(object){
@@ -24365,8 +24448,10 @@ class App extends Component {
 
       me.setState({my_videoposts: my_videoposts, my_videos: my_videos})
     }
-    
-    web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey).then(signed => {
+
+    const signed = await web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey)
+    const hash = signed.transactionHash
+    const broadcast = () => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
       .on('transactionHash', (hash) => {
         console.log('TX broadcasted to mempool:', hash);
@@ -24375,7 +24460,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
         me.lock_run_in_stack(false)
         me.reload_my_balances()
-        me.update_my_videos()
+        update_my_videos()
         if(me.state.dialog_bottomsheet == true) me.open_dialog_bottomsheet();
         me.play_video(video, object)
         me.get_wallet_data_for_specific_e5(e5, true)
@@ -24386,7 +24471,24 @@ class App extends Component {
         me.lock_run_in_stack(false)
         me.get_wallet_data_for_specific_e5(e5, true)
       });
-    })
+    }
+    const get_tx_status = async () => {
+      const [tx, receipt] = await Promise.all([
+        web3.eth.getTransaction(hash).catch(() => null),
+        web3.eth.getTransactionReceipt(hash).catch(() => null),
+      ]);
+
+      if (receipt) return receipt.status ? 'mined_success' : 'mined_reverted';
+      if (tx) return 'in_mempool'; 
+    }
+    broadcast()
+
+    setTimeout(async () => {
+      const status = await get_tx_status()
+      if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
+        broadcast()
+      }
+    }, (1 * 1900));
   }
 
   get_throttled_data(){
@@ -24600,8 +24702,10 @@ class App extends Component {
 
       me.setState({my_albums: my_albums, my_tracks: my_tracks})
     }
-    
-    web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey).then(signed => {
+
+    const signed = await web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey)
+    const hash = signed.transactionHash
+    const broadcast = () => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
       .on('transactionHash', (hash) => {
         console.log('TX broadcasted to mempool:', hash);
@@ -24610,7 +24714,7 @@ class App extends Component {
         me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
         me.lock_run_in_stack(false)
         me.reload_my_balances()
-        me.update_my_tracks_and_audio()
+        update_my_tracks_and_audio()
         if(me.state.dialog_bottomsheet == true) me.open_dialog_bottomsheet();
         me.play_song(song, object, preferred_audio_items, is_page_my_collection_page, false)
         me.get_wallet_data_for_specific_e5(e5, true)
@@ -24621,7 +24725,24 @@ class App extends Component {
         me.lock_run_in_stack(false)
         me.get_wallet_data_for_specific_e5(e5, true)
       });
-    })
+    }
+    const get_tx_status = async () => {
+      const [tx, receipt] = await Promise.all([
+        web3.eth.getTransaction(hash).catch(() => null),
+        web3.eth.getTransactionReceipt(hash).catch(() => null),
+      ]);
+
+      if (receipt) return receipt.status ? 'mined_success' : 'mined_reverted';
+      if (tx) return 'in_mempool'; 
+    }
+    broadcast()
+
+    setTimeout(async () => {
+      const status = await get_tx_status()
+      if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
+        broadcast()
+      }
+    }, (1 * 1900));
   }
 
   async get_ipfs_index_object(tx, type, e5, calculate_gas){
@@ -31974,8 +32095,10 @@ class App extends Component {
         type: '0x2', // explicitly mark as EIP-1559
       }
     }
-    
-    web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey).then(signed => {
+
+    const signed = await web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey)
+    const hash = signed.transactionHash
+    const broadcast = () => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
       .on('transactionHash', (hash) => {
         console.log('TX broadcasted to mempool:', hash);
@@ -31995,7 +32118,24 @@ class App extends Component {
         me.lock_run_in_stack(false)
         me.get_wallet_data_for_specific_e5(e5, true)
       });
-    })
+    }
+    const get_tx_status = async () => {
+      const [tx, receipt] = await Promise.all([
+        web3.eth.getTransaction(hash).catch(() => null),
+        web3.eth.getTransactionReceipt(hash).catch(() => null),
+      ]);
+
+      if (receipt) return receipt.status ? 'mined_success' : 'mined_reverted';
+      if (tx) return 'in_mempool'; 
+    }
+    broadcast()
+
+    setTimeout(async () => {
+      const status = await get_tx_status()
+      if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
+        broadcast()
+      }
+    }, (1 * 1900));
   }
 
   lock_run_in_stack(value){
@@ -33589,8 +33729,10 @@ class App extends Component {
         type: '0x2', // explicitly mark as EIP-1559
       }
     }
-    
-    web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey).then(signed => {
+
+    const signed = await web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey)
+    const hash = signed.transactionHash
+    const broadcast = () => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
       .on('transactionHash', (hash) => {
         console.log('TX broadcasted to mempool:', hash);
@@ -33610,7 +33752,24 @@ class App extends Component {
         this.setState({is_confirming_storage_purchase: false, quick_purchase_transaction_hash: null})
         me.get_wallet_data_for_specific_e5(e5, true)
       });
-    })
+    }
+    const get_tx_status = async () => {
+      const [tx, receipt] = await Promise.all([
+        web3.eth.getTransaction(hash).catch(() => null),
+        web3.eth.getTransactionReceipt(hash).catch(() => null),
+      ]);
+
+      if (receipt) return receipt.status ? 'mined_success' : 'mined_reverted';
+      if (tx) return 'in_mempool'; 
+    }
+    broadcast()
+
+    setTimeout(async () => {
+      const status = await get_tx_status()
+      if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
+        broadcast()
+      }
+    }, (1 * 1900));
 
   }
 

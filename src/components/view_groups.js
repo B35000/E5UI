@@ -788,8 +788,10 @@ class ViewGroups extends Component {
                                     if (bigInt(final_value).lesser(bigInt(1_000_000))) {
                                         return number_with_commas(final_value.toString()) + y_axis_units;
                                     } else {
-                                        const main = final_value.toString().slice(0, 3);
-                                        const rest = final_value.toString().slice(3);
+                                        const final_value_length = final_value.toString().length
+                                        const mod = (final_value_length % 3) + 3
+                                        const main = final_value.toString().slice(0, mod);
+                                        const rest = final_value.toString().slice(mod);
                                         const power = rest.length;
                                         return number_with_commas(main) + 'e' + power + y_axis_units;
                                     }
@@ -905,7 +907,7 @@ class ViewGroups extends Component {
                         // --- Tooltip box ---
                         const padding = 10;
                         const lineHeight = 11;
-                        const tooltipWidth = 70;
+                        const tooltipWidth = 80;
                         const tooltipHeight = padding * 2 + lineHeight * 2;
 
                         // Format the Y value (reuse your existing formatting logic)
@@ -924,8 +926,10 @@ class ViewGroups extends Component {
                             if (bigInt(final_value).lesser(bigInt(1_000_000))) {
                                 formattedY = number_with_commas(final_value.toString()) + y_axis_units;
                             } else {
-                                const main = final_value.toString().slice(0, 3);
-                                const rest = final_value.toString().slice(3);
+                                const final_value_length = final_value.toString().length
+                                const mod = (final_value_length % 3) + 3
+                                const main = final_value.toString().slice(0, mod);
+                                const rest = final_value.toString().slice(mod);
                                 formattedY = number_with_commas(main) + 'e' + rest.length + y_axis_units;
                             }
                         }
@@ -1487,7 +1491,7 @@ class ViewGroups extends Component {
                     // --- Tooltip box ---
                     const padding = 10;
                     const lineHeight = 11;
-                    const tooltipWidth = 70;
+                    const tooltipWidth = 80;
                     const tooltipHeight = padding * 2 + lineHeight * 2;
 
                     // Format the Y value (reuse your existing formatting logic)
@@ -1506,8 +1510,10 @@ class ViewGroups extends Component {
                         if (bigInt(final_value).lesser(bigInt(1_000_000))) {
                             formattedY = number_with_commas(final_value.toString()) + y_axis_units;
                         } else {
-                            const main = final_value.toString().slice(0, 3);
-                            const rest = final_value.toString().slice(3);
+                            const final_value_length = final_value.toString().length
+                            const mod = (final_value_length % 3) + 3
+                            const main = final_value.toString().slice(0, mod);
+                            const rest = final_value.toString().slice(mod);
                             formattedY = number_with_commas(main) + 'e' + rest.length + y_axis_units;
                         }
                     }
