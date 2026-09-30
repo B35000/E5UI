@@ -6306,7 +6306,7 @@ return data['data']
     }
 
     render_image_part(){
-        var col = Math.round(this.props.app_state.width / 100)
+        var col = Math.floor(400 / 100)
         var rowHeight = 100;
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         var items = [].concat(transaction_item.entered_image_objects)
@@ -6316,7 +6316,7 @@ return data['data']
             var background_color = this.props.theme['card_background_color']
             return(
                 <div>
-                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                    <ImageList sx={{ width: (105*col), height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -6334,11 +6334,11 @@ return data['data']
             var background_color = this.props.theme['card_background_color']
             return(
                 <div>
-                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                    <ImageList sx={{ width: (105*col), height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
                                 <div>
-                                    <img src={item} style={{height:100 ,width:100}} />
+                                    <img src={item} style={{height:100 ,width:100, 'border-radius': '5px'}} />
                                 </div> 
                             </ImageListItem>
                         ))}

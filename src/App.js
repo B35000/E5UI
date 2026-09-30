@@ -2022,7 +2022,7 @@ class App extends Component {
 
     web3:'', e5_address:'',
     
-    sync_steps:(11), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:135, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:2700, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65, condition_title_size:65, bag_name_max_length:23,
+    sync_steps:(11), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:135, nitro_link_size:72, image_size_limit:5_000_000, ipfs_delay:90, web3_delay:2700, max_tags_count:7, indexed_title_size:32, iTransfer_identifier_size:53, upload_object_size_limit:(153*1024), max_candidates_count:23, max_poll_nitro_calculator_count:35, max_input_text_length:1029, max_post_bulk_load_count: 35, fetch_object_time_limit: (1000*60*2), file_load_step_count:23, calculate_creator_payout_time_limit:(1000*60*2), moderator_note_max_length:135, pin_description_size:72, transaction_note_length:65, condition_title_size:65, bag_name_max_length:23, entered_text_max_length:135,
 
     object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -6484,6 +6484,9 @@ class App extends Component {
   }
 
   async get_encrypted_seed_if_passcode_is_set(){
+    if(Object.keys(this.state.saved_cypher_seed_object).length > 0){
+      return this.state.saved_cypher_seed_object
+    }
     if(this.state.seed_passcode == ''){
       return {}
     }else{
@@ -22370,7 +22373,7 @@ class App extends Component {
       this.setState({dialog_bottomsheet: !this.state.dialog_bottomsheet});
 
       if(this.state.is_setting_passcode == true){
-        this.setState({seed_object: null, passcode_expiry_time: null, remember_account:'e'})
+        this.setState({seed_object: null, passcode_expiry_time: null, remember_account:'e', saved_cypher_seed_object: {}})
         this.set_cookies()
         setTimeout(function() {
           window.location.reload(false);
@@ -49053,69 +49056,69 @@ class App extends Component {
 
   load_data_from_page_in_focus = async (page, extra_data) => {
     this.focused_page = page
-    const prioritized_accounts = this.prioritized_accounts.slice()
-    const prioritized_accounts_data = this.extract_data_in_prioritized_accounts(prioritized_accounts)
+    const my_prioritized_accounts = this.prioritized_accounts.slice()
+    const prioritized_accounts_data = this.extract_data_in_prioritized_accounts(my_prioritized_accounts)
     this.prioritized_accounts = []
 
     if(page == this.getLocale()['1196']/* 'jobs' */){
       // this.load_contract_data([], null, [])
-      await this.load_jobs_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_jobs_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1197']/* 'contracts' */){
-      await this.load_contract_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_contract_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1199']/* 'proposals' */){
-      await this.load_proposal_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_proposal_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1198']/* 'contractors' */){
       // this.load_contract_data([], null, [])
-      await this.load_contractor_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_contractor_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1200']/* 'subscriptions' */){
-      await this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_subscription_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1201']/* 'mail' */){
-      await this.load_mail_data(prioritized_accounts, null, prioritized_accounts_data)
+      await this.load_mail_data(my_prioritized_accounts, null, prioritized_accounts_data)
     }
     if(page == this.getLocale()['1213']/* 'posts' */){
-      // this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data)
-      await this.load_post_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      // this.load_subscription_data(my_prioritized_accounts, null, prioritized_accounts_data)
+      await this.load_post_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1214']/* 'channels' */){
-      // this.load_subscription_data(prioritized_accounts, null, prioritized_accounts_data)
-      await this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
-      await this.load_channel_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      // this.load_subscription_data(my_prioritized_accounts, null, prioritized_accounts_data)
+      await this.load_nitro_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_channel_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1215']/* 'storefront' */){
-      await this.load_storefront_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_storefront_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
       // this.load_bag_data([], null, [])
     }
     if(page == this.getLocale()['1216']/* 'bags' */){
       // this.load_storefront_data([], null, [])
-      await this.load_bag_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_bag_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
       // this.load_contract_data([], null, [])
     }
     if(page == this.getLocale()['1264k']/* 'audioport' */){
       // this.load_subscription_data([], null, [])
-      await this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
-      await this.load_audio_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_nitro_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_audio_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264p']/* videoport */){
       // this.load_subscription_data([], null, [])
-      await this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
-      await this.load_video_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_nitro_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_video_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264s']/* 'nitro' */){
-      await this.load_nitro_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_nitro_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264aj']/* 'bills' */){
-      await this.load_bill_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_bill_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1264ao']/* 'polls' */){
-      await this.load_poll_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_poll_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
     if(page == this.getLocale()['1218']/* 'ends' */ || page == this.getLocale()['1219']/* 'spends' */ || page == this.getLocale()['1264bw']/* 'certificates' */ || page == this.getLocale()['1264bx']/* 'cross-exchanges' */ || page == 'w'){
-      await this.load_token_data(prioritized_accounts, null, prioritized_accounts_data, extra_data)
+      await this.load_token_data(my_prioritized_accounts, null, prioritized_accounts_data, extra_data)
     }
   }
 

@@ -1483,7 +1483,7 @@ class EthersDetailsSection extends Component {
                 const indicator = this.format_account_balance_figure(data[i]);
                 var final_indicator = '$ %'.replace('$', indicator).replace('%', this.props.app_state.loc['2738db']/* Wei */)
                 
-                if(i == parseInt(0.35*noOfDps) || i == parseInt(0.65*noOfDps)){
+                if(i == parseInt(0.23*noOfDps) || i == parseInt(0.72*noOfDps)){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+final_indicator});//
                 }else{
                     dps.push({x: xVal, y: yVal});//

@@ -1005,7 +1005,7 @@ class AddCommentPage extends Component {
 
 
     render_image_part(){
-        var col = Math.round(400 / 100)
+        var col = Math.floor(400 / 100)
         var rowHeight = 100;
 
         if(this.state.entered_image_objects.length == 0){
@@ -1013,7 +1013,7 @@ class AddCommentPage extends Component {
             var background_color = this.props.theme['card_background_color']
             return(
                 <div>
-                    <ImageList sx={{ width: 400, height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                    <ImageList sx={{ width: (105*col), height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -1032,7 +1032,7 @@ class AddCommentPage extends Component {
             var background_color = this.props.theme['card_background_color']
             return(
                 <div>
-                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                    <ImageList sx={{ width: (105*col), height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
                                 <div onClick={() => this.when_image_clicked(index)}>
@@ -1050,7 +1050,7 @@ class AddCommentPage extends Component {
     render_image_item(ecid, index){
         return(
             <div onClick={() => this.when_image_clicked(index)}>
-                <img alt="" src={this.get_image_from_file(ecid)} style={{height:100 ,width:100}} />
+                <img alt="" src={this.get_image_from_file(ecid)} style={{height:100 ,width:100, 'border-radius': '5px'}} />
             </div> 
         )
     }

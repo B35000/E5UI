@@ -1704,6 +1704,7 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height:10}}/> */}
 
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']/* 'Type Something...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.entered_text_max_length - this.state.entered_text.length)})}
                 {this.render_contains_keyword_if_title_contains_reserved_keyword(this.state.entered_text)}
                 <div style={{height:10}}/>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
@@ -1736,6 +1737,7 @@ class NewStorefrontItemPage extends Component {
     }
 
     when_entered_text_input_field_changed(text){
+        if(text.length > this.props.app_state.entered_text_max_length) return;
         this.setState({entered_text: text})
     }
 
@@ -2616,14 +2618,14 @@ class NewStorefrontItemPage extends Component {
 
     render_image_part(){
         var background_color = this.props.theme['card_background_color']
-        var col = Math.round((this.state.screen_width-25) / 100)
+        var col = Math.floor((this.state.screen_width-25) / 100)
         var rowHeight = 100;
 
         if(this.state.entered_image_objects.length == 0){
             var items = ['1','1','1']
             return(
                 <div>
-                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                    <ImageList sx={{ width: (105*col), height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -2641,7 +2643,7 @@ class NewStorefrontItemPage extends Component {
             var items = [].concat(this.state.entered_image_objects);
             return(
                 <div>
-                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                    <ImageList sx={{ width: (105*col), height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item}>
                                 {this.render_image_item(item, index)}
@@ -2658,7 +2660,7 @@ class NewStorefrontItemPage extends Component {
     render_image_item(ecid, index){
         return(
             <div onClick={() => this.when_image_clicked(index)}>
-                <img alt="" src={this.get_image_from_file(ecid)} style={{height:100 ,width:100}} />
+                <img alt="" src={this.get_image_from_file(ecid)} style={{height:100 ,width:100, 'border-radius': '5px'}} />
             </div> 
         )
     }
@@ -5464,7 +5466,7 @@ return data['data']
         if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)} show_images={this.props.show_images.bind(this)}
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)}
                 
                 />
             </div>
