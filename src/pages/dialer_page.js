@@ -333,7 +333,9 @@ class DialerPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img alt="" className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <div className="text-end" onClick={()=>this.finish()}>
+                                {this.render_detail_item('17', {'src':this.props.theme['close'], 'style': { height:36, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -464,7 +466,9 @@ class DialerPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_dialer_address()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -795,7 +799,9 @@ class DialerPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_beacon_chain_url()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -824,7 +830,9 @@ class DialerPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.test_typed_language_url()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -863,7 +871,9 @@ class DialerPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_theme_image()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -918,7 +928,9 @@ class DialerPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_keyword_to_staged_note()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}}/>
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2047,7 +2059,9 @@ class DialerPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_rpc_url()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -7716,7 +7716,9 @@ return data['data']
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_keyword_to_staged_note()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}}/>
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -10000,7 +10002,9 @@ return data['data']
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.perform_account_search_and_add()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>

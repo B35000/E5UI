@@ -92,7 +92,9 @@ class VoteProposalPage extends Component {
                         </div>
                         <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                             <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                                <img className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                                <div className="text-end" onClick={()=>this.finish()}>
+                                    {this.render_detail_item('17', {'src':this.props.theme['close'], 'style': { height:36, width:'auto' }})}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -536,10 +538,8 @@ class VoteProposalPage extends Component {
     }
 
 
-    finish_creating_object(){
-        var clone = structuredClone(this.state)
-        // clone.e5 = this.props.app_state.selected_e5
-        this.props.add_vote_proposal_action_to_stack(clone)
+    finish(){
+        this.props.add_vote_proposal_action_to_stack(this.state)
         this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
     }
 

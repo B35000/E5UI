@@ -207,14 +207,18 @@ class ContextualTransferPage extends Component {
         if(selected_item == this.props.app_state.loc['3068a']/* 'create-itransfer' */){
             return(
                 <div>
-                    <img alt="" className="text-end" onClick={()=>this.finish_create_itransfer()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                    <div className="text-end" onClick={()=>this.finish_create_itransfer()}>
+                        {this.render_detail_item('17', {'src':this.props.theme['close'], 'style': { height:36, width:'auto' }})}
+                    </div>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['3068c']/* 'send-bill' */){
             return(
                 <div>
-                    <img alt="" className="text-end" onClick={()=>this.finish_send_bill()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                    <div className="text-end" onClick={()=>this.finish_send_bill()}>
+                        {this.render_detail_item('17', {'src':this.props.theme['close'], 'style': { height:36, width:'auto' }})}
+                    </div>
                 </div>
             )
         }

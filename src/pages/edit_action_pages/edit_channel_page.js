@@ -278,21 +278,11 @@ class NewChannelPage extends Component {
                         <Tags app_state={this.props.app_state} font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div style={{'padding': '0px 10px 0px 0px', width:40}}>
-                        <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
-                    </div>
-                </div>
-
-                {/* <div className="row" style={{'width':'102%'}}>
-                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                        <div className="text-end" onClick={()=>this.finish_creating_object()}>
+                            {this.render_detail_item('17', {'src':this.props.theme['close'], 'style': { height:36, width:'auto' }})}
                         </div>
                     </div>
-                </div> */}
-                
+                </div>
                 
                 <div style={{'margin':'0px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(120 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
                     <div style={{'width':'98%'}}>
@@ -523,7 +513,9 @@ class NewChannelPage extends Component {
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         {/* {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag', 'prevent_default':true})} */}
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" onClick={()=>this.add_indexing_tag_for_new_job()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" onClick={()=>this.add_indexing_tag_for_new_job()}>
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2918,7 +2910,9 @@ return data['data']
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_subscription()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end">
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3247,7 +3241,9 @@ return data['data']
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_nitro()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end">
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>

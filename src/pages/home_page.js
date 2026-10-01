@@ -1845,7 +1845,9 @@ class home_page extends Component {
         alpha = 0.2;
       }
       return(
-        <img alt="" className="text-end" onClick={()=> this.when_e_button_tapped()} src={this.props.theme['add_icon']} style={{height:36, width:'auto', opacity:alpha}} />
+        <div className="text-end" onClick={()=> this.when_e_button_tapped()}>
+            {this.render_detail_item('17', {'src':this.props.theme['add_icon'], 'style': { height:36, width:'auto', opacity:alpha }})}
+        </div>
       )
     }
 

@@ -164,7 +164,9 @@ class FilterSection extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -183,7 +185,9 @@ class FilterSection extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_tag()}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>

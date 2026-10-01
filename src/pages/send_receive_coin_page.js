@@ -111,7 +111,9 @@ class SendReceiveCoinPage extends Component {
         if(selected_item == this.props.app_state.loc['1369']/* 'send' */ || selected_item == 'e'){
             return(
                 <div>
-                    <img alt="" className="text-end" onClick={()=>this.open_confirm_send()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                    <div className="text-end" onClick={()=>this.open_confirm_send()}>
+                        {this.render_detail_item('17', {'src':this.props.theme['close'], 'style': { height:36, width:'auto' }})}
+                    </div>
                 </div>
             )
         }

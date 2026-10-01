@@ -99,7 +99,9 @@ class QuickTransferPage extends Component {
         if(this.props.app_state.is_running[this.props.app_state.selected_e5] != true){
             return(
                 <div>
-                    <img alt="" className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                    <div className="text-end" onClick={()=>this.finish()}>
+                                {this.render_detail_item('17', {'src':this.props.theme['close'], 'style': { height:36, width:'auto' }})}
+                            </div>
                 </div>
             )
         }

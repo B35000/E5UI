@@ -2601,7 +2601,9 @@ class VideoDetailsSection extends Component {
                             }}
                             style={{ background: 'none', border: 'none' }}
                         >
-                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end">
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </button>
                     </div>
                     {/* <div className="row" style={{width:ww}}>

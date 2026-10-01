@@ -86,11 +86,20 @@ class NumberPicker extends Component {
                       </div>
                       <div className="col-2" style={{'padding': '7px 0px 0px 0px'}}>
                         <div className="text-end" style={{'display': 'flex','flex-direction': 'row'}}>
-                          <img alt="" src={e5_empty_icon/* 'https://nftstorage.link/ipfs/bafkreib7p2e5m437q3pi6necii3bssqc3eh2zcd2fcxnms7iwfdiyevh2e' */} style={{height:35 ,width:35}} onClick={()=>this.switch_pickers()}/>
+                          <AnimatePresence initial={true}>
+                              <motion.div key={'image_button'} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => this.vibrate_device()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                                  <img alt="" src={e5_empty_icon} style={{height:35 ,width:35}} onClick={()=>this.switch_pickers()}/>
+                              </motion.div>
+                          </AnimatePresence>
                           
                           <div style={{width: 15}}/>
-
-                          <img alt="" src={e5_empty_icon3/* 'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424' */} style={{height:35 ,width:35}} onClick={()=>this.reset_number_picker2()} />
+                          
+                          <AnimatePresence initial={true}>
+                              <motion.div key={'image_button2'} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => this.vibrate_device()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                                  <img alt="" src={e5_empty_icon3} style={{height:35 ,width:35}} onClick={()=>this.reset_number_picker2()} />
+                              </motion.div>
+                          </AnimatePresence>
+                          
                         </div>
                       </div>
                   </div>

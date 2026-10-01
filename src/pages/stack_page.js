@@ -17887,7 +17887,9 @@ class StackPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.when_add_word_button_tapped()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" onClick={()=>this.when_add_word_button_tapped()}>
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -18171,7 +18173,9 @@ class StackPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_contact_to_list()} >
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -18349,7 +18353,9 @@ class StackPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_blocked_account_to_list()} >
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -18497,7 +18503,9 @@ class StackPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.reserve_alias()} >
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -19747,7 +19755,9 @@ class StackPage extends Component {
                         <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                             <div onClick={()=>this.verify_email()}>
                                 <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                                    <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                    <div className="text-end" >
+                                        {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -22613,7 +22623,9 @@ class StackPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_follow_account()} >
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                    {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -22784,7 +22796,9 @@ class StackPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_censored_keyword()} >
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            <div className="text-end" >
+                                {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1464,7 +1464,9 @@ class CertificateDetailsSection extends Component {
                             <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                                 <div onClick={()=>this.perform_search(object)}>
                                     <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                                        <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                        <div className="text-end">
+                                            {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1732,7 +1734,9 @@ class CertificateDetailsSection extends Component {
                             <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                                 <div onClick={()=>this.perform_search2(object)}>
                                     <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-                                        <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                        <div className="text-end">
+                                            {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

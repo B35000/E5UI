@@ -212,7 +212,9 @@ class ViewJobRequestPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img alt="" className="text-end" onClick={()=>this.finish_creating_response()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <div className="text-end" onClick={()=>this.finish_creating_response()}>
+                                {this.render_detail_item('17', {'src':this.props.theme['close'], 'style': { height:36, width:'auto' }})}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1395,7 +1397,9 @@ class ViewJobRequestPage extends Component {
                         </div>
                         <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                             <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >
-                                <img alt="" className="text-end" onClick={()=>this.add_message_to_stack()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                <div className="text-end" onClick={() => this.add_message_to_stack()}>
+                                    {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                                </div>
                             </div>
                         </div>
                     </div>

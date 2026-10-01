@@ -55,7 +55,6 @@ class OpenedIframeLinkPage extends Component {
                     </div>
                     <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            {/* <img alt="" className="text-end" onClick={()=>this.refresh()} src={this.props.theme['add_text']} style={{height:36, width:'auto'}} /> */}
                             <div onClick={()=> this.refresh()}>
                                 {this.render_detail_item('5', {'text':this.props.app_state.loc['3090c']/* 'Reload ⟳' */, 'action':''},)}
                             </div>

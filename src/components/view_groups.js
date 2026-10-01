@@ -1319,6 +1319,19 @@ class ViewGroups extends Component {
                 </div>
             )
         }
+        else if(item_id=='17'){/* image button */
+            const src = object_data == null ? empty_image : object_data['src']
+            const style = object_data == null ? {height: 35, width: 'auto'} : object_data['style']
+            return(
+                <div>
+                    <AnimatePresence initial={true}>
+                        <motion.div key={'image_button'} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => this.vibrate_device()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
+                            <img alt="" src={src} style={style} />
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+            )
+        }
     }
 
     vibrate_device(){
