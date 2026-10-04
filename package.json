@@ -13,6 +13,7 @@
     "@cosmjs/encoding": "^0.32.4",
     "@cosmjs/proto-signing": "^0.32.4",
     "@cosmjs/stargate": "^0.32.4",
+    "@defuse-protocol/one-click-sdk-typescript": "^0.1.26",
     "@dfinity/ledger-icp": "^9.1.0",
     "@dfinity/utils": "^4.2.1",
     "@emotion/react": "^11.13.3",

@@ -68,7 +68,9 @@ class NewContractorPage extends Component {
         get_sort_links_tags_object:this.get_sort_links_tags_object(), markdown:'',
         entered_zip_objects:[], pins:[], get_public_pins_object:this.get_public_pins_object(),
 
-        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
+        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option(),
+
+        get_draw_route_between_pins_option: this.get_draw_route_between_pins_option(), viewer:'', viewers:[],
     };
 
     get_new_contractor_page_tags_object(){
@@ -187,6 +189,23 @@ class NewContractorPage extends Component {
         };
     }
 
+    get_draw_route_between_pins_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['284bv']/* 'draw' */], [0]
+            ],
+        };
+    }
+
+
+
+
+
+
+
 
 
     set(){
@@ -206,6 +225,9 @@ class NewContractorPage extends Component {
         }
         if(this.state.get_object_delisted_setting_tags_option == null){
             this.setState({get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()})
+        }
+        if(this.state.get_draw_route_between_pins_option == null){
+            this.setState({get_draw_route_between_pins_option: this.get_draw_route_between_pins_option(), viewer:'', viewers:[]})
         }
 
         this.setState({edit_text_item_pos:-1, get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(), get_fee_type: fee_type, get_sort_links_tags_object: this.get_sort_links_tags_object()})
@@ -2211,6 +2233,8 @@ return data['data']
                 <div>
                     {this.render_pick_location_parts()}
                     {this.render_detail_item('0')}
+                    {this.render_pick_location_parts2()}
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             )
@@ -2224,7 +2248,7 @@ return data['data']
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-6" >
-                        {this.render_empty_views(3)}
+                        {this.render_pick_location_parts2()}
                     </div>
                 </div>
                 
@@ -2239,7 +2263,7 @@ return data['data']
                         {this.render_detail_item('0')}
                     </div>
                     <div className="col-5" >
-                        {this.render_empty_views(3)}
+                        {this.render_pick_location_parts2()}
                     </div>
                 </div>
                 
@@ -2248,12 +2272,13 @@ return data['data']
     }
 
     render_pick_location_parts(){
+        const draw_route = this.get_selected_item2(this.state.get_draw_route_between_pins_option, 'e') == 1
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['284p']/* 'Specify Some Locations.' */, 'details':this.props.app_state.loc['272g']/* 'You can specify some points on a map if the contractor post is location specific. */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <LocationViewer ref={this.locationPickerRef} height={230} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={this.state.pins} size={this.props.size} input_enabled={false}
+                <LocationViewer ref={this.locationPickerRef} height={230} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={this.state.pins} size={this.props.size} input_enabled={false} route_data={draw_route == true ? this.state.route_data : null} line_color={this.get_my_state_color()}
                 />
                 <div style={{height:10}}/>
 
@@ -2270,11 +2295,43 @@ return data['data']
                     </div>
                 </div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['284bo']/* 'Set as Public.' */, 'details':this.props.app_state.loc['284bp']/* 'If set to public, the locations youve specified will be visible to all users by default. */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['284bo']/* 'Set as Public.' */, 'details':this.props.app_state.loc['284bp']/* 'If set to public, the locations youve specified will be visible to all users by default.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_public_pins_object} tag_size={'l'} when_tags_updated={this.when_get_public_pins_object_updated.bind(this)} theme={this.props.theme}/>
+
+
+                {this.state.pins.length > 1 && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['284bt']/* 'Draw Route' */, 'details':this.props.app_state.loc['284bu']/* 'Draw a route between dropped pins on the map.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_draw_route_between_pins_option} tag_size={'l'} when_tags_updated={this.when_get_draw_route_between_pins_option_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                )}
+
+
                 {this.render_detail_item('0')}
                 {this.render_selected_pins()}
+            </div>
+        )
+    }
+
+    render_pick_location_parts2(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['284bx']/* 'Route Subcontractors (Optional).' */, 'details':this.props.app_state.loc['284by']/* 'You may optionally specify other accounts that can broadcast their locations as subcontractors under this contractor post.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['c311ci']/* Alias or Account ID... */} when_text_input_field_changed={this.when_viewer_input_field_changed.bind(this)} text={this.state.viewer} theme={this.props.theme}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311cm']/* You can specify multiple accounts at once separated by commas, eg ( E25:1002,E25:1204... ) */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                {/* {this.load_account_suggestions('viewer')} */}
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_viewer_button_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['284bz']/* 'Add Subcontractor.' */, 'action':''})}
+                </div>
+                <div style={{height: 20}}/>
+                {this.render_added_viewers()}
             </div>
         )
     }
@@ -2368,8 +2425,211 @@ return data['data']
         this.setState({get_public_pins_object: tag_obj})
     }
 
+    async when_get_draw_route_between_pins_option_updated(tag_obj){
+        if(this.is_calculating_route == true) return;
+        this.setState({get_draw_route_between_pins_option: tag_obj})
+        this.is_calculating_route = true
+        this.props.notify(this.props.app_state.loc['284bw']/* 'Drawing route...' */, 1200)
+        const route_data = await this.props.obtain_route_from_selected_points(this.state.pins)
+        this.setState({route_data: route_data})
+        this.is_calculating_route = false
+    }
+
+    get_my_state_color(){
+        const my_state_code = this.props.app_state.device_country_code
+        const country_data = this.props.app_state.country_data
+
+        var selected_objs = country_data.filter(function (el) {
+            return (el['code'] === my_state_code)
+        });
+
+        var color = 'g'
+        if(selected_objs.length > 0){
+            color = selected_objs[0]['color'][0];
+        }
+
+        const current_theme_name = this.props.theme['name']
+        const theme_obj = {}
+
+        theme_obj[this.props.app_state.loc['1417']/* 'light' */] = color;
+        theme_obj[this.props.app_state.loc['1418']/* 'dark' */] = color;
+        theme_obj[this.props.app_state.loc['2740']/* midnight */] = color;
+        theme_obj[this.props.app_state.loc['1593a']/* 'auto' */] = color;
+
+        theme_obj[this.props.app_state.loc['2741']/* green */] = 'g'
+        theme_obj[this.props.app_state.loc['3057']/* 'red' */] = 'r'
+        theme_obj[this.props.app_state.loc['3059']/* 'blue' */] = 'b'
+        theme_obj[this.props.app_state.loc['3061']/* 'yellow' */] = 'y'
+        theme_obj[this.props.app_state.loc['3063']/* 'pink' */] = 'p'
+        theme_obj[this.props.app_state.loc['3065']/* 'orange' */] = 'o'
+
+        theme_obj[this.props.app_state.loc['3056']/* 'light-green' */] = 'g'
+        theme_obj[this.props.app_state.loc['3058']/* 'light-red' */] = 'r'
+        theme_obj[this.props.app_state.loc['3060']/* 'light-blue' */] = 'b'
+        theme_obj[this.props.app_state.loc['3062']/* 'light-yellow' */] = 'y'
+        theme_obj[this.props.app_state.loc['3064']/* 'light-pink' */] = 'p'
+        theme_obj[this.props.app_state.loc['3066']/* 'light-orange' */] = 'o'
+
+        return this.props.theme['my_messages_color'][theme_obj[current_theme_name]]
+    }
 
 
+
+    when_viewer_input_field_changed(text){
+        this.setState({viewer: text})
+    }
+
+    async when_add_viewer_button_tapped(){
+        var typed_text = this.state.viewer.trim()
+        if(typed_text.includes(',')){
+            this.add_multiple_viewers(typed_text)
+            return;
+        }
+        var participant_id = await this.get_typed_alias_id(typed_text)
+        var participant_e5 = isNaN(typed_text) ? await this.get_alias_e5(typed_text) : this.state.e5
+        var final_value = participant_e5+':'+participant_id
+        var participants_clone = this.state.viewers.slice()
+        if(typed_text == ''){
+            this.props.notify(this.props.app_state.loc['c311cs']/* Type something */, 3600)
+        }
+        else if(isNaN(participant_id) || parseInt(participant_id) < 1000 || participant_id == ''){
+            this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
+        }
+        else if(participants_clone.includes(final_value)){
+            this.props.notify(this.props.app_state.loc['c311j']/* 'Youve already added that account.' */, 4600)
+        }
+        else{
+            participants_clone.push(final_value)
+            this.setState({viewers: participants_clone, viewer:''});
+        }
+    }
+
+    async get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        await this.props.get_account_id_from_alias(alias)
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
+        var id = (obj[alias] == null ? alias : obj[alias])
+        return id
+    }
+
+    async get_alias_e5(recipient){
+        await this.props.get_account_id_from_alias(recipient)
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    add_multiple_viewers(data){
+        var entities = data.split(',')
+        var final_obj = []
+        var account_entries = 0
+        var participants_clone = this.state.viewers.slice()
+        entities.forEach(account_data => {
+            if(account_data != null && account_data != ''){
+                var data_point_array = account_data.split(':')
+                var e5 = ''
+                var account = ''
+                if(data_point_array.length == 2){
+                    e5 = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                    account = data_point_array[1].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                }
+                else if(data_point_array.length == 1){
+                    e5 = this.state.e5
+                    account = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                }
+                if(e5 != '' && account != ''){
+                    if(this.props.app_state.e5s['data'].includes(e5) && this.props.app_state.e5s[e5].active == true){
+                        if(!isNaN(account) && parseInt(account) < 10**16){
+                            var final_value = e5+':'+parseInt(account)
+                            if(!participants_clone.includes(final_value) && !final_obj.includes(final_value)){
+                                final_obj.push(final_value)
+                                account_entries++
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        if(account_entries == 0){
+            this.props.notify(this.props.app_state.loc['c311cn']/* 'No accounts added.' */, 1200)
+        }else{
+            participants_clone = participants_clone.concat(final_obj)
+            this.setState({viewers: participants_clone, viewer:''});
+            this.props.notify(this.props.app_state.loc['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+        }
+    }
+
+    render_added_viewers(){
+        var items = [].concat(this.state.viewers)
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_added_viewer_tapped(item, index)
+                                    }}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                        <li style={{'padding': '3px'}}>
+                                        {this.render_detail_item('3', {'title':' • '+this.get_data(item).id, 'details':this.get_senders_name(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_data(item){
+        var obj = item.split(':')
+        return { e5: obj[0], id: obj[1]}
+    }
+
+    get_senders_name(item){
+        var data_item = this.get_data(item)
+        var sender = data_item.id
+        var e5 = data_item.e5
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var obj = this.props.app_state.alias_bucket[e5]
+            var alias = (obj[sender] == null ? this.props.app_state.loc['c311m']/* 'Account' */ : obj[sender])
+            return alias
+        }
+    }
+
+    when_added_viewer_tapped(item, index){
+        var cloned_array = this.state.viewers.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({viewers: cloned_array})
+    }
 
 
 
@@ -2636,6 +2896,13 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
     load_token_suggestions(target_type){
         var items = [].concat(this.get_suggested_tokens(target_type))
         var background_color = this.props.theme['card_background_color']
@@ -2714,6 +2981,110 @@ return data['data']
         this.reset_the_number_picker()
     }
 
+
+
+
+
+
+
+
+    load_account_suggestions(target_type){
+        var items = [].concat(this.get_suggested_accounts(target_type))
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_suggested_accounts(target_type){
+        var me = this.props.app_state.user_account_id[this.state.e5]
+        if(me == null || me == 1){
+            return this.get_account_suggestions(target_type)
+        }
+        return[
+            {'id':me, 'label':{'title':this.props.app_state.loc['c311l']/* My Account. */, 'details':this.props.app_state.loc['c311m']/* 'Account' */, 'size':'s'}},
+        ].concat(this.get_account_suggestions(target_type))
+    }
+
+    get_account_suggestions(target_type){
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
+        if(contacts == null) contacts = [];
+        var return_array = []
+
+        if(target_type == 'participants'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.participants)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+            return_array = this.filter_and_add_other_accounts(this.state.participants, return_array)
+        }
+        else if(target_type == 'viewer'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.viewers)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+            return_array = this.filter_and_add_other_accounts(this.state.viewers, return_array)
+        }
+        
+        return return_array;
+    }
+
+    filter_and_add_other_accounts(typed_name, return_array){
+        if(typed_name.length < 3){
+            return return_array
+        }
+        const added_aliases = []
+        return_array.forEach(item => {
+            added_aliases.push(item['label']['details'])
+        });
+
+        return return_array.concat(this.get_all_aliases(added_aliases, typed_name))
+    }
+
+    get_all_aliases(added_aliases, typed_name){
+        const aliases = []
+        // const e5s = Object.keys(this.props.app_state.alias_bucket)
+        // e5s.forEach(e5 => {
+        //     const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
+        //     accounts.forEach(account_id => {
+        //         const alias = this.props.app_state.alias_bucket[e5][account_id]
+        //         if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
+        //             aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
+        //         }
+        //     });
+        // });
+        const e5 = this.state.e5
+        if(this.props.app_state.alias_bucket[e5] == null) return []
+        const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
+        accounts.forEach(account_id => {
+            const alias = this.props.app_state.alias_bucket[e5][account_id]
+            if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
+                aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
+            }
+        });
+
+        return aliases
+    }
+
+    get_contact_alias(contact){
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        return (obj[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : obj[contact['id']])
+    }
+
+    when_suggestion_clicked(item, pos, target_type){
+        if(target_type == 'viewer'){
+            this.setState({viewer: item['id']})
+        }
+    }
 
 
 

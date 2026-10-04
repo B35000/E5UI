@@ -2665,12 +2665,26 @@ class PostListSection extends Component {
         return this.order_elements(this.remove_duplicates(this.props.get_contractor_items()), 'e5_id');
     }
 
-    render_contractor_object(object, index){
+    render_contractor_object(object, index, loading=false){
         if(object == null || object['ipfs'] == null){
             if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */){
+                if(loading == true){
+                    return(
+                        <div>
+                            {this.render_small_skeleton_object()}
+                        </div>
+                    )
+                }
                 return(
                     <div>
                         {this.render_small_empty_object()}
+                    </div>
+                )
+            }
+            if(loading == true){
+                return(
+                    <div>
+                        {this.render_skeleton_object()}
                     </div>
                 )
             }
@@ -2758,11 +2772,46 @@ class PostListSection extends Component {
         // middle -= 220
 
         const contractor_location_pins = this.get_location_pins(this.get_contractor_items(), this.get_filter_end_time(this.state.selected_contractors_time_filter_chart_tags_object))
+
+        let route_data;
+        const selected_map_contractor = this.state.selected_map_contractor
+        if(selected_map_contractor != null){
+            if(selected_map_contractor['ipfs']?.get_draw_route_between_pins_option != null){
+                const draw_route = this.get_selected_item2(selected_map_contractor['ipfs']?.get_draw_route_between_pins_option, 'e') == 1
+
+                if(draw_route == true && selected_map_contractor['ipfs']?.route_data != null){
+                    route_data = selected_map_contractor['ipfs']?.route_data
+                }
+            }
+        }
+
+        const contractor_public_locations = this.props.app_state.contractor_public_locations;
+        const subcontractor_pins = []
+        const default_center = this.get_default_center();
+        const my_location = this.state.my_location;
+        const radius_point = my_location == null ? default_center : my_location;
+        if(Object.keys(contractor_public_locations).length > 0){
+            const contractor_e5_ids = Object.keys(contractor_public_locations);
+            contractor_e5_ids.forEach(e5_id => {
+                const addresses = Object.keys(contractor_public_locations[e5_id]);
+                addresses.forEach(address => {
+                    if(contractor_public_locations[e5_id][address]['time'] > Date.now() - (1000*60)){
+                        subcontractor_pins.push(contractor_public_locations[e5_id][address])
+                    }
+                });
+            });
+        }
+        const radius_km = 35;
+        const final_subcontractor_pins = subcontractor_pins.filter(account_location_object =>
+            this.distance_km(radius_point.lat, radius_point.lng, account_location_object.location.lat, account_location_object.location.lng) <= radius_km
+        );
         return(
             <div>
                 <div style={{'position': 'relative'}}>
                     <div style={{height: middle, width: width, 'z-index':'0', 'position': 'absolute'}}>
-                        <LocationViewer ref={this.locationPickerRef2} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={contractor_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_contractor_pin_clicked.bind(this)}/>
+                        <LocationViewer ref={this.locationPickerRef2} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={contractor_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_contractor_pin_clicked.bind(this)} route_data={route_data} subcontractors={final_subcontractor_pins} on_account_location_data_pin_licked={this.on_account_location_data_pin_licked.bind(this)}
+                        
+                        />
                     </div>
                     <div style={{height: 32, width: width-90, 'z-index':'1', 'position': 'absolute', 'margin':'10px 0px 0px 100px'}}>
                         <div style={{'display': 'flex','flex-direction': 'row', 'padding':'10px 20px 0px 20px'}}>
@@ -2783,7 +2832,7 @@ class PostListSection extends Component {
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.selected_contractors_time_filter_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_selected_contractors_time_filter_chart_tags_object_updated.bind(this)} theme={this.props.theme}/> */}
 
-                {this.state.selected_map_contractor != null && this.render_object_bottomsheet(this.render_contractor_object(this.state.selected_map_contractor), this.state.render_selected_map_contractor_bottomsheet, this.when_pin_contractor_closed, 200)}
+                {this.state.render_selected_map_contractor_bottomsheet == true && this.render_object_bottomsheet(this.render_contractor_object(this.state.selected_map_contractor, 0, true), this.state.render_selected_map_contractor_bottomsheet, this.when_pin_contractor_closed, 200)}
             </div>
         )
     }
@@ -2798,6 +2847,68 @@ class PostListSection extends Component {
 
     when_selected_contractors_time_filter_chart_tags_object_updated(tag_obj){
         this.setState({selected_contractors_time_filter_chart_tags_object: tag_obj})
+    }
+
+    distance_km(lat1, lng1, lat2, lng2) {
+        const R = 6371; // Earth radius in km
+        const to_rad = deg => deg * Math.PI / 180;
+
+        const d_lat = to_rad(lat2 - lat1);
+        const d_lng = to_rad(lng2 - lng1);
+
+        const a = Math.sin(d_lat / 2) ** 2 +
+                Math.cos(to_rad(lat1)) * Math.cos(to_rad(lat2)) *
+                Math.sin(d_lng / 2) ** 2;
+
+        return 2 * R * Math.asin(Math.sqrt(a));
+    }
+
+    async on_account_location_data_pin_licked(account_location_data){
+        this.props.notify(this.props.app_state.loc['2509es']/* 'Loading Object...' */, 1200)
+        this.setState({selected_map_contractor: null, render_selected_map_contractor_bottomsheet: true})
+        
+        const object_e5_id = account_location_data['contractor_obj']
+        const id = object_e5_id.split('E')[0]
+        const e5 = 'E'+ object_e5_id.split('E')[1]
+        await this.props.load_objects(26/* 26(contractor_object) */, [parseInt(id)], e5)
+        await this.wait_for_contractor_to_finish_loading()
+        const object = this.get_contractor_object(id, e5)
+
+        const broadcaster = account_location_data['sender_account_e5'] + ':' +account_location_data['sender_account']
+        const viewers = object['ipfs'].viewers || []
+        if(!viewers.includes(broadcaster)){
+            this.props.notify(this.props.app_state.loc['2509et']/* 'That account is not associated with the reported contractor' */, 11200)
+            this.setState({render_selected_map_contractor_bottomsheet: false})
+        }else{
+            this.setState({selected_map_contractor: object, render_selected_map_contractor_bottomsheet: true})
+        }
+    }
+
+    wait_for_contractor_to_finish_loading = (id, e5) => {
+        return new Promise((resolve, reject) => {
+        const checkReady = (n) => {
+            try {
+                const object = this.get_contractor_object(id, e5);
+                if (object != null) {
+                    resolve();
+                    return;
+                }
+                setTimeout(() => checkReady(n+1), 1000);
+            }
+            catch (error) {
+                reject(error);
+            }
+        };
+        checkReady(0);
+        });
+    }
+
+    get_contractor_object(id, e5){
+        const all_contractors = this.props.app_state.created_contractors[e5]
+        const matching_contractors = all_contractors.filter((object) => {
+            return (object['id'] == id)
+        })
+        return matching_contractors[0]
     }
 
 

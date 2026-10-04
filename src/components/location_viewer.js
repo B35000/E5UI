@@ -17,13 +17,16 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 import React, { useImperativeHandle, forwardRef, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvent, CircleMarker, AttributionControl } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvent, CircleMarker, AttributionControl, Polyline } from 'react-leaflet'
 import "leaflet/dist/leaflet.css";
 
 import L from 'leaflet';
 import pin_icon from '../assets/pin_icon.png'
 import pin_icon_dark from '../assets/pin_icon_dark.png'
 import pin_icon_grey from '../assets/pin_icon_grey.png'
+
+import sub_pin_icon from '../assets/sub_location_light.png'
+import sub_pin_icon_dark from '../assets/sub_location_dark.png'
 
 import my_location_icon from '../assets/my_location_icon.png'
 import my_location_icon_dark from '../assets/my_location_icon_dark.png'
@@ -49,7 +52,7 @@ function SetViewOnClick({ input_enabled }) {
   return null
 }
 
-function FitBounds({ pins, my_location }) {
+function FitBounds({ pins, my_location, subcontractors }) {
     const map = useMap();
     let fit = React.useRef(false);
     
@@ -59,18 +62,23 @@ function FitBounds({ pins, my_location }) {
         if(my_location != null){
             bounds_positions.push([my_location.lat, my_location.lon])
         }
+        if(subcontractors != null && subcontractors.length > 0){
+            subcontractors.forEach(account_location_data => {
+                bounds_positions.push([account_location_data['location']['lat'], account_location_data['location']['lon']])
+            });
+        }
         const bounds = L.latLngBounds(bounds_positions);
         if(fit.current == false){
             map.fitBounds(bounds, { padding: [50, 50] });
             fit.current = true
         }
-    }, [map, pins, my_location, fit]);
+    }, [map, pins, my_location, fit, subcontractors]);
 
     return null;
 }
 
 const LocationPicker = forwardRef((props, ref) => {
-    const { height, theme, center, pins, size, input_enabled, my_location, on_pin_clicked } = props;
+    const { height, theme, center, pins, size, input_enabled, my_location, on_pin_clicked, route_data, line_color, subcontractors, on_account_location_data_pin_licked } = props;
     const mapRef = React.useRef();
 
     // This function will be callable from outside
@@ -89,6 +97,12 @@ const LocationPicker = forwardRef((props, ref) => {
     const when_pin_clicked = (pin) => {
         if(on_pin_clicked){
             on_pin_clicked(pin)
+        }
+    }
+
+    const when_sub_pin_clicked = (account_location_data) => {
+        if(on_account_location_data_pin_licked){
+            on_account_location_data_pin_licked(account_location_data)
         }
     }
 
@@ -111,6 +125,23 @@ const LocationPicker = forwardRef((props, ref) => {
         iconSize: [icon_size, icon_size], // Size of the icon [width, height]
         iconAnchor: [icon_size/2, icon_size], // Point of the icon which will correspond to marker's location [x, y]
         popupAnchor: [0, -icon_size] // Point from which the popup should open relative to the iconAnchor
+    });
+
+
+
+    const sub_pin_object = {
+        'light': sub_pin_icon_dark,
+        'black': sub_pin_icon,
+        'dark': sub_pin_icon,
+    }
+
+    const icon_size_obj3 = { 's':48, 'm':56, 'l':72 };
+    const icon_size3 = icon_size_obj3[size];
+    const customIcon3 = L.icon({
+        iconUrl: sub_pin_object[theme], // Path to your custom image
+        iconSize: [icon_size3, icon_size3], // Size of the icon [width, height]
+        iconAnchor: [icon_size3/2, icon_size3], // Point of the icon which will correspond to marker's location [x, y]
+        popupAnchor: [0, -icon_size3] // Point from which the popup should open relative to the iconAnchor
     });
 
 
@@ -156,6 +187,8 @@ const LocationPicker = forwardRef((props, ref) => {
     const circle_size_obj = { 's':40, 'm':60, 'l':80 };
     const circle_size = circle_size_obj[size];
 
+    const route_positions = route_data?.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+
     if(pins.length == 0){
         return (
             <div style={{ height: height, width: '100%' }}>
@@ -174,6 +207,19 @@ const LocationPicker = forwardRef((props, ref) => {
                     style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px'}}>
                     <TileLayer attribution={attribution} url={url} />
                     <AttributionControl position="topright" />
+                    {subcontractors != null && subcontractors.length > 0 && subcontractors.map((account_location_data, index) => (
+                        <div>
+                            <Marker position={[account_location_data['location']['lat'], account_location_data['location']['lon']]} icon={customIcon3}>
+                                {input_enabled == true && (
+                                    <Popup>
+                                        <div onClick={() => when_sub_pin_clicked(account_location_data)}>
+                                            {account_location_data['alias'] || account_location_data['sender_account']}
+                                        </div>
+                                    </Popup>
+                                )}
+                            </Marker>
+                        </div>
+                    ))}
                     {my_location != null && (
                         <div>
                             <Marker position={[my_location.lat, my_location.lon]} icon={my_location_marker_icon}/>
@@ -182,6 +228,7 @@ const LocationPicker = forwardRef((props, ref) => {
                             </CircleMarker>
                         </div>
                     )}
+                    <FitBounds pins={pins} my_location={my_location} subcontractors={subcontractors} />
                 </MapContainer>
             </div>
         );
@@ -191,6 +238,16 @@ const LocationPicker = forwardRef((props, ref) => {
         <div style={{ height: height, width: '100%'}}>
             <MapContainer zoomControl={input_enabled} scrollWheelZoom={false} dragging={input_enabled} touchZoom={input_enabled} doubleClickZoom={input_enabled} boxZoom={input_enabled} keyboard={input_enabled} ref={mapRef} bounds={bounds} style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
                 <TileLayer attribution={attribution} url={url} />
+                {route_positions != null && route_positions.length > 0 && (
+                    <Polyline
+                        positions={route_positions}
+                        pathOptions={{
+                            color: theme === 'light' ? '#000000' : '#ffffff',
+                            weight: 5,
+                            opacity: 0.99,
+                        }}
+                    />
+                )}
                 {pins.map((pin, index) => (
                     <div>
                         <Marker position={[pin['lat'], pin['lng']]} icon={customIcon}>
@@ -204,6 +261,21 @@ const LocationPicker = forwardRef((props, ref) => {
                         </Marker>
                     </div>
                 ))}
+
+                {subcontractors != null && subcontractors.length > 0 && subcontractors.map((account_location_data, index) => (
+                    <div>
+                        <Marker position={[account_location_data['location']['lat'], account_location_data['location']['lng']]} icon={customIcon3}>
+                            {input_enabled == true && (
+                                <Popup>
+                                    <div onClick={() => when_sub_pin_clicked(account_location_data)}>
+                                        {account_location_data['alias'] || account_location_data['sender_account']}
+                                    </div>
+                                </Popup>
+                            )}
+                        </Marker>
+                    </div>
+                ))}
+
                 <SetViewOnClick input_enabled={input_enabled} />
                 <FitBounds pins={pins} my_location={my_location} />
                 {my_location != null && (

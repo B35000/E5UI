@@ -492,11 +492,93 @@ class home_page extends Component {
         const filter = this.props.app_state.opened_bottomsheets2.length > 0 ? "blur(1px)" : "none";
         const transform = this.props.app_state.opened_bottomsheets2.length > 0 ? "scale(0.99)"/* "scale(1.01)" */ : "scale(1.0)"
         return(
-            <div style={{filter: filter, transform: transform, transition: "transform 250ms ease, filter 250ms ease", willChange: "transform, filter", 'background-color': this.props.theme['homepage_background_color']}}>
+            <div style={{
+                filter: filter, 
+                transform: transform, 
+                transition: "transform 250ms ease, filter 250ms ease", 
+                willChange: "transform, filter", 
+                backgroundColor: this.props.theme['homepage_background_color'],
+            }}>
                 {this.render_data()}
-                {/* {this.render_page_toast_container()} */}
             </div>
         )
+    }
+
+    render_location_pulse(){
+        const c = this.get_my_state_color()
+        // const color = this.props.theme['my_messages_color'][c]
+        const colors = {
+            'g':'rgba(86, 198, 127, 0.4)',
+            'r':'rgba(210, 89, 89, 0.4)',
+            'b':'rgba(92, 139, 210, 0.4)',
+            'y':'rgba(211, 215, 83, 0.4)',
+            'p':'rgba(200, 88, 206, 0.4)',
+            'o':'rgba(210, 159, 83, 0.4)',
+        }
+        const color = colors[c]
+        return(
+            <div aria-hidden="true" style={{
+                position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                overflow: 'hidden', pointerEvents: 'none', zIndex: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+                <style>{`
+                    @keyframes location_pulse {
+                        0%   { transform: scale(0.5); opacity: 0.6; }
+                        100% { transform: scale(6);   opacity: 0; }
+                    }
+                `}</style>
+                {[0, 1, 2].map((i) => (
+                    <span key={i} style={{
+                        position: 'absolute',
+                        width: 200, height: 200,
+                        borderRadius: '50%',
+                        background: color,
+                        animation: 'location_pulse 6s ease-out infinite',
+                        animationDelay: `${(i*3)+3}s`,
+                        willChange: 'transform, opacity'
+                    }} />
+                ))}
+            </div>
+        )
+    }
+
+    get_my_state_color(){
+        const my_state_code = this.props.app_state.device_country_code
+        const country_data = this.props.app_state.country_data
+
+        var selected_objs = country_data.filter(function (el) {
+            return (el['code'] === my_state_code)
+        });
+
+        var color = 'g'
+        if(selected_objs.length > 0){
+            color = selected_objs[0]['color'][0];
+        }
+
+        const current_theme_name = this.props.theme['name']
+        const theme_obj = {}
+
+        theme_obj[this.props.app_state.loc['1417']/* 'light' */] = color;
+        theme_obj[this.props.app_state.loc['1418']/* 'dark' */] = color;
+        theme_obj[this.props.app_state.loc['2740']/* midnight */] = color;
+        theme_obj[this.props.app_state.loc['1593a']/* 'auto' */] = color;
+
+        theme_obj[this.props.app_state.loc['2741']/* green */] = 'g'
+        theme_obj[this.props.app_state.loc['3057']/* 'red' */] = 'r'
+        theme_obj[this.props.app_state.loc['3059']/* 'blue' */] = 'b'
+        theme_obj[this.props.app_state.loc['3061']/* 'yellow' */] = 'y'
+        theme_obj[this.props.app_state.loc['3063']/* 'pink' */] = 'p'
+        theme_obj[this.props.app_state.loc['3065']/* 'orange' */] = 'o'
+
+        theme_obj[this.props.app_state.loc['3056']/* 'light-green' */] = 'g'
+        theme_obj[this.props.app_state.loc['3058']/* 'light-red' */] = 'r'
+        theme_obj[this.props.app_state.loc['3060']/* 'light-blue' */] = 'b'
+        theme_obj[this.props.app_state.loc['3062']/* 'light-yellow' */] = 'y'
+        theme_obj[this.props.app_state.loc['3064']/* 'light-pink' */] = 'p'
+        theme_obj[this.props.app_state.loc['3066']/* 'light-orange' */] = 'o'
+
+        return theme_obj[current_theme_name]
     }
 
     render_page_toast_container(){
@@ -529,21 +611,28 @@ class home_page extends Component {
         var back = this.props.theme['background']
         if(this.props.app_state.theme_image != '') back = this.props.app_state.theme_image;
 
+        const is_sharing = (this.props.app_state.is_sharing_location == true && this.props.app_state.broadcast_config['broadcast']['object'] != null) || (this.props.app_state.is_sharing_location == true && Object.keys(this.props.app_state.broadcast_config['private_sharing']).length > 0)
+
         if(size == 'l'){
             var middle = this.props.height-112;
             return (
-                <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px'}}>
-                    <div className="row" style={{height: this.props.height, width:'100%', /* 'background-color':background_color, */ 'padding':'0px 0px 0px 15px', 'margin':'0px', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
-                        {this.render_side_bar()}
+                <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px',  position: 'relative',
+                minHeight: '100vh'}}>
+                    {is_sharing && this.render_location_pulse()}
+                    <div style={{position: 'relative', zIndex: 1}}>
+                        <div className="row" style={{height: this.props.height, width:'100%', 'padding':'0px 0px 0px 15px', 'margin':'0px', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
+                            {this.render_side_bar()}
 
-                        <div className="col-11" style={{}} >
-                            <div style={{height:top_bar, 'padding':'9px 0px 0px 5px'}}>
-                                {this.render_top_tag_bar(size, this.props.width)}
-                            </div>
-                            
-                            {this.render_large_screen_ui(middle, size)}
-                        </div>   
+                            <div className="col-11" style={{}} >
+                                <div style={{height:top_bar, 'padding':'9px 0px 0px 5px'}}>
+                                    {this.render_top_tag_bar(size, this.props.width)}
+                                </div>
+                                
+                                {this.render_large_screen_ui(middle, size)}
+                            </div>   
+                        </div>
                     </div>
+                        
                     {this.render_filter_section_bottomsheet()}
                     {this.render_post_preview_bottomsheet()}
                     {this.render_nsfw_preview_bottomsheet()}
@@ -566,22 +655,27 @@ class home_page extends Component {
             }
             const os = getOS();
             return (
-                <div className="row" style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'padding':'0px', 'margin':'0px'}}>
-                    <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px', 'margin':'0px'}}>
-                        
-                        <div style={{height:top_bar, 'width': '100%', 'padding':'9px 0px 0px 15px', 'overflow-y': 'hidden', 'overflow-x': 'hidden', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
-                            {this.render_top_tag_bar(size, this.props.width)}
+                <div className="row" style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'padding':'0px', 'margin':'0px', position: 'relative',
+                minHeight: '100vh'}}>
+                    {is_sharing && this.render_location_pulse()}
+                    <div style={{position: 'relative', zIndex: 1}}>
+                        <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px', 'margin':'0px'}}>
+                            
+                            <div style={{height:top_bar, 'width': '100%', 'padding':'9px 0px 0px 15px', 'overflow-y': 'hidden', 'overflow-x': 'hidden', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
+                                {this.render_top_tag_bar(size, this.props.width)}
+                            </div>
+                            
+                            <div style={{height:5}}/>
+                            {os != 'Android' && os != 'iOS' ? this.render_post_details_with_orientation_for_non_touch_screens(middle, width, size) : this.render_post_details_with_orientation(middle, width, size)}
+                            <div style={{height:5}}/>
+                            
+                            <div style={{height:bottom_bar, width: navbar_width, 'background-color':  navbar_color, 'border-radius': radius, 'padding':'0px 0px 0px 0px', 'margin':navbar_margin, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
+                                {this.render_navbar_button_group(size, navbar_width)}
+                            </div>
+                            
                         </div>
-                        
-                        <div style={{height:5}}/>
-                        {os != 'Android' && os != 'iOS' ? this.render_post_details_with_orientation_for_non_touch_screens(middle, width, size) : this.render_post_details_with_orientation(middle, width, size)}
-                        <div style={{height:5}}/>
-                        
-                        <div style={{height:bottom_bar, width: navbar_width, 'background-color':  navbar_color, 'border-radius': radius, 'padding':'0px 0px 0px 0px', 'margin':navbar_margin, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
-                            {this.render_navbar_button_group(size, navbar_width)}
-                        </div>
-                        
                     </div>
+                        
                     {this.render_filter_section_bottomsheet()}
                     {this.render_post_preview_bottomsheet()}
                     {this.render_nsfw_preview_bottomsheet()}
@@ -606,22 +700,26 @@ class home_page extends Component {
             }
             
             return(
-                <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}}>
-                    <div style={{height: this.props.height, width:'100%', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
-                        {this.render_small_screen_size_ui(size, top_bar, width)}
-                        
-                        {/* <div style={{height:5}}/> */}
-                        <div style={{height:bottom_bar, width:navbar_width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': radius, 'padding':'0px 0px 0px 0px', 'margin':navbar_margin, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
-                            {this.render_navbar_button_group(size, navbar_width)}
-                        </div>
+                <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', position: 'relative',
+                minHeight: '100vh'}}>
+                    {is_sharing && this.render_location_pulse()}
+                    <div style={{position: 'relative', zIndex: 1}}>
+                        <div style={{height: this.props.height, width:'100%', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
+                            {this.render_small_screen_size_ui(size, top_bar, width)}
+                            
+                            {/* <div style={{height:5}}/> */}
+                            <div style={{height:bottom_bar, width:navbar_width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': radius, 'padding':'0px 0px 0px 0px', 'margin':navbar_margin, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
+                                {this.render_navbar_button_group(size, navbar_width)}
+                            </div>
 
-                        {this.render_view_object_bottomsheet()}
-                        {this.render_filter_section_bottomsheet()}
-                        {this.render_post_preview_bottomsheet()}
-                        {this.render_nsfw_preview_bottomsheet()}
-                        {this.render_dialog_ui()}
-                        {/* {this.render_page_toast_container()} */}
-                    </div>
+                            {this.render_view_object_bottomsheet()}
+                            {this.render_filter_section_bottomsheet()}
+                            {this.render_post_preview_bottomsheet()}
+                            {this.render_nsfw_preview_bottomsheet()}
+                            {this.render_dialog_ui()}
+                            {/* {this.render_page_toast_container()} */}
+                        </div>
+                    </div>    
                 </div>
             )
         }
@@ -1438,8 +1536,9 @@ class home_page extends Component {
         const post_tag = notification_object['post_tag'] || [];
         const storefront_purchase_request = notification_object['storefront_purchase_request'] || []
         const storefront_request_response = notification_object['storefront_request_response'] || []
+        const shared_location = notification_object['shared_location'] || []
         
-        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post, comment_tag, post_tag, storefront_purchase_request, storefront_request_response)
+        const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post, comment_tag, post_tag, storefront_purchase_request, storefront_request_response, shared_location)
 
         const me = this
         const filtered_events = all_events.filter(function (event) {
@@ -5870,7 +5969,7 @@ class home_page extends Component {
             set_page_refresh_feed_tapped_data={this.set_page_refresh_feed_tapped_data.bind(this)}
             current_load_time={this.state.current_load_time} show_view_call_interface={this.props.show_view_call_interface.bind(this)} set_watched_account_id={this.props.set_watched_account_id.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} set_contextual_transfer_identifier={this.props.set_contextual_transfer_identifier.bind(this)}
 
-            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} viewed_items_data={this.state.viewed_items_data} page_search_data={this.state.page_search_data} set_page_objects_that_should_be_in_focus={this.props.set_page_objects_that_should_be_in_focus.bind(this)} perform_itransfer_search={this.props.perform_itransfer_search.bind(this)}
+            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} viewed_items_data={this.state.viewed_items_data} page_search_data={this.state.page_search_data} set_page_objects_that_should_be_in_focus={this.props.set_page_objects_that_should_be_in_focus.bind(this)} perform_itransfer_search={this.props.perform_itransfer_search.bind(this)} load_objects={this.props.load_objects.bind(this)}
 
             
             />
@@ -6966,7 +7065,7 @@ class home_page extends Component {
                 load_token_certificate_chain={this.props.load_token_certificate_chain.bind(this)} load_nft_certificate_parent_objects={this.props.load_nft_certificate_parent_objects.bind(this)} get_objects_showcased_certificates={this.props.get_objects_showcased_certificates.bind(this)} fetch_uploaded_files_for_object={this.props.fetch_uploaded_files_for_object.bind(this)}
 
                 get_ether_blockexplorer_link={this.props.get_ether_blockexplorer_link.bind(this)}
-                auto_stack_subscription={this.auto_stack_subscription.bind(this)} perform_translation_of_specific_object={this.props.perform_translation_of_specific_object.bind(this)}
+                auto_stack_subscription={this.auto_stack_subscription.bind(this)} perform_translation_of_specific_object={this.props.perform_translation_of_specific_object.bind(this)} broadcast_my_location_under_specific_pretense={this.props.broadcast_my_location_under_specific_pretense.bind(this)}
 
                 />
             </div>

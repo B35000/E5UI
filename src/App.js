@@ -2117,7 +2117,7 @@ class App extends Component {
     objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}, 
     ether_ages:{}, created_object_full:{}, current_run_hash:{}, socket_created_bags:{}, translation_data:{}, performing_translation_indicator:{}, translation_percentage_data:{},
 
-    focused_page:this.getLocale()['1196']/* 'jobs' */
+    focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true,
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -2213,7 +2213,7 @@ class App extends Component {
         web3:['https://avalanche.drpc.org'],
         token:'AVAX',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:avalanche_logo/* 'https://nftstorage.link/ipfs/bafkreiazy7wgqjb3w6owts3xixp527kxdb6mohcrt3rkvvomsvk3rqep4e' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.AVA, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Avalanche (C-Chain)")
+        first_block:0, end_image:null, spend_image:null, ether_image:avalanche_logo/* 'https://nftstorage.link/ipfs/bafkreiazy7wgqjb3w6owts3xixp527kxdb6mohcrt3rkvvomsvk3rqep4e' */, iteration:3_000, url:0, active:false, e5_img:null, id: ChainId.AVA, external_swappers:['lifi', 'changenow', 'near_intents'],changenow_object: get_changenow_object("Avalanche (C-Chain)")
       },
       'E55':{
         web3:['https://1rpc.io/celo', 'https://forno.celo.org'],
@@ -2231,7 +2231,7 @@ class App extends Component {
         web3:['https://rpc.gnosischain.com'],
         token:'XDAI',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:31015240, end_image:'https://nftstorage.link/ipfs/bafkreibgr7powl4htuxigjxl6noyew6taomrmztiwnyo5kvytwxwvrg7xq', spend_image:'https://nftstorage.link/ipfs/bafkreifuqbzibz4efhnbkwllwo5qepsnacyhbcpmuxcfcacbyddyniocsm', ether_image:xdai_logo/* 'https://nftstorage.link/ipfs/bafkreiezzy66goly3tmsbxoknk43372eqnc5y6252n5jkxsyurp5ktfmhe' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.DAI, external_swappers:['lifi'],changenow_object: get_changenow_object()
+        first_block:31015240, end_image:'https://nftstorage.link/ipfs/bafkreibgr7powl4htuxigjxl6noyew6taomrmztiwnyo5kvytwxwvrg7xq', spend_image:'https://nftstorage.link/ipfs/bafkreifuqbzibz4efhnbkwllwo5qepsnacyhbcpmuxcfcacbyddyniocsm', ether_image:xdai_logo/* 'https://nftstorage.link/ipfs/bafkreiezzy66goly3tmsbxoknk43372eqnc5y6252n5jkxsyurp5ktfmhe' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.DAI, external_swappers:['lifi', 'near_intents'],changenow_object: get_changenow_object()
       },
       'E85':{
         web3:['https://rpc.fuse.io'],
@@ -2261,13 +2261,13 @@ class App extends Component {
         web3:['https://polygon-bor-rpc.publicnode.com'],
         token:'POL',
         e5_address:'',/* 0x3D610010C43fC1Af89D8d040ED530398817A8E94 */
-        first_block:50258928, end_image:'https://nftstorage.link/ipfs/bafkreihldhuazp6fcbxqvzpl7zzr2zay4zuxnnnma44fg7u7lvydfzrv6y', spend_image:'https://nftstorage.link/ipfs/bafkreih4ctarqvngz5zjyahjlqppslmnpexfyjiso65ywyrepqnv5d7wtm', ether_image:polygon_logo/* 'https://nftstorage.link/ipfs/bafkreid3rpf2wbk4i6y6sd4zltdapek2i3dst5pxzfjy3kvn6iv56obfty' */, iteration:40_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.POL, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Polygon (Matic Mainnet)")
+        first_block:50258928, end_image:'https://nftstorage.link/ipfs/bafkreihldhuazp6fcbxqvzpl7zzr2zay4zuxnnnma44fg7u7lvydfzrv6y', spend_image:'https://nftstorage.link/ipfs/bafkreih4ctarqvngz5zjyahjlqppslmnpexfyjiso65ywyrepqnv5d7wtm', ether_image:polygon_logo/* 'https://nftstorage.link/ipfs/bafkreid3rpf2wbk4i6y6sd4zltdapek2i3dst5pxzfjy3kvn6iv56obfty' */, iteration:40_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.POL, external_swappers:['lifi', 'changenow', 'near_intents'],changenow_object: get_changenow_object("Polygon (Matic Mainnet)")
       },
       'E135':{
         web3:['https://bsc-rpc.publicnode.com'],
         token:'BNB',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:33723227, end_image:'https://nftstorage.link/ipfs/bafkreif4lbsuzzhu23piwbdv3p47ha46g6egmoh7pddrex6f3tbl76ycii', spend_image:'https://nftstorage.link/ipfs/bafkreigvlzjjujid2f3n7zzfw4jzmwowaq2mvd35d32rauedberpnjl6vq', ether_image:binance_logo/* 'https://nftstorage.link/ipfs/bafkreibsa7mds2mc75oyalixvrycvcn6grk625paucy7ol3sifdz42ew5e' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.BSC, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("BNB Smart Chain")
+        first_block:33723227, end_image:'https://nftstorage.link/ipfs/bafkreif4lbsuzzhu23piwbdv3p47ha46g6egmoh7pddrex6f3tbl76ycii', spend_image:'https://nftstorage.link/ipfs/bafkreigvlzjjujid2f3n7zzfw4jzmwowaq2mvd35d32rauedberpnjl6vq', ether_image:binance_logo/* 'https://nftstorage.link/ipfs/bafkreibsa7mds2mc75oyalixvrycvcn6grk625paucy7ol3sifdz42ew5e' */, iteration:40_000, url:0, active:false, e5_img:null, id: ChainId.BSC, external_swappers:['lifi', 'changenow', 'near_intents'],changenow_object: get_changenow_object("BNB Smart Chain")
       },
       'E145':{
         web3:['https://evm-rpc.sei-apis.com'],
@@ -2279,7 +2279,7 @@ class App extends Component {
         web3:['https://rpc.berachain.com/'],
         token:'BERA',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:berachain_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.BER, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Berachain",)
+        first_block:0, end_image:null, spend_image:null, ether_image:berachain_logo, iteration:400_000, url:0, active:false, e5_img:null, id: ChainId.BER, external_swappers:['lifi', 'changenow', 'near_intents'],changenow_object: get_changenow_object("Berachain",)
       },
       'E165':{
         web3:['https://viction.drpc.org'],
@@ -2291,7 +2291,7 @@ class App extends Component {
         web3:['https://rpc.plasma.to'],
         token:'XPL',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image: plasma_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.PLA, external_swappers:['lifi'],changenow_object: get_changenow_object()
+        first_block:0, end_image:null, spend_image:null, ether_image: plasma_logo, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.PLA, external_swappers:['lifi', 'near_intents'],changenow_object: get_changenow_object()
       },
 
 
@@ -2307,25 +2307,25 @@ class App extends Component {
         web3:['https://ethereum-rpc.publicnode.com'],
         token:'ETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:ethereum_logo/* 'https://nftstorage.link/ipfs/bafkreifhlwgbspcfrn2kbu25nevksegskhbns7aesdr6kwy6ikqct7lp7e' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.ETH,external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum")
+        first_block:0, end_image:null, spend_image:null, ether_image:ethereum_logo/* 'https://nftstorage.link/ipfs/bafkreifhlwgbspcfrn2kbu25nevksegskhbns7aesdr6kwy6ikqct7lp7e' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', id: ChainId.ETH,external_swappers:['lifi', 'changenow', 'near_intents'],changenow_object: get_changenow_object("Ethereum")
       },
       'E195':{
         web3:['https://optimism-rpc.publicnode.com'],
         token:'OETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:optimism_logo/* 'https://nftstorage.link/ipfs/bafkreies5rawvabvmzovxqesuor3a43wqmgnec7y7yzlberkwqvicehdse' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185', id: ChainId.OPT, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum (Optimism)")
+        first_block:0, end_image:null, spend_image:null, ether_image:optimism_logo/* 'https://nftstorage.link/ipfs/bafkreies5rawvabvmzovxqesuor3a43wqmgnec7y7yzlberkwqvicehdse' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185', id: ChainId.OPT, external_swappers:['lifi', 'changenow', 'near_intents'],changenow_object: get_changenow_object("Ethereum (Optimism)")
       },
       'E205':{
         web3:['https://base-rpc.publicnode.com'],
         token:'BETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:base_logo/* 'https://nftstorage.link/ipfs/bafkreicwdtpk4fjjh6zmbrreafp7yuuehagxc5iso5iaggezwu2edsrmj4' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185', id: ChainId.BAS, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum (Base)")
+        first_block:0, end_image:null, spend_image:null, ether_image:base_logo/* 'https://nftstorage.link/ipfs/bafkreicwdtpk4fjjh6zmbrreafp7yuuehagxc5iso5iaggezwu2edsrmj4' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'op', bridge_enabled:true, parent: 'E185', id: ChainId.BAS, external_swappers:['lifi', 'changenow', 'near_intents'],changenow_object: get_changenow_object("Ethereum (Base)")
       },
       'E215':{
         web3:['https://arbitrum-one-rpc.publicnode.com'],
         token:'AETH',
         e5_address:'',
-        first_block:0, end_image:null, spend_image:null, ether_image:arbitrum_logo/* 'https://nftstorage.link/ipfs/bafkreia5kfqglxtwiyrm7fw4ydrr4dwyrwftxrs6gvksxss7s5wjvc2ndm' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'ar', bridge_enabled: true, parent: 'E185', id: ChainId.ARB, external_swappers:['lifi', 'changenow'],changenow_object: get_changenow_object("Ethereum (Arbitrum)")
+        first_block:0, end_image:null, spend_image:null, ether_image:arbitrum_logo/* 'https://nftstorage.link/ipfs/bafkreia5kfqglxtwiyrm7fw4ydrr4dwyrwftxrs6gvksxss7s5wjvc2ndm' */, iteration:3_000, url:0, active:false, e5_img:null, type:'1559', class:'L2', rollup_type:'ar', bridge_enabled: true, parent: 'E185', id: ChainId.ARB, external_swappers:['lifi', 'changenow', 'near_intents'],changenow_object: get_changenow_object("Ethereum (Arbitrum)")
       },
       'E225':{
         web3:['https://evm.astar.network', 'https://astar.api.onfinality.io/public'],
@@ -2884,7 +2884,7 @@ class App extends Component {
         web3:['https://scroll-rpc.publicnode.com'],
         token:'SETH',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:scroll_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'zk', parent: 'E185', id: ChainId.SCL, external_swappers:['lifi'],changenow_object: get_changenow_object()
+        first_block:0, end_image: null, spend_image: null, ether_image:scroll_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', class:'L2', rollup_type:'zk', parent: 'E185', id: ChainId.SCL, external_swappers:['lifi', 'near_intents'],changenow_object: get_changenow_object()
       },
       'E1155':{
         web3:['https://rpc.shibarium.shib.io'],
@@ -2933,7 +2933,7 @@ class App extends Component {
         web3:['https://rpc.xlayer.tech'],
         token:'OKB',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:okb_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.XLY, external_swappers:['lifi'],changenow_object: get_changenow_object()
+        first_block:0, end_image: null, spend_image: null, ether_image:okb_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.XLY, external_swappers:['lifi', 'near_intents'],changenow_object: get_changenow_object()
       },
       'E1235':{
         web3:['https://exchainrpc.okex.org/'],
@@ -2991,7 +2991,7 @@ class App extends Component {
         web3:['https://rpc3.monad.xyz', 'https://rpc1.monad.xyz', 'https://monad-mainnet.drpc.org'],
         token:'MON',
         e5_address:'',/*  */
-        first_block:0, end_image: null, spend_image: null, ether_image:monad_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.MON, external_swappers:['lifi'], changenow_object: get_changenow_object()
+        first_block:0, end_image: null, spend_image: null, ether_image:monad_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, id: ChainId.MON, external_swappers:['lifi', 'near_intents'], changenow_object: get_changenow_object()
       },
       'E1325':{
         web3:['https://zora.drpc.org'],
@@ -3267,21 +3267,21 @@ class App extends Component {
     const dogecoin_balance = this.state?.coin_data?.['DOGE']?.['balance']
     const doge_image = dogecoin_balance != null && !bigInt(dogecoin_balance).isZero() ? dogecoin2_logo : dogecoin_logo
     var list = {
-      'BTC': this.get_coin_info('BTC', 'Bitcoin', bitcoin_logo, 'satoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113b']/* 'Proof Of Work' */, '10 min.', this.get_time_difference(1231006505), 3, 1, "Bitcoin", ['changenow']),
+      'BTC': this.get_coin_info('BTC', 'Bitcoin', bitcoin_logo, 'satoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113b']/* 'Proof Of Work' */, '10 min.', this.get_time_difference(1231006505), 3, 1, "Bitcoin", ['changenow', 'near_intents']),
 
-      'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', bitcoincash_logo, 'satoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */,'10 min.', this.get_time_difference(1231006505), 60, 32, "Bitcoin Cash",['changenow']),
+      'BCH': this.get_coin_info('BCH', 'Bitcoin Cash', bitcoincash_logo, 'satoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */,'10 min.', this.get_time_difference(1231006505), 60, 32, "Bitcoin Cash",['changenow', 'near_intents']),
 
-      'LTC': this.get_coin_info('LTC', 'Litecoin', litecoin_logo, 'litoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '2.5 min.', this.get_time_difference(1317972665), 56, 1, "Litecoin", ['changenow']),
+      'LTC': this.get_coin_info('LTC', 'Litecoin', litecoin_logo, 'litoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '2.5 min.', this.get_time_difference(1317972665), 56, 1, "Litecoin", ['changenow', 'near_intents']),
 
-      'DOGE': this.get_coin_info('DOGE', 'Dogecoin', doge_image, 'koinu', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '1 min.', this.get_time_difference(1386338512), 30, 1, "Dogecoin", ['changenow']),
+      'DOGE': this.get_coin_info('DOGE', 'Dogecoin', doge_image, 'koinu', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '1 min.', this.get_time_difference(1386338512), 30, 1, "Dogecoin", ['changenow', 'near_intents']),
 
-      'DASH': this.get_coin_info('DASH', 'Dash', dash_logo, 'duff', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '2.5 min.', this.get_time_difference(1390083000), 56, 2, "Dash", ['changenow']),
+      'DASH': this.get_coin_info('DASH', 'Dash', dash_logo, 'duff', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */,this.getLocale()['3113b']/* 'Proof Of Work' */, '2.5 min.', this.get_time_difference(1390083000), 56, 2, "Dash", ['changenow', 'near_intents']),
 
-      'TRX': this.get_coin_info('TRX', 'Tron', tron_logo, 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113s']/* 'Delegated Proof Of Stake' */, '3 sec.', this.get_time_difference(1529885280), 2000, 1, "TRON", ['changenow']),
+      'TRX': this.get_coin_info('TRX', 'Tron', tron_logo, 'sun', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113s']/* 'Delegated Proof Of Stake' */, '3 sec.', this.get_time_difference(1529885280), 2000, 1, "TRON", ['changenow', 'near_intents']),
       
-      'XRP': this.get_coin_info('XRP', 'XRP', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113r']/* 'Ripple Protocol Consensus Algorithm' */, '5 sec.', this.get_time_difference(1338672000), 1500, '~~~', "Ripple", ['changenow']),
+      'XRP': this.get_coin_info('XRP', 'XRP', xrp_logo, 'drops', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113r']/* 'Ripple Protocol Consensus Algorithm' */, '5 sec.', this.get_time_difference(1338672000), 1500, '~~~', "Ripple", ['changenow', 'near_intents']),
 
-      'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113q']/* 'Stellar Consensus Protocol' */, '5 sec.', this.get_time_difference(1406780800), 3351, '~~~', "Stellar", ['changenow']),
+      'XLM': this.get_coin_info('XLM', 'Stellar', stellar_logo, 'stroop', 7, 10_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113q']/* 'Stellar Consensus Protocol' */, '5 sec.', this.get_time_difference(1406780800), 3351, '~~~', "Stellar", ['changenow', 'near_intents']),
 
       'DOT': this.get_coin_info('DOT', 'Polkadot', polkadot_logo, 'planck', 10, 10_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113p']/* 'Nominated Proof of Stake' */, '6 sec.', this.get_time_difference(1590480213), 143_000, '~~~', "Polkadot", ['changenow']),
 
@@ -3295,11 +3295,11 @@ class App extends Component {
 
       'FIL': this.get_coin_info('FIL', 'Filecoin', filecoin_logo, 'aFIL', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113l']/* 'Proof of Spacetime & Proof of Replication' */, '50 sec.', this.get_time_difference(1602729600), 7, '~~~', "Filecoin", ['changenow']),
 
-      'SOL': this.get_coin_info('SOL', 'Solana',solana_logo, 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113k']/* 'Proof of Stake & Proof of History' */, '0.4 sec.', this.get_time_difference(1584372000),65_000, 2, "Solana", ['changenow']),
+      'SOL': this.get_coin_info('SOL', 'Solana',solana_logo, 'lamport', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113k']/* 'Proof of Stake & Proof of History' */, '0.4 sec.', this.get_time_difference(1584372000),65_000, 2, "Solana", ['changenow', 'near_intents']),
 
-      'APT': this.get_coin_info('APT', 'Aptos', aptos_logo, 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~', "Aptos", ['changenow']),
+      'APT': this.get_coin_info('APT', 'Aptos', aptos_logo, 'octa', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '0.21 sec.', this.get_time_difference(1665532800), 160_000, '~~~', "Aptos", ['changenow', 'near_intents']),
 
-      'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '20 sec.', this.get_time_difference(1506203091), 10, 0.088, "Cardano", ['changenow']),
+      'ADA': this.get_coin_info('ADA', 'Cardano', cardano_logo, 'lovelace', 6, 1_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '20 sec.', this.get_time_difference(1506203091), 10, 0.088, "Cardano", ['changenow', 'near_intents']),
 
       'STX': this.get_coin_info('STX', 'Stacks', stacks_logo, '𝜇STX', 6, 1_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113j']/* 'Proof Of Transfer' */, '10 sec.', this.get_time_difference(1610641813), 10, '~~~', "Stacks", ['changenow']),
 
@@ -3315,13 +3315,13 @@ class App extends Component {
 
       'INJ': this.get_coin_info('INJ', 'Injective', injective_logo, 'inj', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '0.65 sec.', this.get_time_difference(1625058000), 600_000, '~~~', "Injective (Mainnet)", ['changenow']),
 
-      'NEAR': this.get_coin_info('NEAR', 'Near Protocol', near_logo, 'yocto', 24, 10**24, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113f']/* 'Thresholded Proof of Stake' */, '1 sec.', this.get_time_difference(1595350551), 4100, '~~~', "NEAR Protocol", ['changenow']),
+      'NEAR': this.get_coin_info('NEAR', 'Near Protocol', near_logo, 'yocto', 24, 10**24, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113f']/* 'Thresholded Proof of Stake' */, '1 sec.', this.get_time_difference(1595350551), 4100, '~~~', "NEAR Protocol", ['changenow', 'near_intents']),
 
       'ICP': this.get_coin_info('ICP', 'Internet Computer', icp_logo, 'e8', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113e']/* 'Threshold Relay' */, '0.5 sec.', this.get_time_difference(1623283200), 3_000, '~~~', null, []),
 
-      'ZEC': this.get_coin_info('ZEC', 'Zcash', zcash_logo, 'zatoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113b']/* 'Proof Of Work' */, '1.25 min.', this.get_time_difference(1477673333), 5, 2, "Zcash", ['changenow']),
+      'ZEC': this.get_coin_info('ZEC', 'Zcash', zcash_logo, 'zatoshi', 8, 100_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113b']/* 'Proof Of Work' */, '1.25 min.', this.get_time_difference(1477673333), 5, 2, "Zcash", ['changenow', 'near_intents']),
 
-      'GRAM': this.get_coin_info('GRAM', 'Gram', gram_logo, 'nanogram', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '0.4 sec.', this.get_time_difference(1573516800), 104_715, 1, "Toncoin", ['changenow']),
+      'GRAM': this.get_coin_info('GRAM', 'Gram', gram_logo, 'nanogram', 9, 1_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '0.4 sec.', this.get_time_difference(1573516800), 104_715, 1, "Toncoin", ['changenow', 'near_intents']),
 
       '???': this.get_coin_info('???', '??????', monero_logo, '???', 12, 1_000_000_000_000, this.getLocale()['3113a']/* 'Unspent Transaction Outputs (UTXO)' */, this.getLocale()['3113b']/* 'Proof Of Work' */, '2 min.', this.get_time_difference(1397818193), 7, '~~~', "Monero", ['changenow']),
 
@@ -5623,6 +5623,7 @@ class App extends Component {
     if(this.interval8 != null) clearInterval(this.interval8);
     if(this.coin_prices_interval != null) clearInterval(this.coin_prices_interval);
     if(this.translate_interval != null) clearInterval(this.translate_interval);
+    if(this.location_interval != null) clearInterval(this.location_interval)
     
     var obj = {'sluggish':1000_000, 'slow':500_000, 'average':290_000, 'fast':90_000}
     obj[this.getLocale()['1421']/* sluggish */] = 1000_000
@@ -5662,6 +5663,7 @@ class App extends Component {
       me.coin_prices_interval = setInterval(() => me.load_coin_and_ether_coin_prices(), (1000*60*60))
 
       me.translate_interval = setInterval(() => me.translate_loaded_messages(), obj4[me.state.refresh_speed]);
+      me.location_interval = setInterval(() => me.broadcast_location_to_target(), 9000)
     }, (1 * 100));
     
     this.schedule_audio_pip_visibility_because_of_inactivity()
@@ -7818,11 +7820,15 @@ class App extends Component {
         
         'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
 
-        'my_messages_color':{'g':'rgba(199, 216, 195, 0.6)','r':'rgba(217, 198, 198, 0.6)','b':'rgba(198, 206, 218, 0.6)','y':'rgba(218, 219, 195, 0.6)','p':'rgba(210, 191, 211, 0.6)','o':'rgba(215, 207, 195, 0.6)',}, 
+        'my_messages_color':{'g':'rgba(199, 216, 195, 0.6)',
+          'r':'rgba(217, 198, 198, 0.6)','b':'rgba(198, 206, 218, 0.6)',
+          'y':'rgba(218, 219, 195, 0.6)','p':'rgba(210, 191, 211, 0.6)',
+          'o':'rgba(215, 207, 195, 0.6)',}, 
         'markdown_code_background':'rgb(255, 255, 255)', 
         'markdown_code_container_background':'rgb(255, 255, 255)',
         
-        'chart_color2':'#FCFCFC','chart_background_color':'#D5D5D5', 'chart_color':'rgb(170, 170, 170)',
+        'chart_color2':'#FCFCFC','chart_background_color':'#D5D5D5', 
+        'chart_color':'rgb(170, 170, 170)',
   
         'number_picker_label_color':'#D5D5D5','number_picker_label_shadow':'#c9c9c9',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
@@ -8863,7 +8869,7 @@ class App extends Component {
 
           get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)} perform_translation_of_specific_object={this.perform_translation_of_specific_object.bind(this)}
           when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}
-          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)}
+          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -9427,6 +9433,71 @@ class App extends Component {
   reload_all_my_direct_messages(){
     const target_address = this.state.accounts[this.state.selected_e5].address
     this.get_objects_from_socket_and_set_in_state(['direct_message|'+target_address], [], [], Date.now()-(1000*60*60*24*7), (36*7*24*60*60*1000), [], '', [])
+  }
+
+  broadcast_my_location_under_specific_pretense(object, setting){
+    if(setting == 'broadcast'){
+      //account intends to broadcast location publicly
+      const clone = structuredClone(this.state.broadcast_config)
+      clone['broadcast'] = {
+        'object':object,
+        'object_type':object['object_type']
+      }
+      this.setState({broadcast_config: clone})
+    }
+    else if(setting == 'e'){
+      //account intends to stop broadcasting location
+      const clone = structuredClone(this.state.broadcast_config)
+      clone['broadcast'] = {}
+      this.setState({broadcast_config: clone})
+    }
+  }
+
+  async broadcast_location_to_target(){
+    if(this.is_broadcasting_location == true || !this.state.is_sharing_location) return;
+    this.is_broadcasting_location = true
+    if(this.state.broadcast_config['broadcast']['object'] != null){
+      //a contractor broadcast setting has been configured, emit my location under that object
+      await this.emit_my_location_under_specific_contractor_object(this.state.broadcast_config['broadcast']['object'])
+      await this.wait(1000)
+    }
+
+    if(Object.keys(this.state.broadcast_config['private_sharing']).length > 0){
+      const e5_ids = Object.keys(this.state.broadcast_config['private_sharing'])
+      var contains_delete = false
+      for(var i=0; i<e5_ids.length; i++){
+        const share_data = this.state.broadcast_config['private_sharing'][e5_ids[i]]
+        const id = share_data.id
+        const e5 = share_data.e5
+        const expiry = share_data.expiry
+        const address = share_data.address
+        const now = Date.now()
+        if(now < expiry){
+          await this.emit_my_location_with_target_account(id, e5, address)
+          await this.wait(1000)
+        }
+        else{
+          contains_delete = true
+        }
+      }
+      if(contains_delete == true){
+        const clone = structuredClone(this.state.broadcast_config)
+        const e5_ids = Object.keys(clone['private_sharing'])
+        const new_object = {}
+        for(var i=0; i<e5_ids.length; i++){
+          const share_data = this.state.broadcast_config['private_sharing'][e5_ids[i]]
+          const expiry = share_data.expiry
+          const now = Date.now()
+          if(now < expiry){
+            new_object[e5_ids[i]] = share_data
+          }
+        }
+        clone['private_sharing'] = new_object
+        this.setState({broadcast_config: clone})  
+      }
+    }
+
+    this.is_broadcasting_location = false
   }
 
 
@@ -11827,7 +11898,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)} when_language_selected={this.when_language_selected.bind(this)} remove_content_languag_setting={this.remove_content_languag_setting.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} fetch_last_transaction_time={this.fetch_last_transaction_time.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)} when_language_selected={this.when_language_selected.bind(this)} remove_content_languag_setting={this.remove_content_languag_setting.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} fetch_last_transaction_time={this.fetch_last_transaction_time.bind(this)} stop_sharing_with_target={this.stop_sharing_with_target.bind(this)} pause_sharing_on_all={this.pause_sharing_on_all.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)}
       />
     )
   }
@@ -13025,6 +13096,23 @@ class App extends Component {
     setTimeout(function() {
       me.set_cookies()
     }, (1 * 1000));
+  }
+
+  stop_sharing_with_target(item){
+    const clone = structuredClone(this.state.broadcast_config)
+    const e5_id = item.e5+':'+item.id;
+    delete clone['private_sharing'][e5_id]
+    this.setState({broadcast_config: clone})
+  }
+
+  pause_sharing_on_all(){
+    const is_sharing = this.state.is_sharing_location
+    if(is_sharing == true){
+      this.prompt_top_notification(this.getLocale()['1593nn']/* 'Location sharing paused.' */, 1200)
+    }else{
+      this.prompt_top_notification(this.getLocale()['1593no']/* 'Location sharing resumed.' */, 1200)
+    }
+    this.setState({is_sharing_location: !is_sharing})
   }
 
 
@@ -14324,7 +14412,7 @@ class App extends Component {
     else if(target == '9'/* contractors */){
       return(
         <NewContractorPage ref={this.new_contractor_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)} show_images={this.show_images.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)} show_images={this.show_images.bind(this)} obtain_route_from_selected_points={this.obtain_route_from_selected_points.bind(this)}
         />
       );
     }
@@ -15330,6 +15418,19 @@ class App extends Component {
     return result;
   }
 
+  async obtain_route_from_selected_points(pins){
+    const coords = pins.map(p => `${p.lng},${p.lat}`).join(";");
+    const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson&steps=false`;
+
+    try{
+      const res = await fetch(url);
+      const data = await res.json();
+      return data.routes[0];
+    }
+    catch(e){
+      console.log('obtain_route_from_selected_points', e)
+    }
+  }
   
 
 
@@ -22355,7 +22456,7 @@ class App extends Component {
 
         add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} show_select_certificate_bottomsheet={this.show_select_certificate_bottomsheet.bind(this)} show_certificate_chain_bottomsheet={this.show_certificate_chain_bottomsheet.bind(this)} get_blockexplorer_link={this.get_blockexplorer_link.bind(this)} lock_run={this.lock_run.bind(this)} set_hash={this.set_hash.bind(this)}
 
-        delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)}
+        delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} mute_unmute_address={this.mute_unmute_address.bind(this)} add_file_to_collection={this.add_file_to_collection.bind(this)} begin_sharing_location_with_target={this.begin_sharing_location_with_target.bind(this)}
         />
       </div>
     )
@@ -22483,6 +22584,8 @@ class App extends Component {
       'cancel_current_transactions':250,
       'view_stacked_bag_details':650,
       'throttled_address_transactions':600,
+      'when_peer_clicked':300,
+      'share_location_with_another_account':500
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -25321,6 +25424,63 @@ class App extends Component {
     this.setState({xmr_restore_height: restoreHeight})
     await this.wait(600)
     await this.refresh_wallet('???')
+  }
+
+  mute_unmute_address(address){
+    this.open_dialog_bottomsheet()
+    const call_id = this.state.current_call_id
+    const clone = structuredClone(this.state.call_muted_addresses)
+    if(clone[call_id] == null){
+      clone[call_id] = []
+    }
+    const index = clone[call_id].indexOf(address)
+    if(index == -1){
+      clone[call_id].push(address)
+      this.prompt_top_notification(this.getLocale()['3055up']/* '🤐 Speaker Muted.' */)
+    }
+    else{
+      clone[call_id].splice(index, 1)
+      this.prompt_top_notification(this.getLocale()['3055uq']/* '🗣 Speaker Unmuted.' */)
+    }
+    this.setState({call_muted_addresses: clone})
+  }
+
+  add_file_to_collection(ecid_obj){
+    const ecid = ecid_obj['full']
+    const cid_clone = this.state.uploaded_data_cids.slice()
+
+    if(!cid_clone.includes(ecid)){
+      cid_clone.push(ecid)
+
+      this.setState({
+        uploaded_data_cids: cid_clone, 
+        storage_permissions: this.getLocale()['1428']/* 'enabled' */
+      });
+      this.prompt_top_notification(this.getLocale()['3055uu']/* 'File added to collection.' */, 1700)
+      var me = this;
+      setTimeout(function() {
+        me.set_cookies()
+      }, (1 * 1000));
+    }
+    else{
+      this.prompt_top_notification(this.getLocale()['3055uv']/* 'Its already in your collection.' */, 3700)
+    }
+  }
+
+  async begin_sharing_location_with_target(id, e5, expiry_time){
+    this.open_dialog_bottomsheet()
+    const clone = structuredClone(this.state.broadcast_config)
+    const e5_id = e5+':'+id
+    const to = await this.get_recipient_address(id, e5)
+    clone['private_sharing'][e5_id] = {
+      id: id,
+      e5: e5,
+      address: to,
+      expiry: expiry_time,
+      start: Date.now()
+    }
+    this.setState({broadcast_config: clone, is_sharing_location: true})
+    this.prompt_top_notification(this.getLocale()['3055vc']/* 'Sharing your location.' */, 1500)
   }
 
 
@@ -28956,6 +29116,10 @@ class App extends Component {
     else if(event_type == 'quick_itransfer'){
       const data = event['view']['data']
       this.show_dialog_bottomsheet(data, 'view_incoming_itransfer_transactions')
+      return;
+    }
+    else if(event_type == 'shared_location'){
+      if(this.state.view_map_location_pins_bottomsheet == false) this.show_view_map_location_pins([])
       return;
     }
     
@@ -33906,6 +34070,10 @@ class App extends Component {
           this.show_successful_send_bottomsheet(onClickData['data']['hash'], false)
         }
       }
+      if(id == 'shared_location'){
+        if(this.state.view_map_location_pins_bottomsheet == false) this.show_view_map_location_pins([])
+        return;
+      }
       if(this.state.dialog_bottomsheet == false){
         if(id == 'view_coin_ether_request'){
           this.show_dialog_bottomsheet(onClickData['data'], 'view_coin_ether_request')
@@ -34453,7 +34621,7 @@ class App extends Component {
     }
     
     await this.wait(400);
-    await this.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
+    this.start_get_accounts_data(is_synching, false, false/* should_skip_pre_launch */)
     
     
     await this.wait(1000)
@@ -62848,6 +63016,9 @@ class App extends Component {
       else if(roomId == 'bags' && message.type == 'object'){
         me.process_new_bag_received(message, object_hash)
       }
+      else if(roomId == 'jobs' && message.type == 'public_location'){
+        me.process_new_public_location_received(message, object_hash)
+      }
       else{
         if(this.state.active_rooms.includes(roomId)){
           if(message.type == 'channel-message'){
@@ -62964,6 +63135,9 @@ class App extends Component {
       }
       else if(message['type'] == 'my_commented_list'){
         me.process_new_commented_posts_list_message(message, object_hash, from, true)
+      }
+      else if(message['type'] == 'private_location'){
+        me.process_received_private_location_from_sender(message, object_hash, from, true)
       }
     });
     socket.on('user_joined_chatroom', ({userId, roomId}) => {
@@ -63590,6 +63764,9 @@ class App extends Component {
     await this.wait(3000)
 
     await this.process_new_blocked_account_message_update(availability_object.message, availability_object.object_hash)
+
+    await this.wait(1000)
+    this.emit_comment_record_object_event([account+e5], 'blocked_user_instance')
   }
 
   async emit_new_ether_or_coin_request(state_object){
@@ -64079,7 +64256,7 @@ class App extends Component {
     this.state.socket.emit("chatroom_message", {roomId: object_e5_id, message: comment_message_object.message, target: object_e5_id, object_hash: comment_message_object.object_hash});
 
     await this.wait(3000)
-    this.process_new_comment_message(comment_message_object.message, comment_message_object.object_hash)
+    this.process_storefront_payment_update_message(comment_message_object.message, comment_message_object.object_hash)
   }
 
   async emit_new_lock_unlock_wallet_message(password, lock_or_unlock){
@@ -64173,6 +64350,67 @@ class App extends Component {
       this.setState({stack_items: stack})
       this.set_cookies_after_stack_action(stack)
     }
+  }
+
+  async emit_my_location_under_specific_contractor_object(object){
+    const location_data = await this.fetch_location_data()
+    if(location_data == null) return;
+    const availability_object = await this.prepare_my_location_object_message(object, location_data)
+
+    const target = 'locations|'+object['e5_id']
+    const broadcasat_object = {roomId: 'jobs', message: availability_object.message, target: target, object_hash: availability_object.object_hash}
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
+  }
+
+  async fetch_location_data(){
+    var finished = false;
+    var found;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          found = { lat: latitude, lon: longitude }
+          console.log('position found: ', found)
+          finished = true;
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          console.log('fetch_location_permissions','Unable to get your location. Please check permissions.');
+          finished = true;
+        }
+      );
+    } else {
+      console.log('fetch_location_permissions','Geolocation is not supported by your browser.');
+      finished = true;
+    }
+
+    await new Promise(resolve => {
+      const checkReady = () => {
+        if (finished == true) {
+          resolve();
+        } else {
+          setTimeout(checkReady, 100);
+        }
+      };
+      checkReady();
+    });
+
+    return found;
+  }
+
+  async emit_my_location_with_target_account(id, e5, address){
+    const location_data = await this.fetch_location_data()
+    if(location_data == null) return;
+
+    const private_location_object = await this.prepare_my_private_location_object_message(id, e5, location_data)
+
+    const target = 'private_location|'+address
+    const secondary_target = 'private_location|'+this.state.accounts[this.state.selected_e5].address
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {to: address, message: private_location_object.message, target: target, object_hash: private_location_object.object_hash, secondary_target: secondary_target });
   }
   
 
@@ -66839,7 +67077,125 @@ class App extends Component {
     const object_hash = this.hash_message_for_id(message);
     return { message, target, object_hash }
   }
+
+  async prepare_my_location_object_message(object, location_data){
+    const object_data = {
+      'location':location_data,
+      'time':Date.now(),
+      'sender_account': this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5': this.state.selected_e5,
+      'contractor_obj':object['e5_id'],
+      'address':this.state.accounts[e5].address,
+      'alias':this.state.alias_bucket[this.state.selected_e5]?.[this.state.user_account_id[this.state.selected_e5]]
+    }
+
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(object['e5']))
+    // const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.accounts[object['e5']].address
+    const e5 = object['e5']
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(object_data)
+    const signature = await this.generate_signature(object_as_string)
+
+    const message = {
+      type: 'public_location',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id:id,
+      recipient:recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: object_as_string,
+      contractor_object_id: object['e5_id'],
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: 0,
+      signature,
+      no_record: true,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
   
+  async prepare_my_private_location_object_message(account, e5, location_data){
+    const object_data = {
+      'location':location_data,
+      'time':Date.now(),
+      'sender_account': this.state.user_account_id[this.state.selected_e5],
+      'sender_account_e5': this.state.selected_e5,
+      'address':this.state.accounts[e5].address,
+      'alias':this.state.alias_bucket[this.state.selected_e5]?.[this.state.user_account_id[this.state.selected_e5]]
+    }
+
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(e5))
+
+    const author = this.state.accounts[e5].address
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const encrypted_object = await this.get_encrypted_location_message(object_data, account, e5)
+    const object_as_string = JSON.stringify(encrypted_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+
+    const message = {
+      type: 'private_location',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[this.state.selected_e5].address,
+      id:id,
+      recipient:recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: this.state.selected_e5,
+      lan: lan,
+      state: state,
+      data: object_as_string,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: 0,
+      no_record: true,
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  get_encrypted_location_message = async (t, recip, e5) =>{
+    var key = makeid(35)
+    var encrypted_obj = await this.encrypt_data_object(t, key)
+    var recipent_data = {}
+    var recipient = recip
+    var recipients_pub_key_hash = await this.get_accounts_public_key(recipient, e5)
+
+    if(recipients_pub_key_hash != ''){
+      var encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(recipients_pub_key_hash))
+      // recipent_data[parseInt(recipient)] = encrypted_key
+      recipent_data[await this.calculate_unique_crosschain_identifier_number(recipients_pub_key_hash)] = encrypted_key
+    }
+
+    var uint8array = await this.get_account_raw_public_key() 
+    var my_encrypted_key = await this.encrypt_key_with_accounts_public_key_hash(key, this.uint8ToBase64(uint8array))
+    
+    recipent_data[await this.get_my_unique_crosschain_identifier_number2()] = my_encrypted_key
+
+    return {'obj':encrypted_obj, 'recipient_data':recipent_data, 'encryptor_pub_key':this.uint8ToBase64(uint8array)}
+  }
 
   
 
@@ -69816,6 +70172,94 @@ class App extends Component {
     const message_account = message['author']
     const message_e5 = message['e5']
     this.get_alias_from_account_id(message_account, message_e5)
+  }
+
+  async process_new_public_location_received(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[this.state.selected_e5].address == message['author']
+
+    if(message.signature == null) return;
+    try{
+      const e = JSON.parse(message.data)
+    }catch(exception){
+      return;
+    }
+    const ipfs = JSON.parse(message.data)
+
+    const signature_confirmation = await this.confirm_signature(message.signature, message.data, message['author'])
+    
+    if(signature_confirmation == false) return;
+
+    const contractor_public_locations_clone = structuredClone(this.state.contractor_public_locations)
+    if(contractor_public_locations_clone[message.contractor_object_id] == null){
+      contractor_public_locations_clone[message.contractor_object_id] = {}
+    }
+    contractor_public_locations_clone[message.contractor_object_id][ipfs['address']] = ipfs
+    this.setState({contractor_public_locations: contractor_public_locations_clone})
+  }
+
+  async process_received_private_location_from_sender(message, object_hash, from, add_to_notifications, bulk_decyphered_package=null){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[message['e5']].address == message['author']
+
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
+
+    if(ipfs != message.data){
+      const ipfs_obj = bulk_decyphered_package != null && bulk_decyphered_package['internal'] != null ? bulk_decyphered_package['internal'] : await this.fetch_and_decrypt_ipfs_object(ipfs, message.e5);
+
+      // console.log('process_received_private_location_from_sender', 'decrypted ipfs_obj', ipfs_obj)
+      if(ipfs_obj != null && ipfs != ipfs_obj){
+        const e5 = message.e5;
+        const id = message.id;
+        const sender_acc = ipfs_obj['sender_account'];
+        const convo_id = id;
+        const cid = object_hash;
+        const request_id = message.id
+
+        const event = {returnValues:{p1:17, p2:sender_acc, p3:0, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+        const shared_private_locations_clone = structuredClone(this.state.shared_private_locations)
+        const notify = shared_private_locations_clone[ipfs_obj['address']] == null
+        shared_private_locations_clone[ipfs_obj['address']] = ipfs_obj
+        this.setState({shared_private_locations: shared_private_locations_clone})
+
+        if(!am_I_the_author && notify == true){
+          event['e5'] = e5
+          const notifs = [event]
+          this.handle_new_shared_location_notifications(notifs, ipfs_obj)
+          this.set_new_shared_location_event_in_notifications(event, e5, ipfs_obj)
+        }
+      }
+    }
+  }
+
+  async handle_new_shared_location_notifications(events, ipfs_obj){
+    var senders = []
+    for(var i=0; i<events.length; i++){
+      const event = events[i]
+      var alias = await this.get_sender_title_text(event.returnValues.p2/* sender */, event['e5'])
+      if(!senders.includes(alias)) senders.push(alias)
+    }
+    var prompt = this.getLocale()['2738dc']/* '$ is sharing their location with you.' */
+    prompt = prompt.replace('$', senders.toString())
+    this.prompt_top_notification(prompt, 15023, {'notification_id':'shared_location','events':events, 'type':'shared_location', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2', 'data':ipfs_obj})
+  }
+
+  set_new_shared_location_event_in_notifications(event, e5, ipfs_obj){
+    event['e5'] = e5
+    event['p'] = event.returnValues.p1
+    event['time'] = event.returnValues.p6
+    event['block'] = event.returnValues.p7
+    event['sender'] = event.returnValues.p2
+    event['type'] = 'shared_location'
+    event['event_type'] = 'shared_location'
+    event['view'] = {'notification_id':'shared_location','events':[], 'type':'shared_location', 'p':'p1', 'time':'p6','block':'p7', 'sender':'p2', 'data':ipfs_obj}
+
+    var clone = structuredClone(this.state.notification_object)
+    const request_clone_array = clone['shared_location'] == null ? [] : clone['shared_location'].slice()
+    request_clone_array.push(event)
+    clone['shared_location'] = this.sortByAttributeDescending(request_clone_array, 'time')
+    this.setState({notification_object: clone})
   }
 
   

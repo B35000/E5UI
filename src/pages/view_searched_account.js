@@ -670,6 +670,8 @@ class SearchedAccountPage extends Component {
 
                 {this.render_followers(account_id)}
 
+                {this.render_account_blocks(account_id)}
+
                 {this.render_follow_unfollow_author_button(id, e5)}
                 <div style={{height: 10}}/>
 
@@ -768,6 +770,23 @@ class SearchedAccountPage extends Component {
                     <div onClick={()=> this.props.follow_unfollow_post_author(author_id, e5) }>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1770q']/* '💗 Follow Account' */, 'action':''},)}
                     </div>
+                </div>
+            )
+        }
+    }
+
+    render_account_blocks(account_id){
+        const extra_data = this.props.app_state.object_extra_data[account_id]
+        var blocked_total = 0
+        if(extra_data['blocked_user_instance'] != null){
+            blocked_total += extra_data['blocked_user_instance']['all_hits']
+        }
+
+        if(blocked_total > 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1770u']/* 'Blocked by $' */.replace('$', number_with_commas(blocked_total)), 'details':this.props.app_state.loc['1770v']/* 'Accounts.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
                 </div>
             )
         }

@@ -130,9 +130,21 @@ class ViewObjectLocations extends Component {
         const pins = this.state.pins
         const minus = this.props.app_state.os == 'iOS' ? 110 : 160;
         const location_height = this.props.size == 's' ? this.props.height - 200 : this.props.height - minus
+
+        const shared_private_locations = this.props.app_state.shared_private_locations;
+        const subcontractor_pins = []
+        if(Object.keys(shared_private_locations).length > 0){
+            const addresses = Object.keys(shared_private_locations);
+            addresses.forEach(address => {
+                subcontractor_pins.push(shared_private_locations[address])
+            });
+        }
+
+        console.log('render_map','subcontractor_pins', subcontractor_pins)
+
         return(
             <div>
-                <LocationViewer ref={this.locationPickerRef} height={location_height} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location}
+                <LocationViewer ref={this.locationPickerRef} height={location_height} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} subcontractors={subcontractor_pins}
                 />
             </div>
         )
@@ -175,6 +187,20 @@ class ViewObjectLocations extends Component {
 
     render_set_pins(){
         var items = [].concat(this.state.pins)
+        
+        const shared_private_locations = this.props.app_state.shared_private_locations;
+        if(Object.keys(shared_private_locations).length > 0){
+            const addresses = Object.keys(shared_private_locations);
+            addresses.forEach((address, index) => {
+                items.push({
+                    'lat':shared_private_locations[address]['location']['lat'],
+                    'lng':shared_private_locations[address]['location']['lon'],
+                    'description': shared_private_locations[address]['alias'] || shared_private_locations[address]['sender_account'],
+                    'id':index
+                })
+            });
+        }
+
         return(
             <div>
                 <div onClick={() => this.setState({pins: items.slice()})}>

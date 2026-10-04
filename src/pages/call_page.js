@@ -143,7 +143,7 @@ const LocalAudioVisualizer = ({ stream, theme, width }) => {
 };
 
 // Component for visualizing remote peer audio
-const RemotePeerAudio = ({ peer, theme, peerId, onVolumeChange, isTalking, onStreamReceived, width }) => {
+const RemotePeerAudio = ({ peer, theme, peerId, onVolumeChange, isTalking, onStreamReceived, width, has_peer_been_muted}) => {
     const audioRef = useRef();
     const [mediaRecorder, setMediaRecorder] = useState(null);
     const audioContextRef = useRef(null);
@@ -168,7 +168,7 @@ const RemotePeerAudio = ({ peer, theme, peerId, onVolumeChange, isTalking, onStr
         if (audioRef.current) {
             // console.log('socket_stuff2', 'audioRef is not null', audioRef.current)
             audioRef.current.srcObject = stream;
-            audioRef.current.volume = 1.0;
+            audioRef.current.volume = has_peer_been_muted == true ? 0.0 : 1.0;
 
             audioRef.current.load();
 
@@ -253,7 +253,7 @@ const RemotePeerAudio = ({ peer, theme, peerId, onVolumeChange, isTalking, onStr
                 audioContextRef.current.close();
             }
         };
-    }, [peerId, onVolumeChange, onStreamReceived, set_has_set_streams, has_set_streams]);
+    }, [peerId, onVolumeChange, onStreamReceived, set_has_set_streams, has_set_streams, has_peer_been_muted]);
 
     useEffect(() => {
         if (!peer) return;
@@ -506,16 +506,6 @@ class CallPage extends Component {
 
 
 
-    get_max_height(){
-        const index = this.props.app_state.opened_bottomsheets.indexOf('open_view_call_interface_bottomsheet')
-        if(index > 0){
-            return this.props.height-190
-        }
-        else{
-            return this.props.height-145
-        }
-    }
-
     render_metadata_stuff(){
         const formatted_call_id = (str) => {
             if(str.startsWith('e')){
@@ -613,6 +603,16 @@ class CallPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    get_max_height(){
+        const index = this.props.app_state.opened_bottomsheets.indexOf('open_view_call_interface_bottomsheet')
+        if(index > 0){
+            return this.props.height-190
+        }
+        else{
+            return this.props.height-145
+        }
     }
 
     get_pitch_shift(){
@@ -822,9 +822,10 @@ class CallPage extends Component {
     }
 
     render_peer_item(peerObj, width){
+        const has_peer_been_muted = this.props.app_state.call_muted_addresses[this.props.app_state.current_call_id]?.includes(peerObj.peerId) || false;
         return(
-            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '5px 3px 5px 3px','padding': '10px 5px 5px 5px','border-radius': '8px', border: this.state.loudestSpeaker === peerObj.peerId ? `3px solid ${this.props.theme['slider_color']}` : '3px solid transparent', borderRadius: '8px', transition: 'border 0.2s ease'}}>
-                <RemotePeerAudio peer={peerObj.peer} theme={this.props.theme} peerId={peerObj.peerId} onVolumeChange={this.handlePeerVolumeChange} isTalking={this.state.loudestSpeaker === peerObj.peerId} onStreamReceived={(stream) => this.props.handleRemoteStreamReceived(peerObj.peerId, stream)} width={width}
+            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '5px 3px 5px 3px','padding': '10px 5px 5px 5px','border-radius': '8px', border: this.state.loudestSpeaker === peerObj.peerId ? `3px solid ${this.props.theme['slider_color']}` : '3px solid transparent', borderRadius: '8px', transition: 'border 0.2s ease'}} onClick={() => this.when_peer_clicked(peerObj)}>
+                <RemotePeerAudio peer={peerObj.peer} theme={this.props.theme} peerId={peerObj.peerId} onVolumeChange={this.handlePeerVolumeChange} isTalking={this.state.loudestSpeaker === peerObj.peerId} onStreamReceived={(stream) => this.props.handleRemoteStreamReceived(peerObj.peerId, stream)} width={width} has_peer_been_muted={has_peer_been_muted}
                 />
                 {this.render_added_accounts(peerObj.peerId)}
             </div>
@@ -942,6 +943,10 @@ class CallPage extends Component {
         if (this.state.loudestSpeaker !== loudest) {
             this.setState({ loudestSpeaker: loudest });
         }
+    }
+
+    when_peer_clicked(peerObj){
+        this.show_dialog_bottomsheet({'peer':peerObj}, 'when_peer_clicked')
     }
 
 

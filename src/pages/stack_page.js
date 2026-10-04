@@ -18749,487 +18749,6 @@ class StackPage extends Component {
 
 
 
-    // render_notifications(){
-    //     var size = this.props.size
-    //     if(size == 's'){
-    //         return(
-    //             <div style={{'width':'97%'}}>
-    //                 {this.render_my_notifications()}
-    //             </div>
-    //         )
-    //     }
-    //     else if(size == 'm'){
-    //         return(
-    //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-6" >
-    //                     {this.render_my_notifications()}
-    //                 </div>
-    //                 <div className="col-6" >
-    //                     {this.render_empty_views(3)}
-    //                 </div>
-    //             </div>
-    //         )
-    //     }
-    //     else if(size == 'l'){
-    //         return(
-    //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-5" >
-    //                     {this.render_my_notifications()}
-    //                 </div>
-    //                 <div className="col-5" >
-    //                     {this.render_empty_views(3)}
-    //                 </div>
-    //             </div>
-    //         )
-    //     }
-    // }
-
-    // render_my_notifications(){
-    //     var items = [].concat(this.get_all_sorted_notifications())
-    //     if(items == null){
-    //         items = []
-    //     }
-    //     items = [].concat(items)
-    //     var middle = this.props.height-150;
-    //     var size = this.props.size;
-    //     if(size == 'm'){
-    //         middle = this.props.height-150;
-    //     }
-
-    //     if(items.length == 0){
-    //         items = [0, 0]
-    //         return(
-    //             <div style={{}}>
-    //                 {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['1593hr']/* 'If any new notifications are received, they will show here.' */})}
-    //                 <div style={{height:10}}/>
-    //                 {this.render_empty_views(3)}
-    //             </div>
-    //         )
-    //     }else{
-    //         return(
-    //             <div style={{}}>
-    //                 {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3067h']/* 'Youre notification history.' */, 'details':this.props.app_state.loc['3067i']/* 'Below are the most recent events were recorded in relation to your account.' */})}
-    //                 <div style={{height:10}}/>
-    //                 <Virtuoso
-    //                     style={{ height: this.props.height-200 }}
-    //                     totalCount={items.length}
-    //                     itemContent={(index) => {
-    //                         const item = items[index];
-    //                         return (
-    //                             <div>
-    //                                 <AnimatePresence initial={true}>
-    //                                     <motion.div key={item['time']+item['sender']} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => this.when_event_clicked(item)} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-    //                                     style={{}}>
-    //                                         <div style={{'margin':'3px 0px 3px 0px'}}>
-    //                                             {this.render_targeted_notification_item(item, index)}
-    //                                         </div>
-    //                                     </motion.div>
-    //                                 </AnimatePresence>
-    //                             </div>
-    //                         );
-    //                     }}
-    //                 />
-    //             </div>
-    //         )
-    //     }
-    // }
-
-    // get_all_sorted_notifications(){
-    //     const notification_object = this.props.app_state.notification_object
-    //     const mail = notification_object['mail'] == null ? [] : notification_object['mail']
-    //     const message = notification_object['message'] == null ? [] : notification_object['message']
-    //     const proposal = notification_object['proposal'] == null ? [] : notification_object['proposal']
-    //     const job_application = notification_object['job_application'] == null ? [] : notification_object['job_application']
-    //     const job_request = notification_object['job_request'] == null ? [] : notification_object['job_request']
-    //     const job_application_response = notification_object['job_application_response'] == null ? [] : notification_object['job_application_response']
-    //     const job_request_response = notification_object['job_request_response'] == null ? [] : notification_object['job_request_response']
-    //     const contract = notification_object['contract'] == null ? [] : notification_object['contract']
-    //     const comment = notification_object['comment'] == null ? [] : notification_object['comment']
-
-
-    //     const bag = notification_object['bag'] == null ? [] : notification_object['bag']
-    //     const bag_application_response = notification_object['bag_application_response'] == null ? [] : notification_object['bag_application_response']
-    //     const storefront = notification_object['storefront'] == null ? [] : notification_object['storefront']
-    //     const auctionbids = notification_object['auctionbids'] == null ? [] : notification_object['auctionbids']
-
-
-    //     const token = notification_object['token'] == null ? [] : notification_object['token']
-    //     const bill_request = notification_object['bill_request'] == null ? [] : notification_object['bill_request']
-    //     const signature = notification_object['signature'] == null ? [] : notification_object['signature']
-        
-    //     const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, bag_application_response, storefront, auctionbids, bill_request, token, bag, signature)
-
-    //     return this.sortByAttributeDescending(all_events, 'time')
-    // }
-
-    // render_targeted_notification_item(item, index){
-    //    const explore_types = ['bag', 'bag_application_response', 'storefront', 'comment', 'auctionbids']
-    //    const token_type = ['token', 'bill_request']
-    //    const work_type = ['mail', 'message', 'proposal', 'job_application', 'job_request', 'job_application_response', 'job_request_response', 'contract']
-
-    //    const type = item['event_type']
-    //    if(explore_types.includes(type)){
-    //         return(
-    //             <div>
-    //                 {this.render_explore_notification_item(item, index)}
-    //             </div>
-    //         )
-    //    }
-    //    else if(token_type.includes(type)){
-    //         return(
-    //             <div>
-    //                 {this.render_token_notification_item(item, index)}
-    //             </div>
-    //         )
-    //    }
-    //    else if(work_type.includes(type)){
-    //         return(
-    //             <div>
-    //                 {this.render_work_notification_item(item, index)}
-    //             </div>
-    //         )
-    //    }
-    // }
-
-    // render_token_notification_item(item, index){
-    //     if(item['event_type'] == 'token'){
-    //         var sender = item.returnValues.p2
-    //         var amount = item.returnValues.p4
-    //         var depth = item.returnValues.p7
-    //         var exchange = item.returnValues.p1
-    //         var timestamp = item.returnValues.p5
-    //         var e5 = item['e5']
-    //         return(
-    //             <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})}>
-    //                 {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593fg']/* ' sent you ' */+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
-    //             </div>
-    //         )
-    //     }else{
-    //         const obj = {
-    //             'bill_request':this.props.app_state.loc['3067w'],/* '🧾 $ sent you a bill to pay.' */
-    //             'signature': this.props.app_state.loc['3067ad'],/* '✍️ $ sent you a singature request.' */
-    //         }
-    //         const event_type = item['event_type']
-    //         const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
-    //         const message = obj[event_type]
-    //         const processed_message = message.replace('$', sender_alias_or_account)
-    //         const timestamp = item['time']
-    //         const e5 = item['e5']
-    //         return(
-    //             <div onClick={() => this.when_event_clicked(item)}>
-    //                 {this.render_detail_item('3', {'title':processed_message, 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
-    //             </div>
-    //         )
-    //     }
-        
-    // }
-
-    // render_explore_notification_item(item, index){
-    //     const obj = {
-    //         'bag':this.props.app_state.loc['3067r'],/* '🛍️ $ applied to fulfil one of your bags.' */
-    //         'bag_application_response':this.props.app_state.loc['3067s'],/* '📥 $ accepted your bag application.' */
-    //         'storefront':this.props.app_state.loc['3067t'],/* '🏪 $ purchased an item from one of your stores.' */
-    //         'comment':this.props.app_state.loc['3067z'],/* '💬 $ commented on one of your posts.' */
-    //         'auctionbids': this.props.app_state.loc['3067ab'],/* '🙋‍♂️ $ bid in one of your auctions.' */
-    //     }
-    //     const event_type = item['event_type']
-    //     const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
-    //     const message = obj[event_type]
-    //     const processed_message = message.replace('$', sender_alias_or_account)
-    //     const timestamp = item['time']
-    //     const e5 = item['e5']
-    //     return(
-    //         <div onClick={() => this.when_event_clicked(item)}>
-    //             {this.render_detail_item('3', {'title':processed_message, 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
-    //         </div>
-    //     )
-    // }
-
-    // render_work_notification_item(item, index){
-    //     const obj = {
-    //         'mail':this.props.app_state.loc['3067j'],/* '📬 You received new mail from $' */
-    //         'message':this.props.app_state.loc['3067k'],/* '📧 You received a new message from $' */
-    //         'proposal':this.props.app_state.loc['3067l'],/* '🧎 $ sent you a proposal in one of your contracts.' */
-    //         'job_application':this.props.app_state.loc['3067m'],/* '📝 $ applied for one of your jobs.' */
-    //         'job_request':this.props.app_state.loc['3067n'],/* '📥 $ sent you a job in your contractor post.' */
-    //         'job_application_response':this.props.app_state.loc['3067o'],/* '📲 $ responded to your application in their job.' */
-    //         'job_request_response':this.props.app_state.loc['3067p'],/* '👷 $ accepted your job request in their contractor post' */
-    //         'contract':this.props.app_state.loc['3067q'],/* '↪📑 $ entered your contract.' */
-    //         'comment':this.props.app_state.loc['3067z'],/* '💬 $ commented on one of your posts.' */
-    //     }
-    //     const event_type = item['event_type']
-    //     const sender_alias_or_account = this.get_senders_name_or_you(item['sender'], item['e5'])
-    //     var message = obj[event_type]
-    //     if(event_type == 'proposal' && item.returnValues.p1 == 2){
-    //         message = this.props.app_state.loc['3067u']/* '🧎 $ sent a proposal to one of the  main contracts' */
-    //     }
-    //     const processed_message = message.replace('$', sender_alias_or_account)
-    //     const timestamp = item['time']
-    //     const e5 = item['e5']
-        
-    //     return(
-    //         <div onClick={() => this.when_event_clicked(item)}>
-    //             {this.render_detail_item('3', {'title':processed_message, 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l',})}
-    //         </div>
-    //     )
-    // }
-
-    // get_actual_number(number, depth){
-    //     var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
-    //     var depth_vaule = bigInt(('1e'+p))
-    //     return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
-    // }
-
-    // truncate(source, size) {
-    //     return source.length > size ? source.slice(0, size - 1) + "…" : source;
-    // }
-
-    // get_senders_name_or_you(sender, e5){
-    //     if(sender == this.props.app_state.user_account_id[e5]){
-    //         return this.props.app_state.loc['1694']/* 'You' */
-    //     }
-    //     var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
-    //     return alias
-    // }
-
-    // when_event_clicked(event){
-    //     this.props.when_event_clicked(event)
-    // }
-
-
-
-
-
-
-
-
-
-
-    
-
-    // render_watched_account_ui(){
-    //     var size = this.props.size
-    //     if(size == 's'){
-    //         return(
-    //             <div style={{'width':'97%'}}>
-    //                 {this.render_watched_account_ui_data()}
-    //             </div>
-    //         )
-    //     }
-    //     else if(size == 'm'){
-    //         return(
-    //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-6" >
-    //                     {this.render_watched_account_ui_data()}
-    //                 </div>
-    //                 <div className="col-6" >
-    //                     {this.render_empty_views(3)}
-    //                 </div>
-    //             </div>
-                
-    //         )
-    //     }
-    //     else if(size == 'l'){
-    //         return(
-    //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-5" >
-    //                     {this.render_watched_account_ui_data()}
-    //                 </div>
-    //                 <div className="col-5" >
-    //                     {this.render_empty_views(3)}
-    //                 </div>
-    //             </div>
-                
-    //         )
-    //     }
-    // }
-
-    // render_watched_account_ui_data(){
-    //     return(
-    //         <div>
-    //             {this.render_detail_item('3', {'title':this.props.app_state.loc['1593v']/* 'Watch Account.' */, 'details':this.props.app_state.loc['1593w']/* 'Track receive transactions for a specified account from here.' */, 'size':'l'})}
-
-    //             <div style={{ 'margin': '10px 5px 10px 5px'}}>
-    //                 <div className="row" style={{width:'100%'}}>
-    //                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-    //                         <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['1593u']/* 'Name or Account ID...' */} when_text_input_field_changed={this.when_watch_account_input_field_changed.bind(this)} text={this.state.typed_watch_account_input} theme={this.props.theme} />
-    //                     </div>
-    //                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
-    //                         <div onClick={()=>this.watch()}>
-    //                             <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-    //                                 <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
-    //                             </div>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-    //             </div>
-
-    //             {/* {this.render_transfers_item_logs()} */}
-    //             {this.render_incoming_transactions_data()}
-    //         </div>
-    //     )
-    // }
-
-    // render_incoming_transactions_data(){
-    //     var items = this.props.app_state.watched_account_data
-    //     if(items == null){
-    //         items = []
-    //     }
-    //     if(items.length == 0){
-    //         return(
-    //             <div>
-    //                 {this.render_empty_views(3)}
-    //             </div>
-    //         )
-    //     }
-    //     return(
-    //         <div>
-    //             <div style={{overflow: 'auto'}}>
-    //                 <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
-    //                     {items.map((item, index) => (
-    //                         <div style={{'margin':'3px 0px 3px 0px'}}>
-    //                             {this.render_notification_item(item, index)}
-    //                         </div>
-    //                     ))}
-    //                 </ul>
-    //             </div>
-    //         </div>
-    //     )
-    // }
-
-    // render_notification_item(item, index){
-    //     var sender = item.returnValues.p2
-    //     var amount = item.returnValues.p4
-    //     var depth = item.returnValues.p7
-    //     var exchange = item.returnValues.p1
-    //     var timestamp = item.returnValues.p5
-    //     var e5 = item['e5']
-    //     return(
-    //         <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})}>
-    //             {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+this.props.app_state.loc['1593fg']/* ' sent you ' */+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'l'})}
-    //         </div>
-    //     )
-    // }
-
-    // when_watch_account_input_field_changed(text){
-    //     this.setState({typed_watch_account_input: text})
-    // }
-
-    // async watch(){
-    //     var text = this.state.typed_watch_account_input
-    //     var name_id = await this.get_typed_alias_id(text.trim())
-    //     if(!isNaN(name_id) && parseInt(name_id) > 1000 &&  name_id != ''){
-    //         this.props.set_watched_account_id(name_id)
-    //         this.props.notify(this.props.app_state.loc['1593z'], 2000)
-    //     }
-    // }
-
-
-    // render_transfers_item_logs(){
-    //     var e5 = this.props.app_state.selected_e5
-    //     var watched_account_id = this.state.typed_watch_account_input;
-    //     var pointer = e5+watched_account_id
-    //     var items = this.props.app_state.watched_account_data[pointer]
-    //     if(items == null) items = []
-
-    //     if (items.length == 0) {
-    //         items = [0, 1]
-    //         return (
-    //             <div>
-    //                 <div style={{}}>
-    //                     <ul style={{ 'padding': '0px 0px 0px 0px' ,'list-style':'none'}}>
-    //                         {items.map((item, index) => (
-    //                             <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-    //                                 <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
-    //                                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
-    //                                         <img src={this.props.app_state.theme['letter']} style={{ height: 30, width: 'auto' }} />
-    //                                     </div>
-    //                                 </div>
-    //                             </li>
-    //                         ))}
-    //                     </ul>
-    //                 </div>
-    //             </div>
-    //         )
-    //     } else {
-    //         return (
-    //             <div style={{}}>
-    //                 <ul style={{ 'padding': '0px 0px 0px 0px','list-style':'none' }}>
-    //                     {items.map((item, index) => (
-    //                         <li style={{ 'padding': '2px 5px 2px 5px' }}>
-    //                             <div key={index}>
-    //                                 {this.render_transfers_event_item(item, index)}
-    //                             </div>
-    //                         </li>
-    //                     ))}
-    //                 </ul>
-    //             </div>
-    //         )
-    //     }
-    // }
-
-    // when_transfers_item_clicked(index){
-    //     if (this.state.selected_transfers_event_item == index) {
-    //         this.setState({ selected_transfers_event_item: null })
-    //     } else {
-    //         this.setState({ selected_transfers_event_item: index })
-    //     }
-    // }
-
-    // render_transfers_event_item(item, index){
-    //     var e5 = this.props.app_state.selected_e5
-
-    //     var exchange_id = item['event'].returnValues.p1;
-    //     var number = item['event'].returnValues.p4
-    //     var depth = item['event'].returnValues.p7
-    //     number = this.get_actual_number(number, depth)
-    //     var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3): 'From: '+this.get_sender_title_text(item['event'].returnValues.p2)
-        
-    //     if (this.state.selected_transfers_event_item == index) {
-    //         return (
-    //             <div>
-    //                 <div onClick={() => this.when_transfers_item_clicked(index)}>
-    //                     {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's'})}
-    //                 </div>
-    //                 <div style={{ height: 2 }} />
-    //                 <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
-    //                     {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
-    //                 </div>
-
-    //                 <div style={{ height: 2 }} />
-    //                 {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
-    //                 <div style={{ height: 2 }} />
-    //                 {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
-    //                 <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
-    //             </div>
-    //         )
-    //     } else {
-    //         return (
-    //             <div onClick={() => this.when_transfers_item_clicked(index)}>
-    //                 {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 's' })}
-    
-    //             </div>
-    //         )
-    //     }
-    // }
-
-    // get_sender_title_text(sender) {
-    //     var e5 = this.props.app_state.selected_e5
-    //     if (sender == this.props.app_state.user_account_id[e5]) {
-    //         return this.props.app_state.loc['2785']/* 'You' */
-    //     } else {
-    //         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
-    //         return alias
-    //     }
-    // }
-
-    // get_actual_number(number, depth){
-    //     var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
-    //     var depth_vaule = bigInt(('1e'+p))
-    //     return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
-    // }
-
-
 
 
 
@@ -22480,97 +21999,6 @@ class StackPage extends Component {
 
 
 
-    // render_set_custom_ipfs_gateway(){
-    //     var size = this.props.size
-    //     if(size == 's'){
-    //         return(
-    //             <div>
-    //                 {this.render_set_custom_gateway_data()}
-    //             </div>
-    //         )
-    //     }
-    //     else if(size == 'm'){
-    //         return(
-    //             <div className="row">
-    //                 <div className="col-6" >
-    //                     {this.render_set_custom_gateway_data()}
-    //                 </div>
-    //                 <div className="col-6" >
-    //                     {this.render_empty_views(3)}
-    //                 </div>
-    //             </div> 
-    //         )
-    //     }
-    //     else if(size == 'l'){
-    //         return(
-    //             <div className="row">
-    //                 <div className="col-5" >
-    //                     {this.render_set_custom_gateway_data()}
-    //                 </div>
-    //                 <div className="col-5" >
-    //                     {this.render_empty_views(3)}
-    //                 </div>
-    //             </div>
-    //         )
-    //     }
-    // }
-
-    // render_set_custom_gateway_data(){
-    //     return(
-    //         <div>
-    //             {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ck']/* 'Set Custom Ipfs Gateway' */, 'details':this.props.app_state.loc['1593cl']/* 'You can specify a custom gateway for serving all your content.' */, 'size':'l'})}
-    //             <div style={{height:10}}/>
-    //             <div className="row" style={{width:'100%'}}>
-    //                 <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-    //                     <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1593cm']/* 'https://ipfs.io/cid' */} when_text_input_field_changed={this.when_custom_gateway_text_changed.bind(this)} text={this.state.custom_gateway_text} theme={this.props.theme}/>
-    //                 </div>
-    //                 <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.set_custom_ipfs_gateway()} >
-    //                     <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-    //                         <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //             {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['1593cn']/* 'paste \'cid\' whenre the content cid would be used.' */})}
-    //             <div style={{height:10}}/>
-    //             {this.render_detail_item('4', {'text':this.props.app_state.custom_gateway, 'textsize':'13px', 'font':this.props.app_state.font})}
-    //         </div>
-    //     )
-    // }
-
-    // when_custom_gateway_text_changed(text){
-    //     this.setState({custom_gateway_text:text})
-    // }
-
-    // set_custom_ipfs_gateway(){
-    //     var custom_gateway_text = this.state.custom_gateway_text.trim()
-
-    //     if(custom_gateway_text == ''){
-    //         this.props.notify(this.props.app_state.loc['1593bh']/* 'Type something.' */, 4000)
-    //     }
-    //     else if(!this.isValidURL(custom_gateway_text)){
-    //         this.props.notify(this.props.app_state.loc['1593co']/* 'That gateway link is not valid.' */, 4000)
-    //     }
-    //     else if(!custom_gateway_text.includes('cid')){
-    //         this.props.notify(this.props.app_state.loc['1593cq']/* 'The url needs to include the keyword \'cid\'' */, 4000)
-    //     }
-    //     else{
-    //         this.props.notify(this.props.app_state.loc['1593cp']/* 'gateway set. */, 1400)
-    //         this.props.set_custom_gateway(custom_gateway_text)
-    //     }
-    // }
-
-    // isValidURL(url) {
-    //     const pattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/;
-    //     return pattern.test(url);
-    // }
-
-
-
-
-
-
-
-
 
 
 
@@ -22882,199 +22310,6 @@ class StackPage extends Component {
 
 
 
-    // render_contextual_transfers_ui(){
-    //     var size = this.props.size
-    //     if(size == 's'){
-    //         return(
-    //             <div style={{'width':'97%'}}>
-    //                 {this.render_contextual_transfers_data()}
-    //                 {this.load_itransfer_search_results()}
-    //             </div>
-    //         )
-    //     }
-    //     else if(size == 'm'){
-    //         return(
-    //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-6" >
-    //                     {this.render_contextual_transfers_data()}
-    //                     {this.render_empty_views(2)}
-    //                 </div>
-    //                 <div className="col-6" >
-    //                     {this.load_itransfer_search_results()}
-    //                 </div>
-    //             </div>
-                
-    //         )
-    //     }
-    //     else if(size == 'l'){
-    //         return(
-    //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-5" >
-    //                     {this.render_contextual_transfers_data()}
-    //                     {this.render_empty_views(2)}
-    //                 </div>
-    //                 <div className="col-5" >
-    //                     {this.load_itransfer_search_results()}
-    //                 </div>
-    //             </div>
-    //         )
-    //     }
-    // }
-
-    // render_contextual_transfers_data(){
-    //     return(
-    //         <div style={{'padding': '0px 0px 0px 10px'}}>
-    //             {this.render_detail_item('3', {'title':this.props.app_state.loc['1593gg']/* 'Create or Verify an iTransfer.' */, 'details':this.props.app_state.loc['1593gh']/* 'Create or verify a set of transfers that have been made with an attached identifier.' */, 'size':'l'})}
-    //             <div style={{height:10}}/>
-
-    //             <div onClick={() => this.open_create_itransfer_ui()}>
-    //                 {this.render_detail_item('5', {'text':this.props.app_state.loc['1593gi']/* 'Create or Verify iTransfer' */, 'action':'', 'text_transform': 'none'})}
-    //             </div>
-
-    //             {this.render_detail_item('0')}
-
-    //             {this.render_detail_item('3', {'title':this.props.app_state.loc['1593gl']/* 'Track Recent iTransfers.' */, 'details':this.props.app_state.loc['1593gm']/* 'Track the most recent iTransfers that have been made to your account with a specific identifier.' */, 'size':'l'})}
-    //             <div style={{height:10}}/>
-    //             <div className="row" style={{width:'100%'}}>
-    //                 <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-    //                     <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_search_identifier_input_field_changed.bind(this)} text={this.state.search_identifier} theme={this.props.theme}/>
-    //                 </div>
-    //                 <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.perform_verify_itransfer_search()}>
-    //                     <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
-    //                         <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //             <div style={{height:20}}/>
-    //         </div>
-    //     )
-    // }
-
-    // open_create_itransfer_ui(){
-    //     this.props.show_view_contextual_transfer_bottomsheet('')
-    // }
-
-    // when_search_identifier_input_field_changed(text){
-    //     this.setState({search_identifier: text})
-    // }
-
-    // perform_verify_itransfer_search(){
-    //     var identifier = this.state.search_identifier.trim()
-        
-    //     if(identifier == ''){
-    //         this.props.notify(this.props.app_state.loc['3068o']/* 'You need to set an identifier first.' */, 6000)
-    //     }
-    //     else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(identifier) || /\p{Emoji}/u.test(identifier)){
-    //         this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
-    //     }
-    //     else{
-    //         this.props.notify(this.props.app_state.loc['1593gn']/* 'Listening for current iTransfers..' */, 4000)
-    //         this.props.set_contextual_transfer_identifier(identifier)
-    //     }
-    // }
-
-    // load_itransfer_search_results(){
-    //     var items = [].concat(this.load_itransfer_result_items())
-    //     if(items.length == 0){
-    //         return(
-    //             <div>
-    //                 {this.render_empty_views(3)}
-    //             </div>
-    //         )
-    //     }else{
-    //         return(
-    //             <div>
-    //                 {items.map((item, index) => (
-    //                     <div key={index}>
-    //                         {this.render_itransfer_item(item)}
-    //                     </div>
-    //                 ))}
-    //             </div>
-    //         )
-    //     }
-    // }
-
-    // render_itransfer_item(item){
-    //     var alias = this.get_senders_name_or_you2(item['account'], item['e5'])
-    //     return(
-    //         <div>
-    //             {this.render_detail_item('3', {'title':alias, 'details':item['account'], 'size':'l', 'border_radius':'0%'},)}
-    //             <div style={{height: 3}}/>
-
-    //             {this.render_detail_item('3', {'title':''+(new Date(item['time']*1000)), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(item['time'])))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
-    //             <div style={{height: 3}}/>
-
-    //             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['view_group_card_item_background'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-    //                 <div style={{'margin':'0px 0px 0px 5px'}}>
-    //                     {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'12px','text':this.props.app_state.loc['3068y']/* All Transfers */})}
-    //                 </div>
-
-    //                 {item['transfers'].map((transfer, index) => (
-    //                     <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':transfer['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']]})}>
-    //                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(transfer['amount']), 'number':this.format_account_balance_figure(transfer['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transfer['exchange']], })}
-    //                     </div>
-    //                 ))}
-    //             </div>
-    //             {this.render_detail_item('0')}
-    //         </div>
-    //     )
-    // }
-
-    // get_senders_name_or_you2(sender, e5){
-    //     if(sender == this.props.app_state.user_account_id[e5]){
-    //         return this.props.app_state.loc['1694']/* You. */
-    //     }
-    //     var bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
-    //     var alias = (bucket[sender] == null ? this.props.app_state.loc['1591']/* Unknown */ : bucket[sender])
-    //     return alias
-    // }
-
-    // load_itransfer_result_items(){
-    //     var key = this.props.app_state.tracked_contextual_transfer_identifier
-    //     var selected_e5 = this.props.app_state.tracked_contextual_transfer_e5
-    //     var object = this.props.app_state.stack_contextual_transfer_data[key]
-    //     if(object == null) return []
-
-    //     var blocks = Object.keys(object)
-    //     var object_array = []
-    //     blocks.forEach(block => {
-    //         var sender_accounts = Object.keys(object[block])
-    //         sender_accounts.forEach(account => {
-    //             var transfers = this.process_transfers(object[block][account])
-    //             var time = object[block][account][0].returnValues.p5/* timestamp */
-    //             object_array.push({'account':account, 'block':block, 'transfers':transfers, 'time':time, 'e5':selected_e5})
-    //         });
-    //     });
-
-    //     return this.sortByAttributeDescending(object_array, 'time')
-    // }
-
-    // process_transfers(transfers){
-    //     var obj = {}
-    //     transfers.forEach(transfer => {
-    //         var exchange = transfer.returnValues.p1
-    //         var amount = transfer.returnValues.p4/* amount */
-    //         var depth = transfer.returnValues.p7/* depth */
-    //         if(obj[exchange] == null){
-    //             obj[exchange] = bigInt('0')
-    //         }
-    //         var actual_amount = this.get_actual_number(amount, depth)
-    //         obj[exchange] = bigInt(obj[exchange]).plus(bigInt(actual_amount))
-    //     });
-
-    //     var exchange_transfers = Object.keys(obj)
-    //     var final_transfers = []
-    //     exchange_transfers.forEach(key => {
-    //         final_transfers.push({'amount':obj[key], 'exchange':key})
-    //     });
-
-    //     return final_transfers
-    // }
-
-
-
-
-
 
 
 
@@ -23227,6 +22462,10 @@ class StackPage extends Component {
             return(
                 <div style={{'width':'97%'}}>
                     {this.render_pick_location_parts()}
+                    {this.render_detail_item('0')}
+                    {this.render_location_share_targets()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -23237,7 +22476,7 @@ class StackPage extends Component {
                         {this.render_pick_location_parts()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_location_share_targets()}
                     </div>
                 </div>
                 
@@ -23250,7 +22489,7 @@ class StackPage extends Component {
                         {this.render_pick_location_parts()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_location_share_targets()}
                     </div>
                 </div>
                 
@@ -23259,13 +22498,27 @@ class StackPage extends Component {
     }
 
     render_pick_location_parts(){
+        const do_i_have_an_account = this.props.do_i_have_an_account(this.props.app_state.selected_e5)
+        const alpha = do_i_have_an_account == true ? 1.0 : 0.5
+        const shared_private_locations = this.props.app_state.shared_private_locations;
+        const subcontractor_pins = []
+        if(Object.keys(shared_private_locations).length > 0){
+            const addresses = Object.keys(shared_private_locations);
+            addresses.forEach(address => {
+                subcontractor_pins.push(shared_private_locations[address])
+            });
+        }
+
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593jx']/* 'Default Delivery Locations.' */, 'details':this.props.app_state.loc['1593jy']/* 'You can specify some default locations that can be included in your bags and direct purchases upon creation. */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <LocationViewer ref={this.locationPickerRef} height={230} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={this.props.app_state.default_location_pins} size={this.props.size} input_enabled={false}
-                />
+                <div onClick={() => this.props.show_view_map_location_pins(this.props.app_state.default_location_pins)}>
+                    <LocationViewer ref={this.locationPickerRef} height={230} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={this.props.app_state.default_location_pins} size={this.props.size} input_enabled={false} subcontractors={subcontractor_pins}
+                    />
+                </div>
+                
                 <div style={{height:10}}/>
 
                 <div onClick={()=> this.props.show_set_map_location(this.props.app_state.default_location_pins)}>
@@ -23273,6 +22526,15 @@ class StackPage extends Component {
                 </div>
                 {this.render_detail_item('0')}
                 {this.render_selected_pins()}
+
+                {this.render_detail_item('0')}
+                <div style={{opacity: alpha}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593nf']/* 'Share Location.' */, 'details':this.props.app_state.loc['1593ng']/* 'Share your exact location with another account on e.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_share_location_with_another_account()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1593nh']/* 'Begin.' */, 'action':''})}
+                    </div>
+                </div>
             </div>
         )
     }
@@ -23366,185 +22628,80 @@ class StackPage extends Component {
         this.locationPickerRef.current?.set_center(location_data);
     }
 
+    open_share_location_with_another_account(){
+        const do_i_have_an_account = this.props.do_i_have_an_account(this.props.app_state.selected_e5)
+        if(this.props.app_state.has_wallet_been_set == false){
+            this.props.notify(this.props.app_state.loc['1593ni']/* 'First set your wallet.' */, 4300)
+            return;
+        }
+        else if(!do_i_have_an_account){
+            this.props.notify(this.props.app_state.loc['2231s']/* 'First run some transactions and create an account.' */, 7300)
+            return;
+        }
+        this.props.show_dialog_bottomsheet({}, 'share_location_with_another_account')
+    }
+
+    render_location_share_targets(){
+        const broadcast_targets = Object.values(this.props.app_state.broadcast_config['private_sharing'])
+        var items = [].concat(broadcast_targets)
+        const do_i_have_an_account = this.props.do_i_have_an_account(this.props.app_state.selected_e5)
+        const alpha = do_i_have_an_account == true ? 1.0 : 0.5
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{opacity: alpha}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593nj']/* 'Location Sharing' */, 'details':this.props.app_state.loc['1593nk']/* 'When you share your location with another account, it will show here.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            const pause_resume_button_text = this.props.app_state.is_sharing_location == true ? this.props.app_state.loc['1593nm']/* 'Pause Sharing.' */ : this.props.app_state.loc['1593np']/* 'Resume Sharing.' */
+            return(
+                <div style={{opacity: alpha}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593nj']/* 'Location Sharing' */, 'details':this.props.app_state.loc['1593nl']/* 'Youre sharing your location with the accounts listed below.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.props.pause_sharing_on_all()}>
+                        {this.render_detail_item('5', {'text':pause_resume_button_text, 'action':''})}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.props.stop_sharing_with_target(item)
+                                    }}>
+                                    <div style={{width:'100%'}}>
+                                        <li style={{'padding': '3px'}}>
+                                        {this.render_detail_item('3', {'title':' • '+item.id+this.get_senders_name3(item.id, item.e5), 'details':this.props.app_state.loc['3055vb']/* 'Share location until $' */.replace('$', (new Date(item.expiry).toLocaleString())), 'size':'l', 'title_image':this.props.app_state.e5s[item.e5].e5_img, 'footer':this.props.app_state.loc['2738df']/* 'Sharing since $' */.replace('$', (new Date(item.start).toLocaleString()))})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_senders_name3(sender, provided_e5){
+        if(sender == null) return sender
+        var e5 = provided_e5 == null ? this.props.app_state.selected_e5 : provided_e5
+        var obj = this.props.app_state.alias_bucket[e5] == null ? {} : this.props.app_state.alias_bucket[e5]
+        var alias = (obj[sender] == null ? '' : ' • '+obj[sender])
+        return alias
+    }
 
 
 
 
 
-
-
-
-    // render_group_calls_ui(){
-    //     var size = this.props.size
-    //     if(size == 's'){
-    //         return(
-    //             <div style={{'width':'97%'}}>
-    //                 {this.render_group_calls_parts()}
-    //             </div>
-    //         )
-    //     }
-    //     else if(size == 'm'){
-    //         return(
-    //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-6" >
-    //                     {this.render_group_calls_parts()}
-    //                 </div>
-    //                 <div className="col-6" >
-    //                     {this.render_empty_views(3)}
-    //                 </div>
-    //             </div>
-                
-    //         )
-    //     }
-    //     else if(size == 'l'){
-    //         return(
-    //             <div className="row" style={{'width':'99%'}}>
-    //                 <div className="col-5" >
-    //                     {this.render_group_calls_parts()}
-    //                 </div>
-    //                 <div className="col-5" >
-    //                     {this.render_empty_views(3)}
-    //                 </div>
-    //             </div>
-                
-    //         )
-    //     }
-    // }
-
-    // render_group_calls_parts(){
-    //     return(
-    //         <div>
-    //             {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ko']/* 'Enter Indexer Voice Calls' */, 'details':this.props.app_state.loc['1593kp']/* 'Start or enter an online voice call with someone or some people on E5. */, 'size':'l'})}
-    //             <div style={{height:10}}/>
-    //             {this.render_now_calling_message_if_any()}
-    //             <div className="row">
-    //                 <div className="col-6" style={{'padding': '0px 10px 0px 10px'}}>
-    //                     <div onClick={() => this.start_voice_call()}>
-    //                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kt']/* 'Start Call' */, 'action':''})}
-    //                     </div>
-    //                 </div>
-    //                 <div className="col-6" style={{'padding': '0px 10px 0px 10px'}}>
-    //                     <div onClick={() => this.enter_voice_call()}>
-    //                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1593kq']/* 'Enter Call' */, 'action':''})}
-    //                     </div>
-    //                 </div>
-    //             </div>
-
-    //             {this.render_detail_item('0')}
-    //             {this.render_call_history()}
-                
-    //         </div>
-    //     )
-    // }
-
-    // start_voice_call(){
-    //     if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
-    //         this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
-    //         return;
-    //     }
-    //     else if(this.props.app_state.current_call_password != null){
-    //         this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
-    //         return;
-    //     }
-    //     this.props.show_dialog_bottomsheet({}, 'start_voice_call')
-    // }
-
-    // enter_voice_call(){
-    //     if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
-    //         this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
-    //         return;
-    //     }
-    //     else if(this.props.app_state.current_call_password != null){
-    //         this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
-    //         return;
-    //     }
-    //     this.props.show_dialog_bottomsheet({}, 'enter_voice_call')
-    // }
-
-    // render_call_history(){
-    //     var items = this.get_call_invites()
-    //     if(items.length == 0){
-    //         items = [0,1,2]
-    //         return(
-    //             <div style={{}}>
-    //                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ku']/* 'Invite History.' */, 'details':this.props.app_state.loc['1593kw']/* 'When someone invites you to a call, it will show here. */, 'size':'l'})}
-    //                 <div style={{height:10}}/>
-    //                 {items.map((item, index) => (
-    //                     <div style={{'padding': '2px 5px 2px 5px'}}>
-    //                         {this.props.app_state.pre_launch_fetch_loading == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
-    //                     </div>
-    //                 ))}
-    //             </div>
-    //         )
-    //     }else{
-    //         return(
-    //             <div style={{}}>
-    //                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593ku']/* 'Invite History.' */, 'details':this.props.app_state.loc['1593kv']/* 'Youre call invites are shown below. */, 'size':'l'})}
-    //                 <div style={{height:10}}/>
-    //                 <div style={{ 'padding': '0px 0px 0px 0px'}}>
-    //                     {items.map((item, index) => (
-    //                         <div>
-    //                             {this.render_invite_item(item)}
-    //                             <div style={{height:4}}/>
-    //                         </div>
-    //                     ))}
-    //                 </div>
-    //             </div>
-    //         )
-    //     }
-    // }
-
-    // get_call_invites(){
-    //     const invites = Object.keys(this.props.app_state.call_invites)
-    //     const invite_objects = []
-    //     invites.forEach(item => {
-    //         invite_objects.push(this.props.app_state.call_invites[item])
-    //     });
-    //     return this.sortByAttributeDescending(invite_objects, 'time')
-    // }
-
-    // render_invite_item(item){
-    //     const formatted_call_id = (str) => {
-    //         if(str.startsWith('e')){
-    //             return str.slice(0, 4) + " " + str.slice(4, 8) + " " + str.slice(8, 12)+ " " + str.slice(12);
-    //         }else{
-    //             return str.slice(0, 3) + " " + str.slice(3, 7) + " " + str.slice(7, 11)+ " " + str.slice(11);
-    //         }
-    //     }
-    //     const data = item;
-    //     const participants_count = this.props.app_state.room_participants_count[data['call_id']] || 0
-    //     const footer = formatted_call_id(data['call_id']) + ' • ' + this.props.app_state.loc['1593kx']/* '$ participants' */.replace('$', number_with_commas(participants_count))
-    //     const title_image = this.props.app_state.e5s[data['sender_account_e5']].e5_img
-    //     const title = data['sender_account'] + this.get_sender_title_text2(data['sender_account'], data['sender_account_e5'])
-    //     const details = ''+(new Date(data['time']).toLocaleString()) + ', '+this.get_time_diff((Date.now()/1000) - (parseInt(data['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */
-    //     return(
-    //         <div onClick={() => this.enter_voice_call_from_list(data)}>
-    //             {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l', 'footer':footer, 'title_image':title_image})}
-    //         </div>
-    //     )
-    // }
-
-    // get_sender_title_text2(account, e5){
-    //     if(account == this.props.app_state.user_account_id[e5]){
-    //         return ' • ' +this.props.app_state.loc['1694']/* 'You' */
-    //     }else{
-    //         const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
-    //         var alias = (bucket[account] == null ? ' • '+this.props.app_state.loc['2871']/* Alias Unknown. */ : ' • ' +bucket[account])
-    //         return alias
-    //     }
-    // }
-
-    // enter_voice_call_from_list(data){
-    //     if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] == null || this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1){
-    //         this.props.notify(this.props.app_state.loc['3055hz']/* 'Please set your account first.' */, 4300)
-    //         return;
-    //     }
-    //     else if(this.props.app_state.current_call_password != null){
-    //         this.props.notify(this.props.app_state.loc['3091bh']/* 'Youre on a call.' */, 6300)
-    //         return;
-    //     }
-    //     this.props.show_dialog_bottomsheet({'message':data}, 'enter_voice_call')
-    // }
 
     
 

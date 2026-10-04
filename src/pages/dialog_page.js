@@ -132,7 +132,7 @@ class DialogPage extends Component {
 
         selected_conditions:[], get_include_exit_contract_after_finish_transaction_object:this.get_include_exit_contract_after_finish_transaction_object(),
 
-        restore_time: (Date.now()/1000) - (60*60), deductible_data:{}, deductible_amount:0
+        restore_time: (Date.now()/1000) - (60*60), deductible_data:{}, deductible_amount:0, viewer:'', location_sharing_duration:(60*60)
     };
 
 
@@ -785,6 +785,12 @@ class DialogPage extends Component {
         }
         else if(option == 'throttled_address_transactions'){
             return this.throttled_address_transactions_ui()
+        }
+        else if(option == 'when_peer_clicked'){
+            return this.show_peer_options_ui()
+        }
+        else if(option == 'share_location_with_another_account'){
+            return this.show_share_location_with_another_account_ui()
         }
     }
 
@@ -2405,6 +2411,7 @@ return data['data']
                     {this.render_deleted_file_message_if_deleted(hash)}
 
                     {this.render_verify_file_button(hash, ecid_obj, am_i_author)}
+                    {this.render_add_file_to_collection_button(hash, ecid_obj, am_i_author)}
                     {this.render_delete_file_button(hash, data, am_i_author)}
                 </div>
             )
@@ -2548,6 +2555,21 @@ return data['data']
                     <div style={{height:10}}/>
                     <div onClick={() => this.props.delete_nitro_file(hash, data)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3055do']/* '🗑️ Delete File' */, 'action':'', 'font':this.props.app_state.font})}
+                    </div>
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_add_file_to_collection_button(hash, ecid_obj, am_i_author){
+        if(this.is_file_available(hash) && am_i_author == false){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ur']/* 'Add To Collection' */, 'details':this.props.app_state.loc['3055ut']/* 'Add the file to your collection and use it as if it were your own.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.props.add_file_to_collection(ecid_obj)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055us']/* 'Add' */, 'action':'', 'font':this.props.app_state.font})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -19092,6 +19114,343 @@ return data['data']
         )
     }
 
+
+
+
+
+
+
+
+    show_peer_options_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.show_peer_options_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.show_peer_options_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.show_peer_options_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    show_peer_options_data(){
+        const peer = this.state.data['peer']
+        const address = peer.peerId
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055um']/* 'Mute Address?' */, 'details':this.props.app_state.loc['3055un']/* 'Once muted, the audio from the participant will be suppressed for you specifically.' */, 'size':'l',})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('4', {'text':start_and_end(address), 'textsize':'12px', 'font':this.props.app_state.font})}
+                <div style={{height: 10}}/>
+
+                {this.render_added_accounts2(address)}
+                <div style={{height: 10}}/>
+
+                <div onClick={()=>this.props.mute_unmute_address(address)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055uo']/* 'Mute/Unmute'' */, 'action': ''})}
+                </div>
+            </div>
+        )
+    }
+
+    render_added_accounts2(address){
+        const room_participants = this.props.app_state.my_active_call_room_participants[this.props.app_state.current_call_id] || {}
+        const address_accounts = room_participants[address] || []
+        var items = [].concat(address_accounts)
+        if(items.length == 0){
+            items = [1, 2]
+            return(
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            var items2 = [0, 1]
+            return(
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_included_account_item2(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_included_account_item2(item){
+        const title = item['e5']+' • '+ item['id']
+        const details = this.get_sender_title_text2(item['id'], item['e5']) || this.props.app_state.loc['3055ht']/* Unknown */
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'s'})}
+            </div>
+        )
+    }
+
+    get_sender_title_text2(account, e5){
+        if(account == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            const bucket = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (bucket[account] == null ? null : bucket[account])
+            return alias
+        }
+    }
+
+
+
+
+
+
+
+    show_share_location_with_another_account_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.show_share_location_with_another_account_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.show_share_location_with_another_account_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.show_share_location_with_another_account_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    show_share_location_with_another_account_data(){
+        const expiry_time = Date.now() + (this.state.location_sharing_duration * 1000)
+        const footer = this.props.app_state.loc['3055vb']/* 'Share location until $' */.replace('$', (new Date(expiry_time).toLocaleString())) 
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055uw']/* '⚲ Share Location.' */, 'details':this.props.app_state.loc['3055ux']/* 'Share your location privately with another account on e.' */, 'size':'l'})}
+                <div style={{height:5}}/>
+
+                {this.load_preferred_e5_ui4()}
+                <div style={{height:5}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['c311ci']/* Alias or Account ID... */} when_text_input_field_changed={this.when_viewer_input_field_changed.bind(this)} text={this.state.viewer} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055uz']/* 'Share Duration.' */, 'details':this.props.app_state.loc['3055va']/* 'The amount of time you wish to share your location with your targeted account. The default is 1 hour.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+                
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.location_sharing_duration), 'details':this.props.app_state.loc['1439']/* 'Estimated Time.' */, 'size':'l', 'footer': footer})}
+
+                <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_location_sharing_duration_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_begin_sharing_button_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055uy']/* 'Share.' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_viewer_input_field_changed(text){
+        this.setState({viewer: text})
+    }
+
+    when_location_sharing_duration_set(number){
+        this.setState({location_sharing_duration: number})
+    }
+
+    load_preferred_e5_ui4(){
+        var items = this.load_active_e5s4()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked4(item)}>
+                            {this.render_e5_item4(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_active_e5s4(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
+
+    render_e5_item4(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        const account = this.props.app_state.user_account_id[item]
+        var details = account + this.get_sender_title_text2(account, item)
+        if(this.state.picked_e5 == item){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_e5_clicked4(item){
+        this.setState({picked_e5: item})
+    }
+
+    async when_begin_sharing_button_tapped(){
+        const found = await this.fetch_location_permissions()
+        if(found == false) return;
+
+        const expiry_time = Date.now() + (this.state.location_sharing_duration * 1000)
+        const typed_text = this.state.viewer.trim()
+
+        const id = await this.get_typed_alias_id(typed_text)
+        const e5 = isNaN(typed_text) ? await this.get_alias_e5(typed_text) : (this.state.picked_e5 != null ? this.state.picked_e5 : this.props.app_state.selected_e5)
+        
+        if(typed_text == ''){
+            this.props.notify(this.props.app_state.loc['c311cs']/* Type something */, 3600)
+        }
+        else if(isNaN(id) || parseInt(id) < 1000 || id == ''){
+            this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
+        }
+        else{
+            this.props.begin_sharing_location_with_target(id, e5, expiry_time)
+        }
+    }
+
+    async get_alias_e5(recipient){
+        await this.props.get_account_id_from_alias(recipient)
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    async fetch_location_permissions(){
+        var finished = false;
+        var found = false;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const location_data = { lat: latitude, lon: longitude }
+                    console.log('position found: ', location_data)
+                    found = true;
+                    finished = true;
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                    console.log('fetch_location_permissions','Unable to get your location. Please check permissions.');
+                    this.props.notify(this.props.app_state.loc['2509dk']/* 'e cant find your exact location right now.' */, 4400)
+                    found = false;
+                    finished = true;
+                }
+            );
+        } else {
+            console.log('fetch_location_permissions','Geolocation is not supported by your browser.');
+            this.props.notify(this.props.app_state.loc['2509dl']/* 'Your browser doesnt support geo-location.' */, 4400)
+            found = false;
+            finished = true;
+        }
+
+        await new Promise(resolve => {
+            const checkReady = () => {
+                if (finished == true) {
+                    resolve();
+                } else {
+                    setTimeout(checkReady, 100);
+                }
+            };
+            checkReady();
+        });
+
+        return found;
+    }
 
 
 

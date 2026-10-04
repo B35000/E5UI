@@ -49,7 +49,7 @@ class ContractorDetailsSection extends Component {
     
     state = {
         selected: 0, navigate_view_contractors_list_detail_tags_object: this.get_navigate_view_contracts_list_detail_tags(), entered_text:'', focused_message:{'tree':{}}, 
-        get_contractor_availability_tags: this.get_contractor_availability_tags(), selected_price_tag:{}, selected_token_tag:{}
+        get_contractor_availability_tags: this.get_contractor_availability_tags(), selected_price_tag:{}, selected_token_tag:{}, get_broadcast_location_tags: this.get_broadcast_location_tags(),
     };
 
     constructor(props) {
@@ -106,6 +106,25 @@ class ContractorDetailsSection extends Component {
           ],
         }
     }
+
+    get_broadcast_location_tags(){
+        return{
+          'i':{
+              active:'e', 
+          },
+          'e':[
+              ['or','',0], ['e',this.props.app_state.loc['2231q']/* 'broadcasting 📡' */],[0]
+          ],
+        }
+    }
+
+
+
+
+
+
+
+
 
     render(){
         return(
@@ -239,6 +258,15 @@ class ContractorDetailsSection extends Component {
         )
         
     }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -908,6 +936,110 @@ class ContractorDetailsSection extends Component {
         else{
             return tracked_online_accounts[e5_id]['online']
         }
+    }
+
+    render_broadcast_location_switch(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p5 != my_account && !this.can_sender_broadcast_location_as_subcontractor(object)) return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2231o']/* 'Broadcast Location.' */, 'details':this.props.app_state.loc['2231p']/* 'Publicly display your location as a subcontractor of this contractor post.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_broadcast_location_tags} tag_size={'l'} when_tags_updated={this.when_get_broadcast_location_tags_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_location_sharing_status(object)}
+            </div>
+        )
+    }
+
+    render_location_sharing_status(object){
+        const is_sharing_under_this_contract = this.props.app_state.broadcast_config['broadcast']['object'] != null && this.props.app_state.broadcast_config['broadcast']['object']['e5_id'] == object['e5_id']
+
+        if(is_sharing_under_this_contract == true){
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2231q']/* 'broadcasting 📡'' */, 'details':this.props.app_state.loc['2231r']/* 'Location Broadcasting Status.' */, 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    async when_get_broadcast_location_tags_updated(tags){
+        const found = await this.fetch_location_permissions()
+        const selected_item = this.get_selected_item2(tags, 'e')
+        if(found == false && selected_item == 1) return;
+        
+        this.setState({get_broadcast_location_tags: tags})
+        const obj = {0:'e', 1:'broadcast'}
+
+        const object = this.get_item_in_array(this.get_contractor_items(), this.props.selected_contractor_item);
+        if(selected_item != 0){
+            this.props.broadcast_my_location_under_specific_pretense(object, obj[selected_item])
+        }
+    }
+
+    can_sender_broadcast_location_as_subcontractor(object){
+        var viewers = object['ipfs'].viewers
+        if(viewers == null || viewers.length == 0) return false;
+        var my_active_accounts = this.load_my_active_accounts()
+        return my_active_accounts.some(r=> viewers.includes(r))
+    }
+
+    load_my_active_accounts(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                var id = this.props.app_state.user_account_id[e5]
+                if(id != null && id != 1){
+                    var account = e5+':'+id
+                    active_e5s.push(account)
+                }
+            }
+        }
+        return active_e5s
+    }
+
+    async fetch_location_permissions(){
+        var finished = false;
+        var found = false;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const location_data = { lat: latitude, lon: longitude }
+                    console.log('position found: ', location_data)
+                    found = true;
+                    finished = true;
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                    console.log('fetch_location_permissions','Unable to get your location. Please check permissions.');
+                    this.props.notify(this.props.app_state.loc['2509dk']/* 'e cant find your exact location right now.' */, 4400)
+                    found = false;
+                    finished = true;
+                }
+            );
+        } else {
+            console.log('fetch_location_permissions','Geolocation is not supported by your browser.');
+            this.props.notify(this.props.app_state.loc['2509dl']/* 'Your browser doesnt support geo-location.' */, 4400)
+            found = false;
+            finished = true;
+        }
+
+        await new Promise(resolve => {
+            const checkReady = () => {
+                if (finished == true) {
+                    resolve();
+                } else {
+                    setTimeout(checkReady, 100);
+                }
+            };
+            checkReady();
+        });
+
+        return found;
     }
 
 
