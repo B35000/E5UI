@@ -814,6 +814,7 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { CrossChainMessenger, ETHBridgeAdapter } from "@eth-optimism/sdk";
 import { createClient, ChainId, getQuote, convertQuoteToRoute, executeRoute, getConnections, getStatus } from '@lifi/sdk';
 import { EthereumProvider } from '@lifi/sdk-provider-ethereum';
+import { OpenAPI, OneClickService, QuoteRequest } from '@defuse-protocol/one-click-sdk-typescript';
 
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -840,6 +841,8 @@ const default_nitro_option = '1111E35'
 // const originalConsole = { ...console };
 const chains = [ mainnet, optimism, base, fraxtal, ink, soneium, unichain, zircuit, zora, scroll, apeChain, arbitrum, arbitrumNova, arenaz, avalanche, berachain, bitTorrent, blast, bob, boba, botanix, bsc, bscTestnet, bsquared, canto, celo, classic, coinex, coreDao, corn, cronos, edgeware, filecoin, flare, fuse, gnosis, harmonyOne, hedera, hyperliquid, immutableZkEvm, injective, iota, iotex, kaia, kardiaChain, karura, katana, kava, lens, linea, lisk, manta, mantle, metachain, metadium, metalL2, metis, mint, mode, monad, moonbeam, moonriver, okc, omax, opBNB, phoenix, plasma, polygon, pulsechain, rei, rise, ronin, sei, shibarium, sonic, sophon, songbird, step, superseed, taiko, tenet, telos, theta, thunderCore, ubiq, ultron, viction, wemix, worldchain, xrplevm, zetachain, goChain, confluxESpace, oneWorld, abstract, etherlink, hashkey, hemi, neonMainnet, plume, treasure, xLayer, zksync, cronoszkEVM, zeroNetwork ]
 
+OpenAPI.BASE = 'https://1click.chaindefuser.com';
+OpenAPI.TOKEN = process.env.REACT_APP_NEAR_INTENTS_API_KEY;
 
 function makeid(length) {
     let result = '';
@@ -2117,7 +2120,7 @@ class App extends Component {
     objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}, 
     ether_ages:{}, created_object_full:{}, current_run_hash:{}, socket_created_bags:{}, translation_data:{}, performing_translation_indicator:{}, translation_percentage_data:{},
 
-    focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true,
+    focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(),
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -3190,7 +3193,7 @@ class App extends Component {
       this.get_token('ABETH', 'Abstract', 'E855'),
       this.get_token('APE', 'ApeChain', 'E865'),
       this.get_token('BIBTC', 'Bitlayer', 'E875', true),
-      this.get_token('BLETH', 'Blast', 'E885'),
+      this.get_token('BLETH', 'Blast', 'E885', true),
       this.get_token('BOETH', 'Bob', 'E895'),
       this.get_token('BOBTC', 'Botanix', 'E905', true),
       this.get_token('BSBTC', 'Bsquared', 'E915', true),
@@ -3315,7 +3318,7 @@ class App extends Component {
 
       'INJ': this.get_coin_info('INJ', 'Injective', injective_logo, 'inj', 18, 1_000_000_000_000_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113c']/* 'Proof Of Stake' */, '0.65 sec.', this.get_time_difference(1625058000), 600_000, '~~~', "Injective (Mainnet)", ['changenow']),
 
-      'NEAR': this.get_coin_info('NEAR', 'Near Protocol', near_logo, 'yocto', 24, 10**24, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113f']/* 'Thresholded Proof of Stake' */, '1 sec.', this.get_time_difference(1595350551), 4100, '~~~', "NEAR Protocol", ['changenow', 'near_intents']),
+      'NEAR': this.get_coin_info('NEAR', 'Near Protocol', near_logo, 'yocto', 24, 10**24, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113f']/* 'Thresholded Proof of Stake' */, '1 sec.', this.get_time_difference(1595350551), 4100, '~~~', "NEAR Protocol", ['changenow']),
 
       'ICP': this.get_coin_info('ICP', 'Internet Computer', icp_logo, 'e8', 8, 100_000_000, this.getLocale()['2916']/* Accounting' */, this.getLocale()['3113e']/* 'Threshold Relay' */, '0.5 sec.', this.get_time_difference(1623283200), 3_000, '~~~', null, []),
 
@@ -5118,6 +5121,41 @@ class App extends Component {
     }
   }
 
+  get_near_intents_token_ids(){
+    const near_intent_data = {
+      'BTC':'nep141:btc.omft.near',
+      'DOGE':'nep141:doge.omft.near',
+      'ZEC':'nep141:zec.omft.near',
+      'BCH':'nep141:bch.omft.near',
+      'LTC':'nep141:ltc.omft.near',
+      'DASH':'nep141:dash.omft.near',
+      'AETH':'nep141:arb.omft.near',/* ARBITRUM */
+      'BETH':'nep141:base.omft.near',/* BASE */
+      'BERA':'nep141:bera.omft.near',
+      'BNB':'nep245:v2_1.omni.hot.tg:56_11111111111111111111',
+      'ETH':'nep141:eth.omft.near',
+      'XDAI':'nep141:gnosis.omft.near',
+      'OETH':'nep245:v2_1.omni.hot.tg:10_11111111111111111111',/* OPTIMISM */
+      'XPL':'nep141:plasma.omft.near',/* PLASMA */
+      'POL':'nep245:v2_1.omni.hot.tg:137_11111111111111111111',
+      'AVAX':'nep245:v2_1.omni.hot.tg:43114_11111111111111111111',
+      'MON':'nep245:v2_1.omni.hot.tg:143_11111111111111111111',
+      'OKB':'nep245:v2_1.omni.hot.tg:196_11111111111111111111',/* XLAYER */
+      'SETH':'nep245:v2_1.omni.hot.tg:534352_11111111111111111111',/* SCROLL */
+      'APT':'nep141:aptos.omft.near',
+      'ADA':'nep141:cardano.omft.near',
+      // 'NEAR':'',
+      'SOL':'nep141:sol.omft.near',
+      'XLM':'nep245:v2_1.omni.hot.tg:1100_111bzQBB5v7AhLyPMDwS8uJgQV24KaAPXtwyVWu2KXbbfQU6NXRCz',
+      'SUI':'nep141:sui.omft.near',
+      'GRAM':'nep245:v2_1.omni.hot.tg:1117_',
+      'TRON':'nep141:tron.omft.near',
+      'XRP':'nep141:xrp.omft.near',
+      '':'',
+    }
+    return near_intent_data
+  }
+
 
 
 
@@ -5829,6 +5867,7 @@ class App extends Component {
       coinlore_asset_mapping: this.state.coinlore_asset_mapping,
       password_tries:this.state.password_tries,
       content_language: this.state.content_language,
+      broadcast_config: this.state.broadcast_config
     }
   }
 
@@ -6093,6 +6132,7 @@ class App extends Component {
       var coinlore_asset_mapping = state.coinlore_asset_mapping || {}
       var password_tries = state.password_tries || 5
       var content_language = state.content_language
+      var broadcast_config = state.broadcast_config || this.state.broadcast_config
 
       this.setState({
         theme: theme,
@@ -6193,6 +6233,7 @@ class App extends Component {
         coinlore_asset_mapping: coinlore_asset_mapping,
         password_tries: password_tries,
         content_language: content_language,
+        broadcast_config: broadcast_config
       })
       var me = this;
       setTimeout(function() {
@@ -9471,9 +9512,10 @@ class App extends Component {
         const e5 = share_data.e5
         const expiry = share_data.expiry
         const address = share_data.address
+        const memo_text = share_data.memo_text
         const now = Date.now()
         if(now < expiry){
-          await this.emit_my_location_with_target_account(id, e5, address)
+          await this.emit_my_location_with_target_account(id, e5, address, memo_text)
           await this.wait(1000)
         }
         else{
@@ -22456,7 +22498,7 @@ class App extends Component {
 
         add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} show_select_certificate_bottomsheet={this.show_select_certificate_bottomsheet.bind(this)} show_certificate_chain_bottomsheet={this.show_certificate_chain_bottomsheet.bind(this)} get_blockexplorer_link={this.get_blockexplorer_link.bind(this)} lock_run={this.lock_run.bind(this)} set_hash={this.set_hash.bind(this)}
 
-        delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} mute_unmute_address={this.mute_unmute_address.bind(this)} add_file_to_collection={this.add_file_to_collection.bind(this)} begin_sharing_location_with_target={this.begin_sharing_location_with_target.bind(this)}
+        delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} mute_unmute_address={this.mute_unmute_address.bind(this)} add_file_to_collection={this.add_file_to_collection.bind(this)} begin_sharing_location_with_target={this.begin_sharing_location_with_target.bind(this)} swap_ether_to_specified_target_via_near_intents={this.swap_ether_to_specified_target_via_near_intents.bind(this)}
         />
       </div>
     )
@@ -22585,7 +22627,9 @@ class App extends Component {
       'view_stacked_bag_details':650,
       'throttled_address_transactions':600,
       'when_peer_clicked':300,
-      'share_location_with_another_account':500
+      'share_location_with_another_account':500,
+      'confirm_swap_coin_ether_via_changenow_dialog':550,
+      'confirm_swap_coin_ether_via_near_intents_dialog':550,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -25467,7 +25511,7 @@ class App extends Component {
     }
   }
 
-  async begin_sharing_location_with_target(id, e5, expiry_time){
+  async begin_sharing_location_with_target(id, e5, expiry_time, memo_text){
     this.open_dialog_bottomsheet()
     const clone = structuredClone(this.state.broadcast_config)
     const e5_id = e5+':'+id
@@ -25477,7 +25521,8 @@ class App extends Component {
       e5: e5,
       address: to,
       expiry: expiry_time,
-      start: Date.now()
+      start: Date.now(),
+      memo_text: memo_text,
     }
     this.setState({broadcast_config: clone, is_sharing_location: true})
     this.prompt_top_notification(this.getLocale()['3055vc']/* 'Sharing your location.' */, 1500)
@@ -32758,7 +32803,8 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <SwapEtherPage ref={this.swap_ether_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
-      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} check_if_ether_swap_pair_exists={this.check_if_ether_swap_pair_exists.bind(this)} validate_arweave_address={this.validate_arweave_address.bind(this)} estimate_arweave_network_fees={this.estimate_arweave_network_fees.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} get_minimum_amount_for_exchange_pair={this.get_minimum_amount_for_exchange_pair.bind(this)} get_changenow_transaction_object_from_pair={this.get_changenow_transaction_object_from_pair.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_images={this.show_images.bind(this)} get_local_storage_data_if_enabled={this.get_local_storage_data_if_enabled.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} check_if_ether_swap_pair_exists={this.check_if_ether_swap_pair_exists.bind(this)} validate_arweave_address={this.validate_arweave_address.bind(this)} estimate_arweave_network_fees={this.estimate_arweave_network_fees.bind(this)} check_if_recipient_address_is_valid={this.check_if_recipient_address_is_valid.bind(this)} get_minimum_amount_for_exchange_pair={this.get_minimum_amount_for_exchange_pair.bind(this)} get_changenow_transaction_object_from_pair={this.get_changenow_transaction_object_from_pair.bind(this)} 
+      get_near_intents_transaction_quote_from_pair={this.get_near_intents_transaction_quote_from_pair.bind(this)}
       />,
       this.state.swap_ether_bottomsheet,
       this.open_swap_ether_bottomsheet,
@@ -32803,6 +32849,7 @@ class App extends Component {
     }, (1 * 1100));
   }
 
+  //------------LIFI-----------
   async check_if_ether_swap_pair_exists(item, swap_target, picked_amount, recipient_address,sender_address){
     this.setState({checking_if_swap_pair_exists: true})
     const e5 = item['e5']
@@ -32996,133 +33043,10 @@ class App extends Component {
     }
   }
 
-  async swap_ether_to_specified_target_via_changenow(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, type, swap_target_data, changenow_swap_object){
-    this.open_dialog_bottomsheet()
-    this.setState({swapping_tokens_via_changenow: true})
-    this.prompt_top_notification(this.getLocale()['3110k']/* Beginning the swap action... */, 5000)
-    
-    const refresh_balance = async (focused_e5_or_symbol) => {
-      if(this.state.e5s[focused_e5_or_symbol] != null){
-        const web3_url = this.get_web3_url_from_e5(focused_e5_or_symbol)
-        const account_for_e5 = this.state.accounts[focused_e5_or_symbol]
-        await this.get_wallet_data2(account_for_e5, false, web3_url, '', focused_e5_or_symbol)
-      }else{
-        await this.update_coin_balances(focused_e5_or_symbol, false)
-      }
-    }
 
-    if(type == 'ether'){
-      const e5 = item['e5']
-      const { transaction_hash, success } = await this.send_ether_to_target_for_changenow_swap(changenow_swap_object.payinAddress, e5, picked_amount, gas_price, sender_address);
-      if(success == false){
-        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
-        this.setState({swapping_tokens_via_changenow: null})
-        return;
-      }
-      await this.check_if_changenow_swap_has_finalized(changenow_swap_object)
-      
-      await refresh_balance(e5)
-      await refresh_balance(swap_target_data['e5']/* should be the target e5 or symbol */)
-      await this.wait(900)
 
-      const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id)
-      const status = transaction_status.status.toLowerCase()
-      if(status == 'finished'){
-        this.prompt_top_notification(this.getLocale()['3110ba']/* Swap complete. */, 5000)
-        this.setState({swapping_tokens_via_changenow: null})
-
-        const source_balance = this.state.account_balance[e5]
-        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.state.coin_data[swap_target_data['e5']]['balance']
-
-        const target_ether_name = swap_target_data['name']
-        const target_ether_symbol = swap_target_data['symbol']
-        const target_item = swap_target_data['type'] == 'ether' ? this.get_token_display_data(target_ether_symbol, target_ether_name, swap_target) : swap_target_data['item']
-        const received_amount_decimals = swap_target_data['decimals']
-        const target_base_units = swap_target_data['base_units']
-
-        const final_amount = transaction_status.amountTo * 10**received_amount_decimals
-
-        this.show_successful_send_bottomsheet({'type':'changenow_swap', 'item':target_item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash_data':transaction_hash, 'transaction_status':transaction_status, 'target_balance': target_balance, 'source_balance':source_balance, 'completion_time':Date.now(), 'final_amount':final_amount, 'source_item':item, 'received_amount_decimals':received_amount_decimals, 'source_type': type, 'source_decimal_count': 18, 'target_base_units': target_base_units, 'changenow_swap_object':changenow_swap_object}, true)
-      }
-      else if(status == 'failed'){
-        this.prompt_top_notification(this.getLocale()['3110bz']/* Something went wrong, so your funds will be refunded. */, 17000)
-        this.setState({swapping_tokens_via_changenow: null})
-      }
-      else if(status == 'refunded'){
-        this.prompt_top_notification(this.getLocale()['3110ca']/* Something went wrong, so your funds were refunded. */, 19000)
-        this.setState({swapping_tokens_via_changenow: null})
-      }
-    }
-    else{
-      const transaction_hash = await this.send_coin_to_target_for_changenow_swap(changenow_swap_object.payinAddress, item, picked_amount, gas_price, sender_address, changenow_swap_object.payinExtraId)
-
-      if(transaction_hash == null){
-        this.setState({swapping_tokens_via_changenow: null})
-        return;
-      }
-      await this.check_if_changenow_swap_has_finalized(changenow_swap_object)
-
-      await refresh_balance(item['symbol'])
-      await refresh_balance(swap_target_data['e5']/* should be the e5 if an ether or symbol */)
-      await this.wait(900)
-
-      const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id)
-      const status = transaction_status.status.toLowerCase()
-
-      if(status == 'finished'){
-        this.prompt_top_notification(this.getLocale()['3110ba']/* Swap complete. */, 5000)
-        this.setState({swapping_tokens_via_changenow: null})
-
-        const source_balance = this.state.coin_data[item['symbol']]['balance']
-        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.state.coin_data[swap_target_data['e5']]['balance']
-
-        const target_ether_name = swap_target_data['name']
-        const target_ether_symbol = swap_target_data['symbol']
-        const target_item = swap_target_data['type'] == 'ether' ? this.get_token_display_data(target_ether_symbol, target_ether_name, swap_target) : swap_target_data['item']
-        const received_amount_decimals = swap_target_data['decimals']
-        const target_base_units = swap_target_data['base_units']
-
-        const final_amount = transaction_status.amountTo * 10**received_amount_decimals
-
-        this.show_successful_send_bottomsheet({'type':'changenow_swap', 'item':target_item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash_data':transaction_hash, 'transaction_status':transaction_status, 'target_balance': target_balance, 'source_balance':source_balance, 'completion_time':Date.now(), 'final_amount':final_amount, 'source_item':item,'received_amount_decimals':received_amount_decimals, 'source_type': type, 'source_decimal_count': item['decimals'], 'target_base_units':target_base_units, 'changenow_swap_object':changenow_swap_object}, true)
-
-      }
-      else if(status == 'failed'){
-        this.prompt_top_notification(this.getLocale()['3110bz']/* Something went wrong, so your funds will be refunded. */, 17000)
-        this.setState({swapping_tokens_via_changenow: null})
-      }
-      else if(status == 'refunded'){
-        this.prompt_top_notification(this.getLocale()['3110ca']/* Something went wrong, so your funds were refunded. */, 19000)
-        this.setState({swapping_tokens_via_changenow: null})
-      }
-    }
-  }
-
-  async get_changenow_transaction_status(id){
-    const myHeaders = new Headers();
-    myHeaders.append("x-changenow-api-key", process.env.REACT_APP_CHANGENOW_API_KEY);
-
-    const requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow'
-    };
-
-    const request = `https://api.changenow.io/v2/exchange/by-id?id=${id}`
-    try{
-      const response = await fetch(request, requestOptions)
-      if (!response.ok) {
-        console.log('changenow_request', response)
-        throw new Error(`Failed to retrieve data. Status: ${response}`);
-      }
-      const data = await response.json();
-      return data
-    }
-    catch(e){
-      console.log('changenow_request', 'something went wrong', e)
-    }
-  }
-
+  
+  //------------CHANGENOW-----------
   async get_minimum_amount_for_exchange_pair(item, swap_target, swap_target_data, type){
     const fromCurrency = type == 'ether' ? this.state.e5s[item['e5']].changenow_object['ticker'] : item['changenow_object']['ticker'];
     const fromNetwork = type == 'ether' ? this.state.e5s[item['e5']].changenow_object['network'] : item['changenow_object']['network'];
@@ -33228,6 +33152,165 @@ class App extends Component {
     }
   }
 
+  async swap_ether_to_specified_target_via_changenow(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, type, swap_target_data, changenow_swap_object){
+    this.open_dialog_bottomsheet()
+    this.setState({swapping_tokens_via_changenow: true})
+    this.prompt_top_notification(this.getLocale()['3110k']/* Beginning the swap action... */, 5000)
+    
+    const refresh_balance = async (focused_e5_or_symbol) => {
+      if(this.state.e5s[focused_e5_or_symbol] != null){
+        const web3_url = this.get_web3_url_from_e5(focused_e5_or_symbol)
+        const account_for_e5 = this.state.accounts[focused_e5_or_symbol]
+        await this.get_wallet_data2(account_for_e5, false, web3_url, '', focused_e5_or_symbol)
+      }else{
+        await this.update_coin_balances(focused_e5_or_symbol, false)
+      }
+    }
+
+    if(type == 'ether'){
+      const e5 = item['e5']
+      const { transaction_hash, success } = await this.send_ether_to_target_for_changenow_swap(changenow_swap_object.payinAddress, e5, picked_amount, gas_price, sender_address);
+      if(success == false){
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        this.setState({swapping_tokens_via_changenow: null})
+        return;
+      }
+      await this.check_if_changenow_swap_has_finalized(changenow_swap_object)
+      
+      await refresh_balance(e5)
+      await refresh_balance(swap_target_data['e5']/* should be the target e5 or symbol */)
+      await this.wait(900)
+
+      const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id)
+      const status = transaction_status.status.toLowerCase()
+      if(status == 'finished'){
+        this.prompt_top_notification(this.getLocale()['3110ba']/* Swap complete. */, 5000)
+        this.setState({swapping_tokens_via_changenow: null})
+
+        const source_balance = this.state.account_balance[e5]
+        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.state.coin_data[swap_target_data['e5']]['balance']
+
+        const target_ether_name = swap_target_data['name']
+        const target_ether_symbol = swap_target_data['symbol']
+        const target_item = swap_target_data['type'] == 'ether' ? this.get_token_display_data(target_ether_symbol, target_ether_name, swap_target) : swap_target_data['item']
+        const received_amount_decimals = swap_target_data['decimals']
+        const target_base_units = swap_target_data['base_units']
+
+        const final_amount = transaction_status.amountTo * 10**received_amount_decimals
+
+        this.show_successful_send_bottomsheet({'type':'changenow_swap', 'item':target_item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash_data':transaction_hash, 'transaction_status':transaction_status, 'target_balance': target_balance, 'source_balance':source_balance, 'completion_time':Date.now(), 'final_amount':final_amount, 'source_item':item, 'received_amount_decimals':received_amount_decimals, 'source_type': type, 'source_decimal_count': 18, 'target_base_units': target_base_units, 'changenow_swap_object':changenow_swap_object}, true)
+      }
+      else if(status == 'failed'){
+        this.prompt_top_notification(this.getLocale()['3110bz']/* Something went wrong, so your funds will be refunded. */, 17000)
+        this.setState({swapping_tokens_via_changenow: null})
+      }
+      else if(status == 'refunded'){
+        this.prompt_top_notification(this.getLocale()['3110ca']/* Something went wrong, so your funds were refunded. */, 19000)
+        this.setState({swapping_tokens_via_changenow: null})
+      }
+    }
+    else{
+      const transaction_hash = await this.send_coin_to_target_for_changenow_swap(changenow_swap_object.payinAddress, item, picked_amount, gas_price, sender_address, changenow_swap_object.payinExtraId)
+
+      if(transaction_hash == null){
+        this.setState({swapping_tokens_via_changenow: null})
+        return;
+      }
+      await this.check_if_changenow_swap_has_finalized(changenow_swap_object)
+
+      await refresh_balance(item['symbol'])
+      await refresh_balance(swap_target_data['e5']/* should be the e5 if an ether or symbol */)
+      await this.wait(900)
+
+      const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id)
+      const status = transaction_status.status.toLowerCase()
+
+      if(status == 'finished'){
+        this.prompt_top_notification(this.getLocale()['3110ba']/* Swap complete. */, 5000)
+        this.setState({swapping_tokens_via_changenow: null})
+
+        const source_balance = this.state.coin_data[item['symbol']]['balance']
+        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.state.coin_data[swap_target_data['e5']]['balance']
+
+        const target_ether_name = swap_target_data['name']
+        const target_ether_symbol = swap_target_data['symbol']
+        const target_item = swap_target_data['type'] == 'ether' ? this.get_token_display_data(target_ether_symbol, target_ether_name, swap_target) : swap_target_data['item']
+        const received_amount_decimals = swap_target_data['decimals']
+        const target_base_units = swap_target_data['base_units']
+
+        const final_amount = transaction_status.amountTo * 10**received_amount_decimals
+
+        this.show_successful_send_bottomsheet({'type':'changenow_swap', 'item':target_item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash_data':transaction_hash, 'transaction_status':transaction_status, 'target_balance': target_balance, 'source_balance':source_balance, 'completion_time':Date.now(), 'final_amount':final_amount, 'source_item':item,'received_amount_decimals':received_amount_decimals, 'source_type': type, 'source_decimal_count': item['decimals'], 'target_base_units':target_base_units, 'changenow_swap_object':changenow_swap_object}, true)
+
+      }
+      else if(status == 'failed'){
+        this.prompt_top_notification(this.getLocale()['3110bz']/* Something went wrong, so your funds will be refunded. */, 17000)
+        this.setState({swapping_tokens_via_changenow: null})
+      }
+      else if(status == 'refunded'){
+        this.prompt_top_notification(this.getLocale()['3110ca']/* Something went wrong, so your funds were refunded. */, 19000)
+        this.setState({swapping_tokens_via_changenow: null})
+      }
+    }
+  }
+
+  check_if_changenow_swap_has_finalized(changenow_swap_object) {
+    return new Promise((resolve, reject) => {
+      const checkReady = async () => {
+        try {
+          const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id);
+          if (this.swap_ether_page.current != null && this.swap_ether_page.current.state.changenow_swap_object?.id == changenow_swap_object.id ) {
+            this.swap_ether_page.current.setState({ transaction_status: transaction_status });
+          }
+          const status = transaction_status.status;
+          if (
+            status.toLowerCase() === 'finished' ||
+            status.toLowerCase() === 'failed' ||
+            status.toLowerCase() === 'refunded'
+          ) {
+            await this.wait(3000);
+            resolve(transaction_status);
+            return;
+          }
+          setTimeout(checkReady, 5_000);
+        } 
+        catch (error) {
+          reject(error);
+        }
+      };
+      checkReady();
+    });
+  }
+
+  async get_changenow_transaction_status(id){
+    const myHeaders = new Headers();
+    myHeaders.append("x-changenow-api-key", process.env.REACT_APP_CHANGENOW_API_KEY);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    const request = `https://api.changenow.io/v2/exchange/by-id?id=${id}`
+    try{
+      const response = await fetch(request, requestOptions)
+      if (!response.ok) {
+        console.log('changenow_request', response)
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      const data = await response.json();
+      return data
+    }
+    catch(e){
+      console.log('changenow_request', 'something went wrong', e)
+    }
+  }
+
+
+
+
+  //------------
   async send_ether_to_target_for_changenow_swap(recipient_address, e5, picked_amount, gas_price, sender_address){
     const private_key = this.state.accounts[e5].privateKey
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
@@ -33299,34 +33382,6 @@ class App extends Component {
     });
 
     return { transaction_hash, success }
-  }
-
-  check_if_changenow_swap_has_finalized(changenow_swap_object) {
-    return new Promise((resolve, reject) => {
-      const checkReady = async () => {
-        try {
-          const transaction_status = await this.get_changenow_transaction_status(changenow_swap_object.id);
-          if (this.swap_ether_page.current != null && this.swap_ether_page.current.state.changenow_swap_object?.id == changenow_swap_object.id ) {
-            this.swap_ether_page.current.setState({ transaction_status: transaction_status });
-          }
-          const status = transaction_status.status;
-          if (
-            status.toLowerCase() === 'finished' ||
-            status.toLowerCase() === 'failed' ||
-            status.toLowerCase() === 'refunded'
-          ) {
-            await this.wait(3000);
-            resolve(transaction_status);
-            return;
-          }
-          setTimeout(checkReady, 5_000);
-        } 
-        catch (error) {
-          reject(error);
-        }
-      };
-      checkReady();
-    });
   }
 
   async send_coin_to_target_for_changenow_swap(recipient_address, item, transfer_amount, fee, sender_address, memo_text){
@@ -33448,6 +33503,206 @@ class App extends Component {
       const hash = await this.create_and_broadcast_egld_transaction(item, fee, transfer_amount, recipient_address, sender_address, data, true);
       return hash;
     }
+  }
+
+
+
+
+  //------------NEAR_INTENTS-----------
+  async get_near_intents_transaction_quote_from_pair(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, type, swap_target_data){
+    this.setState({generating_near_intents_transaction: true})
+    await this.wait(5000)
+    const fromNetwork = this.state.near_intents_data[item['symbol']]
+    const toNetwork = this.state.near_intents_data[swap_target_data['item']['symbol']]
+
+    const fromAmount = picked_amount.toString()
+
+    const quoteRequest = {
+      dry: false,
+      swapType: QuoteRequest.swapType.EXACT_INPUT,
+      slippageTolerance: 300, // basis points (100 = 1%)
+      originAsset: fromNetwork,
+      depositType: QuoteRequest.depositType.ORIGIN_CHAIN,
+      destinationAsset: toNetwork,
+      amount: fromAmount,
+      refundTo: sender_address,
+      refundType: QuoteRequest.refundType.ORIGIN_CHAIN,
+      recipient: recipient_address,
+      recipientType: QuoteRequest.recipientType.DESTINATION_CHAIN,
+      deadline: new Date(Date.now() + 23 * 60 * 1000).toISOString(),
+    };
+
+    console.log('near_intents_request', 'quoteRequest', quoteRequest)
+
+    try{
+      const quote = await OneClickService.getQuote(quoteRequest);
+      console.log('near_intents_request', 'quote', quote);
+      const deposit_address = quote.quote.depositAddress;
+      const deposit_memo = quote.quote.depositMemo;
+      const receive_amount = quote.quote.amountOut;
+      const time_estimate = quote.quote.timeEstimate
+      const near_intents_swap_object = {
+        deposit_address: deposit_address,
+        deposit_memo: deposit_memo,
+        receive_amount: receive_amount,
+        time_estimate: time_estimate
+      }
+
+      if(this.dialog_page.current != null && this.dialog_page.current?.state.id == 'confirm_swap_coin_ether_via_near_intents_dialog' && deposit_address != null){
+        this.dialog_page.current?.setState({ near_intents_swap_object: near_intents_swap_object})
+      }
+      if(this.swap_ether_page.current != null && near_intents_swap_object.deposit_address != null){
+        this.swap_ether_page.current?.setState({ near_intents_swap_object: near_intents_swap_object })
+      }
+      this.setState({generating_near_intents_transaction: null})
+    }
+    catch(e){
+      console.log('near_intents_request', 'status', e.status)
+      console.log('near_intents_request', 'body', JSON.stringify(e.body, null, 2))
+      console.log('near_intents_request', 'message', e.message)
+      this.setState({generating_near_intents_transaction: null})
+    } 
+  }
+
+  async swap_ether_to_specified_target_via_near_intents(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, type, swap_target_data, near_intents_swap_object){
+    this.open_dialog_bottomsheet()
+    this.setState({swapping_tokens_via_near_intents: true})
+    this.prompt_top_notification(this.getLocale()['3110k']/* Beginning the swap action... */, 5000)
+
+    const refresh_balance = async (focused_e5_or_symbol) => {
+      if(this.state.e5s[focused_e5_or_symbol] != null){
+        const web3_url = this.get_web3_url_from_e5(focused_e5_or_symbol)
+        const account_for_e5 = this.state.accounts[focused_e5_or_symbol]
+        await this.get_wallet_data2(account_for_e5, false, web3_url, '', focused_e5_or_symbol)
+      }else{
+        await this.update_coin_balances(focused_e5_or_symbol, false)
+      }
+    }
+
+
+    if(type == 'ether'){
+      const e5 = item['e5']
+      const { transaction_hash, success } = await this.send_ether_to_target_for_changenow_swap(near_intents_swap_object.deposit_address, e5, picked_amount, gas_price, sender_address);
+      if(success == false){
+        this.prompt_top_notification(this.getLocale()['2946']/* 'Something went wrong with the transaction broadcast.' */, 7000)
+        this.setState({swapping_tokens_via_near_intents: null})
+        return;
+      }
+      await OneClickService.submitDepositTx({
+        depositAddress: near_intents_swap_object.deposit_address,
+        txHash: transaction_hash,
+      });
+      await this.check_if_near_intents_swap_has_finalized(near_intents_swap_object)
+      
+      await refresh_balance(e5)
+      await refresh_balance(swap_target_data['e5']/* should be the target e5 or symbol */)
+      await this.wait(900)
+
+      const transaction_status = await OneClickService.getExecutionStatus(near_intents_swap_object.deposit_address);
+      const status = transaction_status.status.toUpperCase()
+      if(status == 'SUCCESS'){
+        this.prompt_top_notification(this.getLocale()['3110ba']/* Swap complete. */, 5000)
+        this.setState({swapping_tokens_via_near_intents: null})
+
+        const source_balance = this.state.account_balance[e5]
+        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.state.coin_data[swap_target_data['e5']]['balance']
+
+        const target_ether_name = swap_target_data['name']
+        const target_ether_symbol = swap_target_data['symbol']
+        const target_item = swap_target_data['type'] == 'ether' ? this.get_token_display_data(target_ether_symbol, target_ether_name, swap_target) : swap_target_data['item']
+        const received_amount_decimals = swap_target_data['decimals']
+        const target_base_units = swap_target_data['base_units']
+
+        const final_amount = near_intents_swap_object.receive_amount;
+
+        this.show_successful_send_bottomsheet({'type':'near_intents_swap', 'item':target_item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash_data':transaction_hash, 'transaction_status':status, 'target_balance': target_balance, 'source_balance':source_balance, 'completion_time':Date.now(), 'final_amount':final_amount, 'source_item':item, 'received_amount_decimals':received_amount_decimals, 'source_type': type, 'source_decimal_count': 18, 'target_base_units': target_base_units, 'near_intents_swap_object':near_intents_swap_object}, true)
+      }
+      else if(status == 'FAILED'){
+        this.prompt_top_notification(this.getLocale()['3110bz']/* Something went wrong, so your funds will be refunded. */, 17000)
+        this.setState({swapping_tokens_via_near_intents: null})
+      }
+      else if(status == 'REFUNDED'){
+        this.prompt_top_notification(this.getLocale()['3110ca']/* Something went wrong, so your funds were refunded. */, 19000)
+        this.setState({swapping_tokens_via_near_intents: null})
+      }
+    }
+    else{
+      const transaction_hash = await this.send_coin_to_target_for_changenow_swap(near_intents_swap_object.deposit_address, item, picked_amount, gas_price, sender_address, near_intents_swap_object.deposit_memo)
+
+      if(transaction_hash == null){
+        this.setState({swapping_tokens_via_near_intents: null})
+        return;
+      }
+      await OneClickService.submitDepositTx({
+        depositAddress: near_intents_swap_object.deposit_address,
+        txHash: transaction_hash,
+      });
+      await this.check_if_near_intents_swap_has_finalized(near_intents_swap_object)
+
+      await refresh_balance(item['symbol'])
+      await refresh_balance(swap_target_data['e5']/* should be the e5 if an ether or symbol */)
+      await this.wait(900)
+
+      const transaction_status = await OneClickService.getExecutionStatus(near_intents_swap_object.deposit_address);
+      const status = transaction_status.status.toUpperCase()
+
+      if(status == 'SUCCESS'){
+        this.prompt_top_notification(this.getLocale()['3110ba']/* Swap complete. */, 5000)
+        this.setState({swapping_tokens_via_near_intents: null})
+
+        const source_balance = this.state.coin_data[item['symbol']]['balance']
+        const target_balance = swap_target_data['type'] == 'ether' ? this.state.account_balance[swap_target_data['e5']] : this.state.coin_data[swap_target_data['e5']]['balance']
+
+        const target_ether_name = swap_target_data['name']
+        const target_ether_symbol = swap_target_data['symbol']
+        const target_item = swap_target_data['type'] == 'ether' ? this.get_token_display_data(target_ether_symbol, target_ether_name, swap_target) : swap_target_data['item']
+        const received_amount_decimals = swap_target_data['decimals']
+        const target_base_units = swap_target_data['base_units']
+
+        const final_amount = near_intents_swap_object.receive_amount;
+
+        this.show_successful_send_bottomsheet({'type':'near_intents_swap', 'item':target_item, 'amount':picked_amount, 'recipient':recipient_address, 'sender':sender_address, 'hash_data':transaction_hash, 'transaction_status':status, 'target_balance': target_balance, 'source_balance':source_balance, 'completion_time':Date.now(), 'final_amount':final_amount, 'source_item':item,'received_amount_decimals':received_amount_decimals, 'source_type': type, 'source_decimal_count': item['decimals'], 'target_base_units':target_base_units, 'near_intents_swap_object':near_intents_swap_object}, true)
+
+      }
+      else if(status == 'FAILED'){
+        this.prompt_top_notification(this.getLocale()['3110bz']/* Something went wrong, so your funds will be refunded. */, 17000)
+        this.setState({swapping_tokens_via_near_intents: null})
+      }
+      else if(status == 'REFUNDED'){
+        this.prompt_top_notification(this.getLocale()['3110ca']/* Something went wrong, so your funds were refunded. */, 19000)
+        this.setState({swapping_tokens_via_near_intents: null})
+      }
+    }
+  }
+
+  check_if_near_intents_swap_has_finalized(near_intents_swap_object){
+    return new Promise((resolve, reject) => {
+      const checkReady = async () => {
+        try {
+          const transaction_status = await OneClickService.getExecutionStatus(near_intents_swap_object.deposit_address);
+          const status = transaction_status.status;
+
+          if (this.swap_ether_page.current != null && this.swap_ether_page.current.state.near_intents_swap_object?.deposit_address == near_intents_swap_object.deposit_address ) {
+            this.swap_ether_page.current.setState({ transaction_status: status });
+          }
+          
+          if (
+            status.toUpperCase() === 'SUCCESS' ||
+            status.toUpperCase() === 'FAILED' ||
+            status.toUpperCase() === 'REFUNDED'
+          ) {
+            await this.wait(3000);
+            resolve(transaction_status);
+            return;
+          }
+          setTimeout(checkReady, 5_000);
+        } 
+        catch (error) {
+          reject(error);
+        }
+      };
+      checkReady();
+    });
   }
 
 
@@ -37643,6 +37898,31 @@ class App extends Component {
 
 
 
+
+
+  async load_and_set_near_intents_coin_info(){
+    // var { all_symbols, symbol_mappings } = this.get_all_coin_and_ether_symbols()
+    // const request = `https://1click.chaindefuser.com/v0/tokens`
+    // try{
+    //   const response = await fetch(request);
+    //   if (!response.ok) {
+    //     throw new Error(`Failed to retrieve data. Status: ${response}`);
+    //   }
+    //   const tokens = await response.json();
+      
+    //   tokens.forEach(intent_token => {
+    //     const intent_token_coingecko_id = intent_token['coingeckoId'];
+    //     if(all_symbols.includes(intent_token_coingecko_id)){
+    //       const intent_token_symbol = symbol_mappings[intent_token_coingecko_id].symbol
+    //       const intent_token_assetId = intent_token['assetId']
+    //       near_intent_data[intent_token_symbol] = intent_token_assetId
+    //     }
+    //   });
+    // }
+    // catch(e){
+    //   console.log('load_and_set_near_intents_coin_info', e)
+    // }
+  }
 
   load_coinlore_coin_and_ether_ids = async () => {
     for(var i=0; i<this.state.dominance_targets.length; i++){
@@ -64400,11 +64680,11 @@ class App extends Component {
     return found;
   }
 
-  async emit_my_location_with_target_account(id, e5, address){
+  async emit_my_location_with_target_account(id, e5, address, memo_text){
     const location_data = await this.fetch_location_data()
     if(location_data == null) return;
 
-    const private_location_object = await this.prepare_my_private_location_object_message(id, e5, location_data)
+    const private_location_object = await this.prepare_my_private_location_object_message(id, e5, location_data, memo_text)
 
     const target = 'private_location|'+address
     const secondary_target = 'private_location|'+this.state.accounts[this.state.selected_e5].address
@@ -67128,14 +67408,15 @@ class App extends Component {
     return { message, object_hash }
   }
   
-  async prepare_my_private_location_object_message(account, e5, location_data){
+  async prepare_my_private_location_object_message(account, e5, location_data, memo_text){
     const object_data = {
       'location':location_data,
       'time':Date.now(),
       'sender_account': this.state.user_account_id[this.state.selected_e5],
       'sender_account_e5': this.state.selected_e5,
       'address':this.state.accounts[e5].address,
-      'alias':this.state.alias_bucket[this.state.selected_e5]?.[this.state.user_account_id[this.state.selected_e5]]
+      'alias':this.state.alias_bucket[this.state.selected_e5]?.[this.state.user_account_id[this.state.selected_e5]],
+      'memo':memo_text
     }
 
     const tags = []

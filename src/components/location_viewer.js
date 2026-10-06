@@ -140,7 +140,7 @@ const LocationPicker = forwardRef((props, ref) => {
     const customIcon3 = L.icon({
         iconUrl: sub_pin_object[theme], // Path to your custom image
         iconSize: [icon_size3, icon_size3], // Size of the icon [width, height]
-        iconAnchor: [icon_size3/2, icon_size3], // Point of the icon which will correspond to marker's location [x, y]
+        iconAnchor: [icon_size3/2, icon_size3/2], // Point of the icon which will correspond to marker's location [x, y]
         popupAnchor: [0, -icon_size3] // Point from which the popup should open relative to the iconAnchor
     });
 
@@ -229,6 +229,16 @@ const LocationPicker = forwardRef((props, ref) => {
                         </div>
                     )}
                     <FitBounds pins={pins} my_location={my_location} subcontractors={subcontractors} />
+                    {my_location != null && (
+                    <div>
+                        <Marker position={[my_location.lat, my_location.lon]} icon={my_location_marker_icon}/>
+                        <CircleMarker center={[my_location.lat, my_location.lon]} pathOptions={{ color: my_location_circle_color, weight: 1, opacity: 0.7, fillColor: my_location_circle_color, fillOpacity: 0.4  }} radius={circle_size}>
+                            {input_enabled == true && (
+                                <Popup>🫵</Popup>
+                            )}
+                        </CircleMarker>
+                    </div>
+                )}
                 </MapContainer>
             </div>
         );

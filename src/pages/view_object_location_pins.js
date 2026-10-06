@@ -95,6 +95,12 @@ class ViewObjectLocations extends Component {
                     {this.render_map()}
                     <div style={{height:15}}/>
                     {this.render_set_pins()}
+                    {this.state.memo_text != null && (
+                        <div>
+                            <div style={{height:10}}/>
+                            {this.render_detail_item('4', {'text':this.state.memo_text, 'textsize':'12px', 'font':this.props.app_state.font})}
+                        </div>
+                    )}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -108,6 +114,12 @@ class ViewObjectLocations extends Component {
                     </div>
                     <div className="col-6" style={{'padding': '20px 10px 0px 20px'}}>
                         {this.render_set_long_pins()}
+                        {this.state.memo_text != null && (
+                            <div>
+                                <div style={{height:10}}/>
+                                {this.render_detail_item('4', {'text':this.state.memo_text, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            </div>
+                        )}
                     </div>
                 </div>
             )
@@ -120,6 +132,12 @@ class ViewObjectLocations extends Component {
                     </div>
                     <div className="col-5" style={{'padding': '20px 10px 0px 20px'}}>
                         {this.render_set_long_pins()}
+                        {this.state.memo_text != null && (
+                            <div>
+                                <div style={{height:10}}/>
+                                {this.render_detail_item('4', {'text':this.state.memo_text, 'textsize':'12px', 'font':this.props.app_state.font})}
+                            </div>
+                        )}
                     </div>
                 </div>
             )
@@ -140,11 +158,9 @@ class ViewObjectLocations extends Component {
             });
         }
 
-        console.log('render_map','subcontractor_pins', subcontractor_pins)
-
         return(
             <div>
-                <LocationViewer ref={this.locationPickerRef} height={location_height} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} subcontractors={subcontractor_pins}
+                <LocationViewer ref={this.locationPickerRef} height={location_height} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} subcontractors={subcontractor_pins} on_account_location_data_pin_licked={this.on_account_location_data_pin_licked.bind(this)}
                 />
             </div>
         )
@@ -168,9 +184,22 @@ class ViewObjectLocations extends Component {
 
     render_set_long_pins(){
         var items = [].concat(this.state.pins)
+        const shared_private_locations = this.props.app_state.shared_private_locations;
+        if(Object.keys(shared_private_locations).length > 0){
+            const addresses = Object.keys(shared_private_locations);
+            addresses.forEach((address, index) => {
+                items.push({
+                    'lat':shared_private_locations[address]['location']['lat'],
+                    'lng':shared_private_locations[address]['location']['lon'],
+                    'description': shared_private_locations[address]['alias'] || shared_private_locations[address]['sender_account'],
+                    'id':index,
+                    'memo':shared_private_locations[address]['memo'],
+                })
+            });
+        }
         return(
             <div>
-                <div onClick={() => this.setState({pins: items.slice()})}>
+                <div onClick={() => this.setState({pins: this.state.pins.slice()})}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3089']/* 'Specified Locations.' */, 'details':this.props.app_state.loc['3090']/* 'Below are the locations that were set.' */, 'size':'l'})}
                 </div>
                 <div style={{height:10}}/>
@@ -196,14 +225,15 @@ class ViewObjectLocations extends Component {
                     'lat':shared_private_locations[address]['location']['lat'],
                     'lng':shared_private_locations[address]['location']['lon'],
                     'description': shared_private_locations[address]['alias'] || shared_private_locations[address]['sender_account'],
-                    'id':index
+                    'id':index,
+                    'memo':shared_private_locations[address]['memo'],
                 })
             });
         }
 
         return(
             <div>
-                <div onClick={() => this.setState({pins: items.slice()})}>
+                <div onClick={() => this.setState({pins: this.state.pins.slice()})}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3089']/* 'Specified Locations.' */, 'details':this.props.app_state.loc['3090']/* 'Below are the locations that were set.' */, 'size':'l'})}
                 </div>
                 <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -236,6 +266,15 @@ class ViewObjectLocations extends Component {
     when_pin_item_clicked(item){
         const location_data = { lat: item['lat'], lon: item['lng'] }
         this.locationPickerRef.current?.set_center(location_data);
+        if(item['memo'] != null){
+            this.setState({memo_text: item['memo']})
+        }
+    }
+
+    on_account_location_data_pin_licked(item){
+        if(item['memo'] != null){
+            this.setState({memo_text: item['memo']})
+        }
     }
 
 

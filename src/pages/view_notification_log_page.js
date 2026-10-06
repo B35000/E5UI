@@ -491,8 +491,8 @@ class ViewNotificationLogPage extends Component {
         
         const all_events = mail.concat(message, proposal, job_application, job_request, job_application, job_application_response, job_request_response, contract, comment, follower_job, call_request, pre_purchase_request, direct_message)
 
-        const filtered_events = all_events.filter(function (event) {
-            return (types.includes(event['event_type'])  || types.length == 0)
+        const filtered_events = all_events.filter((event) => {
+            return (types.includes(event['event_type']) || types.length == 0) && (event['sender'] != this.props.app_state.user_account_id[event['e5']])
         });
 
         return this.sortByAttributeDescending(filtered_events, 'time')
@@ -652,8 +652,8 @@ class ViewNotificationLogPage extends Component {
         
         const all_events = bag.concat(bag_application_response, storefront, auctionbids, comment, follower_post, follower_audio, follower_video, follower_poll, follower_bag, promoted_post, comment_tag, post_tag, storefront_purchase_request, storefront_request_response, shared_location)
 
-        const filtered_events = all_events.filter(function (event) {
-            return (types.includes(event['event_type'])  || types.length == 0)
+        const filtered_events = all_events.filter((event) => {
+            return (types.includes(event['event_type'])  || types.length == 0) && (event['sender'] != this.props.app_state.user_account_id[event['e5']])
         });
 
         return this.sortByAttributeDescending(filtered_events, 'time')
@@ -773,8 +773,8 @@ class ViewNotificationLogPage extends Component {
         
         const all_events = token.concat(bill_request, signature, ether_coin_request, ether_coin_receipt, mempool_notification, quick_itransfer)
 
-        const filtered_events = all_events.filter(function (event) {
-            return (types.includes(event['event_type'])  || types.length == 0)
+        const filtered_events = all_events.filter((event) => {
+            return (types.includes(event['event_type']) || types.length == 0) && (event['sender'] != this.props.app_state.user_account_id[event['e5']])
         });
 
         return this.sortByAttributeDescending(filtered_events, 'time')

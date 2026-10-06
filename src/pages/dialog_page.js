@@ -132,7 +132,7 @@ class DialogPage extends Component {
 
         selected_conditions:[], get_include_exit_contract_after_finish_transaction_object:this.get_include_exit_contract_after_finish_transaction_object(),
 
-        restore_time: (Date.now()/1000) - (60*60), deductible_data:{}, deductible_amount:0, viewer:'', location_sharing_duration:(60*60)
+        restore_time: (Date.now()/1000) - (60*60), deductible_data:{}, deductible_amount:0, viewer:'', location_sharing_duration:(60*60), memo_text:''
     };
 
 
@@ -791,6 +791,9 @@ class DialogPage extends Component {
         }
         else if(option == 'share_location_with_another_account'){
             return this.show_share_location_with_another_account_ui()
+        }
+        else if(option == 'confirm_swap_coin_ether_via_near_intents_dialog'){
+            return this.view_confirm_swap_coin_ether_via_near_intents_ui()
         }
     }
 
@@ -19298,7 +19301,7 @@ return data['data']
                 <div style={{height:5}}/>
 
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['c311ci']/* Alias or Account ID... */} when_text_input_field_changed={this.when_viewer_input_field_changed.bind(this)} text={this.state.viewer} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055uz']/* 'Share Duration.' */, 'details':this.props.app_state.loc['3055va']/* 'The amount of time you wish to share your location with your targeted account. The default is 1 hour.' */, 'size':'l'})}
                 <div style={{height:20}}/>
@@ -19307,12 +19310,25 @@ return data['data']
 
                 <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_location_sharing_duration_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
 
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055vd']/* 'Location Memo (Optional).' */, 'details':this.props.app_state.loc['3055ve']/* 'An optional short message attached to your shared location for added context.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055vf']/* 'Memo...' */} when_text_input_field_changed={this.when_memo_text_input_field_changed.bind(this)} text={this.state.memo_text} theme={this.props.theme}/>
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(53 - this.state.memo_text.length)})}
+
                 <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={() => this.when_begin_sharing_button_tapped()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055uy']/* 'Share.' */, 'action':''})}
                 </div>
             </div>
         )
+    }
+
+    when_memo_text_input_field_changed(text){
+        const final_text = text.slice(0, 53);
+        this.setState({memo_text: final_text})
     }
 
     when_viewer_input_field_changed(text){
@@ -19353,7 +19369,7 @@ return data['data']
     render_e5_item4(item){
         var image = this.props.app_state.e5s[item].e5_img
         const account = this.props.app_state.user_account_id[item]
-        var details = account + this.get_sender_title_text2(account, item)
+        var details = account
         if(this.state.picked_e5 == item){
             return(
                 <div>
@@ -19380,6 +19396,7 @@ return data['data']
 
         const expiry_time = Date.now() + (this.state.location_sharing_duration * 1000)
         const typed_text = this.state.viewer.trim()
+        const memo_text = this.state.memo_text.trim()
 
         const id = await this.get_typed_alias_id(typed_text)
         const e5 = isNaN(typed_text) ? await this.get_alias_e5(typed_text) : (this.state.picked_e5 != null ? this.state.picked_e5 : this.props.app_state.selected_e5)
@@ -19391,7 +19408,7 @@ return data['data']
             this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
         }
         else{
-            this.props.begin_sharing_location_with_target(id, e5, expiry_time)
+            this.props.begin_sharing_location_with_target(id, e5, expiry_time, memo_text)
         }
     }
 
@@ -19451,6 +19468,203 @@ return data['data']
 
         return found;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    view_confirm_swap_coin_ether_via_near_intents_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.view_confirm_swap_coin_ether_via_near_intents_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.view_confirm_swap_coin_ether_via_near_intents_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.view_confirm_swap_coin_ether_via_near_intents_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    view_confirm_swap_coin_ether_via_near_intents_data(){
+        const item = this.state.data['item']
+        const picked_amount = this.state.data['picked_amount']
+        const recipient_address = this.state.data['recipient_address']
+        const sender_address = this.state.data['sender_address']
+        const gas_price = this.state.data['gas_price']
+        const my_balance = this.state.data['my_balance']
+        
+        const swap_target = this.state.data['swap_target']
+        const swap_target_data = this.state.data['swap_target_data']
+        const target_ether_name = swap_target_data['name']
+        const target_ether_symbol = swap_target_data['symbol']
+        const target_decimals = swap_target_data['decimals']
+        const target_base_units = swap_target_data['base_units']
+       
+        const type = this.state.data['type'] 
+        const item_base_units = type == 'ether' ? this.props.app_state.loc['2738cx']/* wei */ : swap_target_data['item']['base_unit']
+        const item_decimal_count = type == 'ether' ? 18 : item['decimals']
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3110g']/* 'Confirm Swap Action from $ to %' */.replace('$', item['name']).replace('%', target_ether_name), 'details':this.props.app_state.loc['3110h']/* 'Confirm the details for the swap action.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3095d']/* 'Balance in $' */.replace('$', item['symbol'])}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance), 'number':this.format_account_balance_figure(my_balance), 'barcolor':'#606060', 'relativepower':item_base_units, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(my_balance/10**item_decimal_count),
+                    'number':(my_balance/10**item_decimal_count), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':sender_address, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':recipient_address, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110i']/* 'Set amount to Swap.' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount), 'number':this.format_account_balance_figure(picked_amount), 'barcolor':'#606060', 'relativepower':item_base_units, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_amount/10**item_decimal_count),
+                    'number':(picked_amount/10**item_decimal_count), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_near_intents_quote_details_if_loaded()}
+
+                {this.state.near_intents_swap_object != null && (
+                    <div>
+                        <div style={{height: 10}}/>
+                        <div onClick={()=>this.confirm_swap_coin_ether_via_near_intents()}>
+                            <div style={{height:10}}/>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3110j']/* 'Begin Swap.' */, 'action': ''})}
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_near_intents_quote_details_if_loaded(){
+        const near_intents_swap_object = this.state.near_intents_swap_object
+
+        if(near_intents_swap_object == null){
+            if(this.props.app_state.generating_near_intents_transaction == true){
+                return this.render_skeleton_object()
+            }
+            else{
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3110m']/* '⚠️ Swap Unavailable.' */, 'details':this.props.app_state.loc['3110n']/* 'The pair you\'ve selected isnt available to swap right now.' */, 'size':'l'})}
+                    </div>
+                )
+            }
+        }
+        else{
+            const receive_amount = near_intents_swap_object.receive_amount
+            const type = this.state.data['type']
+            const item = this.state.data['item']
+
+            const swap_target = this.state.data['swap_target']
+            const swap_target_data = this.state.data['swap_target_data']
+            const target_ether_name = swap_target_data['name']
+            const target_ether_symbol = swap_target_data['symbol']
+            const target_base_unit_name = swap_target_data['base_units']
+            const target_decimals = swap_target_data['decimals']
+            const target_base_units = swap_target_data['base_units']
+
+            const receive_amount_as_base_units = bigInt(receive_amount);
+
+            return(
+                <div>
+                    {this.render_detail_item('3', {'details':near_intents_swap_object.deposit_address, 'title':this.props.app_state.loc['3110cx']/* 'Deposit Address' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.get_time_diff(near_intents_swap_object.time_estimate), 'details':this.props.app_state.loc['3110cv']/* 'Estimated Duration to Completion.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {near_intents_swap_object.deposit_memo != undefined && (
+                        <div>
+                            {this.render_detail_item('3', {'details':near_intents_swap_object.deposit_memo, 'title':this.props.app_state.loc['3110cw']/* 'Deposit Memo.' */, 'size':'l'})}
+                            <div style={{height: 10}}/>
+                        </div>
+                    )}
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3110by']/* 'Expected Amount.' */}</p>
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(receive_amount_as_base_units), 'number':this.format_account_balance_figure(receive_amount_as_base_units), 'barcolor':'#606060', 'relativepower':target_base_unit_name, })}
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(receive_amount_as_base_units/10**target_decimals),
+                        'number':(receive_amount_as_base_units/10**target_decimals), 'barcolor':'#606060', 'relativepower':target_ether_symbol, })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    confirm_swap_coin_ether_via_near_intents(){
+        const item = this.state.data['item']
+        const picked_amount = this.state.data['picked_amount']
+        const recipient_address = this.state.data['recipient_address']
+        const sender_address = this.state.data['sender_address']
+        const gas_price = this.state.data['gas_price']
+        const my_balance = this.state.data['my_balance']
+        const type = this.state.data['type']
+        const swap_target = this.state.data['swap_target']
+        const swap_target_data = this.state.data['swap_target_data']
+        const near_intents_swap_object = this.state.near_intents_swap_object
+
+        this.props.swap_ether_to_specified_target_via_near_intents(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, type, swap_target_data, near_intents_swap_object)
+    }
+
+
+
+
+
 
 
 

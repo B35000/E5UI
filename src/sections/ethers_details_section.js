@@ -618,8 +618,9 @@ class EthersDetailsSection extends Component {
 
     render_external_swappers(external_swappers){
         const swappers = {
-            'lifi': 'LiFi',
-            'changenow': 'ChangeNOW'
+            'lifi': 'LiFi ᯤ',
+            'changenow': 'ChangeNOW 💫',
+            'near_intents':'Near-Intents ☕'
         }
         return(
             <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -2369,7 +2370,7 @@ class EthersDetailsSection extends Component {
     }
 
     render_send_receipts_item(ipfs, ether_item){
-        if(ipfs['hash']['type'] == 'lifi_swap' || ipfs['hash']['type'] == 'changenow_swap'){
+        if(ipfs['hash']['type'] == 'lifi_swap' || ipfs['hash']['type'] == 'changenow_swap' || ipfs['hash']['type'] == 'near_intents_swap'){
             return this.render_swap_item(ipfs, ether_item)
         }
         const time = ipfs['time']/1000
