@@ -647,22 +647,27 @@ class home_page extends Component {
             var radius = '0px'
             var navbar_margin = '0px 0px 0px 0px'
             var navbar_width = this.props.width
+            var tag_width = width
+            var tag_bar_margin = '0px 0px 0px 0px'
             if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
                 bottom_bar = 61
                 radius = '20px'
                 navbar_margin = '0px 10px 4px 10px'
                 navbar_width = this.props.width - 20
+                tag_bar_margin = '8px 10px 0px 10px'
+                tag_width = width-20
+                middle -= 8
             }
             const os = getOS();
             return (
-                <div className="row" style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'padding':'0px', 'margin':'0px', position: 'relative',
+                <div style={{'background-color':background_color, 'overflow': 'hidden', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'padding':'0px', 'margin':'0px', position: 'relative',
                 minHeight: '100vh'}}>
                     {is_sharing && this.render_location_pulse()}
-                    <div style={{position: 'relative', zIndex: 1}}>
-                        <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px', 'margin':'0px'}}>
+                    <div style={{position: 'relative', zIndex: 1, 'width': '100%'}}>
+                        <div style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden', 'padding':'0px', 'margin':'0px', 'width': '100%'}}>
                             
-                            <div style={{height:top_bar, 'width': '100%', 'padding':'9px 0px 0px 15px', 'overflow-y': 'hidden', 'overflow-x': 'hidden', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)"}}>
-                                {this.render_top_tag_bar(size, this.props.width)}
+                            <div style={{height:top_bar, 'width': tag_width, 'padding':'9px 10px 0px 10px', 'overflow-y': 'hidden', 'overflow-x': 'hidden', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'margin':tag_bar_margin}}>
+                                {this.render_top_tag_bar(size, tag_width-7)}
                             </div>
                             
                             <div style={{height:5}}/>
@@ -707,7 +712,6 @@ class home_page extends Component {
                         <div style={{height: this.props.height, width:'100%', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                             {this.render_small_screen_size_ui(size, top_bar, width)}
                             
-                            {/* <div style={{height:5}}/> */}
                             <div style={{height:bottom_bar, width:navbar_width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': radius, 'padding':'0px 0px 0px 0px', 'margin':navbar_margin, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
                                 {this.render_navbar_button_group(size, navbar_width)}
                             </div>
