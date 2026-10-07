@@ -310,7 +310,7 @@ class EthersDetailsSection extends Component {
                         {this.render_wallet_status(item)}
                     </div>
 
-                    {!isNaN(ledger_age) && (
+                    {!isNaN(ledger_age) && parseInt(ledger_age) > 1000 && (
                         <div>
                             <div style={{height: 10}}/>
                             {this.render_detail_item('3', {'title':this.get_time_difference(ledger_age), 'details':this.props.app_state.loc['2927c']/* Ledger Age. */, 'size':'l'})}

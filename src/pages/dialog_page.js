@@ -9933,6 +9933,12 @@ return data['data']
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055gq']/* 'Enable Cookies and Local Storage?' */, 'details':this.props.app_state.loc['3055gr']/* 'E uses your device\'s storage and cookies to cache some of your data to help make the user experience better. To enable this, tap the button below and if you dont want this setting turned on, just close this page.' */, 'size':'l'})}
                 <div style={{height:10}}/>
+                
+                <div onClick={() => this.props.show_terms_of_service_bottomsheet()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3117a']/* 'Open Terms of Service and Privacy Policy.' */, 'details':this.props.app_state.loc['3117b']/* 'By proceeding to use E5, you agree to its developers\' and maintainers\' terms of service and privacy policy.' */, 'size':'l'})}
+                </div>
+
+                <div style={{height:10}}/>
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 0px 10px'}}>
                         <div onClick={()=> this.accept_cookies()}>

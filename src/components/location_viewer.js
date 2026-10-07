@@ -213,7 +213,7 @@ const LocationPicker = forwardRef((props, ref) => {
                                 {input_enabled == true && (
                                     <Popup>
                                         <div onClick={() => when_sub_pin_clicked(account_location_data)}>
-                                            {account_location_data['alias'] || account_location_data['sender_account']}
+                                            {account_location_data['sender_account']+(account_location_data['alias'] != null ? ' • '+account_location_data['alias'] :'')}
                                         </div>
                                     </Popup>
                                 )}
@@ -278,7 +278,7 @@ const LocationPicker = forwardRef((props, ref) => {
                             {input_enabled == true && (
                                 <Popup>
                                     <div onClick={() => when_sub_pin_clicked(account_location_data)}>
-                                        {account_location_data['alias'] || account_location_data['sender_account']}
+                                        {account_location_data['sender_account']+(account_location_data['alias'] != null ? ' • '+account_location_data['alias'] :'')}
                                     </div>
                                 </Popup>
                             )}
