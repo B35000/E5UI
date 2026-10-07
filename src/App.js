@@ -3191,7 +3191,7 @@ class App extends Component {
       this.get_token('NRG', 'Energi', 'E825', true),
       this.get_token('HYPE', 'HyperEVM', 'E835'),
       this.get_token('XRPE', 'XRPL EVM', 'E845'),
-      this.get_token('ABETH', 'Abstract', 'E855'),
+      this.get_token('ABETH', 'Abstract', 'E855', true),
       this.get_token('APE', 'ApeChain', 'E865'),
       this.get_token('BIBTC', 'Bitlayer', 'E875', true),
       this.get_token('BLETH', 'Blast', 'E885', true),

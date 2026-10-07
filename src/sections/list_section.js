@@ -7593,7 +7593,7 @@ return data['data']
             }
         }
         var items = this.get_coins_data()
-        var x = this.props.app_state.os == 'iOS' ? 60 : 53
+        var x = this.props.app_state.os == 'iOS' ? 58 : 51
 
         if(items.length == 0){
             items = ['0','1'];
@@ -7778,7 +7778,7 @@ return data['data']
             );
         }
 
-        var x = this.props.app_state.os == 'iOS' ? 60 : 53
+        var x = this.props.app_state.os == 'iOS' ? 58 : 51
 
         return ( 
             <div>

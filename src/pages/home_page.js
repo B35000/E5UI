@@ -818,7 +818,10 @@ class home_page extends Component {
     render_small_screen_size_ui(size, top_bar, width){
         var orientation = this.props.app_state.homepage_tags_position
         const selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
-        let x = selected_item == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */ || selected_item == 'e' ? 136 : 129
+        let x = 129
+        if(this.state.page == 'w' && (selected_item == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */)){
+            x = 134
+        }
 
         if(orientation == this.props.app_state.loc['1593k']/* top */){
             var navbar_margin = '0px 0px 0px 0px'
@@ -830,6 +833,7 @@ class home_page extends Component {
                 var radius = '20px'
                 w = this.props.width-20
                 tag_width = this.props.width-20
+                x += 6;
             }
             return(
                 <div>
@@ -852,6 +856,7 @@ class home_page extends Component {
                 var radius = '20px'
                 w = this.props.width-20
                 tag_width = this.props.width-20
+                x += 6;
             }
             return(
                 <div>
