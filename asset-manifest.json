@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.99de1687.css",
-    "main.js": "/static/js/main.832f43b1.js",
+    "main.js": "/static/js/main.c9e49751.js",
     "static/js/54.f093836c.chunk.js": "/static/js/54.f093836c.chunk.js",
     "static/js/420.89d8059d.chunk.js": "/static/js/420.89d8059d.chunk.js",
     "static/js/774.0ad485d6.chunk.js": "/static/js/774.0ad485d6.chunk.js",
@@ -30,7 +30,6 @@
     "static/media/E25.png": "/static/media/E25.bc8d54f408fcdeaaab0c.png",
     "static/media/e35_end_token.png": "/static/media/e35_end_token.ac4100c1b91143e25d83.png",
     "static/media/puzzle_background_dark.png": "/static/media/puzzle_background_dark.77126673f38beead7102.png",
-    "static/media/zora.png": "/static/media/zora.1e31fedd76d4674d5fa5.png",
     "static/media/e35_spend_token.png": "/static/media/e35_spend_token.85e90be81ef9c029f7ae.png",
     "static/media/325.png": "/static/media/325.af929e3dc0f79848032e.png",
     "static/media/stack_icon_pink.png": "/static/media/stack_icon_pink.7c804fb6e47e4ca37646.png",
@@ -49,6 +48,7 @@
     "static/media/default_page_background_dark_grey.png": "/static/media/default_page_background_dark_grey.fd2800020ce72d954ce8.png",
     "static/media/default_page_background.png": "/static/media/default_page_background.6484682656a528e642bb.png",
     "static/media/stack_icon_red.png": "/static/media/stack_icon_red.22e593beb133349291a0.png",
+    "static/media/zora.png": "/static/media/zora.64098c26ffed24f52098.png",
     "static/media/explore_icon_darkpink.png": "/static/media/explore_icon_darkpink.e3bbdafc5d8dce42d8e9.png",
     "static/media/explore_icon_darkblue.png": "/static/media/explore_icon_darkblue.22bbe418cbe42dc7b12e.png",
     "static/media/explore_icon_darkorange.png": "/static/media/explore_icon_darkorange.b18165f6ccc60b1e2c11.png",
@@ -430,6 +430,6 @@
   },
   "entrypoints": [
     "static/css/main.99de1687.css",
-    "static/js/main.832f43b1.js"
+    "static/js/main.c9e49751.js"
   ]
 }
