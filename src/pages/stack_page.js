@@ -2178,9 +2178,13 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':number_with_commas(this.props.app_state.thread_pool_size), 'details':this.props.app_state.loc['1264bm']/* The number of logical processors available on your device. */, 'size':'l'})}
                 
                 <div style={{height: 10}}/>
-
                 <div onClick={() => this.when_socket_message_tapped()}>
                     {this.render_detail_item('3', {'title':this.props.app_state.socket_online == true ? this.props.app_state.loc['1593kh']/* Connected and Enabled */ : this.props.app_state.loc['1593ki']/* Disconnected and Disabled */, 'details':this.props.app_state.loc['1593kg']/* Indexer Socket Connection Status. */, 'size':'l'})}
+                </div>
+
+                <div style={{height: 10}}/>
+                <div onClick={() => this.props.show_terms_of_service_bottomsheet()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593nq']/* 'Review the Terms of Service, Privacy Policy and Content Policy.' */, 'details':this.props.app_state.loc['1593nr']/* 'You agree to these terms when you proceeded with using E5.' */, 'footer':footer, 'size':'l'})}
                 </div>
                 
                 <div style={{height: 10}}/>

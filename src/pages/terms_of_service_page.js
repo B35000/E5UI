@@ -139,7 +139,7 @@ class TermsOfServicePage extends Component {
                 {this.render_detail_item('0')}
                 {items.map((term, index) => (
                     <div>
-                        {this.render_detail_item('4', {'text':term, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        {this.render_detail_item('4', {'text':term, 'textsize':'13px', 'font':this.props.app_state.font, 'mask_profane_words':false})}
                         <div style={{height:4}}/>
                     </div>
                 ))}
@@ -201,7 +201,7 @@ class TermsOfServicePage extends Component {
                 {this.render_detail_item('0')}
                 {items.map((term, index) => (
                     <div>
-                        {this.render_detail_item('4', {'text':term, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        {this.render_detail_item('4', {'text':term, 'textsize':'13px', 'font':this.props.app_state.font, 'mask_profane_words':false})}
                         <div style={{height:4}}/>
                     </div>
                 ))}
@@ -262,7 +262,7 @@ class TermsOfServicePage extends Component {
                 {this.render_detail_item('0')}
                 {items.map((term, index) => (
                     <div>
-                        {this.render_detail_item('4', {'text':term, 'textsize':'13px', 'font':this.props.app_state.font})}
+                        {this.render_detail_item('4', {'text':term, 'textsize':'13px', 'font':this.props.app_state.font, 'mask_profane_words':false})}
                         <div style={{height:4}}/>
                     </div>
                 ))}

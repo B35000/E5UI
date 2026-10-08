@@ -514,15 +514,17 @@ class ViewGroups extends Component {
             var text = 'some random text';
             var color = this.props.theme['primary_text_color'];
             var word_wrap_value = 'normal'
+            var mask_profane_words = true
             if(object_data!=null){
               font = object_data['font'];
               textsize = object_data['textsize'];
               text = object_data['text'];
               word_wrap_value = this.longest_word_length(object_data['text']) > 44 ? 'break-word' : 'normal'
+              mask_profane_words = object_data['mask_profane_words'] != null ? object_data['mask_profane_words'] : true
             }
 
             text = this.format_text_if_empty_or_null(text)
-            const parts = this.split_text(this.mask_profane_words(text))
+            const parts = mask_profane_words == false ? this.split_text(text) : this.split_text(this.mask_profane_words(text))
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <AnimatePresence initial={true}>
@@ -541,7 +543,7 @@ class ViewGroups extends Component {
                                                                 </span>
                                                             );
                                                         }
-                                                        return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{this.mask_word_if_censored(part)}</span>;
+                                                        return <span style={{ color: color, 'font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': word_wrap_value }} key={index}>{mask_profane_words == false ? part : this.mask_word_if_censored(part)}</span>;
                                                     })
                                                 }
                                             </Linkify>

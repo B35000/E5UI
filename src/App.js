@@ -2986,7 +2986,7 @@ class App extends Component {
         class:'L2', rollup_type:'op', parent: 'E185', id: null, external_swappers:['changenow'],changenow_object: get_changenow_object("Ethereum (Manta)")
       },
       'E1305':{
-        web3:['https://api.node.glif.io'],
+        web3:['https://api.node.glif.io','https://filfox.info/rpc/v1'],
         token:'FILE',
         e5_address:'',/*  */
         first_block:0, end_image: null, spend_image: null, ether_image:filecoin_evm_logo, iteration:10_000, url:0	, active:false, e5_img:null, end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, type:'1559', id: null, external_swappers:[],changenow_object: get_changenow_object(), parent_coin:'FIL'
@@ -11943,7 +11943,7 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)} when_language_selected={this.when_language_selected.bind(this)} remove_content_languag_setting={this.remove_content_languag_setting.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} fetch_last_transaction_time={this.fetch_last_transaction_time.bind(this)} stop_sharing_with_target={this.stop_sharing_with_target.bind(this)} pause_sharing_on_all={this.pause_sharing_on_all.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)} when_language_selected={this.when_language_selected.bind(this)} remove_content_languag_setting={this.remove_content_languag_setting.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} fetch_last_transaction_time={this.fetch_last_transaction_time.bind(this)} stop_sharing_with_target={this.stop_sharing_with_target.bind(this)} pause_sharing_on_all={this.pause_sharing_on_all.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} show_terms_of_service_bottomsheet={this.show_terms_of_service_bottomsheet.bind(this)}
       />
     )
   }
@@ -22577,7 +22577,7 @@ class App extends Component {
       'export_direct_purchases':700,
       'view_access_logs':550,
       'view_error_logs':650,
-      'view_link_option':350,
+      'view_link_option':410,
       'vote_wait_bottomsheet':700,
       'hide_audiopost_confirmation':550,
       'hide_videopost_confirmation':550,
@@ -67763,7 +67763,7 @@ class App extends Component {
             // this.homepage.current?.when_mail_item_clicked(0, id, obj, 'ignore')
             // this.homepage.current?.reset_post_detail_object()
           }else{
-            if(message.time > (Date.now()/1000) - (3*60)){
+            if(message.time > (Date.now()/1000) - (3*60) && !this.is_address_blocked(from)){
               event['e5'] = e5
               const notifs = [event]
               this.handle_mail_notifications(notifs)
@@ -67849,7 +67849,7 @@ class App extends Component {
           this.fetch_uploaded_files_for_object(ipfs_obj)
           this.setState({socket_mail_messages: all_mail_clone})
 
-          if(!am_I_the_author){
+          if(!am_I_the_author && !this.is_address_blocked(from)){
             if(message.time > (Date.now()/1000) - (3*60)){
               event['e5'] = e5
               const notifs = [event]
@@ -67943,7 +67943,7 @@ class App extends Component {
         this.setState({socket_object_messages: clone})
 
 
-        if(!am_I_the_author){
+        if(!am_I_the_author && !this.is_address_blocked(from)){
           if(message.time > (Date.now()/1000) - (3*60)){
             event['e5'] = e5
             const notifs = [event]
@@ -68142,7 +68142,7 @@ class App extends Component {
           // this.homepage.current?.when_bill_item_clicked(bill, 'ignore')
           // this.homepage.current?.reset_post_detail_object()
         }else{
-          if(message.time > (Date.now()/1000) - (3*60)){
+          if(message.time > (Date.now()/1000) - (3*60) && !this.is_address_blocked(from)){
             event['e5'] = e5
             const notifs = [event]
             this.handle_bill_request_notifications(notifs)
@@ -68257,7 +68257,7 @@ class App extends Component {
             clone[message.job_object_id] = messages
             this.setState({socket_job_responses: clone})
 
-            if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+            if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author && !this.is_address_blocked(from)){
               event['e5'] = e5
               const notifs = [event]
               this.handle_job_application_notifications(notifs)
@@ -68368,7 +68368,7 @@ class App extends Component {
             clone[message.job_object_id] = messages
             this.setState({socket_job_responses: clone})
 
-            if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+            if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author && !this.is_address_blocked(from)){
               event['e5'] = e5
               const notifs = [event]
               this.handle_incoming_bag_application_notifications(notifs)
@@ -68478,7 +68478,7 @@ class App extends Component {
         clone[message.contractor_object_id] = messages
         this.setState({socket_contractor_applications: clone})
 
-        if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+        if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author && !this.is_address_blocked(from)){
           event['e5'] = e5
           const notifs = [event]
           this.handle_job_request_notifications(notifs)
@@ -68630,7 +68630,7 @@ class App extends Component {
       clone[message.storefront_e5_id] = messages
       this.setState({direct_orders: clone})
 
-      if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+      if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author && !this.is_address_blocked(from)){
         event['e5'] = e5
         const notifs = [event]
         this.handle_incoming_storefront_direct_order_notifications(notifs)
@@ -68696,7 +68696,7 @@ class App extends Component {
     received_signature_requests_object[ipfs['signature_request_id']] = ipfs
     this.setState({received_signature_requests: received_signature_requests_object})
 
-    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+    if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author && !this.is_address_blocked(from)){
       this.handle_signature_request_notifications(ipfs)
     }
     if(add_to_notifications == true){
@@ -68983,7 +68983,7 @@ class App extends Component {
         this.setState({call_invites: clone})
         console.log('process_new_call_invite_message', clone)
 
-        if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author){
+        if(message.time > (Date.now()/1000) - (3*60) && !am_I_the_author && !this.is_address_blocked(from)){
           this.handle_call_invite_notifications(ipfs_message)
         }
         this.get_room_participant_count(ipfs_message['call_id'])
@@ -69486,7 +69486,7 @@ class App extends Component {
 
           this.setState({direct_messages: all_mail_clone, loaded_messages: loaded_messages_clone})
 
-          if(!am_I_the_author){
+          if(!am_I_the_author && !this.is_address_blocked(from)){
             if(message.time > (Date.now()/1000) - (3*60)){
               event['e5'] = e5
               this.handle_direct_messages_notifications(event)
@@ -69501,6 +69501,15 @@ class App extends Component {
     const message_e5 = message['e5']
     this.get_alias_from_account_id(message_account, message_e5)
     // await this.wait(4000)
+  }
+
+  is_address_blocked(address){
+    const all_blocked = this.get_all_sorted_objects(this.state.blocked_accounts)
+    const blocked_add = all_blocked.find((blocked_obj) => {
+      return blocked_obj['address'] == address
+    })
+    
+    return blocked_add != null
   }
   
   async handle_direct_messages_notifications(event){
