@@ -738,7 +738,7 @@ class EthersDetailsSection extends Component {
 
     render_wallet_vaue(item, balance_decimal){
         var final_balance = balance_decimal == null ? 0.0 : balance_decimal
-        const used_symbol = item['symbol'].endsWith('ETH') ? 'ETH' : item['symbol']
+        const used_symbol = item['symbol'].endsWith('ETH') ? 'ETH' : (this.props.app_state.e5s[item['symbol']]?.parent_coin || item['symbol'])
         if(this.props.app_state.asset_price_data['BTC'] == null || this.props.app_state.asset_price_data[used_symbol] == null) return;
         var coin_price = this.props.app_state.asset_price_data[used_symbol]['price']
         var bitcoin_price = this.props.app_state.asset_price_data['BTC']['price']

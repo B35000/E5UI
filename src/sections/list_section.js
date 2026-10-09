@@ -97,6 +97,7 @@ class PostListSection extends Component {
         // }, (1 * 100));
 
         this.setState({screen_width: this.screen.current.offsetWidth})
+        this.initial_load_done = true
     }
 
     componentDidUpdate(prevProps){
@@ -467,6 +468,9 @@ class PostListSection extends Component {
         this.locationPickerRef2 = React.createRef();
 
         this.current_load_time = {}
+
+        this.animated_ids = new Set();   // ids that have already been shown
+        this.initial_load_done = false;
     }
 
 
@@ -1002,6 +1006,40 @@ class PostListSection extends Component {
         )
     }
 
+    render_animated_view(view, view_id, style, index, length){
+        const is_new = (id) => {
+            if (!this.initial_load_done) return false;
+            return !this.animated_ids.has(id);
+        };
+
+        const id = view_id;
+        const should_animate = is_new(id);
+        this.animated_ids.add(id);
+
+        return (
+            <motion.div
+                onClick={() => console.log()}
+                initial={should_animate ? { height: 0, opacity: 0 } : false}
+                animate={{ height: 'auto', opacity: 1 }}
+                transition={{
+                    height: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] },
+                    opacity: { duration: 0.2, delay: 0.1 },
+                }} style={{ overflow: 'hidden' }}>
+
+                <motion.div
+                    initial={{ scale: 0.95 }}
+                    animate={{ scale: 1 }}
+                    whileTap={{ scale: 0.9, transition: { duration: 0.3 } }}
+                    transition={{ duration: 0.3 }}
+                    style={style}>
+                    {view}
+                </motion.div>
+                
+                {this.render_space_if_last_item(index, length)}
+            </motion.div>
+        );
+    }
+
 
 
 
@@ -1062,11 +1100,12 @@ class PostListSection extends Component {
                                 ref={this.jobs_list}
                                 style={{ height: middle }}
                                 totalCount={items.length}
+                                computeItemKey={(index) => items[index]['e5_id']}
                                 itemContent={(index) => {
                                     const item = items[index];
                                     return (
                                         <div>
-                                            <AnimatePresence initial={true}>
+                                            {/* <AnimatePresence initial={true}>
                                                 <motion.div key={item['e5_id']} 
                                                 initial={{ 
                                                     opacity: 0, 
@@ -1094,7 +1133,9 @@ class PostListSection extends Component {
                                                     {this.render_job_object(item, index)}
                                                 </motion.div>
                                             </AnimatePresence>
-                                            {this.render_space_if_last_item(index, items.length)}
+                                            {this.render_space_if_last_item(index, items.length)} */}
+
+                                            {this.render_animated_view(this.render_job_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                         </div>
                                     );
                                 }}
@@ -1102,33 +1143,6 @@ class PostListSection extends Component {
                                     this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'jobs'))
                                 }}
                             />
-                            {/* <VList
-                                ref={(el) => (this.jobs_list = el)}
-                                style={{ height: middle }}
-                                onScroll={(offset) => {
-                                    const handle = this.jobs_list
-                                    const startOffset = handle.scrollOffset;
-                                    const endOffset = startOffset + handle.viewportSize;
-                                    const range = { 
-                                        startIndex: handle.findItemIndex(startOffset), 
-                                        endIndex: handle.findItemIndex(endOffset) 
-                                    }
-                                    this.handleScroll2(range, this.get_viewed_item_ids(items, range, 'e5_id', 'jobs'))
-                                }}
-                            >
-                                {items.map((item, index) => {
-                                    return (
-                                        <div>
-                                            <AnimatePresence initial={true}>
-                                                <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                                style={{'padding': padding}}>
-                                                    {this.render_job_object(item, index)}
-                                                </motion.div>
-                                            </AnimatePresence>
-                                        </div>
-                                    );
-                                })}
-                            </VList> */}
                     </div>
                 </div>
             );
@@ -1719,12 +1733,13 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'padding': padding}}>
                                             {this.render_contract_item(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_contract_item(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -1924,13 +1939,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_proposal_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_proposal_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -2103,13 +2119,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_nitro_object_if_locked(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_nitro_object_if_locked(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -2258,13 +2275,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_subscription_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_subscription_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -2438,13 +2456,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['convo_id']} className={this.state.animate_click == item['convo_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_mail_object_or_null(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_mail_object_or_null(item, index), item['convo_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -2642,13 +2661,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_contractor_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_contractor_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -2972,13 +2992,14 @@ class PostListSection extends Component {
                                 const item = items[index];
                                 return (
                                     <div>
-                                        <AnimatePresence initial={true}>
+                                        {/* <AnimatePresence initial={true}>
                                             <motion.div key={item['convo_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                             style={{'padding': padding}}>
                                                 {this.render_direct_message_object(item, index)}
                                             </motion.div>
                                         </AnimatePresence>
-                                        {this.render_space_if_last_item(index, items.length)}
+                                        {this.render_space_if_last_item(index, items.length)} */}
+                                        {this.render_animated_view(this.render_direct_message_object(item, index), item['convo_id'], {'padding': padding}, index, items.length)}
                                     </div>
                                 );
                             }}
@@ -3214,14 +3235,15 @@ class PostListSection extends Component {
                                 const item = items[index];
                                 return (
                                     <div>
-                                        <AnimatePresence initial={true}>
+                                        {/* <AnimatePresence initial={true}>
                                             <motion.div key={item['call_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                             style={{}}>
                                                 {this.render_invite_item(item)}
                                                 <div style={{height:4}}/>
                                             </motion.div>
                                         </AnimatePresence>
-                                        {this.render_space_if_last_item(index, items.length)}
+                                        {this.render_space_if_last_item(index, items.length)} */}
+                                        {this.render_animated_view(this.render_invite_item(item), item['call_id'], {}, index, items.length)}
                                     </div>
                                 );
                             }}
@@ -3364,13 +3386,14 @@ class PostListSection extends Component {
                         const item = items[index];
                         return (
                             <div>
-                                <AnimatePresence initial={true}>
+                                {/* <AnimatePresence initial={true}>
                                     <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                     style={{'padding': '1px 5px 1px 5px'}}>
                                         {this.render_E5s_object(item['data'], index, item['id'])}
                                     </motion.div>
                                 </AnimatePresence>
-                                {this.render_space_if_last_item(index, items.length)}
+                                {this.render_space_if_last_item(index, items.length)} */}
+                                {this.render_animated_view(this.render_E5s_object(item['data'], index, item['id']), item['id'], {'padding': '1px 5px 1px 5px'}, index, items.length)}
                             </div>
                         );
                     }}
@@ -3595,6 +3618,7 @@ class PostListSection extends Component {
                                 </motion.div>
                             ))}
                         </AnimatePresence>
+                        
                     </ul>
                 </div>
             )
@@ -4039,14 +4063,15 @@ class PostListSection extends Component {
                                 const item = items[index];
                                 return (
                                     <div>
-                                        <AnimatePresence initial={true}>
+                                        {/* <AnimatePresence initial={true}>
                                             <motion.div key={item.returnValues.p5.toString()}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                             style={{}}>
                                                 {this.render_notification_item2(item, index)}
                                                 <div style={{height:4}}/>
                                             </motion.div>
                                         </AnimatePresence>
-                                        {this.render_space_if_last_item(index, items.length)}
+                                        {this.render_space_if_last_item(index, items.length)} */}
+                                        {this.render_animated_view(this.render_notification_item2(item, index), item.returnValues.p5.toString(), {}, index, items.length)}
                                     </div>
                                 );
                             }}
@@ -4230,13 +4255,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_post_object_if_locked(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_post_object_if_locked(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -4559,13 +4585,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_channel_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_channel_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -4771,13 +4798,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_poll_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_poll_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -4947,13 +4975,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_storefront_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_storefront_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -5222,13 +5251,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding':padding}}>
                                             {this.render_bag_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_bag_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -5541,13 +5571,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_audio_object_if_locked(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_audio_object_if_locked(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -5586,11 +5617,14 @@ class PostListSection extends Component {
             <div>
                 <AnimatePresence initial={true}>
                     {items.map((item, index) => (
-                        <motion.div key={item['song_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                        style={{'padding': '2px'}}>
-                            {this.render_song(item['song'], item['object'], index, 'album')} 
-                            {this.render_space_if_not_last(index, items.length)}
-                        </motion.div>
+                        // <motion.div key={item['song_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                        // style={{'padding': '2px'}}>
+                        //     {this.render_song(item['song'], item['object'], index, 'album')} 
+                        //     {this.render_space_if_not_last(index, items.length)}
+                        // </motion.div>
+                        <div>
+                            {this.render_animated_view(this.render_song(item['song'], item['object'], index, 'album'), item['song_id'], {'padding': '2px'}, index, items.length)}
+                        </div>
                     ))}
                 </AnimatePresence>
                 <div style={{height:10}}/>
@@ -5868,7 +5902,7 @@ class PostListSection extends Component {
                                 const item = items[index];
                                 return (
                                     <div>
-                                        <AnimatePresence initial={true}>
+                                        {/* <AnimatePresence initial={true}>
                                             <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                             style={{}}>
                                                 <ImageListItem key={index}>
@@ -5877,7 +5911,9 @@ class PostListSection extends Component {
                                                     </div>
                                                 </ImageListItem>
                                             </motion.div>
-                                        </AnimatePresence>
+                                        </AnimatePresence> */}
+
+                                        {this.render_animated_view(<ImageListItem key={index}> <div> {this.render_bought_audio_item_plus_buttons(item, index, w, my_stacked_albums)} </div> </ImageListItem>, item['e5_id'], {}, index, 100000000000000000)}
                                     </div>
                                 );
                             }}
@@ -6465,13 +6501,14 @@ return data['data']
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_video_object_if_locked(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_video_object_if_locked(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -6659,16 +6696,17 @@ return data['data']
                                 const item = items[index];
                                 return (
                                     <div>
-                                        <AnimatePresence initial={true}>
+                                        {/* <AnimatePresence initial={true}>
                                             <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                             style={{}}>
-                                                <ImageListItem key={index}>
-                                                    <div onClick={() => this.when_video_item_clicked(index, item)}>
-                                                        {this.render_my_bought_video_item(item, index, w, stacked_videoposts)}
-                                                    </div> 
-                                                </ImageListItem>
-                                            </motion.div>
-                                    </AnimatePresence>
+                                                    <ImageListItem key={index}>
+                                                        <div onClick={() => this.when_video_item_clicked(index, item)}>
+                                                            {this.render_my_bought_video_item(item, index, w, stacked_videoposts)}
+                                                        </div> 
+                                                    </ImageListItem>
+                                                </motion.div>
+                                        </AnimatePresence> */}
+                                        {this.render_animated_view(<ImageListItem key={index}> <div onClick={() => this.when_video_item_clicked(index, item)}> {this.render_my_bought_video_item(item, index, w, stacked_videoposts)} </div> </ImageListItem>, item['e5_id'], {}, index, 10000000000000)}
                                     </div>
                                 );
                             }}
@@ -7039,13 +7077,14 @@ return data['data']
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': '1px 5px 1px 5px'}}>
                                             {this.render_coin_item(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_coin_item(item, index), item['id'], {'padding': '1px 5px 1px 5px'}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -7206,13 +7245,14 @@ return data['data']
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)',}} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': '1px 5px 1px 5px'}}>
                                             {this.render_ether_item(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {this.render_animated_view(this.render_ether_item(item, index), item['id'], {'padding': '1px 5px 1px 5px'}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -7440,13 +7480,14 @@ return data['data']
                         const item = items[index];
                         return (
                             <div>
-                                <AnimatePresence initial={true}>
+                                {/* <AnimatePresence initial={true}>
                                     <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                     style={{'padding': padding}}>
                                         {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                                     </motion.div>
                                 </AnimatePresence>
-                                {this.render_space_if_last_item(index, items.length)}
+                                {this.render_space_if_last_item(index, items.length)} */}
+                                {this.render_animated_view(this.render_ends_object(item['data'], index, item['id'], item['img'], item), item['e5_id'], {'padding': padding}, index, items.length)}
                             </div>
                         );
                     }}
@@ -7724,13 +7765,15 @@ return data['data']
                         const item = items[index];
                         return (
                             <div>
-                                <AnimatePresence initial={true}>
-                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                {/* <AnimatePresence initial={true}>
+                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] }}}
                                     style={{'padding': padding}}>
                                         {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                                     </motion.div>
                                 </AnimatePresence>
-                                {this.render_space_if_last_item(index, items.length)}
+                                {this.render_space_if_last_item(index, items.length)} */}
+
+                                {this.render_animated_view(this.render_spends_object(item['data'], index, item['id'], item['img'], item), item['e5_id']+`i${index}`, {'padding': padding}, index, items.length)}
                             </div>
                         );
                     }}
@@ -7872,13 +7915,15 @@ return data['data']
                             const item = items[index];
                             return (
                                 <div>
-                                    <AnimatePresence initial={true}>
+                                    {/* <AnimatePresence initial={true}>
                                         <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                         style={{'padding': padding}}>
                                             {this.render_bill_object(item, index)}
                                         </motion.div>
                                     </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)}
+                                    {this.render_space_if_last_item(index, items.length)} */}
+
+                                    {this.render_animated_view(this.render_bill_object(item, index), item['e5_id']+`i${index}`, {'padding': padding}, index, items.length)}
                                 </div>
                             );
                         }}
@@ -8064,13 +8109,15 @@ return data['data']
                         const item = items[index];
                         return (
                             <div>
-                                <AnimatePresence initial={true}>
+                                {/* <AnimatePresence initial={true}>
                                     <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
                                     style={{'padding': padding}}>
                                         {this.render_certificate_object(item, index)}
                                     </motion.div>
                                 </AnimatePresence>
-                                {this.render_space_if_last_item(index, items.length)}
+                                {this.render_space_if_last_item(index, items.length)} */}
+
+                                {this.render_animated_view(this.render_certificate_object(item, index), item['e5_id']+`i${index}`, {'padding': padding}, index, items.length)}
                             </div>
                         );
                     }}
@@ -8211,13 +8258,15 @@ return data['data']
                         const item = items[index];
                         return (
                             <div>
-                                <AnimatePresence initial={true}>
-                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
+                                {/* <AnimatePresence initial={true}>
+                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] }}}
                                     style={{'padding': padding}}>
                                         {this.render_crossexchange_object(item, index)}
                                     </motion.div>
                                 </AnimatePresence>
-                                {this.render_space_if_last_item(index, items.length)}
+                                {this.render_space_if_last_item(index, items.length)} */}
+
+                                {this.render_animated_view(this.render_crossexchange_object(item, index), item['e5_id']+`i${index}`, {'padding': padding}, index, items.length)}
                             </div>
                         );
                     }}

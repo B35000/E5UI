@@ -1074,7 +1074,7 @@ class ContractDetailsSection extends Component {
     render_fulfil_obligations(object){
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
-        if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
+        if(object['id'] != 2 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
             return(
                 <div>
                     {this.render_detail_item('0')}

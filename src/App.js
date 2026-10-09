@@ -603,7 +603,7 @@ import { NANOS_PER_IOTA, isValidIotaAddress, IOTA_TYPE_ARG } from '@iota/iota-sd
 import { AccountsContractMethod, CoreContract, getHname, IscTransaction, L2_FROM_L1_GAS_BUDGET, } from '@iota/isc-sdk';
 import { Message } from 'iso-filecoin/message'
 import { RPC } from 'iso-filecoin/rpc'
-import { Client, Mnemonic, PrivateKey, AccountId, AccountBalanceQuery, TransferTransaction, TransactionRecordQuery, Hbar, HbarUnit, TransactionId, Status, } from "@hashgraph/sdk";
+import { Client, Mnemonic, AccountId, MirrorNodeAccountBalanceQuery, TransferTransaction, Hbar, HbarUnit, Status, } from "@hiero-ledger/sdk";
 import { PrivateKey as InjectivePrivateKey, PublicKey as InjectivePublicKey, MsgSend, ChainGrpcBankApi, ChainRestAuthApi, ChainRestTendermintApi, createTransaction, TxRestApi, BaseAccount} from '@injectivelabs/sdk-ts';
 import { Network, getNetworkEndpoints, getNetworkInfo } from '@injectivelabs/networks';
 import { BigNumberInBase, BigNumberInWei } from '@injectivelabs/utils';
@@ -37172,7 +37172,7 @@ class App extends Component {
 
   get_hbar_address_balance = async (client, account_id) => {
     try{
-      const balance = await new AccountBalanceQuery().setAccountId(account_id).execute(client);
+      const balance = await new MirrorNodeAccountBalanceQuery().setAccountId(account_id).execute(client);
       return balance.hbars.to(HbarUnit.Tinybar).toString();
     }
     catch(e){
