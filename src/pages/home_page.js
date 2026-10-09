@@ -144,6 +144,8 @@ class home_page extends Component {
         this.pointerId = null;
         this.edgeZone = 72;
         this.commitThreshold = 0.5;
+
+        this.navbar_change_time = Date.now()
     }
 
 
@@ -1190,181 +1192,6 @@ class home_page extends Component {
         this[function_name]();
     }
 
-
-    // render_navbar_button_group(size){
-    //     var line_margin = '0px '+this.get_navbar_line_margin_percentage()+' 0px 0px'
-    //     if(size == 'm'){
-    //       return ( 
-    //           <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:'100%'}}>
-    //                 <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
-    //                     {this.render_navbar_button('l','4px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
-    //                 </div>
-
-    //                 <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-    //                     {this.render_navbar_button('l','5px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
-    //                 </div>
-
-    //                 <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-    //                     {this.render_navbar_button('l','5px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
-    //                 </div>
-                    
-    //                 <div className="col" style={{'padding':'5px 0px 0px 30px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-    //                     {this.render_navbar_button('l','5px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
-    //                 </div>
-    //           </div>
-    //       );
-    //     }
-    //     else if(size == 's'){
-    //       return(
-    //         <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:'103%'}}>
-    //               <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 0px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'border-radius': '1px 0px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
-    //                   {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['JobIcon'], 'auto', '38px','5px 0px 0px 0px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
-    //               </div>
-
-    //               <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-    //                   {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['ExploreIcon'], 'auto', '30px','5px 0px 0px 0px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
-    //               </div>
-
-    //               <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-    //                 {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '42px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
-                      
-    //               </div>
-
-    //               <div className="col" style={{height: '100%', width:'100%', padding:'5px 0px 0px 1px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-    //                 {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['StackIcon'], 'auto', '31px','4px 0px 0px 0px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
-    //               </div>
-    //           </div>
-    //       );
-    //     }
-    //     else if(size == 'l' || size == 'xl'){
-    //         return ( 
-    //             <div style={{height: '100%', width:'100%', padding:'5px 0px 0px 0px'}}>
-    //               <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': line_margin}}/>
-    //               <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('?'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
-    //                   {this.render_navbar_button('s', '1px 0px 10px 6px', this.props.theme['JobIcon'], 'auto', '60px','5px 12px 0px 11px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)} 
-    //               </div>
-                
-
-    //               <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
-    //               <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('e'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-    //                   {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['ExploreIcon'], 'auto', '50px','5px 11px 0px 10px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
-                      
-    //               </div>
-                
-
-    //               <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
-    //               <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('w'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-    //                 {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['WalletIcon'], 'auto', '55px','5px 10px 4px 10px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
-    //               </div>
-                
-
-    //               <div style={{height:'1px', 'background-color':'transparent', 'margin': '10px 12px '+(this.props.height-460)+'px 0px'}} />
-    //                 <div style={{'background-color':'transparent', padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-    //                     {this.render_navbar_button('s', '0px 0px 0px 9px', this.props.theme['StackIcon'], 'auto', '50px','1px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
-    //                 </div>
-    //               <div style={{height:'1px', 'background-color':'transparent', 'margin': '0px 12px 5px 0px'}}/>
-    //             </div>  
-    //         );
-    //     }
-    // }
-
-    // /* returns if button selected is highlighted */
-    // get_navbar_normal_or_highlighted_button_background(val){
-    //     var color = 'transparent';
-    //     if(val == this.state.page){
-    //         color = this.props.theme['navbar_button_selected_color'];
-    //     }
-    //     return color;
-    // }
-
-    // get_navbar_line_margin_percentage(){
-    //     var page = this.state.page
-    //     if(page == '?'){
-    //         return '80%'
-    //     }
-    //     else if(page == 'e'){
-    //         return '55%'
-    //     }
-    //     else return '25%'
-    // }
-
-    // /* called when a bottom navbar item has been clicked */
-    // when_bottom_navbar_button_clicked(item){
-    //     if(item == 's'){
-    //         console.log('stack item clicked');
-    //         this.open_view_stack_bottomsheet();
-    //     }
-    //     else {
-    //         // let me = this;
-    //         // if(Date.now() - this.last_all_click_time2 < 200){
-    //         //     clearTimeout(this.all_timeout);
-    //         //     //double tap
-    //         //     me.props.show_view_notification_log_bottomsheet(item)
-    //         // }else{
-    //         //     this.all_timeout = setTimeout(function() {
-    //         //         clearTimeout(this.all_timeout);
-    //         //         // single tap
-    //         //         me.normal_bottom_navbar_item_click(item)
-    //         //     }, 200);
-    //         // }
-    //         // this.last_all_click_time2 = Date.now();
-            
-    //         if(this.state.page == item){
-    //             this.props.show_view_notification_log_bottomsheet(item)
-    //         }else{
-    //             this.normal_bottom_navbar_item_click(item)
-    //         }
-    //     }
-    // }
-
-    // normal_bottom_navbar_item_click(item){
-    //     this.setState({page: item});
-    //     var me = this;
-    //     setTimeout(function() {
-    //         me.update_scroll_position()
-    //     }, (1 * 10));
-    // }
-
-    // render_navbar_button(icontype, text_padding, img, img_height, img_width, img_padding, title, tabs){
-    //     var navbar_button_text_color = this.props.theme['primary_navbar_text_color']
-    //     var navbar_button_secondary_text = this.props.theme['secondary_navbar_text_color']
-    //     if(icontype == 's' || icontype == 'xs'){
-    //         return(
-    //             <AnimatePresence initial={true}>
-    //                 <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
-    //                     <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
-    //                         <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
-
-    //                         <p style={{'font-size': '12px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p>
-
-    //                         <p style={{'font-size': '8px','color': navbar_button_secondary_text,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
-    //                     </div>
-    //                 </motion.div>
-    //             </AnimatePresence>
-    //         )
-    //     }else{
-    //         return(
-    //             <AnimatePresence initial={true}>
-    //                 <motion.div key={title} initial={{ opacity: 0, scale:0.95 }} animate={{ opacity: 1, scale:1 }} exit={{ opacity: 0, scale:0.95 }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{}}>
-    //                     <div className="row" style={{ width:'100%', 'padding':'7px 0px 0px 10px', 'border-radius': '0px 0px 0px 0px'}}>
-    //                         <div className="col-3" style={{'padding':'0px 0px 10px 0px'}}>
-    //                             <div style={{height:'7%', width:'100%'}}>
-    //                                 <img alt="" src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
-    //                             </div>
-    //                         </div>
-    //                         <div className="col" style={{'padding':'0px 0px 0px 10px'}}>
-    //                             <div style={{height:'7%', width:'100%', 'padding':text_padding}}>
-    //                                 <p style={{'font-size': '15px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p> 
-    //                                 <p style={{'font-size': '10px','color': navbar_button_secondary_text,'margin': '-5px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
-    //                             </div>
-    //                         </div>
-    //                     </div> 
-    //                 </motion.div>
-    //             </AnimatePresence>
-    //         )
-    //     }
-    // }
-
     render_navbar_button_group(size, navbar_width){
         var line_margin = '0px '+this.get_navbar_line_margin_percentage()+' 0px 0px'
         if(size == 'm'){
@@ -1408,7 +1235,7 @@ class home_page extends Component {
                     </div>
 
                     <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w'), position: 'relative'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                        {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '46px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
+                        {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '43px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */, this.get_notification_count('w'))}
                         
                     </div>
 
@@ -1640,12 +1467,13 @@ class home_page extends Component {
     }
 
     normal_bottom_navbar_item_click(item){
+        this.navbar_change_time = Date.now()
         this.setState({page: item});
         var me = this;
         setTimeout(function() {
             me.update_scroll_position()
             me.props.set_focused_page_in_homepage(me.get_page_from_tag_group_item())
-        }, (1 * 10));
+        }, (1 * 100));
     }
 
     get_page_from_tag_group_item(){
@@ -2216,16 +2044,16 @@ class home_page extends Component {
         var id = ''
         if(this.state.page == '?'){
             var selected_item = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
-            id = this.state.work_page_tags_object['i'].active + selected_item
+            id = '?'+this.state.work_page_tags_object['i'].active + selected_item
         }
         else if(this.state.page == 'e'){
             var selected_item = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
-            id = this.state.explore_page_tags_object['i'].active + selected_item
+            id = 'e'+this.state.explore_page_tags_object['i'].active + selected_item
         }
         else{
             //wallet
             var selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
-            id = this.state.wallet_page_tags_object['i'].active + selected_item
+            id = 'w'+this.state.wallet_page_tags_object['i'].active + selected_item
         }
 
         return id
@@ -2257,7 +2085,7 @@ class home_page extends Component {
             var me = this;
             setTimeout(function() {
                 me.update_scroll_position()
-            }, (1 * 10));
+            }, (1 * 100));
         }
     }
 
@@ -2542,6 +2370,7 @@ class home_page extends Component {
     }
 
     async when_tags_updated(tag_group, clicked_tag_name, is_selecting_same_tag){
+        this.navbar_change_time = Date.now()
         var selected_page = ''
         if(this.state.page == '?'){
             this.setState({work_page_tags_object: tag_group})
@@ -2677,7 +2506,7 @@ class home_page extends Component {
         var me = this;
         setTimeout(function() {
             me.update_scroll_position()
-        }, (1 * 10));
+        }, (1 * 100));
 
         setTimeout(function() {
             me.reload_object_album_arts_if_any()
@@ -2822,6 +2651,7 @@ class home_page extends Component {
 
     
     set_page_scroll(pos, viewed_items, page){
+        if(Date.now() - this.navbar_change_time < 500) return;
         if(this.page_scroll_data == null) this.page_scroll_data = {}
 
         if(this.state.page == '?'){

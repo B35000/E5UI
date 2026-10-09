@@ -674,6 +674,7 @@ class PostListSection extends Component {
 
     handleScroll2(range, viewed_items){
         const page = this.props.get_page_id()
+        console.log('handleScroll2', page, 'setting page scroll', range, range.startIndex)
         this.props.set_page_scroll(range.startIndex, viewed_items, page)
     }
 
@@ -685,6 +686,7 @@ class PostListSection extends Component {
     set_jobs_list(pos, smooth){
         if(smooth == null || smooth == false){
             // this.jobs_list.current?.scrollTo(0, pos);
+            console.log('handleScroll2', 'scrolling to position: ', pos)
             this.jobs_list.current?.scrollToIndex({ index: pos, align: "start", });
         }else{
             // this.jobs_list.current?.scrollTo({ top: pos, behavior: 'smooth' })
@@ -1156,6 +1158,9 @@ class PostListSection extends Component {
             var height = size == 's' ? 78 : 68;
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */ && size == 's'){
                 height += 50
+            }
+            if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
+                height += 10
             }
             return(
                 <div style={{height: height}}/>
