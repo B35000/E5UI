@@ -1008,6 +1008,11 @@ class PostListSection extends Component {
         )
     }
 
+    reset_initial_load_done_value(){
+        this.initial_load_done = false;
+        this.animated_ids.clear()
+    }
+
     render_animated_view(view, view_id, style, index, length){
         const is_new = (id) => {
             if (!this.initial_load_done) return false;
@@ -1016,6 +1021,7 @@ class PostListSection extends Component {
 
         const id = view_id;
         const should_animate = is_new(id);
+        // console.log('render_animated_view', 'id', id, 'should animate', should_animate)
         this.animated_ids.add(id);
 
         return (

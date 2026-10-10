@@ -2373,16 +2373,19 @@ class home_page extends Component {
         this.navbar_change_time = Date.now()
         var selected_page = ''
         if(this.state.page == '?'){
+            this.work_list_section.current?.reset_initial_load_done_value()
             this.setState({work_page_tags_object: tag_group})
             selected_page = tag_group['i'].active
             if(selected_page == 'e') selected_page = this.props.app_state.loc['1196']/* 'jobs' */
         }
         else if(this.state.page == 'e'){
+            this.explore_list_section.current?.reset_initial_load_done_value()
             this.setState({explore_page_tags_object: tag_group})
             selected_page = tag_group['i'].active
         }
         else{
             //wallet
+            this.explore_list_section.current?.reset_initial_load_done_value()
             this.setState({wallet_page_tags_object: tag_group})
             selected_page = 'w'
             if(tag_group['i'].active == this.props.app_state.loc['1264ai']/* bills */){

@@ -1600,13 +1600,13 @@ class ViewGroups extends Component {
         if(blur_image == true){
             return(
                 <div onTouchStart={(e) => stop_propagation_if_required(e)} onTouchMove={(e) => stop_propagation_if_required(e)} onPointerDown={(e) => stop_propagation_if_required(e)}>
-                    <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius, 'filter': 'blur(3px)', '-webkit-filter': 'blur(3px)'}} onClick={() => this.when_detail_eight_clicked(object_data['image_click'], object_data['object'])}/>
+                    <img src={this.get_image_from_file(img)} key={title} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius, 'filter': 'blur(3px)', '-webkit-filter': 'blur(3px)'}} onClick={() => this.when_detail_eight_clicked(object_data['image_click'], object_data['object'])}/>
                 </div>
             )
         }else{
             return(
                 <div onTouchStart={(e) => stop_propagation_if_required(e)} onTouchMove={(e) => stop_propagation_if_required(e)} onPointerDown={(e) => stop_propagation_if_required(e)}>
-                    <img src={this.get_image_from_file(img)} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius}} onClick={() => this.when_detail_eight_clicked(object_data['image_click'], object_data['object'])}/>
+                    <img src={this.get_image_from_file(img)} key={title} alt={title} style={{height:font_size[3] ,width:image_width, 'border-radius': image_border_radius}} onClick={() => this.when_detail_eight_clicked(object_data['image_click'], object_data['object'])}/>
                 </div>
             )
         }
