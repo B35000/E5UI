@@ -5319,22 +5319,24 @@ class App extends Component {
     this.instantiate_webworkers()
   }
 
+  check_if_updated = async () => {
+    const shouldreload = await this.check_for_updates_and_reload_if_old()
+
+    if(shouldreload == true){
+      window.location.reload();
+    }else{
+      if (this.props.onReady) {
+        this.props.onReady();
+      }
+    }
+  }
+
   componentDidMount() {
     console.log("mounted", 'os version: ', iOS());
 
-    const check_if_updated = async () => {
-      const shouldreload = await this.check_for_updates_and_reload_if_old()
+    
 
-      if(shouldreload == true){
-        window.location.reload();
-      }else{
-        if (this.props.onReady) {
-          this.props.onReady();
-        }
-      }
-    }
-
-    check_if_updated()
+    // this.check_if_updated()
     
     /* listens for when the window is resized */
     window.addEventListener("resize", this.resize.bind(this));
@@ -6258,6 +6260,10 @@ class App extends Component {
       }, (1 * 500));
     }
     this.set_stack_page_data()
+
+    setTimeout(() => {
+      this.check_if_updated()
+    }, (1 * 500));
   }
 
   set_stack_page_data(){
@@ -7861,7 +7867,8 @@ class App extends Component {
         'navbar_button_selected_color':'rgba(255, 253, 253, 0.75)','primary_navbar_text_color':'#393e46','secondary_navbar_text_color':'grey','navbar_text_shadow_color':'#BABABA','card_background_color':'rgba(225, 225, 225,.4)','card_shadow_color':'#DCDCDC',
         'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)','synchronizer_loading_highlight_color':'rgb(206, 206, 206)',
         
-        'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
+        /* 'tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', */
+        'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#dbd8d8','indexed_tag_background':'#bebdbd','tag_shadow':'#c6c6c6','tag_text_color':'#404040', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
 
         'my_messages_color':{'g':'rgba(199, 216, 195, 0.6)',
           'r':'rgba(217, 198, 198, 0.6)','b':'rgba(198, 206, 218, 0.6)',

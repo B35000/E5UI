@@ -224,6 +224,7 @@ class tags extends Component {
 
         if(index == 0){
             background = 'black';
+            text_background = 'white'
             // if(this.props.theme['pdf_theme'] == 'light'){
             //     background = 'white'
             //     text_background = 'black'
@@ -232,6 +233,7 @@ class tags extends Component {
         if(selected != null){
             if(selected == index){
                 background = 'black';
+                text_background = 'white'
                 // if(this.props.theme['pdf_theme'] == 'light'){
                 //     background = 'white'
                 //     text_background = 'black'
