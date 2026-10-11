@@ -7857,7 +7857,9 @@ class App extends Component {
     if(theme == this.getLocale()['1417']/* 'light' */){
       return{
         'name':this.getLocale()['1417']/* 'light' */,
-        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':'linear-gradient(135deg, #444444,rgb(119, 116, 116))', 'button_text_color':'white', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF', 'nav_bar_color2':'rgba(221, 221, 221, 1.0)',
+        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':'linear-gradient(135deg, #acabab, #dbd8d8)', 'button_text_color':'#404040', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF', 'nav_bar_color2':'rgba(221, 221, 221, 1.0)',
+
+        /* 'button_color':'linear-gradient(135deg, #444444,rgb(119, 116, 116))', 'button_text_color':'white' */
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'rgb(241, 241, 241)','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
@@ -7868,7 +7870,7 @@ class App extends Component {
         'loading_base_color':'rgb(225, 225, 225)','loading_highlight_color':'rgb(240, 240, 240)','synchronizer_loading_highlight_color':'rgb(206, 206, 206)',
         
         /* 'tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686','tag_text_color':'white', */
-        'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#dbd8d8','indexed_tag_background':'#bebdbd','tag_shadow':'#c6c6c6','tag_text_color':'#404040', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
+        'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#dbd8d8','indexed_tag_background':'#bebdbd','tag_shadow':'#d1d0d0','tag_text_color':'#404040', 'view_group_card_item_background2':'linear-gradient(135deg, rgb(217, 217, 217),rgb(196, 193, 193))',
 
         'my_messages_color':{'g':'rgba(199, 216, 195, 0.6)',
           'r':'rgba(217, 198, 198, 0.6)','b':'rgba(198, 206, 218, 0.6)',

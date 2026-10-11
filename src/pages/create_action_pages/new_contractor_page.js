@@ -888,7 +888,7 @@ class NewContractorPage extends Component {
                 </div>
                 <div style={{height:10}}/> */}
 
-                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={() => this.when_add_text_button_tapped()}/>
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.entered_text_max_length - this.state.entered_text.length)})}
                 {this.render_contains_keyword_if_title_contains_reserved_keyword(this.state.entered_text)}
                 <div style={{height:10}}/>
