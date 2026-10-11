@@ -1393,7 +1393,7 @@ class ViewJobRequestPage extends Component {
                     <div style={{width:10}}/>
                     <div className="row" style={{width:ww}}>
                         <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={this.add_message_to_stack.bind(this)}/>
+                            <TextInput ref={(el) => (this.message_input = el)} font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} when_text_input_field_height_changed={this.when_text_input_field_height_changed.bind(this)}  text={this.state.entered_text} theme={this.props.theme} when_enter_tapped={this.add_message_to_stack.bind(this)}/>
                         </div>
                         <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                             <div className="text-end" style={{'padding': '5px 0px 0px 0px', 'margin':`${side_buttons_margin_top}px 0px 0px 0px`}} >
@@ -2627,6 +2627,7 @@ class ViewJobRequestPage extends Component {
             this.props.add_job_request_message_to_stack_object(tx)
 
             this.setState({entered_text:'', text_input_field_height: 30})
+            this.message_input.setState({set_text: ''})
             // this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
             
             if (this.messagesEnd.current){

@@ -1043,6 +1043,10 @@ class CoinsDetailsSection extends Component {
         }
     }
 
+
+
+
+
     render_coin_ether_chart_data(item){
         const symbol = item['symbol']
         const chart_data = this.props.app_state.coin_ether_chart_info[symbol];
@@ -1065,13 +1069,13 @@ class CoinsDetailsSection extends Component {
                     {symbol != dominance_target && (
                         <div>
                             <div style={{height: 10}}/>
-                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bu']/* 'Relative Dominance Change.' */, 'details':this.props.app_state.loc['2927bv']/* 'Chart containing the relative change in dominance of $ against % over the last year.' */.replace('$', item['symbol']).replace('%', dominance_target), 'size':'l'})}
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bu']/* 'Relative Price Change.' */, 'details':this.props.app_state.loc['2927bv']/* 'Chart containing the relative change in price of $ against % over the last year.' */.replace('$', item['symbol']).replace('%', dominance_target), 'size':'l'})}
                             {this.render_detail_item('6', {'dataPoints':datapoints2.dps, 'start_time':datapoints2.starting_time,})}
                             <div style={{height: 10}}/>
                             {this.render_dominance_targets(item)}
 
                             <div style={{height: 10}}/>
-                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bw']/* Y-Axis: Dominance Points' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['2927bw']/* Y-Axis: Price Points' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
                         </div>
                     )}
                 </div>

@@ -44,7 +44,7 @@ class OpenedIframeLinkPage extends Component {
 
     render(){
         const link = this.state.link == null ? '' : getDomain(this.state.link)
-        const height = this.props.app_state.os == 'iOS' ? this.props.height-90 : this.props.height-160
+        const height = this.props.app_state.os == 'iOS' ? this.props.height-75 : this.props.height-145
         return(
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
                 <div className="row">

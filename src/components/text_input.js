@@ -59,7 +59,7 @@ function iOS() {
 class TextInput extends Component {
   state = {
     selected: 0,
-    set_text:'',
+    set_text:this.props.text || '',
     input_type: this.props.type || 'text',
   };
 
@@ -71,6 +71,10 @@ class TextInput extends Component {
   componentDidUpdate(prevProps){
     if(prevProps.text != this.props.text && this.props.text == '' && this.inputRef.current != null){
       this.adjustTextareaHeight(this.inputRef.current);
+    }
+
+    if(prevProps.text != this.props.text && this.props.text == '' && this.state.set_text != ''){
+      this.setState({set_text: ''})
     }
   }
 
@@ -121,7 +125,7 @@ class TextInput extends Component {
               }
             `}
           </style>
-            <input onKeyDown={(e) => this.handleKeyDown(e)} ref={this.inputRef} className="form-control" step={step}  type={text_type} style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} onWheel="return false;" placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text}></input>
+            <input onKeyDown={(e) => this.handleKeyDown(e)} ref={this.inputRef} className="form-control" step={step}  type={text_type} style={{'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} onWheel="return false;" placeholder={this.props.placeholder} onChange={(event) => this.when_text_input_field_changed(event)} value={this.state.set_text}></input>
         </div> 
       )
     }else{
@@ -135,7 +139,7 @@ class TextInput extends Component {
               }
             `}
           </style>
-            <textarea onKeyDown={(e) => this.handleKeyDown(e)} ref={this.inputRef} className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} autocapitalize="off" onChange={(event) => this.when_text_input_field_changed(event)} value={this.props.text} onSelect={this.getCaretPosition} onKeyUp={this.getCaretPosition} onClick={this.getCaretPosition}/>
+            <textarea onKeyDown={(e) => this.handleKeyDown(e)} ref={this.inputRef} className="form-control" rows="1" style={{height: height,'color': this.props.theme['text_input_color'],'border': 'none','outline':'none','background-color':'transparent','margin': '0px 0px 5px 0px','resize': 'none', 'font-size': f,'font-family':this.props.font, 'boxShadow': "none", 'borderColor': this.props.theme['text_input_color']}} placeholder={this.props.placeholder} onInput={(event) => this.adjustHeight(event)} autocapitalize="off" onChange={(event) => this.when_text_input_field_changed(event)} value={this.state.set_text} onSelect={this.getCaretPosition} onKeyUp={this.getCaretPosition} onClick={this.getCaretPosition}/>
         </div> 
       )
     }

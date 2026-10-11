@@ -285,9 +285,9 @@ const currencies = [
     "name": "Kava"
   },
   {
-    "id": "klay-token",
-    "symbol": "klay",
-    "name": "Klaytn"
+    "id": "kite-2",
+    "symbol": "kite",
+    "name": "Kite"
   },
   {
     "id": "litecoin",
