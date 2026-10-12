@@ -2009,7 +2009,7 @@ class App extends Component {
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:this.getLocale()['1593cw']/* 'nitro 🛰️' *//* infura, arweave */,
-    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* 'sluggish' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e'/* this.getLocale()['1428'] *//* 'enabled' */, homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e', locked_wallet:'e', preserve_state: this.getLocale()['1593mk']/* 'only-necessary' */,
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1421']/* 'sluggish' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1202']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e'/* this.getLocale()['1428'] *//* 'enabled' */, homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:1/* splineArea */, remember_account:'e', hide_pip:'e', preferred_currency:this.getLocale()['1593ef']/* 'USD' */, minified_content:'e', auto_run:'e', explore_display_type:this.getLocale()['1593gv']/* 'default' */, audiplayer_position:this.getLocale()['1593gz']/* 'bottom-right' */, rating_denomination: this.getLocale()['1593hj']/* 'percentage' */, disable_moderation:'e', link_handler:'e', show_floating_close_button:'e', floating_close_button_position:this.getLocale()['1593jt']/* 'left' */, page_background_setting:'e', message_comment_fulfilment:this.getLocale()['1593cw']/* 'nitro 🛰️' */, rounded_edges:this.getLocale()['1593li']/* sharp */, notifications_permissions:'e', locked_wallet:'e', preserve_state: this.getLocale()['1593mk']/* 'only-necessary' */, minimalist_mode:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -5372,6 +5372,7 @@ class App extends Component {
 
     window.addEventListener('popstate', function() {
       me.when_close_button_clicked()
+      me.close_snap_point_if_opened()
       window.history.pushState({}, '')
     })
 
@@ -5871,7 +5872,9 @@ class App extends Component {
       coinlore_asset_mapping: this.state.coinlore_asset_mapping,
       password_tries:this.state.password_tries,
       content_language: this.state.content_language,
-      broadcast_config: this.state.broadcast_config
+      broadcast_config: this.state.broadcast_config,
+
+      minimalist_mode: this.state.minimalist_mode,
     }
   }
 
@@ -6138,6 +6141,8 @@ class App extends Component {
       var content_language = state.content_language
       var broadcast_config = state.broadcast_config || this.state.broadcast_config
 
+      var minimalist_mode = state.minimalist_mode || this.state.minimalist_mode
+
       this.setState({
         theme: theme,
         stack_items: stack_items,
@@ -6237,7 +6242,8 @@ class App extends Component {
         coinlore_asset_mapping: coinlore_asset_mapping,
         password_tries: password_tries,
         content_language: content_language,
-        broadcast_config: broadcast_config
+        broadcast_config: broadcast_config,
+        minimalist_mode: minimalist_mode
       })
       var me = this;
       setTimeout(function() {
@@ -6303,6 +6309,7 @@ class App extends Component {
       me.stack_page.current?.set_rounded_edges_option()
       me.stack_page.current?.set_notifications_permissions_option()
       me.stack_page.current?.set_preserve_state_option()
+      me.stack_page.current?.set_minimalist_mode_option()
     }, (1 * 1000));
   }
 
@@ -8922,7 +8929,7 @@ class App extends Component {
 
           get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)} perform_translation_of_specific_object={this.perform_translation_of_specific_object.bind(this)}
           when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}
-          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)}
+          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -9631,20 +9638,21 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-  renderBottomSheet(view, open, onOpenChange, height, disable_background_interaction=true, snap_points=[], active_snap_point=0, set_active_snap_point={}, background_size='cover', background_color=this.state.theme['send_receive_ether_background_color'], ignore_radius=false) {
+  renderBottomSheet(view, open, onOpenChange, height, disable_background_interaction=true, snap_points=[], active_snap_point=0, set_active_snap_point={}, background_size='cover', background_color=this.state.theme['send_receive_ether_background_color'], ignore_radius=false, dismissable=true, disable_blur=false, content_height) {
     const padding = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ || ignore_radius == true ? 0 : 10;
     const radius = this.state.rounded_edges == this.getLocale()['1593li']/* sharp */ || ignore_radius == true ? '0px' : '25px';
 
     const is_bottomsheet_at_top = this.is_function_at_complete_top_of_stack(onOpenChange.name)
-    const filter = is_bottomsheet_at_top == false ? "blur(1px)" : "none";
-    const transform = is_bottomsheet_at_top == false ? "scale(0.99)" : "scale(1.0)"
+    const filter = is_bottomsheet_at_top == false && disable_blur == false ? "blur(1px)" : "none";
+    const transform = is_bottomsheet_at_top == false && disable_blur == false ? "scale(0.99)" : "scale(1.0)"
     const obstruction_height = this.state.obstruction_height || 0
+    const working_content_height = content_height || height
     const data = () => {
       return(
         <Drawer.Portal>
           <Drawer.Overlay style={{ position: "fixed", inset: 0, background: "rgba(28, 28, 28, 0.5)" }}/>
           <Drawer.Content style={{height: height-padding, position: "fixed", bottom: padding+obstruction_height, left: padding, right: padding, background: "transparent", display: "flex", flexDirection: "column", outline:'none'}}>
-            <div style={{ height: height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: background_size, filter: filter, transform: transform, transition: "transform 250ms ease, filter 250ms ease", willChange: "transform, filter",}}>
+            <div style={{ height: working_content_height, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': radius, 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px','overflow-y':'auto', backgroundImage: `${this.linear_gradient_text(background_color)}, url(${this.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: background_size, filter: filter, transform: transform, transition: "transform 250ms ease, filter 250ms ease", willChange: "transform, filter",}}>
               {view}
             </div>
           </Drawer.Content>
@@ -9654,14 +9662,14 @@ class App extends Component {
 
     if(snap_points.length > 0){
       return(
-        <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} modal={disable_background_interaction} snapPoints={snap_points} activeSnapPoint={active_snap_point} setActiveSnapPoint={set_active_snap_point} repositionInputs={false}>
+        <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} modal={disable_background_interaction} snapPoints={snap_points} activeSnapPoint={active_snap_point} setActiveSnapPoint={set_active_snap_point.bind(this)} repositionInputs={false}>
           {data()}
         </Drawer.Root>
       )
     }    
 
     return(
-      <Drawer.Root open={open} onOpenChange={onOpenChange.bind(this)} modal={disable_background_interaction} repositionInputs={false}>
+      <Drawer.Root dismissible={dismissable} open={open} onOpenChange={onOpenChange.bind(this)} modal={disable_background_interaction} repositionInputs={false}>
         {data()}
       </Drawer.Root>
     )
@@ -11887,7 +11895,75 @@ class App extends Component {
 
 
 
+  is_minimalist_mode_enabled(){
+    return false;
+    // return this.do_i_have_an_account() && this.getScreenSize() == 's' && (getOS() == 'iOS' || getOS() == 'Android')
+  }
 
+  render_stack_bottomsheet_snapped(top_tag_bar_render){
+    if(!this.is_minimalist_mode_enabled()) return;
+    var size = this.getScreenSize();
+    const height = '705px'
+    const collapsed_height = '55px'
+    const snap_points = ['0px', collapsed_height, height]
+    const starting_height = this.state.minimalist_mode == 'e' ? snap_points[0] : snap_points[1];
+    const active_snap_point = this.state.active_full_stack_snap_point == null ? starting_height : this.state.active_full_stack_snap_point;
+
+    const render_top_tag_bar = () => {
+      return(
+        <div style={{'padding':'10px 0px 10px 0px'}}>
+          {top_tag_bar_render}
+        </div>
+      )
+    }
+
+    return this.renderBottomSheet(
+     (active_snap_point == collapsed_height ? render_top_tag_bar() : this.render_stack_item(size)),
+      true,
+      this.open_stack_bottomsheet,
+      this.state.height,
+      false,
+      snap_points,
+      active_snap_point,
+      this.when_full_stack_snap_point_updated,
+      'cover',
+      this.state.theme['send_receive_ether_background_color'],
+      false,
+      false,
+      true,/* disable_blur */
+      this.state.height-70
+    )
+  }
+
+  when_full_stack_snap_point_updated(snap_point){
+    if(snap_point == '0px'){
+      if(this.state.minimalist_mode != 'e'){
+        this.setState({active_full_stack_snap_point: '55px'})
+      }else{
+        this.setState({active_full_stack_snap_point: snap_point})
+      }
+      return;
+    }
+    else if(snap_point == '55px'){
+      if(this.state.minimalist_mode == 'e'){
+        this.setState({active_full_stack_snap_point: '0px'})
+      }else{
+        this.setState({active_full_stack_snap_point: snap_point})
+      }
+      return;
+    }
+    this.setState({active_full_stack_snap_point: snap_point})
+  }
+
+  close_snap_point_if_opened(){
+    if(this.state.active_full_stack_snap_point == '705px'){
+      if(this.state.minimalist_mode != 'e'){
+        this.setState({active_full_stack_snap_point: '55px'})
+      }else{
+        this.setState({active_full_stack_snap_point: '0px'})
+      }
+    }
+  }
 
 
   render_stack_bottomsheet(){
@@ -11952,12 +12028,26 @@ class App extends Component {
       when_link_handler_changed={this.when_link_handler_changed.bind(this)} set_file_upload_status={this.set_file_upload_status.bind(this)} when_enable_floating_close_button_changed={this.when_enable_floating_close_button_changed.bind(this)} when_set_floating_close_button_position_changed={this.when_set_floating_close_button_position_changed.bind(this)} encryptTag={this.encryptTag.bind(this)} decryptTag={this.decryptTag.bind(this)}
       encrypt_singular_file={this.encrypt_singular_file.bind(this)} encrypt_file_in_chunks2={this.encrypt_file_in_chunks2.bind(this)} encrypt_file_in_chunks={this.encrypt_file_in_chunks.bind(this)} when_set_my_location_pins={this.when_set_my_location_pins.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} when_page_background_setting_changed={this.when_page_background_setting_changed.bind(this)} when_chain_or_indexer_setting_changed={this.when_chain_or_indexer_setting_changed.bind(this)} show_view_call_interface={this.show_view_call_interface.bind(this)} get_recipient_address={this.get_recipient_address.bind(this)}
       add_renew_alias_transaction_to_stack={this.add_renew_alias_transaction_to_stack.bind(this)}
-      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)} when_language_selected={this.when_language_selected.bind(this)} remove_content_languag_setting={this.remove_content_languag_setting.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} fetch_last_transaction_time={this.fetch_last_transaction_time.bind(this)} stop_sharing_with_target={this.stop_sharing_with_target.bind(this)} pause_sharing_on_all={this.pause_sharing_on_all.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} show_terms_of_service_bottomsheet={this.show_terms_of_service_bottomsheet.bind(this)}
+      when_rounded_edges_option_changed={this.when_rounded_edges_option_changed.bind(this)} load_targets_obligation_data={this.load_targets_obligation_data.bind(this)} load_target_or_object_accounts_obligation_data={this.load_target_or_object_accounts_obligation_data.bind(this)} get_signature_for_obligation_data={this.get_signature_for_obligation_data.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} set_emit_tagged_addresses_for_current_run_in_state={this.set_emit_tagged_addresses_for_current_run_in_state.bind(this)} check_for_any_tagged_accounts_in_object={this.check_for_any_tagged_accounts_in_object.bind(this)} when_notifications_permissions_option_changed={this.when_notifications_permissions_option_changed.bind(this)} reload_end_spend_balance={this.reload_end_spend_balance.bind(this)} set_up_socket_connection_and_initialize_listeners={this.set_up_socket_connection_and_initialize_listeners.bind(this)} show_quick_send_bottomsheet={this.show_quick_send_bottomsheet.bind(this)} set_hash={this.set_hash.bind(this)} when_language_selected={this.when_language_selected.bind(this)} remove_content_languag_setting={this.remove_content_languag_setting.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} fetch_last_transaction_time={this.fetch_last_transaction_time.bind(this)} stop_sharing_with_target={this.stop_sharing_with_target.bind(this)} pause_sharing_on_all={this.pause_sharing_on_all.bind(this)} show_view_map_location_pins={this.show_view_map_location_pins.bind(this)} show_terms_of_service_bottomsheet={this.show_terms_of_service_bottomsheet.bind(this)} when_minimalist_mode_option_changed={this.when_minimalist_mode_option_changed.bind(this)}
+      is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)}
       />
     )
   }
 
   open_stack_bottomsheet(){
+    if(this.is_minimalist_mode_enabled()){
+      if(this.state.active_full_stack_snap_point == null || this.state.active_full_stack_snap_point == '55px' || this.state.active_full_stack_snap_point == '0px'){
+        this.setState({active_full_stack_snap_point: '705px'})
+      }
+      else if(this.state.active_full_stack_snap_point == '705px'){
+        if(this.state.minimalist_mode != 'e'){
+          this.setState({active_full_stack_snap_point: '55px'})
+        }else{
+          this.setState({active_full_stack_snap_point: '0px'})
+        }
+      }
+      return;
+    }
     this.when_bottomsheet_opened_or_closed('open_stack_bottomsheet')
     if(this.state.stack_bottomsheet == true){
       //closing
@@ -13167,6 +13257,14 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['1593no']/* 'Location sharing resumed.' */, 1200)
     }
     this.setState({is_sharing_location: !is_sharing})
+  }
+
+  when_minimalist_mode_option_changed(item){
+    this.setState({minimalist_mode: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
   }
 
 
@@ -28486,8 +28584,8 @@ class App extends Component {
     if(this.state.full_video_bottomsheet2 != true) return;
     var os = getOS()
     const height = this.state.height-20
-    const snap_points = [height+'px', '0px']
-    const active_snap_point = this.state.active_full_video_snap_point == null ? snap_points[0] : this.state.active_full_video_snap_point;
+    const snap_points = ['0px', height+'px']
+    const active_snap_point = this.state.active_full_video_snap_point == null ? snap_points[1] : this.state.active_full_video_snap_point;
 
     return this.renderBottomSheet(
       this.render_full_video_element(),

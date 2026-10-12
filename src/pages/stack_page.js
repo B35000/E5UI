@@ -188,7 +188,7 @@ class StackPage extends Component {
         get_rounded_edges_option_tags_object:this.get_rounded_edges_option_tags_object(),
         get_notifications_permissions_option_tags_object:this.get_notifications_permissions_option_tags_object(),
         get_locked_wallet_option_tags_object:this.get_locked_wallet_option_tags_object(),
-        get_preserve_state_option_object:this.get_preserve_state_option_object(),
+        get_preserve_state_option_object:this.get_preserve_state_option_object(), get_minimalist_mode_option_tags_object:this.get_minimalist_mode_option_tags_object(),
 
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
@@ -1535,6 +1535,35 @@ class StackPage extends Component {
 
 
 
+    get_minimalist_mode_option_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['1593hm']/* 'enabled' */], [this.get_minimalist_mode_option()]
+            ],
+        };
+    }
+
+    get_minimalist_mode_option(){
+        var obj = {'e':0}
+        obj[this.props.app_state.loc['1593hm']/* 'enabled' */] = 1
+        return obj[this.props.app_state.minimalist_mode]
+    }
+
+    set_minimalist_mode_option(){
+        this.setState({get_minimalist_mode_option_tags_object: this.get_minimalist_mode_option_tags_object(),})
+    }
+
+
+
+
+
+
+
+
+
 
 
     render(){
@@ -2778,7 +2807,7 @@ class StackPage extends Component {
         this.props.app_state.e5s['data'].forEach(e5 => {
             if(e5 != 'E35'){
                 var symbol = this.props.app_state.e5s[e5].token
-                const effective_symbol = symbol.endsWith('ETH') ? 'ETH' : (this.props.app_state.e5s[symbol]?.parent_coin || symbol)
+                const effective_symbol = symbol.endsWith('ETH') ? 'ETH' : (this.props.app_state.e5s[e5]?.parent_coin || symbol)
                 var ether_price = this.props.app_state.asset_price_data[effective_symbol] == null ? 0 : this.props.app_state.asset_price_data[effective_symbol]['price']
                 var ether_balance = this.props.app_state.account_balance[e5] == null ? 0 : (this.props.app_state.account_balance[e5] / 10**18)
                 if(ether_price != null){
@@ -16668,7 +16697,6 @@ class StackPage extends Component {
                         </div>
                     )}
 
-
                     {this.render_notification_setting_if_not_mobile()}
 
                     {this.does_title_details_contain_searched_text('1593mi', '1593mj') && (
@@ -16861,9 +16889,34 @@ class StackPage extends Component {
                     {this.render_lock_wallet_setting_if_wallet_set()}
 
                     {this.render_content_language_setting()}
+
+                    {this.render_minimalist_mode_setting()}
                 </div>
             </div>
         )
+    }
+
+    render_minimalist_mode_setting(){
+        const alpha = this.is_minimalist_mode_enabled() && this.props.do_i_have_an_account() ? 1.0 : 0.5;
+
+        return(
+            <div style={{opacity: alpha}}>
+                {this.does_title_details_contain_searched_text('1593ns', '1593mw') && (
+                    <div>
+                        {this.render_detail_item('3',{'title':this.props.app_state.loc['1593ns']/* '🧘 Minimalist Mode' */, 'details':this.props.app_state.loc['1593nt']/* 'Hide the homepage navbar and navigate the page using gestures.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_minimalist_mode_option_tags_object} tag_size={'l'} when_tags_updated={this.when_get_minimalist_mode_option_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                        {this.render_detail_item('0')}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    is_minimalist_mode_enabled(){
+        return this.props.is_minimalist_mode_enabled()
     }
 
     render_content_language_setting(){
@@ -17420,6 +17473,14 @@ class StackPage extends Component {
         this.setState({get_preserve_state_option_object: tag_obj})
         var selected_item = this.get_selected_item(tag_obj, 'e')
         this.props.when_preserve_state_option_changed(selected_item)
+    }
+
+    when_get_minimalist_mode_option_tags_object_updated(tag_obj){
+        if(this.is_minimalist_mode_enabled()){
+            this.setState({get_minimalist_mode_option_tags_object: tag_obj})
+            var selected_item = this.get_selected_item(tag_obj, 'e')
+            this.props.when_minimalist_mode_option_changed(selected_item)
+        }
     }
     
 

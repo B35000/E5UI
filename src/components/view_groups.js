@@ -259,14 +259,14 @@ class ViewGroups extends Component {
               }
             }
             return (
-                <div onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'40px'}}>
+                <div className="swiper-no-swiping" onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()} style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'40px'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
                         <AnimatePresence initial={true}>
                             {active_tags.map((item, index) => (
                                 <motion.li key={'tag'+item+index} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }} onClick={() => this.vibrate_device()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:40}}>
                                     <div>
                                         <div style={{'background-color': this.get_tag_color(item, selected_tags, tag_background_color), 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow, cursor: 'pointer'}} onClick={()=> this.when_tag_item_clicked(item, index, when_tapped)}>
-                                            <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{this.mask_item_if_enabled(masked, item)}</p>
+                                            <p style={{'color': this.get_tag_text_color(item, selected_tags, this.props.theme['tag_text_color']), 'font-size': '14px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{this.mask_item_if_enabled(masked, item)}</p>
                                         </div>
                                     </div>
                                 </motion.li>
@@ -1732,6 +1732,13 @@ class ViewGroups extends Component {
     get_tag_color(tag, selected_tags, tag_background_color){
         if(selected_tags.includes(tag)){
             return 'black'
+        }
+        return tag_background_color
+    }
+
+    get_tag_text_color(tag, selected_tags, tag_background_color){
+        if(selected_tags.includes(tag)){
+            return 'white'
         }
         return tag_background_color
     }

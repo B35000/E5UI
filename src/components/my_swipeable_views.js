@@ -27,7 +27,9 @@ class SwipeableViews extends React.Component {
     this.velocity = 0;
     this.isHorizontal = null;
     this.setState({ dragging: true, offset: 0 });
-    e.currentTarget.setPointerCapture(e.pointerId);
+    // e.currentTarget.setPointerCapture(e.pointerId);
+    this.captured = false;
+    this.didDrag = false;
   }
 
   onPointerMove = (e) => {
@@ -40,7 +42,15 @@ class SwipeableViews extends React.Component {
       this.isHorizontal = Math.abs(dx) > Math.abs(dy);
     }
 
+    // console.log('swipeable_views', 'this.isHorizontal', this.isHorizontal, 'Math.abs(dx)', Math.abs(dx), 'Math.abs(dy)', Math.abs(dy))
+
     if (!this.isHorizontal) return;
+
+    if (this.isHorizontal && !this.captured) {
+      e.currentTarget.setPointerCapture(e.pointerId);
+      this.captured = true;
+      this.didDrag = true
+    }
 
     // Track velocity using exponential moving average for smoothness
     const now = performance.now();
@@ -58,6 +68,7 @@ class SwipeableViews extends React.Component {
 
   onPointerUp = (e) => {
     if (!this.state.dragging) return;
+    this.didDrag = false
     const { index, offset } = this.state;
     const count = React.Children.count(this.props.children);
     const width = this.props.width || window.innerWidth;
@@ -90,6 +101,11 @@ class SwipeableViews extends React.Component {
     }
   }
 
+  onPointerCancel = () => {
+    if (!this.state.dragging) return;
+    this.setState({ dragging: false, offset: 0 });
+  };
+
   render() {
     const { index, offset, dragging, duration = 300 } = this.state;
     const width = this.props.width || window.innerWidth;
@@ -102,13 +118,18 @@ class SwipeableViews extends React.Component {
       resistedOffset = offset * 0.2; // 20% resistance at edges
     }
 
+    // console.log('swipeable_views', 'resistedOffset', resistedOffset, dragging)
+
     return (
       <div
-        style={{ overflow: 'hidden', width }}
+        style={{ overflow: 'hidden', width, touchAction: 'pan-y' }}
         onPointerDown={this.onPointerDown}
         onPointerMove={this.onPointerMove}
         onPointerUp={this.onPointerUp}
-        onPointerCancel={this.onPointerUp}
+        onPointerCancel={this.onPointerCancel}
+        onClickCapture={(e) => {
+          if (this.didDrag) { e.stopPropagation(); e.preventDefault(); }
+        }}
       >
         <div style={{
           display: 'flex',

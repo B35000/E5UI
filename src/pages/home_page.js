@@ -48,7 +48,10 @@ import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import { ViewPager, Frame, Track, View } from 'react-view-pager'
 import { motion, AnimatePresence } from "framer-motion";
 import { Drawer } from 'vaul';
+import MySwipeableViews from './../components/my_swipeable_views';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 var bigInt = require("big-integer");
 var primary_following = ['E25:1002']
@@ -146,6 +149,8 @@ class home_page extends Component {
         this.commitThreshold = 0.5;
 
         this.navbar_change_time = Date.now()
+        this.page_keys = ['?', 'e', 'w'];
+        this.swiper = null;
     }
 
 
@@ -365,6 +370,17 @@ class home_page extends Component {
 
 
 
+
+
+    componentDidUpdate(prevProps, prevState) {
+        // keep Swiper in sync if state.page was changed by something other than a swipe
+        if (prevState.page !== this.state.page && this.swiper) {
+            var pos = this.page_keys.indexOf(this.state.page);
+            if (this.swiper.activeIndex !== pos) {
+                this.swiper.slideTo(pos);
+            }
+        }
+    }
 
     /* returns the tag object used for the main page */
     get_main_page_tag_object(page){
@@ -695,16 +711,27 @@ class home_page extends Component {
             var bottom_bar = 85;
             var radius = '0px'
             const selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+            let x = 85
+            // let x2 = 129
+            // if(this.state.page == 'w' && (selected_item == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */)){
+            //     x2 = 134
+            // }
             
             var navbar_margin = '0px 0px 0px 0px'
             var navbar_width = this.props.width
+            var w = this.props.width
             if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
                 bottom_bar = 72
                 radius = '20px'
                 
                 navbar_margin = '0px 10px 15px 10px'
                 navbar_width = this.props.width - 20
+                w = this.props.width - 20
+                x = 72
+                x += 6;
             }
+
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
             
             return(
                 <div style={{'background-color':background_color, backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', position: 'relative',
@@ -712,12 +739,32 @@ class home_page extends Component {
                     {is_sharing && this.render_location_pulse()}
                     <div style={{position: 'relative', zIndex: 1}}>
                         <div style={{height: this.props.height, width:'100%', backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
-                            {this.render_small_screen_size_ui(size, top_bar, width)}
-                            
-                            <div style={{height:bottom_bar, width:navbar_width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': radius, 'padding':'0px 0px 0px 0px', 'margin':navbar_margin, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
-                                {this.render_navbar_button_group(size, navbar_width)}
+                            <div style={{position: 'relative', zIndex: 2, minHeight: '100vh'}}>
+                                <div style={{position: 'absolute', zIndex: 3}}>
+                                    {minimalist_mode_enabled == false ? this.render_small_screen_size_ui(size, top_bar, width) : (
+                                        <div style={{height:this.props.height, width:width, 'padding':'5px 5px 0px 5px'}}>
+                                            {this.render_post_list_group(size, this.props.height, width)}
+                                        </div>
+                                    )}
+                                </div>
+                                {minimalist_mode_enabled == false && (
+                                    <div style={{position: 'absolute', zIndex: 4, marginTop:this.props.height-x}}>
+                                        <div style={{height:bottom_bar, width:navbar_width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': radius, 'padding':'0px 0px 0px 0px', 'margin':navbar_margin, backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'overflow-y': 'hidden', 'overflow-x': 'hidden'}}>
+                                            {this.render_navbar_button_group(size, navbar_width)}
+                                        </div>
+                                    </div>
+                                )}
+                                {this.props.app_state.active_full_stack_snap_point == '705px' && (
+                                    <div style={{position: 'absolute', zIndex: 6}} onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                                        <div style={{width: this.props.width, height: this.props.height, 'background-color': "rgba(28, 28, 28, 0.5)", backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", transition: "transform 250ms ease, filter 250ms ease", willChange: "transform, filter",}} onClick={() => this.props.close_snap_point_if_opened()}/>
+                                    </div>
+                                )}
                             </div>
+                            
+                            
+                            
 
+                            {this.props.render_stack_bottomsheet_snapped(this.render_top_tag_bar(size, w))}
                             {this.render_view_object_bottomsheet()}
                             {this.render_filter_section_bottomsheet()}
                             {this.render_post_preview_bottomsheet()}
@@ -844,7 +891,7 @@ class home_page extends Component {
                     </div>
                     
                     <div style={{height:this.props.height-x, width:width, 'padding':'0px 5px 0px 5px'}}>
-                        {this.render_post_list_group(size, this.props.height-x)}
+                        {this.render_post_list_group(size, this.props.height-x, width)}
                     </div>
                 </div>
             )
@@ -862,8 +909,8 @@ class home_page extends Component {
             }
             return(
                 <div>
-                    <div style={{height:this.props.height-x, width:width, 'padding':'0px 5px 0px 5px'}}>
-                        {this.render_post_list_group(size, this.props.height-x)}
+                    <div style={{height:this.props.height-x, width:width, 'padding':'5px 5px 0px 5px'}}>
+                        {this.render_post_list_group(size, this.props.height-x, width)}
                     </div>
                     <div style={{height:top_bar, width:tag_width, 'padding':'7px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'border-radius': radius, 'margin':navbar_margin,}}>
                         {this.render_top_tag_bar(size, w)}
@@ -1586,8 +1633,10 @@ class home_page extends Component {
         if(size == 's') width = width_arg
 
         const color = this.props.app_state.socket_online == true ? (this.props.app_state.is_device_online == true ? this.props.app_state.theme['online_dot_color'] : this.props.app_state.theme['offline_dot_color']) : this.props.app_state.theme['unset_dot_color'];
+
+        const alpha = this.props.app_state.active_full_stack_snap_point == '705px' ? 0.5 : 1.0
         return(
-            <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: width}}>
+            <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: width, opacity: alpha}}>
                 <div style={{'padding': '0px 0px 0px 0px', width:width-60}}>
                     {this.render_tag_bar_group(this.get_tag_group_option(),'l')}
                 </div>
@@ -1898,6 +1947,10 @@ class home_page extends Component {
     }
 
     when_e_button_tapped = () => {
+        if(this.props.app_state.active_full_stack_snap_point == '705px'){
+            this.props.close_snap_point_if_opened()
+            return;
+        }
         this.when_e_plus_letter_clicked()
         // let me = this;
         // if(Date.now() - this.last_all_click_time < 200){
@@ -2370,6 +2423,10 @@ class home_page extends Component {
     }
 
     async when_tags_updated(tag_group, clicked_tag_name, is_selecting_same_tag){
+        if(this.props.app_state.active_full_stack_snap_point == '705px'){
+            this.props.close_snap_point_if_opened()
+            return;
+        }
         this.navbar_change_time = Date.now()
         var selected_page = ''
         if(this.state.page == '?'){
@@ -5367,6 +5424,11 @@ class home_page extends Component {
         this.setState({page: obj[value]})
     };
 
+    handleChange3 = (swiper) => {
+        var obj = {0:'?', 1:'e', 2:'w'}
+        this.setState({ page: obj[swiper.activeIndex] });
+    };
+
     handleChange2 = (value) => {
         var obj = {0:'?', 1:'e', 2:'w'}
         var me = this;
@@ -5375,7 +5437,7 @@ class home_page extends Component {
         }, (1 * 400));
     };
 
-    render_post_list_group(size, height){
+    render_post_list_group(size, height, width){
         // if(size != 'l'){
         //     return this.render_post_list_group_if_touch_screen(size, height)
         // }
@@ -5386,36 +5448,76 @@ class home_page extends Component {
         var subtract2 = this.should_show_line() == true ? 10 : 0
         h -= subtract2;
         if(size == 'm') h-=4;
+
+        const render_active_page = () => {
+            if(this.props.is_minimalist_mode_enabled()){
+                return(
+                    <div>
+                        {/* <MySwipeableViews width={width-10} index={pos} onChangeIndex={this.handleChange}>
+                            <div key={'?'}>
+                                {this.render_post_list_group2(size, '?', this.work_list_section, h)}
+                            </div>
+                            <div key={'e'}>
+                                {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
+                            </div>
+                            <div key={'w'}>
+                                {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
+                            </div>
+                        </MySwipeableViews> */}
+                        {/* <SwipeableViews disabled={false} index={pos} onChangeIndex={this.handleChange}>
+                            <div key={'?'}>
+                                {this.render_post_list_group2(size, '?', this.work_list_section, h)}
+                            </div>
+                            <div key={'e'}>
+                                {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
+                            </div>
+                            <div key={'w'}>
+                                {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
+                            </div>
+                        </SwipeableViews> */}
+                        <Swiper
+                            initialSlide={pos}
+                            onSwiper={(swiper) => { this.swiper = swiper; }}
+                            onSlideChange={this.handleChange3}
+                            style={{ width: '100%' }}>
+                                <SwiperSlide key={'?'}>
+                                    {this.render_post_list_group2(size, '?', this.work_list_section, h)}
+                                </SwiperSlide>
+                                <SwiperSlide key={'e'}>
+                                    {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
+                                </SwiperSlide>
+                                <SwiperSlide key={'w'}>
+                                    {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
+                                </SwiperSlide>
+                        </Swiper>
+                    </div>
+                )
+            }
+            return(
+                <div>
+                    {pos == 0 && (
+                        <div key={'?'}>
+                            {this.render_post_list_group2(size, '?', this.work_list_section, h)}
+                        </div>
+                    )}
+                    {pos == 1 && (
+                        <div key={'e'}>
+                            {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
+                        </div>
+                    )}
+                    {pos == 2 && (
+                        <div key={'w'}>
+                            {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
+                        </div>
+                    )}
+                </div>
+            )
+        }
         return(
             <div>
                 {this.render_line_if_enabled()}
                 {this.render_search_tags_views()}
-                {/* <SwipeableViews disabled={!this.is_swiping_enabled()} index={pos} onChangeIndex={this.handleChange}>
-                    <div key={'?'}>
-                        {this.render_post_list_group2(size, '?', this.work_list_section, h)}
-                    </div>
-                    <div key={'e'}>
-                        {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
-                    </div>
-                    <div key={'w'}>
-                        {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
-                    </div>
-                </SwipeableViews> */}
-                {pos == 0 && (
-                    <div key={'?'}>
-                        {this.render_post_list_group2(size, '?', this.work_list_section, h)}
-                    </div>
-                )}
-                {pos == 1 && (
-                    <div key={'e'}>
-                        {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
-                    </div>
-                )}
-                {pos == 2 && (
-                    <div key={'w'}>
-                        {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
-                    </div>
-                )}
+                {render_active_page()}
             </div>
         )
         
@@ -5811,7 +5913,7 @@ class home_page extends Component {
             set_page_refresh_feed_tapped_data={this.set_page_refresh_feed_tapped_data.bind(this)}
             current_load_time={this.state.current_load_time} show_view_call_interface={this.props.show_view_call_interface.bind(this)} set_watched_account_id={this.props.set_watched_account_id.bind(this)} get_account_id_from_alias={this.props.get_account_id_from_alias.bind(this)} set_contextual_transfer_identifier={this.props.set_contextual_transfer_identifier.bind(this)}
 
-            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} viewed_items_data={this.state.viewed_items_data} page_search_data={this.state.page_search_data} set_page_objects_that_should_be_in_focus={this.props.set_page_objects_that_should_be_in_focus.bind(this)} perform_itransfer_search={this.props.perform_itransfer_search.bind(this)} load_objects={this.props.load_objects.bind(this)}
+            get_searched_tag_price_data_for_search={this.props.get_searched_tag_price_data_for_search.bind(this)} viewed_items_data={this.state.viewed_items_data} page_search_data={this.state.page_search_data} set_page_objects_that_should_be_in_focus={this.props.set_page_objects_that_should_be_in_focus.bind(this)} perform_itransfer_search={this.props.perform_itransfer_search.bind(this)} load_objects={this.props.load_objects.bind(this)} is_minimalist_mode_enabled={this.props.is_minimalist_mode_enabled.bind(this)}
 
             
             />

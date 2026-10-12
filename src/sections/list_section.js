@@ -1075,6 +1075,10 @@ class PostListSection extends Component {
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var all_items = this.get_job_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -1167,6 +1171,10 @@ class PostListSection extends Component {
             }
             if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
                 height += 10
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                height = 70
             }
             return(
                 <div style={{height: height}}/>
@@ -1708,6 +1716,10 @@ class PostListSection extends Component {
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var all_items = this.get_contract_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -1913,6 +1925,10 @@ class PostListSection extends Component {
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var all_items = this.get_my_proposals()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -2093,6 +2109,10 @@ class PostListSection extends Component {
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var all_items = this.get_nitro_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -2248,6 +2268,10 @@ class PostListSection extends Component {
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var all_items = this.get_subscription_items()
@@ -2422,6 +2446,10 @@ class PostListSection extends Component {
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var all_items = this.get_mail_items()
@@ -2634,6 +2662,10 @@ class PostListSection extends Component {
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var all_items = this.get_contractor_items()
@@ -2963,6 +2995,10 @@ class PostListSection extends Component {
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var items = this.get_my_direct_message_objects()
         var x = this.props.app_state.os == 'iOS' ? 60 : 53
@@ -3224,6 +3260,7 @@ class PostListSection extends Component {
         else if(size == 'm'){
             middle = this.props.height-135
         }
+
         if(items.length == 0){
             items = [0,1,2]
             return(
@@ -3369,6 +3406,10 @@ class PostListSection extends Component {
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var items = this.get_e5_data()
@@ -4230,6 +4271,10 @@ class PostListSection extends Component {
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var all_items = this.get_post_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -4560,6 +4605,10 @@ class PostListSection extends Component {
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var all_items = this.get_channel_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -4773,6 +4822,10 @@ class PostListSection extends Component {
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var all_items = this.get_poll_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -4947,6 +5000,10 @@ class PostListSection extends Component {
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var all_items = this.get_storefront_items()
@@ -5223,6 +5280,10 @@ class PostListSection extends Component {
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var all_items = this.get_bag_items()
@@ -5526,6 +5587,10 @@ class PostListSection extends Component {
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var all_items = this.get_audio_items()
@@ -6465,6 +6530,10 @@ return data['data']
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var all_items = this.get_video_items()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -7051,6 +7120,10 @@ return data['data']
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var items = this.get_coins_data()
         var x = this.props.app_state.os == 'iOS' ? 58 : 51
@@ -7216,6 +7289,10 @@ return data['data']
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var items = this.get_ethers_data()
@@ -7454,6 +7531,10 @@ return data['data']
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var all_items = this.get_end_exchange_tokens()
@@ -7740,6 +7821,10 @@ return data['data']
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var all_items = this.get_spend_exchange_tokens()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -7889,6 +7974,10 @@ return data['data']
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var all_items = this.props.get_bill_items()
@@ -8082,6 +8171,10 @@ return data['data']
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
             }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
+            }
         }
         var all_items = this.get_certificate_exchanges()
         var items = this.filter_objects_and_remove_very_new_entries(all_items)
@@ -8230,6 +8323,10 @@ return data['data']
             middle = this.props.height+80
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
                 middle += 50
+            }
+            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+            if(minimalist_mode_enabled == true){
+                middle = this.props.height
             }
         }
         var all_items = this.get_crossexchange_exchanges()
@@ -8628,6 +8725,13 @@ return data['data']
         }
         this.last_all_click_time = Date.now();
     }
+
+
+
+
+
+
+
 
 
 
