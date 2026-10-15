@@ -5633,6 +5633,8 @@ class App extends Component {
     if(this.interval8 != null) clearInterval(this.interval8);
     if(this.coin_prices_interval != null) clearInterval(this.coin_prices_interval);
     if(this.translate_interval != null) clearInterval(this.translate_interval);
+    if(this.location_interval != null) clearInterval(this.location_interval);
+    if(this.basic_coin_data_interval != null) clearInterval(this.basic_coin_data_interval)
 
     this.set_cookies()
     this.delete_data_in_db_when_app_closed()
@@ -5666,7 +5668,8 @@ class App extends Component {
     if(this.interval8 != null) clearInterval(this.interval8);
     if(this.coin_prices_interval != null) clearInterval(this.coin_prices_interval);
     if(this.translate_interval != null) clearInterval(this.translate_interval);
-    if(this.location_interval != null) clearInterval(this.location_interval)
+    if(this.location_interval != null) clearInterval(this.location_interval);
+    if(this.basic_coin_data_interval != null) clearInterval(this.basic_coin_data_interval)
     
     var obj = {'sluggish':1000_000, 'slow':500_000, 'average':290_000, 'fast':90_000}
     obj[this.getLocale()['1421']/* sluggish */] = 1000_000
@@ -5707,6 +5710,7 @@ class App extends Component {
 
       me.translate_interval = setInterval(() => me.translate_loaded_messages(), obj4[me.state.refresh_speed]);
       me.location_interval = setInterval(() => me.broadcast_location_to_target(), 9000)
+      me.basic_coin_data_interval = setInterval(() => me.load_coin_and_externals_data(), (1000*60*60))
     }, (1 * 100));
     
     this.schedule_audio_pip_visibility_because_of_inactivity()
@@ -7864,7 +7868,7 @@ class App extends Component {
     if(theme == this.getLocale()['1417']/* 'light' */){
       return{
         'name':this.getLocale()['1417']/* 'light' */,
-        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':'linear-gradient(135deg, #acabab, #dbd8d8)', 'button_text_color':'#404040', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF', 'nav_bar_color2':'rgba(221, 221, 221, 1.0)',
+        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':'linear-gradient(135deg, #dddddd, #ffffff)', 'button_text_color':'#404040', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF', 'nav_bar_color2':'rgba(221, 221, 221, 1.0)',
 
         /* 'button_color':'linear-gradient(135deg, #444444,rgb(119, 116, 116))', 'button_text_color':'white' */
         

@@ -238,13 +238,12 @@ class ContractDetailsSection extends Component {
                 )
 
             }
-            else if (selected_item == this.props.app_state.loc['1713']/* 'transfers' */) {
+            else if (selected_item == this.props.app_state.loc['2121']/* 'transfers' */) {
                 return (
                     <div key={selected_item}>
                         {this.render_transfer_logs(object)}
                     </div>
                 )
-
             }
             else if(selected_item == this.props.app_state.loc['2066']/* 'modify-moderators' */){
                 return(
