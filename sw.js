@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-restricted-globals */
-const version = '10.23(beta)';
+const version = '10.24(beta)';
 self.addEventListener('push', event => {
   const data = event.data.json();
   const get_language = () => {
