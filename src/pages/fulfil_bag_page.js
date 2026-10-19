@@ -85,7 +85,7 @@ class FulfilBagPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1133']/* 'prepaid' */, this.props.app_state.loc['1134']/* 'postpaid' */], [1]
+                ['xor','',0], ['e'/* ,this.props.app_state.loc['1133'] *//* 'prepaid' */, this.props.app_state.loc['1134']/* 'postpaid' */], [1]
             ],
         }
     }

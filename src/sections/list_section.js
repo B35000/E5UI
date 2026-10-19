@@ -1439,6 +1439,12 @@ class PostListSection extends Component {
                 if(extra_data['finish_payments'] != null){
                     return_text.push(this.props.app_state.loc['2509eq']/* '$ finalizations.' */.replace('$', this.format_count(extra_data['finish_payments']['all_hits'])));
                 }
+                if(extra_data['poll_votes'] != null){
+                    return_text.push(this.props.app_state.loc['2509eu']/* '$ votes.' */.replace('$', this.format_count(extra_data['poll_votes']['all_hits'])));
+                }
+                if(extra_data['job_accepances'] != null){
+                    return_text.push(this.props.app_state.loc['2509ev']/* '$ acceptances.' */.replace('$', this.format_count(extra_data['job_accepances']['all_hits'])));
+                }
                 
             }
             const result_string = return_text.join(' • ')
@@ -8074,7 +8080,7 @@ return data['data']
         }
         if(this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true){
             return(
-                <div onClick={() => this.when_bill_item_clicked(index, object)}>
+                <div onClick={() => this.when_bill_clicked(index, object)}>
                     {this.render_detail_item('3', item['min'])}
                 </div>
             )

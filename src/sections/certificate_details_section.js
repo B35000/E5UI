@@ -1496,7 +1496,7 @@ class CertificateDetailsSection extends Component {
         else{
             this.props.notify(this.props.app_state.loc['2509']/* 'Searching...' */, 800)
             this.setState({searched_account: typed_account})
-            this.props.load_accounts_non_fungible_token_data(object, typed_account)
+            await this.props.load_accounts_non_fungible_token_data(object, typed_account)
         }
         
     }
@@ -1547,8 +1547,10 @@ class CertificateDetailsSection extends Component {
             )
         })
 
+        const selected_item = this.get_selected_item(this.state.get_my_account_or_another_accounts_certificate_data, 'e')
+
         if(items.length == 0){
-            const account = this.props.app_state.user_account_id[object['e5']]
+            const account = selected_item == this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */ ? this.props.app_state.user_account_id[object['e5']] : (this.state.searched_account || 0)
             const nft_loading_data = this.props.app_state.nft_loading_data[object['e5_id']+account] || []
             if(nft_loading_data.length > 0){
                 return(
@@ -1587,7 +1589,7 @@ class CertificateDetailsSection extends Component {
     get_acquired_tokens(object){
         const non_fungible_token_data = this.props.app_state.non_fungible_token_data[object['e5_id']] || {}
         const selected_item = this.get_selected_item(this.state.get_my_account_or_another_accounts_certificate_data, 'e')
-        const my_account = selected_item == this.props.app_state.loc['3098bn']/* 'other-account 👤' */ ? this.state.typed_account : this.props.app_state.user_account_id[object['e5']]
+        const my_account = selected_item == this.props.app_state.loc['3098bn']/* 'other-account 👤' */ ? this.state.searched_account : this.props.app_state.user_account_id[object['e5']]
         const account_data = non_fungible_token_data[object['e5']+':'+my_account] || {}
         // console.log('get_acquired_tokens', this.props.app_state.non_fungible_token_data)
         return this.sortByAttributeDescending(Object.values(account_data), 'time')

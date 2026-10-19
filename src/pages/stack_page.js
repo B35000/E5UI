@@ -1571,7 +1571,7 @@ class StackPage extends Component {
             <div style={{'margin':'10px 10px 0px 10px'}}>
                 <Tags ref={c => this.top_tags = c} font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
-                <div style={{'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 5px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(135), maxWidth: this.props.app_state.width}}>
+                <div style={{'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 5px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(122 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 15 )), maxWidth: this.props.app_state.width}}>
                     {this.render_everything()}
                 </div>
             </div>

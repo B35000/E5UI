@@ -84,7 +84,7 @@ class RespondToJobPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1314']/* 'prepaid' */, this.props.app_state.loc['1315']/* 'postpaid' */], [1]
+                ['xor','',0], ['e'/* ,this.props.app_state.loc['1314'] *//* 'prepaid' */, this.props.app_state.loc['1315']/* 'postpaid' */], [1]
             ],
         }
     }

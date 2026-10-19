@@ -3674,6 +3674,12 @@ return data['data']
                 if(extra_data['finish_payments'] != null){
                     return_text.push(this.props.app_state.loc['2509eq']/* '$ finalizations.' */.replace('$', this.format_count(extra_data['finish_payments']['all_hits'])));
                 }
+                if(extra_data['poll_votes'] != null){
+                    return_text.push(this.props.app_state.loc['2509eu']/* '$ votes.' */.replace('$', this.format_count(extra_data['poll_votes']['all_hits'])));
+                }
+                if(extra_data['job_accepances'] != null){
+                    return_text.push(this.props.app_state.loc['2509ev']/* '$ acceptances.' */.replace('$', this.format_count(extra_data['job_accepances']['all_hits'])));
+                }
             }
             const result_string = return_text.join(' • ')
             return result_string
@@ -9374,6 +9380,8 @@ return data['data']
         const items = item['price_data']
         var is_application_accepted = item['is_response_accepted'];
         if(is_application_accepted){
+            const me = this.props.app_state.user_account_id[object['e5']]
+            const message_target_account = me == item['applicant_id'] ? object['author'] : item['applicant_id']
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2498']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
@@ -9397,6 +9405,13 @@ return data['data']
                             </div>
                         </div>
                     )}
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055qo']/* 'Directly Message.' */, 'details':this.props.app_state.loc['3055vh']/* 'Send a message and start a private dialogue with the counterparty' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.open_direct_message_ui2(message_target_account, object['e5'])}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055qq']/* 'Begin Chat' */, 'action':'', 'font':this.props.app_state.font})}
+                    </div>
 
                     {this.render_finish_job_and_make_payment(item, object)}
                 </div>
@@ -9543,6 +9558,12 @@ return data['data']
         return arr
     }
 
+    open_direct_message_ui2(account, e5){
+        const me = this.props.app_state.user_account_id[e5]
+        if(me == account) return;
+        this.props.start_new_direct_message_chat(account, e5)
+    }
+
 
 
 
@@ -9606,6 +9627,8 @@ return data['data']
         const items_to_deliver = object['ipfs']['bag_orders']
         const total_amounts = this.get_total_bag_value(items_to_deliver, object)
         if(is_application_accepted == true){
+            const me = this.props.app_state.user_account_id[object['e5']]
+            const message_target_account = me == item['applicant_id'] ? object['author'] : item['applicant_id']
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2054']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
@@ -9633,6 +9656,13 @@ return data['data']
                             </div>
                         </div>
                     )}
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055qo']/* 'Directly Message.' */, 'details':this.props.app_state.loc['3055vh']/* 'Send a message and start a private dialogue with the counterparty' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.open_direct_message_ui2(message_target_account, object['e5'])}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['3055qq']/* 'Begin Chat' */, 'action':'', 'font':this.props.app_state.font})}
+                    </div>
                     
                     {this.render_finish_job_and_make_payment(item, object)}
                 </div>
@@ -14882,6 +14912,7 @@ return data['data']
         const ipfs = item['ipfs']
         const event = item['event']
         const time = item['time']
+        const owner = item['account']
         const data = this.get_model_config(depth_data, object, time)
 
         const name = data['class_name']
@@ -14900,6 +14931,7 @@ return data['data']
         const certificate_chain_data = this.props.app_state.objects_showcased_certificate_chain[object['e5_id']] || []
 
         const linked_certificate_objects = this.props.app_state.loaded_nft_certificate_parents[object['e5_id']+item['depth_data']['full']] || []
+        const owner_title = this.get_senders_name2(owner, object) == owner ? owner : owner+' • '+this.get_senders_name2(owner, object)
 
         return(
             <div>
@@ -14907,6 +14939,9 @@ return data['data']
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title': this.props.app_state.loc['3055pi']/* '$ out of %' */.replace('$', number_with_commas(depth_data['identifier'])).replace('%', number_with_commas(maximum_supply)) , 'details':this.props.app_state.loc['3055ph']/* 'Acquired Identifier out of total' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':owner_title, 'details':this.props.app_state.loc['3055vg']/* 'Owner' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
@@ -14932,7 +14967,7 @@ return data['data']
                     </div>
                 )}
                 
-                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && data['archived'] != true && view_only == false && (
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && data['archived'] != true && view_only == false && owner == my_account && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pj']/* ⇄ Transfer Ownership' */, 'details':this.props.app_state.loc['3055pk']/* 'Transfer Ownership of your certificate to another account.' */, 'size':'l'})}
@@ -14942,7 +14977,7 @@ return data['data']
                         </div>
                     </div>
                 )}
-                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && fractionalizable == true && data['archived'] != true && (verification_data['verified'] == true || verification == 1) && view_only == false && (
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && fractionalizable == true && data['archived'] != true && (verification_data['verified'] == true || verification == 1) && view_only == false && owner == my_account && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pm']/* ❖ Fractionalize Certificate' */, 'details':this.props.app_state.loc['3055pn']/* 'Fragment your certificate into shares that you can redistribute to other accounts.' */, 'size':'l'})}
@@ -14963,7 +14998,7 @@ return data['data']
                     </div>
                 )}
 
-                {view_only == false && now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && data['archived'] != true && (verification_data['verified'] == true || verification == 1) && (
+                {view_only == false && now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && data['archived'] != true && (verification_data['verified'] == true || verification == 1) && owner == my_account && (
                     <div>
                         {this.render_detail_item('0')}
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['3055so']/* 🔗 Link Certificate.' */, 'details':this.props.app_state.loc['3055sp']/* 'Link your minted token to another certificate and create a chain of ownership delegation.' */, 'size':'l'})}

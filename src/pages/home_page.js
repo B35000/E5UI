@@ -1724,7 +1724,7 @@ class home_page extends Component {
                 /* this.props.app_state.loc['1264c'] *//* 'job-notifications' */ 
             ], [this.get_all_work_notification_items(['follower_job', 'job_application_response','job_application']).length,0,0,
                 this.get_all_work_notification_items(['follower_job']).length,
-                0,
+                0,0,
                 this.get_all_work_notification_items(['job_application_response']).length,
                 0,
                 this.get_all_work_notification_items(['job_application']).length/* created */,
@@ -2562,6 +2562,21 @@ class home_page extends Component {
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264cb']/* 'auto-stacked 🔁' */)){
             posts_to_load = posts_to_load.concat(this.state.auto_stack)
         }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1205']/* 'applied' */)){
+            var all_applications = this.get_all_sorted_objects(this.props.app_state.my_applications)
+            var all_job_mappings = this.get_all_sorted_objects_mappings(this.props.app_state.created_job_mappings)
+            for(var i=0; i<all_applications.length; i++){
+                var job_id = all_applications[i]['event'].returnValues.p1
+                var job_obj = all_job_mappings[job_id]
+                if(job_obj != null){
+                    posts_to_load.push(job_id+job_obj['e5'])
+                }
+            }
+            posts_to_load = posts_to_load.concat(this.props.app_state.my_applications2)
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264ae']/* 'my-responses' */)){
+            posts_to_load = posts_to_load.concat(this.props.app_state.my_bag_applications2)
+        }
 
         var me = this;
         setTimeout(function() {
@@ -2693,6 +2708,21 @@ class home_page extends Component {
         }
         else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264cb']/* 'auto-stacked 🔁' */)){
             posts_to_load = posts_to_load.concat(this.state.auto_stack)
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1205']/* 'applied' */)){
+            var all_applications = this.get_all_sorted_objects(this.props.app_state.my_applications)
+            var all_job_mappings = this.get_all_sorted_objects_mappings(this.props.app_state.created_job_mappings)
+            for(var i=0; i<all_applications.length; i++){
+                var job_id = all_applications[i]['event'].returnValues.p1
+                var job_obj = all_job_mappings[job_id]
+                if(job_obj != null){
+                    posts_to_load.push(job_id+job_obj['e5'])
+                }
+            }
+            posts_to_load = posts_to_load.concat(this.props.app_state.my_applications2)
+        }
+        else if(posts_to_load.length == 0 && id.includes(this.props.app_state.loc['1264ae']/* 'my-responses' */)){
+            posts_to_load = posts_to_load.concat(this.props.app_state.my_bag_applications2)
         }
         
         const page_id = this.get_page_id()
@@ -3287,8 +3317,9 @@ class home_page extends Component {
         else if(selected_option_name == this.props.app_state.loc['1264ae']/* 'my-responses' */){
             var my_applied_bags = []
             var all_bags = this.get_items_for_page2(id, selected_page)
+            var my_bag_applications2 = this.props.app_state.my_bag_applications2;
             for(var i=0; i<all_bags.length; i++){
-                if(all_bags[i]['responded_to'] == true){
+                if(all_bags[i]['responded_to'] == true || my_bag_applications2.includes(all_bags[i]['e5_id'])){
                     my_applied_bags.push(all_bags[i])
                 }
             }
@@ -3729,6 +3760,13 @@ class home_page extends Component {
                     my_applied_jobs.push(job_obj)
                 }
             }
+            var my_applications2 = this.props.app_state.my_applications2;
+            my_applications2.forEach(job_id => {
+                var job_obj = all_jobs.find((obj) => obj['e5_id'] == job_id);
+                if(job_obj != null && !my_applied_jobs.includes(job_obj)){
+                    my_applied_jobs.push(job_obj)
+                }
+            });
             return this.set_objects_translations(this.filter_by_blocked_posts(this.sort_feed_based_on_my_section_tags(this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_applied_jobs))))))
         }
         else if(selected_option_name == this.props.app_state.loc['1264ag']/* 'following' */){

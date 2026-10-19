@@ -76,6 +76,10 @@ class TextInput extends Component {
     if(prevProps.text != this.props.text && this.props.text == '' && this.state.set_text != ''){
       this.setState({set_text: ''})
     }
+
+    if(prevProps.text != this.props.text && this.props.text != '' && this.state.set_text == ''){
+      this.setState({set_text: this.props.text})
+    }
   }
 
   render(){

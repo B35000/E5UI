@@ -2121,7 +2121,7 @@ class App extends Component {
     objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}, 
     ether_ages:{}, created_object_full:{}, current_run_hash:{}, socket_created_bags:{}, translation_data:{}, performing_translation_indicator:{}, translation_percentage_data:{},
 
-    focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(),
+    focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(), my_applications2:[], my_bag_applications2:[]
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -7868,7 +7868,7 @@ class App extends Component {
     if(theme == this.getLocale()['1417']/* 'light' */){
       return{
         'name':this.getLocale()['1417']/* 'light' */,
-        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':'linear-gradient(135deg, #dddddd, #ffffff)', 'button_text_color':'#404040', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF', 'nav_bar_color2':'rgba(221, 221, 221, 1.0)',
+        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'rgba(221, 221, 221, 0.05)', 'button_color':'linear-gradient(135deg, #eeeeee, #ffffff)', 'button_text_color':'#404040', 'line_color':'#C1C1C1','linebar_background_color':'#BFBFBF', 'nav_bar_color2':'rgba(221, 221, 221, 1.0)',
 
         /* 'button_color':'linear-gradient(135deg, #444444,rgb(119, 116, 116))', 'button_text_color':'white' */
         
@@ -13563,6 +13563,8 @@ class App extends Component {
     const swap_transactions = []
     const mint_certificate_transactions = []
     const finish_payment_transactions = []
+    const poll_record_e5_ids = []
+    const accept_job_e5_ids = []
 
     const all_tagged_addresses_data_clone = structuredClone(this.state.all_tagged_addresses_data)
     for(var i=0; i<stack.length; i++){
@@ -13667,7 +13669,11 @@ class App extends Component {
           if(t.application_item.bag_storefront_transfers != null){
             payment_update_transactions.push(t)
           }
+          const job_id = t.application_item['job_id']
+          const e5 = this.state.selected_e5
+          accept_job_e5_ids.push(job_id+e5)
         }
+        
         else if(stack[i].type == this.getLocale()['946']/* 'buy-sell' */ || stack[i].type == this.getLocale()['3108']/* 'crossexchange-swap' */){
           const t = stack[i];
           swap_transactions.push(t.token_item['e5_id'])
@@ -13688,6 +13694,17 @@ class App extends Component {
           const t = stack[i];
           const object = t.object;
           finish_payment_transactions.push(object['e5_id'])
+        }
+        else if(stack[i].type == this.getLocale()['3073']/* 'vote-poll' */){
+          const t = stack[i];
+          const object = t.poll_object;
+          poll_record_e5_ids.push(object['e5_id'])
+        }
+        else if(stack[i].type == this.getLocale()['1513']/* 'accept-job-application' */){
+          const t = stack[i]
+          const job_id = t.application_item['job_id']
+          const e5 = this.state.selected_e5
+          accept_job_e5_ids.push(job_id+e5)
         }
       }
     }
@@ -13776,6 +13793,16 @@ class App extends Component {
 
     if(finish_payment_transactions.length > 0){
       this.emit_comment_record_object_event(finish_payment_transactions, 'finish_payments');
+      await this.wait(1000)
+    }
+
+    if(poll_record_e5_ids.length > 0){
+      this.emit_comment_record_object_event(poll_record_e5_ids, 'poll_votes')
+      await this.wait(1000)
+    }
+
+    if(accept_job_e5_ids.length > 0){
+      this.emit_comment_record_object_event(accept_job_e5_ids, 'job_accepances')
       await this.wait(1000)
     }
     
@@ -45382,11 +45409,12 @@ class App extends Component {
     var event_params = [
       [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_tokens[i].toString(), p2/* action_type */:'4'/* <4>modify_moderator_accounts */}],
       [web3, H5contractInstance, 'e1', e5, {p1/* exchange */: created_tokens[i].toString()}],
-      [web3, H5contractInstance, 'e2', e5, {p1/* exchange */: created_tokens[i].toString()}],
+      [web3, H5contractInstance, 'e2', e5, {p1/* exchange */: created_tokens[i].toString()}],/* 2 */
 
       [web3, H52contractInstance, 'e1', e5, {p1/* exchange */: this.process_array_for_indexer_query(exchanges_buy_tokens), p2/* sender */: id.toString()}],
       [web3, H52contractInstance, 'e1', e5, {p1/* exchange */: this.process_array_for_indexer_query(exchanges_buy_tokens), p3/* receiver */: id.toString()}],
-      [web3, H52contractInstance, 'e2', e5, {p1/* exchange_id */:id.toString()}]
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange_id */:id.toString()}],/* 5 */
+      [web3, H52contractInstance, 'e2', e5, {p1/* exchange_id */:id.toString()}]/* 6 */
     ]
     const { all_events } = await this.load_multiple_events_from_nitro(event_params)
 
@@ -45462,7 +45490,8 @@ class App extends Component {
 
     console.log('load_extra', object)
     if(object['data'][0][4/* <4>non-fungible */] == 1){
-      const all_depth_mint_events = all_events[5]
+      const all_depth_mint_events = all_events[6]
+      const all_depth_transfer_events = all_events[5]
       console.log('load_extra', 'all_depth_mint_events', all_depth_mint_events)
       const depths_used = []
       const all_depths_used = []
@@ -45473,7 +45502,23 @@ class App extends Component {
         if(!depths_used.includes(depth)){
           all_depths_used.push(depth);
           depth_use_times.push(time);
-          if(event.returnValues.p2 == account) depths_used.push(depth);
+          if(event.returnValues.p2/* receiver */ == account) depths_used.push(depth);
+        }
+      });
+      all_depth_transfer_events.forEach(event => {
+        const depth = event.returnValues.p7/* depth */;
+        const time = event.returnValues.p5/* timestamp */;
+        if(!depths_used.includes(depth)){
+          all_depths_used.push(depth);
+          depth_use_times.push(time);
+          if(event.returnValues.p3/* receiver */ == account) depths_used.push(depth);
+        }else{
+          if(event.returnValues.p2/* sender */ == account){
+            const index = depths_used.indexOf(depth)
+            if(index != -1){
+              depths_used.splice(index, 1)
+            }
+          }
         }
       });
       
@@ -45539,11 +45584,13 @@ class App extends Component {
     const H52_address = contract_addresses[6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
     var event_params = [
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange_id */:id.toString()}],
       [web3, H52contractInstance, 'e2', e5, {p1/* exchange_id */:id.toString()}]
     ]
     const { all_events } = await this.load_multiple_events_from_nitro(event_params)
 
-    const all_depth_mint_events = all_events[0]
+    const all_depth_transfer_events = all_events[0]
+    const all_depth_mint_events = all_events[1]
     const depths_used = []
     const all_depths_used = []
     const depth_use_times = []
@@ -45553,7 +45600,23 @@ class App extends Component {
       if(!depths_used.includes(depth)){
         all_depths_used.push(depth);
         depth_use_times.push(time);
-        if(event.returnValues.p2 == account) depths_used.push(depth);
+        if(event.returnValues.p2/* receiver */ == account) depths_used.push(depth);
+      }
+    });
+    all_depth_transfer_events.forEach(event => {
+      const depth = event.returnValues.p7/* depth */;
+      const time = event.returnValues.p5/* timestamp */;
+      if(!depths_used.includes(depth)){
+        all_depths_used.push(depth);
+        depth_use_times.push(time);
+        if(event.returnValues.p3/* receiver */ == account) depths_used.push(depth);
+      }else{
+        if(event.returnValues.p2/* sender */ == account){
+          const index = depths_used.indexOf(depth)
+          if(index != -1){
+            depths_used.splice(index, 1)
+          }
+        }
       }
     });
     if(depths_used.length > 0){
@@ -45755,6 +45818,7 @@ class App extends Component {
           'depth_data': depth_data,
           'ipfs': object_data,
           'event': event,
+          'account':account,
           'time': parseInt(event.returnValues.p6/* timestamp */)
         }
 
@@ -60321,9 +60385,9 @@ class App extends Component {
   }
 
   get_token_chart_data = (symbol) => {
-    if(this.state.coin_ether_chart_info[symbol] != null){
-      return;
-    }
+    // if(this.state.coin_ether_chart_info[symbol] != null){
+    //   return;
+    // }
     const asset_data = this.state.coin_chart_info[symbol]
     if(asset_data != null){
       try{
@@ -60437,9 +60501,9 @@ class App extends Component {
   }
 
   get_ether_gas_usage_chart_data(symbol){
-    if(this.state.ether_gas_chart_info[symbol] != null){
-      return;
-    }
+    // if(this.state.ether_gas_chart_info[symbol] != null){
+    //   return;
+    // }
     const asset_data = this.state.ether_usage_chart_info[symbol]?.['final_data']
     if(asset_data != null){
       const candle_sticks = []
@@ -63306,7 +63370,9 @@ class App extends Component {
             'direct_message|'+target_address, 
             'tags|'+target_address, 
             'mempool_notification|'+target_address, 
-            'lock_unlock_wallet|'+target_address
+            'lock_unlock_wallet|'+target_address,
+            'job_application|'+target_address,
+            'bag_application|'+target_address,
           ]
           this.get_objects_from_socket_and_set_in_state(resync_targets, [], [], disconnect_time)  
         }
@@ -68288,7 +68354,7 @@ class App extends Component {
 
   async process_new_job_application_message(message, object_hash, from, add_to_notifications, application_responses=[], bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
-    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    const am_I_the_author = this.state.accounts[message['e5']].address == from
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
       const index = clone.indexOf(message['message_identifier'])
@@ -68376,6 +68442,13 @@ class App extends Component {
                 this.set_job_application_event_in_notifications(event, e5)
               }
             }
+
+            if(am_I_the_author){
+              const job_id = message.job_object_id+e5
+              const my_applications_clone = this.state.my_applications2.slice()
+              if(!my_applications_clone.includes(job_id)) my_applications_clone.push(job_id);
+              this.setState({my_applications2: my_applications_clone})
+            }
           }else{
             console.log('get_job_objects_responses', 'data is null')
           }
@@ -68406,7 +68479,7 @@ class App extends Component {
 
   async process_new_bag_application_message(message, object_hash, from, add_to_notifications, application_responses=[], bulk_decyphered_package=null){
     if(this.hash_message_for_id(message) != object_hash) return;
-    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    const am_I_the_author = this.state.accounts[message['e5']].address == from
     if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
       const clone = this.state.broadcast_stack.slice()
       const index = clone.indexOf(message['message_identifier'])
@@ -68486,6 +68559,12 @@ class App extends Component {
               if(add_to_notifications == true){
                 this.set_bag_application_event_in_notifications(event, e5)
               }
+            }
+            if(am_I_the_author){
+              const job_id = message.job_object_id+e5
+              const my_applications_clone = this.state.my_bag_applications2.slice()
+              if(!my_applications_clone.includes(job_id)) my_applications_clone.push(job_id);
+              this.setState({my_bag_applications2: my_applications_clone})
             }
           }else{
             console.log('get_job_objects_responses', 'data is null')
