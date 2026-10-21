@@ -428,8 +428,8 @@ class ViewGroups extends Component {
                 }
                 
                 const text_width = object_data != null && object_data['includes_subtitle_text'] == true ? '70%' : '99%'
-                const subtitle = object_data != null && object_data['subtitle'] == null ? '' : object_data['subtitle']
-                const subdetails = object_data != null && object_data['subdetails'] == null ? '' : object_data['subdetails']
+                const subtitle = object_data != null && object_data['subtitle'] != null ? object_data['subtitle'] : ''
+                const subdetails = object_data != null && object_data['subdetails'] != null ? object_data['subdetails'] : ''
 
                 const stop_propagation_if_required = (e) => {
                     if(object_data != null && object_data['text_click'] != null && object_data['text_click'] != ''){
@@ -1670,6 +1670,7 @@ class ViewGroups extends Component {
     }
 
     mask_word_if_censored(word){
+        if(word == null) return word
         var all_censored_phrases = this.props.censored_keyword_phrases == null ? [] : this.props.censored_keyword_phrases
         const specific_word = word.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '')
         if(all_censored_phrases.includes(specific_word) || words.includes(specific_word)){

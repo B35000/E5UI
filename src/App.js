@@ -2121,7 +2121,9 @@ class App extends Component {
     objects_showcased_certificate_chain:{}, loaded_nft_certificate_parents:{}, nft_loading_data:{}, 
     ether_ages:{}, created_object_full:{}, current_run_hash:{}, socket_created_bags:{}, translation_data:{}, performing_translation_indicator:{}, translation_percentage_data:{},
 
-    focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(), my_applications2:[], my_bag_applications2:[]
+    focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(), my_applications2:[], my_bag_applications2:[], account_message_history2:{}, account_post_history2:{},
+
+    object_event_loader:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -3234,7 +3236,7 @@ class App extends Component {
       this.get_token('ZKETH', 'zkSync Era', 'E1255'),
       this.get_token('ZKCRO', 'Cronos zkEVM', 'E1265', true),
       this.get_token('ZERETH', 'ZERϴ Network', 'E1275', true),
-      this.get_token('SOPH', 'Sophon', 'E1285'),
+      this.get_token('SOPH', 'Sophon', 'E1285', true),
       this.get_token('MAETH', 'Manta Pacific', 'E1295'),
       this.get_token('FILE', 'Filecoin EVM', 'E1305'),
       this.get_token('MON', 'Monad', 'E1315'),
@@ -8933,7 +8935,7 @@ class App extends Component {
 
           get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)} perform_translation_of_specific_object={this.perform_translation_of_specific_object.bind(this)}
           when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}
-          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)}
+          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)} show_loader_for_object_events={this.show_loader_for_object_events.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -21851,7 +21853,7 @@ class App extends Component {
     var os = getOS();
     
     return this.renderBottomSheet(
-      <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)} get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)}
+      <SearchedAccountPage ref={this.searched_account_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} perform_searched_account_balance_search={this.perform_searched_account_balance_search.bind(this)} when_searched_account_reclicked={this.when_searched_account_reclicked.bind(this)} when_account_in_data_clicked={this.when_account_in_data_clicked.bind(this)} follow_unfollow_post_author={this.follow_unfollow_post_author.bind(this)} get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} play_individual_track={this.play_individual_track.bind(this)} play_individual_video={this.play_individual_video.bind(this)} when_pdf_file_opened={this.when_pdf_file_opened.bind(this)} when_zip_file_opened={this.when_zip_file_opened.bind(this)} load_accounts_message_history={this.load_accounts_message_history.bind(this)} get_accounts_uploaded_object_data={this.get_accounts_uploaded_object_data.bind(this)} get_accounts_message_activities={this.get_accounts_message_activities.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
       />,
       this.state.searched_account_bottomsheet,
       this.open_searched_account_bottomsheet,
@@ -21982,6 +21984,7 @@ class App extends Component {
   }
 
   when_account_in_data_clicked = async (account, e5, name) => {
+    if(this.state.dialog_bottomsheet == true) this.open_dialog_bottomsheet()
     this.prompt_top_notification(this.getLocale()['2738ah']/* 'Searching for $...' */.replace('$', name), 1500)
     var data = this.state.searched_accounts_data[account] == null ? [] : this.state.searched_accounts_data[account]
     var object = data.find(e => (e['id'] == account && e['e5'] == e5 && e['ether_balance'] != null))
@@ -22771,6 +22774,8 @@ class App extends Component {
       'share_location_with_another_account':600,
       'confirm_swap_coin_ether_via_changenow_dialog':550,
       'confirm_swap_coin_ether_via_near_intents_dialog':550,
+      'show_post_basic_details':590,
+      'render_event_item_details':300,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -61237,9 +61242,14 @@ class App extends Component {
 
 
 
-
+  show_loader_for_object_events = (id, e5, show_or_hide) => {
+    const clone = structuredClone(this.state.object_event_loader)
+    clone[id+e5] = show_or_hide
+    this.setState({object_event_loader: clone})
+  }
 
   get_contract_event_data = async (id, e5) => {
+    this.show_loader_for_object_events(id, e5, true)
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const G5contractArtifact = require('./contract_abis/G5.json');
     const G5_address = this.state.addresses[e5][3];
@@ -61248,7 +61258,6 @@ class App extends Component {
     const G52contractArtifact = require('./contract_abis/G52.json');
     const G52_address = this.state.addresses[e5][4];
     const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
-
 
     var make_proposal_event_data = null
     var modify_object_event_data = null
@@ -61300,6 +61309,8 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.setState({contract_events: clone})
+
+      me.show_loader_for_object_events(id, e5, false)
     }, (1 * 200));
     
   }
@@ -61342,6 +61353,7 @@ class App extends Component {
   }
 
   get_proposal_event_data = async (id, e5) => {
+    this.show_loader_for_object_events(id, e5, true)
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const G52contractArtifact = require('./contract_abis/G52.json');
     const G52_address = this.state.addresses[e5][4];
@@ -61376,9 +61388,11 @@ class App extends Component {
     clone[id] = {'vote':record_proposal_vote_event_data, 'submit':submit_proposal_event_data, 'archive':archive_proposal_event_data, 'transfer':proposal_token_event_data}
 
     this.setState({proposal_events: clone})
+    this.show_loader_for_object_events(id, e5, false)
   }
 
   get_subscription_event_data = async (id, e5) => {
+    this.show_loader_for_object_events(id, e5, true)
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const F5contractArtifact = require('./contract_abis/F5.json');
     const F5_address = this.state.addresses[e5][2];
@@ -61419,10 +61433,11 @@ class App extends Component {
 
     this.setState({subscription_events: clone})
 
-
+    this.show_loader_for_object_events(id, e5, false)
   }
 
   get_exchange_event_data = async (id, e5) => {
+    this.show_loader_for_object_events(id, e5, true)
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H5contractArtifact = require('./contract_abis/H5.json');
     const H5_address = this.state.addresses[e5][5];
@@ -61478,6 +61493,8 @@ class App extends Component {
     clone[id] = {'transfer':transfer_event_data, 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'proportion_ratio':update_proportion_ratio_event_data.reverse(), 'modify':modify_exchange_event_data.reverse(), 'exchange-transfer': exchange_token_event_data, 'update_balance':update_balance_event_data.reverse(), 'freeze_unfreeze':freeze_unfreeze_event_data.reverse(), 'depth_mint':depth_mint_event_data.reverse()}
 
     this.setState({exchange_events: clone});
+
+    this.show_loader_for_object_events(id, e5, false)
   }
 
   get_accounts_token_event_data = async (exchange, id, e5) => {
@@ -61504,6 +61521,7 @@ class App extends Component {
   }
 
   get_moderator_event_data = async (id, e5) => {
+    this.show_loader_for_object_events(id, e5, true)
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[e5][1];
@@ -61547,6 +61565,7 @@ class App extends Component {
     clone[id] = {'modify_moderator':modify_moderator_event_data, 'enable_interactible':enable_disable_interactible_checkers_event_data, 'add_interactible':add_interactible_account_event_data, 'block_account':block_accounts_event_data, 'revoke_privelages':revoke_author_privelages_event_data}
 
     this.setState({moderator_events: clone});
+    this.show_loader_for_object_events(id, e5, false)
   }
 
   get_channel_event_data = async (id, e5) => {
@@ -61829,8 +61848,10 @@ class App extends Component {
 
           data.push(obj)
 
-          this.get_accounts_uploaded_object_data(make_object_event_data, e5, web3, id);
-          this.get_accounts_message_activities(id, e5);
+          // this.get_accounts_uploaded_object_data(make_object_event_data, e5, id);
+          // this.load_accounts_message_history(id, e5, 'comment_message');
+          // this.load_accounts_message_history(id, e5, 'object');
+          // this.get_accounts_message_activities(id, e5);
         }
       }
     }
@@ -61901,7 +61922,7 @@ class App extends Component {
             messages = [ipfs_message].concat(messages)
           }
         }
-        if(is_first_time){
+        if(is_first_time || true){
           var clone = JSON.parse(JSON.stringify(this.state.account_message_history))
           clone[account_id] = messages
           this.setState({account_message_history: clone})
@@ -61913,7 +61934,8 @@ class App extends Component {
     this.setState({account_message_history: clone})
   }
 
-  get_accounts_uploaded_object_data = async (events, e5, web3, account_id) => {
+  get_accounts_uploaded_object_data = async (events, e5, account_id) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     var data = []
     var contract_addresses = this.state.addresses[e5]
     if(contract_addresses != null){
@@ -61948,10 +61970,11 @@ class App extends Component {
           if(ipfs != null && ipfs.album_art != null && ipfs.album_art.startsWith('image')) this.fetch_uploaded_data_from_ipfs([ipfs.album_art], false, keys);
         }
 
+        const object = {'e5':e5, 'author':author, 'id':id, 'type':object_type, 'ipfs':ipfs, 'block':block, 'timestamp':timestamp}
         if(ipfs != null){
-          data.push({'e5':e5, 'author':author, 'id':id, 'type':object_type, 'ipfs':ipfs, 'block':block, 'timestamp':timestamp})
+          data.push(object)
         }
-        if(is_first_time){
+        if(is_first_time || true){
           var clone = JSON.parse(JSON.stringify(this.state.account_post_history))
           clone[account_id] = data
           this.setState({account_post_history: clone})
@@ -61971,6 +61994,106 @@ class App extends Component {
     });
     return ids
   }
+
+  async load_accounts_message_history(account_id, e5, type){
+    const load_step = Date.now() - 1000;
+    var current_filter_end_time = Date.now() - load_step
+    var current_filter_start_time = Date.now()
+
+    const target_data = await this.get_socket_data([], current_filter_end_time, current_filter_start_time, (1024*100), [], false, 0, [account_id], e5, [], type)
+
+    if(target_data != null){
+      const entries = Object.keys(target_data)
+      for(var j=0; j<entries.length; j++){
+        const time_entry = entries[j]
+        const target_entries = Object.keys(target_data[time_entry])
+        for(var k=0; k<target_entries.length; k++){
+          const target_entry = target_entries[k]
+          const object_hashes = Object.keys(target_data[time_entry][target_entry])
+          for(var i=0; i<object_hashes.length; i++){
+            const object_hash = object_hashes[i]
+            const object_data = target_data[time_entry][target_entry][object_hash]
+            if(object_data['type'] == 'comment_message'){
+              await this.process_new_comment_message2(object_data, object_hash)
+            }
+            else if(object_data['type'] == 'object'){
+              await this.process_new_job_received2(object_data, object_hash)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  async process_new_comment_message2(message, object_hash, bulk_decyphered_package=null){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    
+    const ipfs = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
+    // console.log('process_new_comment_message', 'message ipfs', ipfs)
+
+    if(ipfs != message.data){
+      const e5 = message.e5;
+      const id = message.id;
+      const sender_acc = message.author;
+      const convo_id = id;
+      const cid = object_hash;
+      const request_id = message.id+e5
+
+      const event = {returnValues:{p1:17, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+      var ipfs_obj = ipfs
+      if(ipfs_obj != null){
+        const clone = structuredClone(this.state.account_message_history2)
+        const messages = clone[sender_acc] == null ? [] : clone[sender_acc].slice()
+        const ipfs_message = ipfs_obj;
+        ipfs_message['time'] = event.returnValues.p6
+        this.fetch_uploaded_files_for_object(ipfs_message)
+        const includes = messages.find(e => e['message_id'] === ipfs_message['message_id'])
+        if(includes == null){
+          messages.push(ipfs_message)
+        }
+        clone[sender_acc] = messages
+        this.setState({account_message_history2: clone})
+      }
+    }
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
+  }
+
+  async process_new_job_received2(message, object_hash, bulk_decyphered_package=null){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+
+    const ipfs_data = bulk_decyphered_package != null && bulk_decyphered_package['successful'] == true ? JSON.parse(bulk_decyphered_package['data']) : JSON.parse(await this.decrypt_storage_object(message.data))
+   
+    if(ipfs_data != message.data){
+      const e5 = message.e5;
+      const id = message.id
+      const channeling = message.channeling
+      const sender_acc = message.author
+      const event = {returnValues:{p1:channeling, p2:id, p3: 17, p4:channeling, p5:sender_acc, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+      const object = {'id':id, 'ipfs':ipfs_data, 'event': event, 'e5':e5, 'timestamp':parseInt(event.returnValues.p6), 'author':event.returnValues.p5 ,'e5_id':id+e5, 'responses':0, 'type':ipfs_data.object_type || 18, 'block':parseInt(event.returnValues.p7)}
+        
+      var clone = structuredClone(this.state.account_post_history2)
+      if(clone[sender_acc] == null){
+        clone[sender_acc] = []
+      }
+      const includes = clone[sender_acc].find(e => e['id'] === object['id'])
+      if(includes == null) clone[sender_acc].push(object)
+      this.setState({account_post_history2: clone})
+    }
+
+    const message_account = message['author']
+    const message_e5 = message['e5']
+    this.get_alias_from_account_id(message_account, message_e5)
+  }
+
+
+
+
 
 
 
@@ -70821,7 +70944,7 @@ class App extends Component {
 
 
 
-  get_socket_data = async (targets, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0, filter_authors=[], target_e5='E25', recipients=[]) => {
+  get_socket_data = async (targets, filter_end_time=(Date.now() - (52*7*24*60*60*1000)), filter_start_time=(Date.now()), size_limit_in_kbs=(1024*10), filter_tags=[], updated_signature=false, tries=0, filter_authors=[], target_e5='E25', recipients=[], filter_type='') => {
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     var beacon_e5_id = ''
     if(this.state.beacon_chain_url != ''){
@@ -70845,6 +70968,7 @@ class App extends Component {
       target_lan:'',
       target_state:'',
       size_limit_in_kbs,
+      filter_type
     }
 
     // const body = {

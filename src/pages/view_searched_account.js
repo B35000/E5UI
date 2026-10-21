@@ -28,6 +28,7 @@ import SpendImg from './../assets/spend_token_icon.png';
 
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { Virtuoso } from "react-virtuoso";
 
 var bigInt = require("big-integer");
 
@@ -142,12 +143,12 @@ class SearchedAccountPage extends Component {
 
     render(){
         var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
-        var f = 110
-        if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e' || selected_item == this.props.app_state.loc['1770i']/* 'activity' */){
-            f = 90
-        }
+        var f = this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 90 : 103
+        // if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e' || selected_item == this.props.app_state.loc['1770i']/* 'activity' */){
+        //     f = 96
+        // }
 
-        f+=90
+        f+=100
 
         if(this.state.searched_account == null){
             return(
@@ -159,20 +160,47 @@ class SearchedAccountPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.searched_account_page_tags_object} tag_size={'l'} when_tags_updated={this.when_searched_account_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                {this.render_search_tabs()}
-                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-f}}>
+
+                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', height: this.props.height-f}}>
                     {this.render_everything()}
                 </div>
+
+                {this.render_search_tabs()}
             </div>
         )
     }
 
-    when_searched_account_page_tags_object_updated(tag_obj){
+    async when_searched_account_page_tags_object_updated(tag_obj){
+        this.top_tags_last_change_time = Date.now()
         this.setState({searched_account_page_tags_object: tag_obj})
-        var me = this;
+        const me = this;
         setTimeout(function() {
             me.update_scroll_position()
         }, (1 * 10));
+
+        const selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        const item = this.state.searched_account
+        const make_object = item['make_object']
+        const e5 = item['e5']
+        const id = item['id']
+        if(selected_item == this.props.app_state.loc['1703']/* 'creations' */){
+            if(this.last_load_creations != null && Date.now() - this.last_load_creations < (1000*60)) return;
+            this.last_load_creations = Date.now()
+
+            this.setState({loading_creations: true})
+            await this.props.load_accounts_message_history(id, e5, 'object');
+            await this.props.get_accounts_uploaded_object_data(make_object, e5, id);
+            this.setState({loading_creations: null})
+        }
+        else if(selected_item == this.props.app_state.loc['1770i']/* 'activity' */){
+            if(this.last_load_activity != null && Date.now() - this.last_load_activity < (1000*60)) return;
+            this.last_load_activity = Date.now()
+
+            this.setState({loading_activity: true})
+            await this.props.load_accounts_message_history(id, e5, 'comment_message');
+            await this.props.get_accounts_message_activities(id, e5);
+            this.setState({loading_activity: null})
+        }
     }
 
     render_search_tabs(){
@@ -237,14 +265,14 @@ class SearchedAccountPage extends Component {
         if(this.state.searched_account['id'] == item['id'] && this.state.searched_account['e5'] == item['e5']){
             return(
                 <div onClick={() => this.props.when_searched_account_reclicked(item, item['id'])}>
-                    {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+                    {this.render_detail_item('8', {'title':title, 'image':image, 'details':details, 'size':'s'})}
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
                 </div>
             )
         }
         return(
             <div onClick={() => this.props.when_searched_account_reclicked(item, item['id'])}>
-                {this.render_detail_item('14', {'title':title, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+                {this.render_detail_item('8', {'title':title, 'image':image, 'details':details, 'size':'s'})}
             </div>
         )
     }
@@ -359,7 +387,6 @@ class SearchedAccountPage extends Component {
             return(
                 <div style={{'width':'98%'}}>
                     {this.render_search_bar()}
-                    
                     {this.render_content()}
                     {this.render_search_account_balances_ui()}
                 </div>
@@ -580,6 +607,22 @@ class SearchedAccountPage extends Component {
         }
     }
 
+    handleScroll2(range){
+        if(this.top_tags_last_change_time != null && Date.now() - this.top_tags_last_change_time < 700) return;
+        var pos = range.startIndex
+        var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
+
+        if(this.page_scroll_data == null) this.page_scroll_data = {}
+        var id = selected_item
+        if(pos == 0){
+            if(this.page_scroll_data[id] != null && this.page_scroll_data[id] <= 5){
+                this.page_scroll_data[id] = pos
+            }
+        }else{
+            this.page_scroll_data[id] = pos
+        }
+    }
+
     update_scroll_position(){
         if(this.page_scroll_data == null) this.page_scroll_data = {}
         var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
@@ -591,10 +634,12 @@ class SearchedAccountPage extends Component {
         var pos = scroll_pos
 
         if(selected_item == this.props.app_state.loc['1703']/* 'creations' */){
-            this.creations_ref.current?.scrollTo(0, pos);
+            // this.creations_ref.current?.scrollTo(0, pos);
+            this.creations_ref.current?.scrollToIndex({ index: pos, align: "start", });
         }
         else if(selected_item == this.props.app_state.loc['1770i']/* 'activity' */){
-            this.activity_ref.current?.scrollTo(0, pos);
+            // this.activity_ref.current?.scrollTo(0, pos);
+            this.activity_ref.current?.scrollToIndex({ index: pos, align: "start", });
         }
         else if(selected_item == this.props.app_state.loc['1704']/* 'withdraws' */){
             this.withdraws_ref.current?.scrollTo(0, pos);
@@ -673,7 +718,8 @@ class SearchedAccountPage extends Component {
                 {this.render_account_blocks(account_id)}
 
                 {this.render_follow_unfollow_author_button(id, e5)}
-                <div style={{height: 10}}/>
+
+                {this.render_detail_item('0')}
 
                 {link != null && (
                     <div>
@@ -776,7 +822,7 @@ class SearchedAccountPage extends Component {
     }
 
     render_account_blocks(account_id){
-        const extra_data = this.props.app_state.object_extra_data[account_id]
+        const extra_data = this.props.app_state.object_extra_data[account_id] || {}
         var blocked_total = 0
         if(extra_data['blocked_user_instance'] != null){
             blocked_total += extra_data['blocked_user_instance']['all_hits']
@@ -948,12 +994,6 @@ class SearchedAccountPage extends Component {
                     <div style={{height:10}}/>
 
                     {this.render_account_balance_or_yearly_balance_change_data()}
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    {this.render_empty_views(3)}
                 </div>
             )
         }
@@ -1342,6 +1382,11 @@ class SearchedAccountPage extends Component {
         if(this.props.app_state.end_tokens[e5] != null && this.props.app_state.end_tokens[e5].includes(exchange_id)){
             return false
         }
+
+        if(this.props.app_state.created_crossexchanges[e5][exchange_id] != null || this.props.app_state.created_certificates[e5][exchange_id] != null){
+            return false
+        }
+
         return true
     }
 
@@ -1741,39 +1786,22 @@ class SearchedAccountPage extends Component {
 
     render_created_items(){
         var account_id = this.state.searched_account['id']
-        var items = this.filter_objects(this.props.app_state.account_post_history[account_id])
-        var middle = this.props.height - 170;
-        if(items != null){
-            if(items.length == 0){
-                items = ['0','1','2'];
-                return ( 
-                    <div style={{overflow: 'auto', }}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {items.map((item, index) => (
-                                <li style={{'padding': '2px 0px 2px 0px'}}>
-                                    {this.render_empty_object()}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                );
-            }else{
+        const objects = this.props.app_state.account_post_history[account_id] || []
+        const objects2 = this.props.app_state.account_post_history2[account_id] || []
+        const sorted = this.sortByAttributeDescending(objects.concat(objects2), 'timestamp')
+        var items = this.filter_objects(sorted)
+        var middle = this.props.height - 250;
+        if(items.length == 0){
+            items = ['0','1'];
+            if(this.state.loading_creations == true){
                 return(
-                    <div ref={this.creations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                            {items.map((item, index) => (
-                                <li style={{ 'padding': '5px 3px 5px 3px' }}>
-                                    <div key={index}>
-                                        {this.render_object(item, index)}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                    <div>
+                        {this.render_skeleton_object()}
+                        <div style={{height: 10}}/>
+                        {this.render_skeleton_object()}
                     </div>
                 )
             }
-        }else{
-            items = ['0','1','2'];
             return ( 
                 <div style={{overflow: 'auto', }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -1785,6 +1813,27 @@ class SearchedAccountPage extends Component {
                     </ul>
                 </div>
             );
+        }else{
+            return(
+                <div>
+                    <Virtuoso
+                        ref={this.creations_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '5px 3px 5px 3px' }}>
+                                    {this.render_object(item)}
+                                </div>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
+                </div>
+            )
         }
     }
 
@@ -1821,12 +1870,12 @@ class SearchedAccountPage extends Component {
         var item = this.format_item(object)
         var object_type = object['type']
         
-         if(this.get_object_type(object_type) == this.props.app_state.loc['1732']/* 'storefront bag object' */ || this.get_object_type(object_type) == this.props.app_state.loc['1741']/* 'custom object' */ || this.get_object_type(object_type) == this.props.app_state.loc['1731']/* 'shadow object' */ || this.is_post_anonymous(object)) {
-                return(
-                    <div>
-                        {this.render_empty_object()}
-                    </div>
-                )
+        if(this.get_object_type(object_type) == this.props.app_state.loc['1732']/* 'storefront bag object' */ || this.get_object_type(object_type) == this.props.app_state.loc['1741']/* 'custom object' */ || this.get_object_type(object_type) == this.props.app_state.loc['1731']/* 'shadow object' */ || this.is_post_anonymous(object)) {
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
         }
 
         return(
@@ -1835,8 +1884,8 @@ class SearchedAccountPage extends Component {
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div>
-                        <div style={{'padding': '0px 0px 0px 0px'}} >
-                            {this.render_title_or_image_title(object_type, item)}
+                        <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_object_clicked(object, object_type, item)}>
+                            {this.render_title_or_image_title(object_type, item, object)}
                         </div>
                         <div style={{'padding': '20px 0px 0px 0px'}}>
                             {this.render_detail_item('2', item['age'])}
@@ -1847,11 +1896,17 @@ class SearchedAccountPage extends Component {
         )
     }
 
-    render_title_or_image_title(object_type, item){
+    render_title_or_image_title(object_type, item, object){
         if(object_type == 31/* token_exchange */){
+            if(object['ipfs'].certificate_models != null){
+                return this.render_detail_item('3', item['id'])
+            }
+            else if(object['ipfs'].token_target != null){
+                return this.render_detail_item('3', item['id'])
+            }
             return(
                 <div>
-                    {this.render_detail_item('8', item['label'])}
+                    {this.render_detail_item('8', item['id'])}
                 </div>
             )
         }
@@ -1873,44 +1928,46 @@ class SearchedAccountPage extends Component {
 
 
     format_item(object){
-        var tags = object['ipfs'] == null ? ['Object'] : [].concat(object['ipfs'].entered_indexing_tags)
-        var title = object['ipfs'] == null ? 'Object ID' : object['ipfs'].entered_title_text
-        var age = object['block']
-        var time = object['timestamp']
-        var object_type = object['type']
+        return this.format_link_item(object, object['type'])
 
-        var default_img_obj = {'31':EndImg, '19':this.props.app_state.static_assets['music_label'], '20':this.props.app_state.static_assets['video_label'], '21':EndImg}
-        var image = default_img_obj[(object_type.toString())]
-        var name = object['ipfs'] == null ? 'Token' : object['ipfs'].entered_title_text
-        var symbol = object['ipfs'] == null ? 'tokens' : object['ipfs'].entered_symbol_text
-        if(object['ipfs'].token_image != null){
-            image = this.get_image_from_file(object['ipfs'].token_image)
-        }
-        if(object['ipfs'].album_art != null){
-            image = this.get_image_from_file(object['ipfs'].album_art)
-        }      
+        // var tags = object['ipfs'] == null ? ['Object'] : [].concat(object['ipfs'].entered_indexing_tags)
+        // var title = object['ipfs'] == null ? 'Object ID' : object['ipfs'].entered_title_text
+        // var age = object['block']
+        // var time = object['timestamp']
+        // var object_type = object['type']
+
+        // var default_img_obj = {'31':EndImg, '19':this.props.app_state.static_assets['music_label'], '20':this.props.app_state.static_assets['video_label'], '21':EndImg}
+        // var image = default_img_obj[(object_type.toString())]
+        // var name = object['ipfs'] == null ? 'Token' : object['ipfs'].entered_title_text
+        // var symbol = object['ipfs'] == null ? 'tokens' : object['ipfs'].entered_symbol_text
+        // if(object['ipfs'].token_image != null){
+        //     image = this.get_image_from_file(object['ipfs'].token_image)
+        // }
+        // if(object['ipfs'].album_art != null){
+        //     image = this.get_image_from_file(object['ipfs'].album_art)
+        // }
         
-        if(object_type == 31/* token_exchange */){
-            return{
-                'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
-                'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
-                'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
-            }
-        }
-        else if(object_type == 19 || object_type == 20 || object_type == 21){
-            return{
-                'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
-                'id':{'title':this.get_object_type(object_type)+' • '+object['id'], 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
-                'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
-            }
-        }
-        else{
-            return{
-                'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
-                'id':{'title':' • '+this.get_object_type(object_type)+' • '+object['id'], 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
-                'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
-            }
-        }
+        // if(object_type == 31/* token_exchange */){
+        //     return{
+        //         'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
+        //         'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
+        //         'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        //     }
+        // }
+        // else if(object_type == 19 || object_type == 20 || object_type == 21){
+        //     return{
+        //         'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
+        //         'id':{'title':this.get_object_type(object_type)+' • '+object['id'], 'details':title, 'size':'l', 'image':image, 'border_radius':'7px'},
+        //         'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        //     }
+        // }
+        // else{
+        //     return{
+        //         'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':[], 'when_tapped':''},
+        //         'id':{'title':' • '+this.get_object_type(object_type)+' • '+object['id'], 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img},
+        //         'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        //     }
+        // }
     }
 
     get_number_width(number){
@@ -1922,24 +1979,60 @@ class SearchedAccountPage extends Component {
         return last_two_digits+'%'
     }
 
+    when_object_clicked(object, type, item){
+        const accepted_types = [17, 18, 26, 27, 28, 36, 19, 20, 21]
+        if(accepted_types.includes(parseInt(type))){
+            this.props.show_dialog_bottomsheet({'object':object, 'type': type, 'item':item}, 'show_post_basic_details')
+        }
+    }
+
     get_object_type(object_type){
-        var object_id_obj = {'17':this.props.app_state.loc['1729']/* 'job object' */,'18':this.props.app_state.loc['1730']/* 'post object' */,'24':this.props.app_state.loc['1731']/* 'shadow object' */,'25':this.props.app_state.loc['1732']/* 'storefront bag object' */,'26':this.props.app_state.loc['1733']/* 'contractor object' */,'27':this.props.app_state.loc['1734']/* 'storefront item object' */,'28':this.props.app_state.loc['1735']/* 'storefront object' */,'29':this.props.app_state.loc['1736']/* 'account object' */,'30':this.props.app_state.loc['1737']/* 'contract object' */,'31':this.props.app_state.loc['1738']/* 'token exchange object' */,'32':this.props.app_state.loc['1739']/* 'consensus object' */,'33':this.props.app_state.loc['1740']/* 'subscription object' */,'34':this.props.app_state.loc['1741']/* 'custom object' */,'36':this.props.app_state.loc['1742']/* 'channel object' */, '19':this.props.app_state.loc['1770k']/* 'audio object' */, '20':this.props.app_state.loc['1770l']/* 'video object' */, '21':this.props.app_state.loc['1770j']/* 'nitro object' */}
+        var object_id_obj = {
+            '17':this.props.app_state.loc['1729']/* 'job object' */,
+            '18':this.props.app_state.loc['1730']/* 'post object' */,
+            '24':this.props.app_state.loc['1731']/* 'shadow object' */,
+            '25':this.props.app_state.loc['1732']/* 'storefront bag object' */,
+            '26':this.props.app_state.loc['1733']/* 'contractor object' */,
+            '27':this.props.app_state.loc['1734']/* 'storefront item object' */,
+            '28':this.props.app_state.loc['1735']/* 'poll object' */,
+            '29':this.props.app_state.loc['1736']/* 'account object' */,
+            '30':this.props.app_state.loc['1737']/* 'contract object' */,
+            '31':this.props.app_state.loc['1738']/* 'token exchange object' */,
+            '32':this.props.app_state.loc['1739']/* 'consensus object' */,
+            '33':this.props.app_state.loc['1740']/* 'subscription object' */,
+            '34':this.props.app_state.loc['1741']/* 'custom object' */,
+            '36':this.props.app_state.loc['1742']/* 'channel object' */, 
+            '19':this.props.app_state.loc['1770k']/* 'audio object' */, 
+            '20':this.props.app_state.loc['1770l']/* 'video object' */, 
+            '21':this.props.app_state.loc['1770j']/* 'nitro object' */
+        }
         return object_id_obj[(object_type.toString())]
     }
 
     filter_objects(items){
         var search = this.state.typed_search_id['creations']
-        if(search == null || items == null) return items;
+        if(search == null) return this.remove_duplicates(items);
         var return_items = []
         items.forEach(item => {
             var title = item['ipfs'].entered_title_text == null ? '' : item['ipfs'].entered_title_text
-            var object_type = this.get_object_type(item['type'])
             var id = item['id']
-            if(title.includes(search) || id.toString() == search){
+            if(title.toLowerCase().includes(search.toLowerCase()) || id.toString() == search){
                 return_items.push(item)
             }
         });
-        return return_items;
+        return this.remove_duplicates(return_items);
+    }
+
+    remove_duplicates(list){
+        var filtered = []
+        var item_mapping = {}
+        list.forEach(element => {
+            if(element != null && !filtered.includes(element) && item_mapping[element['id']] == null){
+                filtered.push(element)
+                item_mapping[element['id']] = element['id']
+            }
+        });
+        return filtered
     }
 
     get_image_from_file(ecid){
@@ -1966,6 +2059,468 @@ return data['data']
         return{'filetype':filetype, 'cid':cid, 'storage':storage, 'full':ecid}
     }
 
+    format_link_item(object, object_type){
+        if(object_type == 17/* jobs */){
+            return this.format_job_item(object)
+        }
+        else if(object_type == 30/* contracts */){
+            return this.format_contract_item(object)
+        }
+        else if(object_type == 32/* proposal */){
+            return this.format_proposal_item(object)
+        }
+        else if(object_type == 26/* contractor */){
+            return this.format_contractor_item(object)
+        }
+        else if(object_type == 33/* subscription */){
+            return this.format_subscription_item(object)
+        }
+        else if(object_type == 18/* post */){
+            return this.format_post_item(object)
+        }
+        else if(object_type == 36/* channel */){
+            return this.format_channel_item(object)
+        }
+        else if(object_type == 27/* storefront */){
+            return this.format_storefront_item(object)
+        }
+        // else if(object_type == 25/* bag */){
+        //     return this.format_bag_item(object)
+        // }
+        else if(object_type == 31/* token */){
+            return this.format_token_item(object)
+        }
+        else if(object_type == 19/* audioport */){
+            return this.format_audio_item(object)
+        }
+        else if(object_type == 20/* videoport */){
+            return this.format_video_item(object)
+        }
+        else if(object_type == 21/* nitro */){
+            return this.format_nitro_item(object)
+        }
+        else if(object_type == 28 /* 28(poll-object) */){
+            return this.format_poll_item(object)
+        }
+    }
+
+    format_job_item(object){
+        var tags = object['ipfs'] == null ? ['Job'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var title = object['ipfs'] == null ? 'Job ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        var responses_text = object['responses']+this.props.app_state.loc['2509c']/* ' responses' */
+
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
+        const title_space = is_socket_job == true ? ' • ' : '• '
+
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':title_space+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
+        }
+    }
+
+    format_contract_item(object){
+        var main_contract_tags = ['Contract', 'main', object['e5'] ]
+        var tags = object['ipfs'] == null ? (object['id'] == 2 ? main_contract_tags : ['Contract']) : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        var object_id = number_with_commas(object['id'])
+        if(this.should_hide_contract_info_because_private(object)){
+            object_id = '????'
+        }
+        var id_text = '• '+object_id
+        if(object['id'] == 2) id_text = '• '+'Main Contract'
+        if(this.should_hide_contract_info_because_private(object)){
+            sender = '????'
+        }
+        var number = number_with_commas(age)
+        var barwidth = this.get_number_width(age)
+        var relativepower = this.get_time_difference(time)
+        if(this.should_hide_contract_info_because_private(object)){
+            sender = '????'
+            id_text = '• ????'
+            object_id = '????'
+            number = '????'
+            relativepower = '????'
+        }
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':id_text+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':barwidth, 'number':`${number}`, 'barcolor':'', 'relativepower':relativepower, 'number_when_tapped': this.should_hide_contract_info_because_private(object) ? '????' : `${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
+        }
+    }
+
+    should_hide_contract_info_because_private(object){
+        if(object['ipfs'] == null){
+            return false
+        }
+        var should_show =  object['ipfs'].contract_type == 'personal' || object['ipfs'].contract_type == 'life';
+        if(this.props.app_state.user_account_id[object['e5']] == object['author']){
+            return false
+        }
+        return should_show
+    }
+
+    format_proposal_item(object){
+        var tags = object['ipfs'] == null ? ['Proposal'] : [].concat(object['ipfs'].entered_indexing_tags)
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
+        }
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return ' • '+this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (obj[sender] == null ? '' : ' • '+obj[sender])
+            return alias
+        }
+    }
+
+    format_nitro_item(object){
+        var tags = object['ipfs'] == null ? ['NitroPost'] : [].concat(object['ipfs'].entered_indexing_tags)
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var title = object['ipfs'] == null ? 'NitroPost ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        var author = sender
+        var default_image = EndImg
+        var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':number_with_commas(object['id'])+' • '+author, 'details':title, 'size':'l', 'image':image, 'border_radius':'7px', 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
+        }
+    }
+
+    format_subscription_item(object){
+        var tags = object['ipfs'] == null ? ['Subscription'] : [].concat(object['ipfs'].entered_indexing_tags)
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
+        }
+    }
+
+    format_contractor_item(object){
+        var tags = object['ipfs'] == null ? ['Contractor'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var title = object['ipfs'] == null ? 'Contractor ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
+        }
+    }
+
+    format_post_item(object){
+        var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var extra = ''
+        if(this.is_post_nsfw(object)){
+            extra = extra+'🔞'
+        }
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(extra != '') extra = extra + ' '
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        if(this.is_post_anonymous(object)){
+            sender = ''
+        }
+        var number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
+        var relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
+        var objectid = this.is_post_anonymous(object) ? '???' : number_with_commas(object['id'])
+
+        const is_socket_job = object['ipfs'].get_chain_or_indexer_job_object != null ? this.get_selected_item2(object['ipfs'].get_chain_or_indexer_job_object, 'e') == 1 : false
+
+        console.log('format_post_item', 'this.props.app_state.nitro_album_art', this.props.app_state.nitro_album_art)
+
+        const title_image = is_socket_job == true ? (this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']] == null ? this.props.app_state.static_assets['empty_image'] : this.props.app_state.nitro_album_art[object['event']['nitro_e5_id']]) : this.props.app_state.e5s[object['e5']].e5_img
+
+        const title_space = is_socket_job == true ? ' • ' : '• '
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':title_space+objectid+sender, 'details':extra+title, 'size':'l', 'title_image':title_image, 'border_radius':'0%', 'text_image_border_radius':'6px'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number}`, 'barcolor':'', 'relativepower':`${relativepower}`, 'number_when_tapped':this.is_post_anonymous(object) ? '???' : `${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
+        }
+    }
+
+    is_post_nsfw(object){
+        if(object['ipfs'].get_post_nsfw_option == null) return false
+        var selected_nsfw_option = this.get_selected_item2(object['ipfs'].get_post_nsfw_option, 'e')
+        if(selected_nsfw_option == 1) return true
+    }
+
+    is_post_preview_enabled(object){
+        if(object['ipfs'] == null || object['ipfs'].get_post_preview_option == null) return false
+        var selected_post_preview_option = this.get_selected_item2(object['ipfs'].get_post_preview_option, 'e')
+        if(selected_post_preview_option == 2) return true
+        return false
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
+    is_post_anonymous(object){
+        var is_anonymous = false;
+        if(object['ipfs'].get_post_anonymously_tags_option != null){
+            var option = this.get_selected_item2(object['ipfs'].get_post_anonymously_tags_option, 'e')
+            if(option == 1){
+                is_anonymous = true
+            }
+        }
+        return is_anonymous
+    }
+
+    format_channel_item(object){
+        var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var extra = ''
+        if(object['ipfs']['blocked_data'] != null){
+            extra = extra+'🗝️'
+        }
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        
+        if(extra != ''){
+            extra = extra+' '
+        }
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':extra+title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
+        }
+    }
+
+    format_storefront_item(object){
+        var tags = object['ipfs'] == null ? ['Storefront'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].selected_device_city != null && object['ipfs'].selected_device_city != ''){
+            tags = [object['ipfs'].selected_device_city].concat(tags)
+        }
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var title = object['ipfs'] == null ? 'Storefront ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}`}
+        }
+    }
+
+    format_audio_item(object){
+        var tags = object['ipfs'] == null ? ['Audiopost'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].audio_type != null){
+            tags = [object['ipfs'].audio_type].concat(tags)
+        }
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var extra = ''
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        
+        if(extra != '') extra = extra + ' '
+        var title = object['ipfs'] == null ? 'Audiopost ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        var author = object['ipfs'] == null ? sender : object['ipfs'].entered_author_text
+        if(this.is_post_anonymous(object)){
+            author = ''
+        }
+        var listing_type = object['ipfs'] == null ? 'Audiopost' :this.get_selected_item(object['ipfs'].get_listing_type_tags_option, 'e')
+        var default_image = this.props.app_state.static_assets['music_label']
+        var image = object['ipfs'] == null ? default_image :object['ipfs'].album_art
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':/* object['e5']+' • '+object['id']+' • '+ *//* listing_type+' • '+ */author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
+            'min':{'details': author+' • '+this.get_time_difference(time), 'title':extra+title, 'size':'l','image':image, 'border_radius':'7px',}
+        }
+    }
+
+    format_video_item(object){
+        var tags = object['ipfs'] == null ? ['Videopost'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(object['ipfs'].video_type != null){
+            tags = [object['ipfs'].video_type].concat(tags)
+        }
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var extra = ''
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(extra != '') extra = extra + ' '
+        var title = object['ipfs'] == null ? 'Videopost ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        var author = sender
+        if(this.is_post_anonymous(object)){
+            author = ''
+        }
+        var default_image = this.props.app_state.static_assets['video_label']
+        var image = object['ipfs'] == null ? default_image : object['ipfs'].album_art
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':author, 'details':extra+title, 'size':'l', 'image':image, 'border_radius':'7px', 'image_width':'auto', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
+        }
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            const obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+            var alias = (obj[sender] == null ? sender : obj[sender])
+            return alias
+        }
+    }
+
+    format_token_item(object){
+        var token_id = object['id']
+        var item = object
+        if(item['ipfs'].certificate_models != null){
+            return this.format_certificate_item(object)
+        }
+        else if(item['ipfs'].token_target != null){
+            return this.format_crossexchange_item(object)
+        }
+        var type = this.get_selected_item2(item['ipfs'].new_token_type_tags_object, 'e') == 1 ? this.props.app_state.loc['3078']/* END */: this.props.app_state.loc['3079']/* SPEND */
+        var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
+        active_tags = [this.get_object_type(object['type'])].concat(active_tags)
+        var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
+        var img = EndImg
+        if(token_id == 3){
+            name = item['e5']
+        } else if(token_id == 5){
+            name = item['e5'].replace('E','3')
+            img = SpendImg
+        }
+        var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
+        var image = img
+        if(item['ipfs']!= null){
+            if(item['ipfs'].token_image!= null){
+                image = item['ipfs'].token_image
+            }
+        }
+
+        var balance = item['balance']
+        var age = object['block']
+        var time = object['timestamp']
+        return{
+            'tags':{'active_tags':[].concat(active_tags), 'index_option':'indexed', 'when_tapped':'select_deselect_tag', 'selected_tags':this.props.app_state.explore_section_tags},
+            'id':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%', 'footer':this.get_object_views_text(object['e5_id']), 'image_width':'auto'},
+            'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` }
+        }
+    }
+
+    format_poll_item(object){
+        var tags = object['ipfs'] == null ? ['Poll'] : [].concat(object['ipfs'].entered_indexing_tags)
+        tags = [this.get_object_type(object['type'])].concat(tags)
+        var title = object['ipfs'] == null ? 'Poll ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
+            'min':{'details':object['e5']+' • '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%'}
+        }
+    }
+
+    format_certificate_item(object){
+        var tags = object['ipfs'] == null ? ['Certificate'] : [].concat(object['ipfs'].entered_indexing_tags)
+        tags = [this.props.app_state.loc['1770w']/* 'Certificate Object' */].concat(tags)
+        var title = object['ipfs'] == null ? 'Certificate ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
+        }
+    }
+
+    format_crossexchange_item(object){
+        var tags = object['ipfs'] == null ? ['Crossexchange'] : [].concat(object['ipfs'].entered_indexing_tags)
+        tags = [this.props.app_state.loc['1770x']/* 'Cross-Exchange Object' */].concat(tags)
+        var title = object['ipfs'] == null ? 'Crossexchange ID' : object['ipfs'].entered_title_text
+        var age = object['block']
+        var time = object['timestamp']
+        var sender = this.get_senders_name(this.state.searched_account['id'], object);
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':'• '+number_with_commas(object['id'])+sender, 'details':title, 'size':'l', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%', 'footer':this.get_object_views_text(object['e5_id'])},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
+            'min':{'details':'• '+number_with_commas(object['id'])+sender, 'title':title, 'size':'l', 'border_radius':'0%', 'title_image':this.props.app_state.e5s[object['e5']].e5_img, 'text_image_border_radius':'6px', 'footer':this.get_object_views_text(object['e5_id'])}
+        }
+    }
+
+    get_object_views_text(e5_id){
+        return
+    }
+
+
+
+
 
 
 
@@ -1975,76 +2530,140 @@ return data['data']
 
     render_activity_items(){
         var account_id = this.state.searched_account['id']
-        var account_activity = this.props.app_state.account_message_history[account_id]
-        var middle = this.props.height - 170;
+        const messages = this.props.app_state.account_message_history[account_id] || []
+        const messages2 = this.props.app_state.account_message_history2[account_id] || []
+        var account_activity = this.sortByAttributeDescending(messages.concat(messages2), 'time')
+        var middle = this.props.height - 250;
         if(account_activity != null && account_activity.length != 0 ){
             var items = account_activity;
             return(
                 <div>
-                    <div ref={this.activity_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                            {items.map((item, index) => (
-                                <li style={{ 'padding': '2px 0px 2px 0px' }}>
-                                    <div>
-                                        {this.render_message_item(item)}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    <Virtuoso
+                        ref={this.activity_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 0px 2px 0px' }}>
+                                    {this.render_stack_message_item(item)}
+                                </div>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }else{
-            var items = ['0','1','2'];
+            if(this.state.loading_activity == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{height: 5}}/>
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return ( 
-                <div style={{overflow: 'auto', }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px 0px 2px 0px'}}>
-                                {this.render_empty_message()}
-                            </li>
-                        ))}
-                    </ul>
+                <div style={{}}>
+                    {this.render_empty_views(2)}
                 </div>
             );
         }
     }
 
-    render_empty_message(){
-        return(
-            <div>
-                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    render_message_item(item){
-        var title = ''+this.get_sender_title_text2(item)
-        var time = ''+this.get_time_difference(item['time'])
-        var message = ''+this.format_message(item['message'])
-        var word_wrap_value = this.longest_word_length(message) > 53 ? 'break-all' : 'normal'
+    render_stack_message_item(item){
         var size = item['size'] == null ? '15px' : item['size'];
         var font = item['font'] == null ? this.props.app_state.font : item['font']
+        var word_wrap_value = this.longest_word_length(item['message']) > 53 ? 'break-all' : 'normal'
+        var line_color = item['sender'] == this.props.app_state.user_account_id[item['sender_e5']] ? this.props.theme['secondary_text_color'] : this.props.theme['send_receive_ether_background_color']
+        var text = this.format_message(item['message'])
+        // const parts = text.split(/(\d+)/g);
+        const parts = this.split_text(text);
+        const border_radii = '7px'
+        const background_color = this.props.theme['view_group_card_item_background']
         return(
             <div>
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}}>{title}</p>
-                        </div>
-                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{time}</p>
+                <div style={{'background-color': line_color,'margin': '0px 0px 0px 0px','border-radius': border_radii}}>
+                    <div style={{'background-color': this.props.theme['send_receive_ether_background_color'],'margin': '0px 1px 0px 0px','border-radius': border_radii}}>
+                        <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radii}}>
+                            <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                                <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                                    <p className="fw-bold" style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}}>{this.get_sender_title_text2(item)}</p>
+                                    </div>
+                                    <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                                    <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                                </div>
+                            </div>
+                            <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}}><Linkify options={this.linkifyOptions}  /* options={{target: '_blank'}} */>{
+                                parts.map((part, index) => {
+                                    const num = part.startsWith('e') ? parseInt(part.replace('e',''), 10): parseInt(part, 10);
+                                    const isId = !isNaN(num) && num > 1000 && part.startsWith('e') && (part.match(/e/g) || []).length == 1;
+                                    const is_account_link = isNaN(part.replace('@', '')) && part.startsWith('@') && (part.match(/@/g) || []).length == 1;
+                                    if (isId || is_account_link) {
+                                        return (
+                                            <span key={index} style={{'width': 'fit-content', 'background-color': this.props.theme['tag_background_color'], 'border-radius': '7px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}}>
+                                                <span style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 3px 11px 3px 11px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{part}</span>
+                                            </span>
+                                        );
+                                    }
+                                    return <span key={index}>{part}</span>;
+                                })
+                            }</Linkify></p>
+                            {this.render_markdown_in_message_if_any(item)}
+                            {this.render_images_if_any(item)}
                         </div>
                     </div>
-                    <p style={{'font-size': size,'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-break': word_wrap_value}}><Linkify options={{target: '_blank'}}>{message}</Linkify></p>
-                    {this.render_images_if_any(item)}
                 </div>
+                {this.render_pdfs_if_any(item)}
+                {this.show_moderator_note_for_comment_if_any(item)}
             </div>
         )
+        
+    }
+
+    linkifyOptions = {
+        render: {
+            url: ({ attributes, content }) => (
+                <a
+                {...attributes}
+                onClick={(e) => this.handleLinkClick(e.target.href, e)}
+                style={{ color: this.props.theme['secondary_text_color'], cursor: "pointer" }}
+                className="custom-link"
+                >
+                {content}
+                </a>
+            )
+        }
+    };
+
+    handleLinkClick = (url, e) => {
+        e.preventDefault(); // stop normal navigation
+        this.props.show_view_iframe_link_bottomsheet(url)
+    };
+
+    split_text(text){
+        if(text == null) return []
+        return this.mask_profane_words(text).match(/\s+|\S+/g) || []
+    }
+
+    mask_profane_words(string){
+        if(string == null) return;
+        var result_string = string
+        var all_censored_phrases = this.props.app_state.censored_keyword_phrases == null ? [] : this.props.app_state.censored_keyword_phrases
+        // var leetspeek = result_string.match(/\b[a-zA-Z]*[0-9@!$%^&*()_\-+=?/\\#.,';:"`~|<>]+[a-zA-Z]*\b/g) || []
+        // leetspeek.forEach(phrase => {
+        //     if(isNaN(phrase)) result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+        // });
+        all_censored_phrases.forEach(phrase_ => {
+            const phrase = phrase_
+            if(result_string.includes(phrase) && phrase.includes(' ')){
+                result_string = result_string.replace(phrase, phrase[0] + '?'.repeat(phrase.length - 1))
+            }
+        });
+        return result_string
     }
 
     longest_word_length(text) {
@@ -2078,6 +2697,209 @@ return data['data']
                 </div>
             )
         }
+    }
+
+    render_markdown_in_message_if_any(item){
+        if(item['markdown'] != null && item['markdown'] != ''){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('13', {'source':item['markdown']})}
+                </div>
+            )
+        }
+    }
+
+    render_pdfs_if_any(item){
+        if(item.type == 'image' && item['pdf-data'] != null && item['pdf-data'].length > 0){
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    {this.render_files_part(item['pdf-data'])}
+                    <div style={{height:5}}/>
+                </div>
+            )
+        }
+    }
+
+    render_files_part(items){
+        if(items.length == 0) return;
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_uploaded_file_item_clicked(item, index)}>
+                            {this.render_uploaded_comment_file(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_uploaded_file_item_clicked(item){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null || this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        if(data != null){
+            if(data['type'] == 'audio'){
+                this.props.play_individual_track(item)
+            }
+            else if(data['type'] == 'video'){
+                this.props.play_individual_video(item, data['width'], data['height'])
+            }
+            else if(data['type'] == 'pdf'){
+                this.props.when_pdf_file_opened(item)
+            }
+            else if(data['type'] == 'zip'){
+                this.props.when_zip_file_opened(item)
+            }
+        }
+    }
+
+    render_uploaded_comment_file(item, index){
+        var ecid_obj = this.get_cid_split(item)
+        if(this.props.app_state.uploaded_data[ecid_obj['filetype']] == null) return
+        var data = this.props.app_state.uploaded_data[ecid_obj['filetype']][ecid_obj['full']]
+        const minified = true;
+        
+        if(data != null){
+            if(data['type'] == 'audio'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail'] == '' ? this.props.app_state.static_assets['music_label'] : data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'video'){
+                var video = data['data']
+                var font_size = ['15px', '12px', 19];
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
+                var title = data['name']
+                var video_height = "50"
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    font_size = ['12px', '10px', 16];
+                    video_height = "40"
+                }
+
+                if(this.props.app_state.video_thumbnails[ecid_obj['full']] != null){
+                    var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }else{
+                    var thumbnail = this.props.app_state.static_assets['video_label']
+                    return(
+                        <div>
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':size, 'image':thumbnail, 'border_radius':'15%', 'image_width':'auto'})}
+                        </div>
+                    )
+                }
+            }
+            else if(data['type'] == 'pdf'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = data['thumbnail']
+                 if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+            else if(data['type'] == 'zip'){
+                var formatted_size = this.format_data_size(data['size'])
+                var fs = formatted_size['size']+' '+formatted_size['unit']
+                var details = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */;
+                var title = data['name']
+                var size = 'l'
+                var thumbnail = this.props.app_state.static_assets['zip_file']
+                if(minified == true){
+                    details = fs
+                    title = start_and_end(title)
+                    size = 's'
+                }
+                return(
+                    <div>
+                        {this.render_detail_item('8', {'details':details,'title':title, 'size':size, 'image':thumbnail, 'border_radius':'15%'})}
+                    </div>
+                )
+            }
+        }
+    }
+
+    show_moderator_note_for_comment_if_any(item){
+        if(this.props.app_state.moderator_notes_by_my_following.length == 0 || item['sender'] == this.props.app_state.user_account_id[item['sender_e5']]) return;
+        var note_to_apply = []
+        for(var n=0; n<this.props.app_state.moderator_notes_by_my_following.length; n++){
+            const focused_note = this.props.app_state.moderator_notes_by_my_following[n]
+            var hit_count = 0
+            for(var k=0; k<focused_note['keywords'].length; k++){
+                const keyword_target = focused_note['keywords'][k]
+                if(item['message'].includes(keyword_target)){
+                    hit_count ++
+                }
+                else if(item['markdown'] != null && item['markdown'].includes(keyword_target)){
+                    hit_count++
+                }
+            }
+
+            if(((focused_note['type'] == 'all' && hit_count == focused_note['keywords'].length) || (focused_note['type'] == 'one' && hit_count != 0)) && focused_note['visibility_end_time'] >= (Date.now()/1000)){
+                note_to_apply.push(focused_note)
+            }
+        }
+        if(note_to_apply.length != 0){
+            const identifier = item['message_id']
+            const note_index = this.state.note_index == null || this.state.note_index[identifier] == null ? 0 : this.state.note_index[identifier];
+            const note_count_message = `(${note_index+1}/${note_to_apply.length})`
+            return(
+                <div>
+                    <div style={{height:5}}/>
+                    <div onClick={() => this.update_note_index(note_to_apply, identifier)}>
+                        {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1593is']/* '⚠️ Moderator Note $' */.replace('$', note_count_message), 'details':note_to_apply[note_index]['message']})}
+                        {this.props.render_files_part(note_to_apply[note_index]['entered_file_objects'])}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    update_note_index(note_to_apply, identifier){
+        var clone = this.state.note_index == null ? {} : structuredClone(this.state.note_index)
+        if(clone[identifier] == null){
+            clone[identifier] = 0
+        }
+        if(clone[identifier] + 1 == note_to_apply.length){
+            clone[identifier] = 0
+        }
+        else{
+            clone[identifier] ++
+        }
+        this.setState({note_index: clone})
     }
 
 
@@ -2114,30 +2936,52 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.withdraws_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_withdraws_item_clicked(index)}>
+                // <div ref={this.withdraws_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index} onClick={() => this.when_withdraws_item_clicked(index)}>
+                //                     {this.render_withdraws_event_item(item, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        ref={this.withdraws_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_withdraws_item_clicked(index, item)}>
                                     {this.render_withdraws_event_item(item, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_withdraws_item_clicked(index){
-        if (this.state.selected_withdraws_event_item == index) {
-            this.setState({ selected_withdraws_event_item: null })
-        } else {
-            this.setState({ selected_withdraws_event_item: index })
-        }
+    when_withdraws_item_clicked(index, item){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_withdraws_event_item(item, index, true), 'item':item}, 'render_event_item_details')
+        return;
+
+        // if (this.state.selected_withdraws_event_item == index) {
+        //     this.setState({ selected_withdraws_event_item: null })
+        // } else {
+        //     this.setState({ selected_withdraws_event_item: index })
+        // }
     }
 
-    render_withdraws_event_item(item, index){
+    render_withdraws_event_item(item, index, return_full=false){
         var amount = item.returnValues.p5
         var e5 = this.state.searched_account['e5']
 
@@ -2147,13 +2991,13 @@ return data['data']
         }
         var gas_transactions = amount == 0 ? 0 : Math.floor((amount/gas_price)/2_300_000)
 
-        if (this.state.selected_withdraws_event_item == index) {
+        if (this.state.selected_withdraws_event_item == index || return_full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1745']/* 'transaction ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }}/>
+                    <div style={{ height: 5 }}/>
                     {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p3), 'title': 'target', 'size': 'l' })}
-                    <div style={{ height: 2 }}/>
+                    <div style={{ height: 5 }}/>
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1746']/* 'Amount in Wei' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2738cx']/* wei */, })}
@@ -2162,12 +3006,11 @@ return data['data']
 
                         
                     </div>
-                    <div style={{ height: 2 }}/>
+                    <div style={{ height: 5 }}/>
 
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }}/>
+                    <div style={{ height: 5 }}/>
                     {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -2226,30 +3069,52 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.pending_withdraws_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_pending_withdraws_item_clicked(index)}>
+                // <div ref={this.pending_withdraws_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index} onClick={() => this.when_pending_withdraws_item_clicked(index)}>
+                //                     {this.render_pending_withdraws_event_item(item, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        ref={this.pending_withdraws_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_pending_withdraws_item_clicked(index, item)}>
                                     {this.render_pending_withdraws_event_item(item, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_pending_withdraws_item_clicked(index){
-        if (this.state.selected_pending_withdraws_event_item == index) {
-            this.setState({ selected_pending_withdraws_event_item: null })
-        } else {
-            this.setState({ selected_pending_withdraws_event_item: index })
-        }
+    when_pending_withdraws_item_clicked(index, item){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_pending_withdraws_event_item(item, index, true), 'item':item}, 'render_event_item_details')
+        return;
+
+        // if (this.state.selected_pending_withdraws_event_item == index) {
+        //     this.setState({ selected_pending_withdraws_event_item: null })
+        // } else {
+        //     this.setState({ selected_pending_withdraws_event_item: index })
+        // }
     }
 
-    render_pending_withdraws_event_item(item, index){
+    render_pending_withdraws_event_item(item, index, full=false){
         var amount = item.returnValues.p2
         var e5 = this.state.searched_account['e5']
 
@@ -2259,7 +3124,7 @@ return data['data']
         }
         var gas_transactions = amount == 0 ? 0 : Math.floor((amount/gas_price)/2_300_000)
 
-        if (this.state.selected_pending_withdraws_event_item == index) {
+        if (this.state.selected_pending_withdraws_event_item == index || full == true) {
             return (
                 <div>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
@@ -2268,12 +3133,11 @@ return data['data']
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1747']/* 'Amount in Ether' */, 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': this.props.app_state.loc['2738cw']/* ether */, })}
 
                     </div>
-                    <div style={{ height: 2 }}/>
+                    <div style={{ height: 5 }}/>
 
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p3), 'details': 'Age', 'size': 'l' })}
-                    <div style={{ height: 2 }}/>
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p3), 'details': this.props.app_state.loc['1770z']/* 'Age' */, 'size': 'l' })}
+                    <div style={{ height: 5 }}/>
                     {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
@@ -2298,7 +3162,7 @@ return data['data']
 
     render_transactions_item_logs(){
         var items = this.transactions_filter(this.state.searched_account['transactions'])
-        var middle = this.props.height - 170;
+        var middle = this.props.height - 250;
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -2320,67 +3184,86 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.runs_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index}>
+                // <div ref={this.runs_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index}>
+                //                     {this.render_transactions_event_item(item, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        ref={this.runs_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}>
                                     {this.render_transactions_event_item(item, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_transactions_item_clicked(index){
-        if (this.state.selected_transactions_event_item == index) {
-            this.setState({ selected_transactions_event_item: null })
-        } else {
-            this.setState({ selected_transactions_event_item: index })
-        }
+    when_transactions_item_clicked(index, item){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_transactions_event_item(item, index, true), 'item':item}, 'render_event_item_details')
+        return;
+
+        // if (this.state.selected_transactions_event_item == index) {
+        //     this.setState({ selected_transactions_event_item: null })
+        // } else {
+        //     this.setState({ selected_transactions_event_item: index })
+        // }
     }
 
-    render_transactions_event_item(item, index){
+    render_transactions_event_item(item, index, full=false){
         var estimated_gas_consumed = item.returnValues.p5
         var msg_value = item.returnValues.p6
         var gas_price_paid = item.returnValues.p7
-        if (this.state.selected_transactions_event_item == index) {
+        if (this.state.selected_transactions_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_transactions_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': item.returnValues.p3, 'details': this.props.app_state.loc['1750']/* 'Transaction ID' */, 'size': 'l' })}
-                    </div>
-                    <div style={{ height: 2 }}/>
+                    {this.render_detail_item('3', { 'title': item.returnValues.p3, 'details': this.props.app_state.loc['1750']/* 'Transaction ID' */, 'size': 'l' })}
+                    <div style={{ height: 5 }}/>
                     {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1751']/* 'Transaction Stack Size' */, 'size': 'l' })}
-                    <div style={{ height: 2 }}/>
+                    <div style={{ height: 5 }}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1752']/* 'Estimated Gas Consumed' */, 'number':estimated_gas_consumed, 'relativepower':'Gas'})}>
-                            {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1752']/* 'Estimated Gas Consumed' */, 'subtitle': this.format_power_figure(estimated_gas_consumed), 'barwidth': this.calculate_bar_width(estimated_gas_consumed), 'number': this.format_account_balance_figure(estimated_gas_consumed), 'barcolor': '', 'relativepower': 'Gas', })}
+                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1752']/* 'Estimated Gas Consumed' */, 'number':estimated_gas_consumed, 'relativepower':this.props.app_state.loc['1770bi']/* 'Gas' */})}>
+                            {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1752']/* 'Estimated Gas Consumed' */, 'subtitle': this.format_power_figure(estimated_gas_consumed), 'barwidth': this.calculate_bar_width(estimated_gas_consumed), 'number': this.format_account_balance_figure(estimated_gas_consumed), 'barcolor': '', 'relativepower': this.props.app_state.loc['1770bi']/* 'Gas' */, })}
                         </div>
 
-                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1753']/* Included Wei' */, 'number':msg_value, 'relativepower':'Wei'})}>
-                            {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1753']/* Included Wei' */, 'subtitle': this.format_power_figure(msg_value), 'barwidth': this.calculate_bar_width(msg_value), 'number': this.format_account_balance_figure(msg_value), 'barcolor': '', 'relativepower': 'Wei', })}
+                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1753']/* Included Wei' */, 'number':msg_value, 'relativepower':this.props.app_state.loc['1770bj'] /* 'Wei' */})}>
+                            {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1753']/* Included Wei' */, 'subtitle': this.format_power_figure(msg_value), 'barwidth': this.calculate_bar_width(msg_value), 'number': this.format_account_balance_figure(msg_value), 'barcolor': '', 'relativepower': this.props.app_state.loc['1770bj'] /* 'Wei' */, })}
                         </div>
 
-                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1754']/* 'Gas Price Paid' */, 'number':gas_price_paid, 'relativepower':'Wei'})}>
-                            {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1754']/* 'Gas Price Paid' */, 'subtitle': this.format_power_figure(gas_price_paid), 'barwidth': this.calculate_bar_width(gas_price_paid), 'number': this.format_account_balance_figure(gas_price_paid), 'barcolor': '', 'relativepower': 'Wei', })}
+                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1754']/* 'Gas Price Paid' */, 'number':gas_price_paid, 'relativepower':this.props.app_state.loc['1770bj'] /* 'Wei' */})}>
+                            {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1754']/* 'Gas Price Paid' */, 'subtitle': this.format_power_figure(gas_price_paid), 'barwidth': this.calculate_bar_width(gas_price_paid), 'number': this.format_account_balance_figure(gas_price_paid), 'barcolor': '', 'relativepower': this.props.app_state.loc['1770bj'] /* 'Wei' */, })}
                         </div>
                     </div>
-                    <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p8), 'details': 'Age', 'size': 'l' })}
-                    <div style={{ height: 2 }}/>
+                    <div style={{ height: 5 }}/>
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p8), 'details': this.props.app_state.loc['1770z']/* 'Age' */, 'size': 'l' })}
+                    <div style={{ height: 5 }}/>
                     {this.render_detail_item('3', { 'title': item.returnValues.p9, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: 2 }}/>
+                    <div style={{ height: 5 }}/>
                     {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p10), 'title':this.props.app_state.loc['1755'] /* 'Coinbase (Miner)' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_transactions_item_clicked(index)}>
+                <div onClick={() => this.when_transactions_item_clicked(index, item)}>
                     {this.render_detail_item('3', { 'title': this.props.app_state.loc['1750']/* 'Transaction ID' */+': '+item.returnValues.p3, 'details': this.format_account_balance_figure(estimated_gas_consumed)+' gas', 'size': 'l' })}
                 </div>
             )
@@ -2412,7 +3295,7 @@ return data['data']
 
     render_pay_subscription_item_logs(){
         var items = this.pay_subscription_filter(this.state.searched_account['pay_subscription'])
-        var middle = this.props.height - 170;
+        var middle = this.props.height - 250;
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -2434,52 +3317,70 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.payments_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index}>
+                // <div ref={this.payments_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index}>
+                //                     {this.render_pay_subscription_event_item(item, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        ref={this.payments_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}>
                                     {this.render_pay_subscription_event_item(item, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_pay_subscription_item_clicked(index){
-        if (this.state.selected_pay_subscription_event_item == index) {
-            this.setState({ selected_pay_subscription_event_item: null })
-        } else {
-            this.setState({ selected_pay_subscription_event_item: index })
-        }
+    when_pay_subscription_item_clicked(index, item){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_pay_subscription_event_item(item, index, true), 'item':item}, 'render_event_item_details')
+        return;
+        // if (this.state.selected_pay_subscription_event_item == index) {
+        //     this.setState({ selected_pay_subscription_event_item: null })
+        // } else {
+        //     this.setState({ selected_pay_subscription_event_item: index })
+        // }
     }
 
-    render_pay_subscription_event_item(item, index){
+    render_pay_subscription_event_item(item, index, full=false){
         var number = item.returnValues.p3
-        if (this.state.selected_pay_subscription_event_item == index) {
+        if (this.state.selected_pay_subscription_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_pay_subscription_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 'l' })}
-                    </div>
-                    <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2807']/* 'Time Units: ' */, 'number':number, 'relativepower':'units'})}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2807']/* 'Time Units: ' */, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
+                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2807']/* 'Time Units: ' */, 'number':number, 'relativepower':this.props.app_state.loc['1770bd']/* 'units' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2807']/* 'Time Units: ' */, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1770bd']/* 'units' */, })}
                     </div>
 
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['1770z']/* 'Age' */, 'size': 'l' })}
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_pay_subscription_item_clicked(index)}>
+                <div onClick={() => this.when_pay_subscription_item_clicked(index, item)}>
                     {this.render_detail_item('3', { 'title': this.props.app_state.loc['1756']/* 'Subscription ID' */+': '+(item.returnValues.p1), 'details': this.format_account_balance_figure(number), 'size': 'l' })}
                 </div>
             )
@@ -2509,7 +3410,7 @@ return data['data']
 
     render_cancellations_item_logs(){
         var items = this.cancellations_filter(this.state.searched_account['cancel_subscription'])
-        var middle = this.props.height - 170;
+        var middle = this.props.height - 250;
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -2531,52 +3432,71 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.cancellations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index}>
+                // <div ref={this.cancellations_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index}>
+                //                     {this.render_cancellations_event_item(item, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        ref={this.cancellations_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}>
                                     {this.render_cancellations_event_item(item, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_cancellations_item_clicked(index){
-        if (this.state.selected_cancellations_event_item == index) {
-            this.setState({ selected_cancellations_event_item: null })
-        } else {
-            this.setState({ selected_cancellations_event_item: index })
-        }
+    when_cancellations_item_clicked(index, item){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_cancellations_event_item(item, index, true), 'item':item}, 'render_event_item_details')
+        return;
+
+        // if (this.state.selected_cancellations_event_item == index) {
+        //     this.setState({ selected_cancellations_event_item: null })
+        // } else {
+        //     this.setState({ selected_cancellations_event_item: index })
+        // }
     }
 
-    render_cancellations_event_item(item, index){
+    render_cancellations_event_item(item, index, full=false){
         var number = item.returnValues.p3
-        if (this.state.selected_cancellations_event_item == index) {
+        if (this.state.selected_cancellations_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_cancellations_item_clicked(index)}>
-                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 'l' })}
-                    </div>
-                    <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'number':number, 'relativepower': 'units'})}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
+                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'number':number, 'relativepower':this.props.app_state.loc['1770bd']/* 'units' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1770bd']/* 'units' */, })}
                     </div>
 
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['1770z']/* 'Age' */, 'size': 'l' })}
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_cancellations_item_clicked(index)}>
+                <div onClick={() => this.when_cancellations_item_clicked(index, item)}>
                     {this.render_detail_item('3', { 'title': this.props.app_state.loc['1756']/* 'Subscription ID' */+': '+(item.returnValues.p1), 'details': this.format_account_balance_figure(number)+' units.', 'size': 'l' })}
                 </div>
             )
@@ -2606,7 +3526,7 @@ return data['data']
 
     render_entry_item_logs(){
         var items = this.entry_filter(this.state.searched_account['enter_contract'])
-        var middle = this.props.height - 170;
+        var middle = this.props.height - 250;
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -2628,22 +3548,44 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.entries_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_entry_item_clicked(index)}>
+                // <div ref={this.entries_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index} onClick={() => this.when_entry_item_clicked(index)}>
+                //                     {this.render_entry_event_item(item, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        ref={this.entries_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => this.when_entry_item_clicked(index, item)}>
                                     {this.render_entry_event_item(item, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_entry_item_clicked(index){
+    when_entry_item_clicked(index, item){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_entry_event_item(item, index, true), 'item':item}, 'render_event_item_details')
+        return;
+
         if (this.state.selected_entry_event_item == index) {
             this.setState({ selected_entry_event_item: null })
         } else {
@@ -2651,25 +3593,23 @@ return data['data']
         }
     }
 
-    render_entry_event_item(item, index){
-        if (this.state.selected_entry_event_item == index) {
+    render_entry_event_item(item, index, full=false){
+        if (this.state.selected_entry_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_diff((Date.now() / 1000) - item.returnValues.p4), 'details': 'Entry Expiry', 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_diff((Date.now() / 1000) - item.returnValues.p4), 'details':this.props.app_state.loc['1770bh']/* 'Entry Expiry' */, 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1770z']/* 'Age' */, 'size': 'l' })}
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details':this.props.app_state.loc['1744'] /* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details':this.props.app_state.loc['1759'] /* 'Contract ID' */, 'size': 'l' })}
-                    {/* <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
         }
@@ -2697,7 +3637,7 @@ return data['data']
 
     render_exit_item_logs(){
         var items = this.exit_filter(this.state.searched_account['exit_contract'])
-        var middle = this.props.height - 170;
+        var middle = this.props.height - 250;
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -2719,46 +3659,65 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.exits_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_exit_item_clicked(index)}>
+                // <div ref={this.exits_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index} onClick={() => this.when_exit_item_clicked(index)}>
+                //                     {this.render_exit_event_item(item, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        ref={this.exits_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => this.when_exit_item_clicked(index, item)}>
                                     {this.render_exit_event_item(item, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_exit_item_clicked(index){
-        if (this.state.selected_exit_event_item == index) {
-            this.setState({ selected_exit_event_item: null })
-        } else {
-            this.setState({ selected_exit_event_item: index })
-        }
+    when_exit_item_clicked(index, item){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_exit_event_item(item, index, true), 'item':item}, 'render_event_item_details')
+        return;
+        // if (this.state.selected_exit_event_item == index) {
+        //     this.setState({ selected_exit_event_item: null })
+        // } else {
+        //     this.setState({ selected_exit_event_item: index })
+        // }
     }
 
-    render_exit_event_item(item, index){
-        if (this.state.selected_exit_event_item == index) {
+    render_exit_event_item(item, index, full=false){
+        if (this.state.selected_exit_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1770z']/* 'Age' */, 'size': 'l' })}
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 'l' })}
-                    {/* <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
         }
@@ -2786,7 +3745,7 @@ return data['data']
 
     render_vote_item_logs(){
         var items = this.vote_filter(this.state.searched_account['vote'])
-        var middle = this.props.height - 170;
+        var middle = this.props.height - 250;
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -2808,34 +3767,55 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.votes_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_vote_item_clicked(index)}>
+                // <div ref={this.votes_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto',  }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index} onClick={() => this.when_vote_item_clicked(index)}>
+                //                     {this.render_vote_event_item(item, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        ref={this.votes_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => this.when_vote_item_clicked(index, item)}>
                                     {this.render_vote_event_item(item, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_vote_item_clicked(index){
-        if (this.state.selected_vote_event_item == index) {
-            this.setState({ selected_vote_event_item: null })
-        } else {
-            this.setState({ selected_vote_event_item: index })
-        }
+    when_vote_item_clicked(index, item){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_vote_event_item(item, index, true), 'item':item}, 'render_event_item_details')
+        return;
+        // if (this.state.selected_vote_event_item == index) {
+        //     this.setState({ selected_vote_event_item: null })
+        // } else {
+        //     this.setState({ selected_vote_event_item: index })
+        // }
     }
 
-    render_vote_event_item(item, index){
+    render_vote_event_item(item, index, full=false){
         var obj = {'1':'Yes!', '2':'Wait..', '3':'No.'}
         var vote = obj[item.returnValues.p4]
 
-        if (this.state.selected_vote_event_item == index) {
+        if (this.state.selected_vote_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['1760']/* 'Contract ID: ' */+item.returnValues.p1, 'size': 'l' })}
@@ -2845,14 +3825,12 @@ return data['data']
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 'l' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['1762']/* 'Contract ID: ' */+item.returnValues.p1, 'size': 'l' })}
-                    {/* <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
         }
@@ -2879,7 +3857,7 @@ return data['data']
 
     render_swap_item_logs(){
         var items = this.swap_filter(this.state.searched_account['exchange_ratio'])
-        var middle = this.props.height - 170;
+        var middle = this.props.height - 250;
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -2901,31 +3879,52 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.swaps_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index}>
+                // <div ref={this.swaps_ref} onScroll={event => this.handleScroll(event)} style={{ overflow: 'auto', }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index}>
+                //                     {this.render_swap_event_item(item, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        ref={this.swaps_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}>
                                     {this.render_swap_event_item(item, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_swap_item_clicked(index){
-        if (this.state.selected_swap_event_item == index) {
-            this.setState({ selected_swap_event_item: null })
-        } else {
-            this.setState({ selected_swap_event_item: index })
-        }
+    when_swap_item_clicked(index, item){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_swap_event_item(item, index, true), 'item':item}, 'render_event_item_details')
+        return;
+        // if (this.state.selected_swap_event_item == index) {
+        //     this.setState({ selected_swap_event_item: null })
+        // } else {
+        //     this.setState({ selected_swap_event_item: index })
+        // }
     }
 
-    render_swap_event_item(item, index){
-        var action_obj = {'0':'Buy', '1':'Sell'}
+    render_swap_event_item(item, index, full=false){
+        var action_obj = {'0':this.props.app_state.loc['1770bf']/* 'Buy' */, '1':this.props.app_state.loc['1770bg']/* 'Sell' */}
         var action = action_obj[item.returnValues.p2]
         var token_exchange_liquidity = item.returnValues.p4
         var updated_exchange_ratio_x = item.returnValues.p5
@@ -2936,49 +3935,46 @@ return data['data']
         var exchange_id = item.returnValues.p1
         var thumbnail = this.props.app_state.token_thumbnail_directory[e5] == null ? this.props.app_state.static_assets['end_img'] : (this.props.app_state.token_thumbnail_directory[e5][exchange_id] == null ? this.props.app_state.static_assets['end_img'] : this.props.app_state.token_thumbnail_directory[e5][exchange_id])
 
-        if (this.state.selected_swap_event_item == index) {
+        if (this.state.selected_swap_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_swap_item_clicked(index)}>
-                        {this.render_detail_item('8', { 'title': (exchange_id), 'details': this.props.app_state.loc['1763']/* 'Exchange ID' */, 'size': 'l', 'image':thumbnail, 'border_radius':'5px' })}
-                    </div>
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': action, 'details': 'Action', 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('8', { 'title': (exchange_id), 'details': this.props.app_state.loc['1763']/* 'Exchange ID' */, 'size': 'l', 'image':thumbnail, 'border_radius':'5px' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': action, 'details': this.props.app_state.loc['1770be']/* 'Action' */, 'size': 'l' })}
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'number':amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1765']/* 'Updted Token Exchange Liquidity' */, 'number':token_exchange_liquidity, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1765']/* 'Updted Token Exchange Liquidity' */, 'subtitle': this.format_power_figure(token_exchange_liquidity), 'barwidth': this.calculate_bar_width(token_exchange_liquidity), 'number': this.format_account_balance_figure(token_exchange_liquidity), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1766']/* 'Updated Exchange Ratio X' */, 'number':updated_exchange_ratio_x, 'relativepower':'units'})}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1766']/* 'Updated Exchange Ratio X' */, 'subtitle': this.format_power_figure(updated_exchange_ratio_x), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_x), 'number': this.format_account_balance_figure(updated_exchange_ratio_x), 'barcolor': '', 'relativepower': 'units', })}
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1766']/* 'Updated Exchange Ratio X' */, 'number':updated_exchange_ratio_x, 'relativepower':this.props.app_state.loc['1770bd']/* 'units' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1766']/* 'Updated Exchange Ratio X' */, 'subtitle': this.format_power_figure(updated_exchange_ratio_x), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_x), 'number': this.format_account_balance_figure(updated_exchange_ratio_x), 'barcolor': '', 'relativepower': this.props.app_state.loc['1770bd']/* 'units' */, })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1767']/* 'Updated Exchange Ratio Y' */, 'number':updated_exchange_ratio_y, 'relativepower':'units'})}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1767']/* 'Updated Exchange Ratio Y' */, 'subtitle': this.format_power_figure(updated_exchange_ratio_y), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_y), 'number': this.format_account_balance_figure(updated_exchange_ratio_y), 'barcolor': '', 'relativepower': 'units', })}
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1767']/* 'Updated Exchange Ratio Y' */, 'number':updated_exchange_ratio_y, 'relativepower':this.props.app_state.loc['1770bd']/* 'units' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1767']/* 'Updated Exchange Ratio Y' */, 'subtitle': this.format_power_figure(updated_exchange_ratio_y), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_y), 'number': this.format_account_balance_figure(updated_exchange_ratio_y), 'barcolor': '', 'relativepower': this.props.app_state.loc['1770bd']/* 'units' */, })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     {this.render_detail_item('3', {'title':this.format_exchange_ratio(updated_exchange_ratio_x, updated_exchange_ratio_y), 'details':this.props.app_state.loc['1768']/* 'Updated Exchange Ratios X:Y' */, 'size':'l'},)}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p9), 'details': 'Age', 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p9), 'details': this.props.app_state.loc['1770z']/* 'Age' */, 'size': 'l' })}
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p10, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_swap_item_clicked(index)}>
-                    {this.render_detail_item('8', { 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.searched_account['e5']+item.returnValues.p1], 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l', 'image':thumbnail, 'border_radius':'5px' })}
+                <div onClick={() => this.when_swap_item_clicked(index, item)}>
+                    {this.render_detail_item('8', { 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.searched_account['e5']+item.returnValues.p1], 'details': this.format_account_balance_figure(amount)+' '+(this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1] || this.props.app_state.loc['1770bc']/* 'tokens' */), 'size': 'l', 'image':thumbnail, 'border_radius':'5px' })}
                     
                 </div>
             )
@@ -3021,7 +4017,7 @@ return data['data']
 
     render_transfers_item_logs(){
         var items = this.transfers_filter(this.state.searched_account['tokens'])
-        var middle = this.props.height - 170;
+        var middle = this.props.height - 250;
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -3043,66 +4039,85 @@ return data['data']
             )
         } else {
             return (
-                <div ref={this.transfers_ref} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto',}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index}>
+                // <div ref={this.transfers_ref} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto',}}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index}>
+                //                     {this.render_transfers_event_item(item, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        ref={this.transfers_ref}
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}>
                                     {this.render_transfers_event_item(item, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                        rangeChanged={(range) => {
+                            this.handleScroll2(range)
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_transfers_item_clicked(index){
-        if (this.state.selected_transfers_event_item == index) {
-            this.setState({ selected_transfers_event_item: null })
-        } else {
-            this.setState({ selected_transfers_event_item: index })
-        }
+    when_transfers_item_clicked(index, item){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_transfers_event_item(item, index, true), 'item':item}, 'render_event_item_details')
+        return;
+        // if (this.state.selected_transfers_event_item == index) {
+        //     this.setState({ selected_transfers_event_item: null })
+        // } else {
+        //     this.setState({ selected_transfers_event_item: index })
+        // }
     }
 
-    render_transfers_event_item(item, index){
+    render_transfers_event_item(item, index, full=false){
         var searched_account = this.state.searched_account
         var e5 = item['e5']
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
-        var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3): 'From: '+this.get_sender_title_text(item['event'].returnValues.p2)
+        var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['1770ba']/* '⤴ To: $' */.replace('$', this.get_sender_title_text(item['event'].returnValues.p3)) : this.props.app_state.loc['1770bb']/* '⤵ From: $' */.replace('$', this.get_sender_title_text(item['event'].returnValues.p2))
 
         var other_party = item['action'] == 'Sent' ? item['event'].returnValues.p3 : item['event'].returnValues.p2
         var thumbnail = this.props.app_state.token_thumbnail_directory[e5] == null ? this.props.app_state.static_assets['end_img'] : (this.props.app_state.token_thumbnail_directory[e5][exchange_id] == null ? this.props.app_state.static_assets['end_img'] : this.props.app_state.token_thumbnail_directory[e5][exchange_id])
 
-        if (this.state.selected_transfers_event_item == index) {
+        if (this.state.selected_transfers_event_item == index || full == true) {
             return (
                 <div>
                     <div onClick={() => this.props.when_account_in_data_clicked(other_party, e5, this.get_sender_title_text(other_party))}>
                         {this.render_detail_item('8', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 'l', 'image':thumbnail, 'border_radius':'5px'})}
                     </div>
-                    <div onClick={() => this.when_transfers_item_clicked(index)}>
-                        <div style={{ height: 2 }} />
+                    <div>
+                        <div style={{ height: 5 }} />
                         <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                             {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                         </div>
 
-                        <div style={{ height: 2 }} />
-                        {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 'l' })}
-                        <div style={{ height: 2 }} />
-                        {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 'l' })}
-                        <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                        <div style={{ height: 5 }} />
+                        {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': this.props.app_state.loc['1770z']/* 'Age' */, 'size': 'l' })}
+                        <div style={{ height: 5 }} />
+                        {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['1770y']/* 'Block Number' */, 'size': 'l' })}
                     </div>
                     
                 </div>
             )
         } else {
-            
             return (
-                <div onClick={() => this.when_transfers_item_clicked(index)}>
+                <div onClick={() => this.when_transfers_item_clicked(index, item)}>
                     {this.render_detail_item('8', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l', 'image':thumbnail, 'border_radius':'5px' })}
                 </div>
             )
@@ -3147,7 +4162,49 @@ return data['data']
 
 
 
+
+
+
+
+
+
     
+    render_skeleton_object(){
+        const styles = {
+            container: {
+                position: 'relative',
+                width: '100%',
+                height: 160,
+                borderRadius: '15px',
+                overflow: 'hidden',
+            },
+            skeletonBox: {
+                width: '100%',
+                height: '100%',
+                borderRadius: '15px',
+            },
+            centerImage: {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 60,
+                objectFit: 'contain',
+                opacity: 0.9,
+            },
+        };
+        return(
+            <div>
+                <SkeletonTheme baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
+                    <div style={styles.container}>
+                        <Skeleton style={styles.skeletonBox} />
+                        <img src={this.props.app_state.theme['letter']} alt="" style={styles.centerImage} />
+                    </div>
+                </SkeletonTheme>
+            </div>
+        )
+    }
     
     get_gas_price_from_runs(){
         var last_events = this.props.app_state.all_E5_runs[this.state.searched_account['e5']]
@@ -3165,7 +4222,7 @@ return data['data']
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         var uploaded_data = {}
-        if(item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '14')uploaded_data = this.props.app_state.uploaded_data
+        if(item_id == '3' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '13' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
                 <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_view_account_exchange_tapped={this.when_view_account_exchange_tapped.bind(this)}
@@ -3269,6 +4326,18 @@ return data['data']
             return a;
         }
         return this.calculateGCD(b, a % b);
+    }
+
+    sortByAttributeDescending(array, attribute) {
+        return array.sort((a, b) => {
+            if (a[attribute] < b[attribute]) {
+            return 1;
+            }
+            if (a[attribute] > b[attribute]) {
+            return -1;
+            }
+            return 0;
+        });
     }
 
 }

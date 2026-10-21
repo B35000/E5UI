@@ -144,8 +144,31 @@ class CrossexchangeDetailsSection extends Component {
         )
     }
 
-    when_navigate_view_post_list_detail_tags_object_updated(tag_obj){
+    async when_navigate_view_post_list_detail_tags_object_updated(tag_obj){
         this.setState({navigate_view_post_list_detail_tags_object: tag_obj})
+
+        if(this.load_history == null){
+            this.load_history = {'events':{}, 'moderators':{}}
+        }
+
+        if(tag_obj['i'].active == this.props.app_state.loc['2119']/* 'events' */){
+            var object = this.get_item_in_array(this.get_crossexchange_items(), this.props.selected_crossexchang_item);
+            if(object == null) return;
+
+            if(this.load_history['events'][object['e5_id']] != null && Date.now() - this.load_history['events'][object['e5_id']] < (1000*60)) return;
+            this.load_history['events'][object['e5_id']] = Date.now()
+            
+            await this.props.get_exchange_event_data(object['id'], object['e5'])
+        }
+        else if(tag_obj['i'].active == this.props.app_state.loc['2120']/* moderator-events */){
+            var object = this.get_item_in_array(this.get_crossexchange_items(), this.props.selected_crossexchang_item);
+            if(object == null) return;
+
+            if(this.load_history['moderators'][object['e5_id']] != null && Date.now() - this.load_history['moderators'][object['e5_id']] < (1000*60)) return;
+            this.load_history['moderators'][object['e5_id']] = Date.now()
+
+            await this.props.get_moderator_event_data(object['id'], object['e5'])
+        }
     }
 
     get_item_in_array(object_array, id){
@@ -1475,6 +1498,11 @@ class CrossexchangeDetailsSection extends Component {
 
 
 
+
+
+    //----------------------------------------LOGS-----------------------------------------
+
+
     render_transfer_logs(object){
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
@@ -1499,10 +1527,19 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     render_contract_transfer_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'transfer'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -1523,7 +1560,7 @@ class CrossexchangeDetailsSection extends Component {
         } else {
             return (
                 <div style={{ }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} >
@@ -1531,49 +1568,63 @@ class CrossexchangeDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_contract_transfer_item_clicked(index, item, object)}>
+                                    {this.render_contract_transfer_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_contract_transfer_item_clicked(index){
-        if (this.state.selected_contract_transfer_event_item == index) {
-            this.setState({ selected_contract_transfer_event_item: null })
-        } else {
-            this.setState({ selected_contract_transfer_event_item: index })
-        }
+    when_contract_transfer_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_contract_transfer_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_contract_transfer_event_item == index) {
+        //     this.setState({ selected_contract_transfer_event_item: null })
+        // } else {
+        //     this.setState({ selected_contract_transfer_event_item: index })
+        // }
     }
 
-    render_contract_transfer_event_item(item, object, index){
+    render_contract_transfer_event_item(item, object, index, full=false){
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
-        if (this.state.selected_contract_transfer_event_item == index) {
+        if (this.state.selected_contract_transfer_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2421']/* 'Action: ' */+item['action'], 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item['event'].returnValues.p5*1000).toLocaleString()),  'details': this.get_time_difference(item['event'].returnValues.p5), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item['event'].returnValues.p6), 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l', 'footer': (new Date(item['event'].returnValues.p5*1000).toLocaleString()+' • '+this.get_time_difference(item['event'].returnValues.p5)) })}
                 </div>
             )
         }
@@ -1641,11 +1692,20 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     render_updated_exchange_ratio_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var logs = this.get_item_logs(object, 'exchange_ratio')
         var items = [].concat(this.filter_for_my_logs(logs, 'p3', object))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -1666,7 +1726,7 @@ class CrossexchangeDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index}>
@@ -1674,21 +1734,36 @@ class CrossexchangeDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_exchange_ratio_item_clicked(index, item, object)}>
+                                    {this.render_exchange_ratio_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_exchange_ratio_item_clicked(index){
-        if (this.state.selected_exchange_ratio_event_item == index) {
-            this.setState({ selected_exchange_ratio_event_item: null })
-        } else {
-            this.setState({ selected_exchange_ratio_event_item: index })
-        }
+    when_exchange_ratio_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_exchange_ratio_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_exchange_ratio_event_item == index) {
+        //     this.setState({ selected_exchange_ratio_event_item: null })
+        // } else {
+        //     this.setState({ selected_exchange_ratio_event_item: index })
+        // }
     }
 
-    render_exchange_ratio_event_item(item, object, index){
+    render_exchange_ratio_event_item(item, object, index, full=false){
         var action_obj = {'0':this.props.app_state.loc['2409']/* 'Buy' */, '1':this.props.app_state.loc['2410']/* 'Sell' */}
         var action = action_obj[item.returnValues.p2]
         var token_exchange_liquidity = item.returnValues.p4
@@ -1696,49 +1771,49 @@ class CrossexchangeDetailsSection extends Component {
         var updated_exchange_ratio_y = item.returnValues.p6
         var parent_tokens_balance = item.returnValues.p7
         var amount = item.returnValues.p8
-        if (this.state.selected_exchange_ratio_event_item == index) {
+        if (this.state.selected_exchange_ratio_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_exchange_ratio_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object)/*  */, 'details': this.props.app_state.loc['2400']/* 'Swapping Account ID' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': action, 'details': this.props.app_state.loc['2400']/* 'Action' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2401']/* 'Amount Swapped' */, 'number':amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2401']/* 'Amount Swapped' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2402']/* 'Updted Token Exchange Liquidity' */, 'number':token_exchange_liquidity, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2402']/* 'Updted Token Exchange Liquidity' */, 'subtitle': this.format_power_figure(token_exchange_liquidity), 'barwidth': this.calculate_bar_width(token_exchange_liquidity), 'number': this.format_account_balance_figure(token_exchange_liquidity), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2403']/* 'Updated Exchange Ratio X' */, 'number':updated_exchange_ratio_x, 'relativepower':this.props.app_state.loc['92']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2403']/* 'Updated Exchange Ratio X' */, 'subtitle': this.format_power_figure(updated_exchange_ratio_x), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_x), 'number': this.format_account_balance_figure(updated_exchange_ratio_x), 'barcolor': '', 'relativepower': this.props.app_state.loc['92']/* 'units' */, })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2404']/* 'Updated Exchange Ratio Y' */, 'number':updated_exchange_ratio_y, 'relativepower':this.props.app_state.loc['92']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2404']/* 'Updated Exchange Ratio Y' */, 'subtitle': this.format_power_figure(updated_exchange_ratio_y), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_y), 'number': this.format_account_balance_figure(updated_exchange_ratio_y), 'barcolor': '', 'relativepower': this.props.app_state.loc['92']/* 'units' */, })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     {this.render_detail_item('3', {'title':this.format_exchange_ratio(updated_exchange_ratio_x, updated_exchange_ratio_y), 'details':this.props.app_state.loc['2405']/* 'Updated Exchange Ratios X:Y' */, 'size':'l'},)}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p9), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p9*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p9), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+
                     {this.render_detail_item('3', { 'title': item.returnValues.p10, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_exchange_ratio_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object)/*  */, 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object)/*  */, 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l', 'footer': (new Date(item.returnValues.p9*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p9)) })}
                 </div>
             )
         }
@@ -1772,10 +1847,19 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     render_exchange_modification_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'modify'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -1796,7 +1880,7 @@ class CrossexchangeDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_modify_item_clicked(index)}>
@@ -1804,40 +1888,54 @@ class CrossexchangeDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_modify_item_clicked(index, item, object)}>
+                                    {this.render_modified_exchange_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_modify_item_clicked(index){
-        if (this.state.selected_modify_event_item == index) {
-            this.setState({ selected_modify_event_item: null })
-        } else {
-            this.setState({ selected_modify_event_item: index })
-        }
+    when_modify_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_modified_exchange_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_modify_event_item == index) {
+        //     this.setState({ selected_modify_event_item: null })
+        // } else {
+        //     this.setState({ selected_modify_event_item: index })
+        // }
     }
 
-    render_modified_exchange_event_item(item, object, index){
-        if (this.state.selected_modify_event_item == index) {
+    render_modified_exchange_event_item(item, object, index, full=false){
+        if (this.state.selected_modify_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2415']/* 'Modifier' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2416']/* 'Targeted Modify Item' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.get_value_ui(item, object)}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p6*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p6), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p7), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2416']/* 'Targeted Modify Item' */, 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2416']/* 'Targeted Modify Item' */, 'size': 'l' , 'footer': (new Date(item.returnValues.p6*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p6))})}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -2003,10 +2101,19 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     render_exchange_transfer_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'exchange-transfer'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2027,7 +2134,7 @@ class CrossexchangeDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index}>
@@ -2035,50 +2142,64 @@ class CrossexchangeDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_exchange_transfer_item_clicked(index, item, object)}>
+                                    {this.render_exchange_transfer_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_exchange_transfer_item_clicked(index){
-        if (this.state.selected_exchange_transfer_event_item == index) {
-            this.setState({ selected_exchange_transfer_event_item: null })
-        } else {
-            this.setState({ selected_exchange_transfer_event_item: index })
-        }
+    when_exchange_transfer_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_exchange_transfer_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_exchange_transfer_event_item == index) {
+        //     this.setState({ selected_exchange_transfer_event_item: null })
+        // } else {
+        //     this.setState({ selected_exchange_transfer_event_item: index })
+        // }
     }
 
-    render_exchange_transfer_event_item(item, object, index){
+    render_exchange_transfer_event_item(item, object, index, full=false){
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
 
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* From:  */+this.get_sender_title_text(item['event'].returnValues.p2, object)
-        if (this.state.selected_exchange_transfer_event_item == index) {
+        if (this.state.selected_exchange_transfer_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_exchange_transfer_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2421']/* 'Action: ' */+item['action'], 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details':this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item['event'].returnValues.p5*1000).toLocaleString()),  'details': this.get_time_difference(item['event'].returnValues.p5), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item['event'].returnValues.p6), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_exchange_transfer_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+ ' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+ ' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' , 'footer': (new Date(item['event'].returnValues.p5*1000).toLocaleString()+' • '+this.get_time_difference(item['event'].returnValues.p5))})}
                 </div>
             )
         }
@@ -2110,11 +2231,20 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     render_update_balance_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var logs = this.get_item_logs(object, 'update_balance')
         var items = [].concat(this.filter_for_my_logs(logs, 'p2', object))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2135,7 +2265,7 @@ class CrossexchangeDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index}>
@@ -2143,43 +2273,57 @@ class CrossexchangeDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_update_balance_item_clicked(index, item, object)}>
+                                    {this.render_update_balance_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_update_balance_item_clicked(index){
-        if (this.state.selected_update_balance_event_item == index) {
-            this.setState({ selected_update_balance_event_item: null })
-        } else {
-            this.setState({ selected_update_balance_event_item: index })
-        }
+    when_update_balance_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_update_balance_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_update_balance_event_item == index) {
+        //     this.setState({ selected_update_balance_event_item: null })
+        // } else {
+        //     this.setState({ selected_update_balance_event_item: index })
+        // }
     }
 
-    render_update_balance_event_item(item, object, index){
+    render_update_balance_event_item(item, object, index, full=false){
         var new_balance = item.returnValues.p3
-        if (this.state.selected_update_balance_event_item == index) {
+        if (this.state.selected_update_balance_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_update_balance_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2447n']/* 'Receiver Account' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2422']/* 'New Balance ' */, 'number':new_balance, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2422']/* 'New Balance ' */, 'subtitle': this.format_power_figure(new_balance), 'barwidth': this.calculate_bar_width(new_balance), 'number': this.format_account_balance_figure(new_balance), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p4), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p5, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p4*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p4), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p5), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_update_balance_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title':this.get_sender_title_text(item.returnValues.p2, object)/*  */, 'details': this.format_account_balance_figure(new_balance)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title':this.get_sender_title_text(item.returnValues.p2, object)/*  */, 'details': this.format_account_balance_figure(new_balance)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l', 'footer': (new Date(item.returnValues.p4*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p4)) })}
                 </div>
             )
         }
@@ -2212,10 +2356,19 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     render_freeze_unfreeze_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'freeze_unfreeze'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2236,7 +2389,7 @@ class CrossexchangeDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index}>
@@ -2244,49 +2397,66 @@ class CrossexchangeDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_freeze_unfreeze_item_clicked(index, item, object)}>
+                                    {this.render_freeze_unfreeze_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_freeze_unfreeze_item_clicked(index){
-        if (this.state.selected_freeze_unfreeze_event_item == index) {
-            this.setState({ selected_freeze_unfreeze_event_item: null })
-        } else {
-            this.setState({ selected_freeze_unfreeze_event_item: index })
-        }
+    when_freeze_unfreeze_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_freeze_unfreeze_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_freeze_unfreeze_event_item == index) {
+        //     this.setState({ selected_freeze_unfreeze_event_item: null })
+        // } else {
+        //     this.setState({ selected_freeze_unfreeze_event_item: index })
+        // }
     }
 
-    render_freeze_unfreeze_event_item(item, object, index){
-        var freeze_unfreeze_obj = {'1':this.props.app_state.loc['2423']/* 'Action: Freeze' */,'0':this.props.app_state.loc['2424']/* 'Action: Unfreeze' */}
+    render_freeze_unfreeze_event_item(item, object, index, full=false){
+        var freeze_unfreeze_obj = {
+            '1':this.props.app_state.loc['2423']/* 'Action: Freeze' */,
+            '0':this.props.app_state.loc['2424']/* 'Action: Unfreeze' */
+        }
         var amount = item.returnValues.p5
         var action = freeze_unfreeze_obj[item.returnValues.p2]
         var depth = item.returnValues.p6
         amount = this.get_actual_number(amount, depth)
-        if (this.state.selected_freeze_unfreeze_event_item == index) {
+        if (this.state.selected_freeze_unfreeze_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_freeze_unfreeze_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': action, 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2425']/* 'Amount, depth: ' */+depth, 'number':amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2425']/* 'Amount, depth: ' */+depth, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Authority Account', 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['3107p']/* 'Authority Account' */, 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title':number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_freeze_unfreeze_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object)+' • '+action, 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object)+' • '+action, 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l', 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }
@@ -2325,7 +2495,7 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     render_modify_moderator_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'modify_moderator'))
         if (items.length == 0) {
             items = [0, 1]
@@ -2349,7 +2519,7 @@ class CrossexchangeDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_modify_moderator_item_clicked(index)}>
@@ -2357,45 +2527,59 @@ class CrossexchangeDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_modify_moderator_item_clicked(index, item, object)}>
+                                    {this.render_modify_moderator_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_modify_moderator_item_clicked(index){
-        if (this.state.selected_modify_moderator_event_item == index) {
-            this.setState({ selected_modify_moderator_event_item: null })
-        } else {
-            this.setState({ selected_modify_moderator_event_item: index })
-        }
+    when_modify_moderator_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_modify_moderator_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_modify_moderator_event_item == index) {
+        //     this.setState({ selected_modify_moderator_event_item: null })
+        // } else {
+        //     this.setState({ selected_modify_moderator_event_item: index })
+        // }
     }
 
-    render_modify_moderator_event_item(item, object, index){
-        var authority_val_obj = {'0':this.props.app_state.loc['2427']/* 'Not Moderator' */, '1':this.props.app_state.loc['2428']/* 'Moderator' */}
+    render_modify_moderator_event_item(item, object, index, full=false){
+        var authority_val_obj = {
+            '0':this.props.app_state.loc['2427']/* 'Not Moderator' */, 
+            '1':this.props.app_state.loc['2428']/* 'Moderator' */
+        }
         var authority_val = authority_val_obj[item.returnValues.p6]
-        if (this.state.selected_modify_moderator_event_item == index) {
+        if (this.state.selected_modify_moderator_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2429']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2430']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': authority_val, 'details': this.props.app_state.loc['2431']/* 'Authority value' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2429']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', {'title': authority_val, 'details': this.props.app_state.loc['2431']/* 'Authority value' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'size': 'l', 'details': authority_val, 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }
@@ -2428,7 +2612,7 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     render_interactable_checker_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'enable_interactible'))
         if (items.length == 0) {
             items = [0, 1]
@@ -2452,7 +2636,7 @@ class CrossexchangeDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_interactable_checker_item_clicked(index)}>
@@ -2460,41 +2644,54 @@ class CrossexchangeDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_interactable_checker_item_clicked(index, item, object)}>
+                                    {this.render_interactable_checker_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_interactable_checker_item_clicked(index){
-        if (this.state.selected_interactable_checker_event_item == index) {
-            this.setState({ selected_interactable_checker_event_item: null })
-        } else {
-            this.setState({ selected_interactable_checker_event_item: index })
-        }
+    when_interactable_checker_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_interactable_checker_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_interactable_checker_event_item == index) {
+        //     this.setState({ selected_interactable_checker_event_item: null })
+        // } else {
+        //     this.setState({ selected_interactable_checker_event_item: index })
+        // }
     }
 
-    render_interactable_checker_event_item(item, object, index){
+    render_interactable_checker_event_item(item, object, index, full=false){
         var interactable_checker_obj = {'0':this.props.app_state.loc['2433']/* 'Access Rights Disabled(Public)' */,'1':this.props.app_state.loc['2434']/* 'Access Rights Enabled(Private) */}
         var interactable_checker = interactable_checker_obj[item.returnValues.p6]
-        if (this.state.selected_interactable_checker_event_item == index) {
+        if (this.state.selected_interactable_checker_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2435']/* 'Access Rights Status' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2436']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2435']/* 'Acces Rights Status' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2435']/* 'Acces Rights Status' */, 'size': 'l' , 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7))})}
                 </div>
             )
         }
@@ -2526,7 +2723,7 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     render_interactable_accounts_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'add_interactible'))
         if (items.length == 0) {
             items = [0, 1]
@@ -2550,7 +2747,7 @@ class CrossexchangeDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_interactable_account_item_clicked(index)}>
@@ -2558,44 +2755,55 @@ class CrossexchangeDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_interactable_account_item_clicked(index, item, object)}>
+                                    {this.render_interactable_account_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_interactable_account_item_clicked(index){
-        if (this.state.selected_interactable_account_event_item == index) {
-            this.setState({ selected_interactable_account_event_item: null })
-        } else {
-            this.setState({ selected_interactable_account_event_item: index })
-        }
+    when_interactable_account_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_interactable_account_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_interactable_account_event_item == index) {
+        //     this.setState({ selected_interactable_account_event_item: null })
+        // } else {
+        //     this.setState({ selected_interactable_account_event_item: index })
+        // }
     }
 
-    render_interactable_account_event_item(item, object, index){
-        if (this.state.selected_interactable_account_event_item == index) {
+    render_interactable_account_event_item(item, object, index, full=false){
+        if (this.state.selected_interactable_account_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2438']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2439']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['159']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2438']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2117']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2438']/* 'Targeted Account' */, 'size': 'l', 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }
@@ -2627,7 +2835,7 @@ class CrossexchangeDetailsSection extends Component {
     }
 
     render_blocked_accounts_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'block_account'))
         if (items.length == 0) {
             items = [0, 1]
@@ -2651,7 +2859,7 @@ class CrossexchangeDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_blocked_account_item_clicked(index)}>
@@ -2659,45 +2867,56 @@ class CrossexchangeDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_blocked_account_item_clicked(index, item, object)}>
+                                    {this.render_blocked_account_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_blocked_account_item_clicked(index){
-        if (this.state.selected_blocked_account_event_item == index) {
-            this.setState({ selected_blocked_account_event_item: null })
-        } else {
-            this.setState({ selected_blocked_account_event_item: index })
-        }
+    when_blocked_account_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_blocked_account_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_blocked_account_event_item == index) {
+        //     this.setState({ selected_blocked_account_event_item: null })
+        // } else {
+        //     this.setState({ selected_blocked_account_event_item: index })
+        // }
     }
 
-    render_blocked_account_event_item(item, object, index){
-        if (this.state.selected_blocked_account_event_item == index) {
+    render_blocked_account_event_item(item, object, index, full=false){
+        if (this.state.selected_blocked_account_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2442']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2443']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2208']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
+
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2442']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2208']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2442']/* 'Targeted Account' */, 'size': 'l', 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }

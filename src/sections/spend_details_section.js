@@ -163,13 +163,41 @@ class SpendDetailSection extends Component {
         }
     }
 
-    when_navigate_view_spend_list_detail_tags_object_updated(tag_group){
+    async when_navigate_view_spend_list_detail_tags_object_updated(tag_group){
         this.setState({navigate_view_spend_list_detail_tags_object: tag_group})
         const selected_item = this.get_selected_item(tag_group, 'e')
-        const object = this.get_item_in_array(this.get_exchange_tokens(5), this.props.selected_spend_item)
-        if(object == null) return;
+
+        if(this.load_history == null){
+            this.load_history = {'op_certificates':{}, 'events':{}, 'moderators':{}}
+        }
+
         if(selected_item == this.props.app_state.loc['2642dc']/* 'operation-certificates 📜' */){
-            this.props.get_objects_showcased_certificates(object)
+            const object = this.get_item_in_array(this.get_exchange_tokens(5), this.props.selected_spend_item)
+            if(object == null) return;
+
+            if(this.load_history['op_certificates'][object['e5_id']] != null && Date.now() - this.load_history['op_certificates'][object['e5_id']] < (1000*60)) return;
+            this.load_history['op_certificates'][object['e5_id']] = Date.now()
+
+            await this.props.get_objects_showcased_certificates(object)
+        }
+
+        if(tag_group['i'].active == this.props.app_state.loc['2119']/* 'events' */){
+            const object = this.get_item_in_array(this.get_exchange_tokens(5), this.props.selected_spend_item)
+            if(object == null) return;
+
+            if(this.load_history['events'][object['e5_id']] != null && Date.now() - this.load_history['events'][object['e5_id']] < (1000*60)) return;
+            this.load_history['events'][object['e5_id']] = Date.now()
+
+            await this.props.get_exchange_event_data(object['id'], object['e5'])
+        }
+        else if(tag_group['i'].active == this.props.app_state.loc['2120']/* moderator-events */){
+            const object = this.get_item_in_array(this.get_exchange_tokens(5), this.props.selected_spend_item)
+            if(object == null) return;
+
+            if(this.load_history['moderators'][object['e5_id']] != null && Date.now() - this.load_history['moderators'][object['e5_id']] < (1000*60)) return;
+            this.load_history['moderators'][object['e5_id']] = Date.now()
+
+            await this.props.get_moderator_event_data(object['id'], object['e5'])
         }
     }
 
@@ -2768,6 +2796,7 @@ return data['data']
 
 
 
+    //----------------------------------------LOGS-----------------------------------------
 
 
     render_transfer_logs(object){
@@ -2794,10 +2823,19 @@ return data['data']
     }
 
     render_contract_transfer_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'transfer'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2818,7 +2856,7 @@ return data['data']
         } else {
             return (
                 <div style={{ }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} >
@@ -2826,49 +2864,64 @@ return data['data']
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_contract_transfer_item_clicked(index, item, object)}>
+                                    {this.render_contract_transfer_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_contract_transfer_item_clicked(index){
-        if (this.state.selected_contract_transfer_event_item == index) {
-            this.setState({ selected_contract_transfer_event_item: null })
-        } else {
-            this.setState({ selected_contract_transfer_event_item: index })
-        }
+    when_contract_transfer_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_contract_transfer_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_contract_transfer_event_item == index) {
+        //     this.setState({ selected_contract_transfer_event_item: null })
+        // } else {
+        //     this.setState({ selected_contract_transfer_event_item: index })
+        // }
     }
 
-    render_contract_transfer_event_item(item, object, index){
+    render_contract_transfer_event_item(item, object, index, full=false){
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
-        if (this.state.selected_contract_transfer_event_item == index) {
+        if (this.state.selected_contract_transfer_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2421']/* 'Action: ' */+item['action'], 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item['event'].returnValues.p5*1000).toLocaleString()),  'details': this.get_time_difference(item['event'].returnValues.p5), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item['event'].returnValues.p6), 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
+                    
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l', 'footer': (new Date(item['event'].returnValues.p5*1000).toLocaleString()+' • '+this.get_time_difference(item['event'].returnValues.p5)) })}
                 </div>
             )
         }
@@ -2936,10 +2989,19 @@ return data['data']
     }
 
     render_proportion_ratio_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = this.get_item_logs(object, 'proportion_ratio')
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2960,7 +3022,7 @@ return data['data']
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index}>
@@ -2968,48 +3030,61 @@ return data['data']
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_proportion_ratio_item_clicked(index, item, object)}>
+                                    {this.render_proportion_ratio_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_proportion_ratio_item_clicked(index){
-        if (this.state.selected_proportion_ratio_event_item == index) {
-            this.setState({ selected_proportion_ratio_event_item: null })
-        } else {
-            this.setState({ selected_proportion_ratio_event_item: index })
-        }
+    when_proportion_ratio_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_proportion_ratio_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_proportion_ratio_event_item == index) {
+        //     this.setState({ selected_proportion_ratio_event_item: null })
+        // } else {
+        //     this.setState({ selected_proportion_ratio_event_item: index })
+        // }
     }
 
-    render_proportion_ratio_event_item(item, object, index){
+    render_proportion_ratio_event_item(item, object, index, full=false){
         var new_active_limit = item.returnValues.p2
         var tokens_to_receive = item.returnValues.p3
-        if (this.state.selected_proportion_ratio_event_item == index) {
+        if (this.state.selected_proportion_ratio_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_proportion_ratio_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': this.format_proportion(new_active_limit), 'details': this.props.app_state.loc['2588']/* 'Updated Active Limit' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2587']/* 'Tokens Received' */, 'number':tokens_to_receive, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2587']/* 'Tokens Received' */, 'subtitle': this.format_power_figure(tokens_to_receive), 'barwidth': this.calculate_bar_width(tokens_to_receive), 'number': this.format_account_balance_figure(tokens_to_receive), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p5*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p5), 'size': 'l' })}
                     <div style={{ height: 2 }}/>
 
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p4), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_proportion_ratio_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.format_proportion(new_active_limit), 'details': this.props.app_state.loc['2588']/* 'Updated Active Limit' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                <div>
+                    {this.render_detail_item('3', { 'title': this.format_proportion(new_active_limit), 'details': this.props.app_state.loc['2588']/* 'Updated Active Limit' */, 'size': 'l', 'footer': (new Date(item.returnValues.p5*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p5)) })}
                 </div>
             )
         }
@@ -3046,10 +3121,19 @@ return data['data']
     }
 
     render_exchange_modification_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'modify'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -3070,7 +3154,7 @@ return data['data']
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_modify_item_clicked(index)}>
@@ -3078,41 +3162,54 @@ return data['data']
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_modify_item_clicked(index, item, object)}>
+                                    {this.render_modified_exchange_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_modify_item_clicked(index){
-         if (this.state.selected_modify_event_item == index) {
-            this.setState({ selected_modify_event_item: null })
-        } else {
-            this.setState({ selected_modify_event_item: index })
-        }
+    when_modify_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_modified_exchange_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_modify_event_item == index) {
+        //     this.setState({ selected_modify_event_item: null })
+        // } else {
+        //     this.setState({ selected_modify_event_item: index })
+        // }
     }
 
-    render_modified_exchange_event_item(item, object, index){
-        if (this.state.selected_modify_event_item == index) {
+    render_modified_exchange_event_item(item, object, index, full=false){
+        if (this.state.selected_modify_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2415']/* 'Modifier' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2590']/* 'Targeted Modify Item' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.get_value_ui(item, object)}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p6*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p6), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p7), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2590']/* 'Targeted Modify Item' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2590']/* 'Targeted Modify Item' */, 'size': 'l', 'footer': (new Date(item.returnValues.p6*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p6)) })}
                 </div>
             )
         }
@@ -3283,10 +3380,19 @@ return data['data']
     }
 
     render_exchange_transfer_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'exchange-transfer'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -3307,7 +3413,7 @@ return data['data']
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index}>
@@ -3315,50 +3421,63 @@ return data['data']
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_exchange_transfer_item_clicked(index, item, object)}>
+                                    {this.render_exchange_transfer_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_exchange_transfer_item_clicked(index){
-        console.log('click@bry')
-        if (this.state.selected_exchange_transfer_event_item == index) {
-            this.setState({ selected_exchange_transfer_event_item: null })
-        } else {
-            this.setState({ selected_exchange_transfer_event_item: index })
-        }
+    when_exchange_transfer_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_exchange_transfer_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_exchange_transfer_event_item == index) {
+        //     this.setState({ selected_exchange_transfer_event_item: null })
+        // } else {
+        //     this.setState({ selected_exchange_transfer_event_item: index })
+        // }
     }
 
-    render_exchange_transfer_event_item(item, object, index){
+    render_exchange_transfer_event_item(item, object, index, full=false){
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
-        if (this.state.selected_exchange_transfer_event_item == index) {
+        if (this.state.selected_exchange_transfer_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_exchange_transfer_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2421']/* 'Action: ' */+item['action'], 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item['event'].returnValues.p5*1000).toLocaleString()),  'details': this.get_time_difference(item['event'].returnValues.p5), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item['event'].returnValues.p6), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_exchange_transfer_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l', 'footer': (new Date(item['event'].returnValues.p5*1000).toLocaleString()+' • '+this.get_time_difference(item['event'].returnValues.p5)) })}
                 </div>
             )
         }
@@ -3393,11 +3512,20 @@ return data['data']
     }
 
     render_update_balance_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var logs = this.get_item_logs(object, 'update_balance')
         var items = [].concat(this.filter_for_my_logs(logs, 'p2', object))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -3418,7 +3546,7 @@ return data['data']
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} >
@@ -3426,43 +3554,57 @@ return data['data']
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_update_balance_item_clicked(index, item, object)}>
+                                    {this.render_update_balance_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_update_balance_item_clicked(index){
-        if (this.state.selected_update_balance_event_item == index) {
-            this.setState({ selected_update_balance_event_item: null })
-        } else {
-            this.setState({ selected_update_balance_event_item: index })
-        }
+    when_update_balance_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_update_balance_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_update_balance_event_item == index) {
+        //     this.setState({ selected_update_balance_event_item: null })
+        // } else {
+        //     this.setState({ selected_update_balance_event_item: index })
+        // }
     }
 
-    render_update_balance_event_item(item, object, index){
+    render_update_balance_event_item(item, object, index, full=false){
         var new_balance = item.returnValues.p3
-        if (this.state.selected_update_balance_event_item == index) {
+        if (this.state.selected_update_balance_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_update_balance_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object)/*  */, 'details': this.props.app_state.loc['2593']/* 'Receiver Account' */, 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2422']/* 'New Balance ' */, 'number':new_balance, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2422']/* 'New Balance ' */, 'subtitle': this.format_power_figure(new_balance), 'barwidth': this.calculate_bar_width(new_balance), 'number': this.format_account_balance_figure(new_balance), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p4), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p5, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p4*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p4), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p5), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_update_balance_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object)/*  */, 'details': this.format_account_balance_figure(new_balance)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object)/*  */, 'details': this.format_account_balance_figure(new_balance)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l', 'footer': (new Date(item.returnValues.p4*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p4)) })}
                 </div>
             )
         }
@@ -3499,10 +3641,19 @@ return data['data']
 
 
     render_freeze_unfreeze_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'freeze_unfreeze'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -3523,7 +3674,7 @@ return data['data']
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index}>
@@ -3531,51 +3682,68 @@ return data['data']
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_freeze_unfreeze_item_clicked(index, item, object)}>
+                                    {this.render_freeze_unfreeze_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
 
-    when_freeze_unfreeze_item_clicked(index){
-        if (this.state.selected_freeze_unfreeze_event_item == index) {
-            this.setState({ selected_freeze_unfreeze_event_item: null })
-        } else {
-            this.setState({ selected_freeze_unfreeze_event_item: index })
-        }
+    when_freeze_unfreeze_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_freeze_unfreeze_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_freeze_unfreeze_event_item == index) {
+        //     this.setState({ selected_freeze_unfreeze_event_item: null })
+        // } else {
+        //     this.setState({ selected_freeze_unfreeze_event_item: index })
+        // }
     }
 
 
-    render_freeze_unfreeze_event_item(item, object, index){
-        var freeze_unfreeze_obj = {'1':this.props.app_state.loc['2595']/* 'Action: Freeze' */,'0':this.props.app_state.loc['2596']/* Action: Unfreeze' */}
+    render_freeze_unfreeze_event_item(item, object, index, full=false){
+        var freeze_unfreeze_obj = {
+            '1':this.props.app_state.loc['2595']/* 'Action: Freeze' */,
+            '0':this.props.app_state.loc['2596']/* Action: Unfreeze' */
+        }
         var amount = item.returnValues.p5
         var action = freeze_unfreeze_obj[item.returnValues.p2]
         var depth = item.returnValues.p6
         amount = this.get_actual_number(amount, depth)
-        if (this.state.selected_freeze_unfreeze_event_item == index) {
+        if (this.state.selected_freeze_unfreeze_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_freeze_unfreeze_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': action, 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2425']/* 'Amount, depth: ' */+depth, 'number':amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2425']/* 'Amount, depth: ' */+depth, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2597']/* 'Authority Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_freeze_unfreeze_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object)+' • '+action, 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object)+' • '+action, 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 'l', 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }
@@ -3617,7 +3785,7 @@ return data['data']
     }
 
     render_modify_moderator_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'modify_moderator'))
         if (items.length == 0) {
             items = [0, 1]
@@ -3641,7 +3809,7 @@ return data['data']
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_modify_moderator_item_clicked(index)}>
@@ -3649,45 +3817,58 @@ return data['data']
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_modify_moderator_item_clicked(index, item, object)}>
+                                    {this.render_modify_moderator_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_modify_moderator_item_clicked(index){
-        if (this.state.selected_modify_moderator_event_item == index) {
-            this.setState({ selected_modify_moderator_event_item: null })
-        } else {
-            this.setState({ selected_modify_moderator_event_item: index })
-        }
+    when_modify_moderator_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_modify_moderator_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+        // if (this.state.selected_modify_moderator_event_item == index) {
+        //     this.setState({ selected_modify_moderator_event_item: null })
+        // } else {
+        //     this.setState({ selected_modify_moderator_event_item: index })
+        // }
     }
 
-    render_modify_moderator_event_item(item, object, index){
-        var authority_val_obj = {'0':this.props.app_state.loc['2104']/* 'Not Moderator' */, '1':this.props.app_state.loc['2105']/* 'Moderator' */}
+    render_modify_moderator_event_item(item, object, index, full=false){
+        var authority_val_obj = {
+            '0':this.props.app_state.loc['2104']/* 'Not Moderator' */, 
+            '1':this.props.app_state.loc['2105']/* 'Moderator' */
+        }
         var authority_val = authority_val_obj[item.returnValues.p6]
-        if (this.state.selected_modify_moderator_event_item == index) {
+        if (this.state.selected_modify_moderator_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2107']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': authority_val, 'details': this.props.app_state.loc['2108']/* 'Authority value' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', {'title': authority_val, 'details': this.props.app_state.loc['2108']/* 'Authority value' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': authority_val, 'size': 'l' , 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7))})}
                 </div>
             )
         }
@@ -3723,7 +3904,7 @@ return data['data']
     }
 
     render_interactable_checker_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'enable_interactible'))
         if (items.length == 0) {
             items = [0, 1]
@@ -3747,7 +3928,7 @@ return data['data']
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_interactable_checker_item_clicked(index)}>
@@ -3755,41 +3936,53 @@ return data['data']
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_interactable_checker_item_clicked(index, item, object)}>
+                                    {this.render_interactable_checker_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_interactable_checker_item_clicked(index){
-        if (this.state.selected_interactable_checker_event_item == index) {
-            this.setState({ selected_interactable_checker_event_item: null })
-        } else {
-            this.setState({ selected_interactable_checker_event_item: index })
-        }
+    when_interactable_checker_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_interactable_checker_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+        // if (this.state.selected_interactable_checker_event_item == index) {
+        //     this.setState({ selected_interactable_checker_event_item: null })
+        // } else {
+        //     this.setState({ selected_interactable_checker_event_item: index })
+        // }
     }
 
-    render_interactable_checker_event_item(item, object, index){
+    render_interactable_checker_event_item(item, object, index, full=false){
         var interactable_checker_obj = {'0':this.props.app_state.loc['2433']/* 'Access Rights Disabled(Public)' */,'1':this.props.app_state.loc['2434']/* Access Rights Enabled(Private)' */}
         var interactable_checker = interactable_checker_obj[item.returnValues.p6]
-        if (this.state.selected_interactable_checker_event_item == index) {
+        if (this.state.selected_interactable_checker_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2435']/* 'Access Rights Status' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2436']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2435']/* 'Acces Rights Status' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2435']/* 'Acces Rights Status' */, 'size': 'l', 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }
@@ -3822,7 +4015,7 @@ return data['data']
     }
 
     render_interactable_accounts_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'add_interactible'))
         if (items.length == 0) {
             items = [0, 1]
@@ -3846,7 +4039,7 @@ return data['data']
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_interactable_account_item_clicked(index)}>
@@ -3854,44 +4047,55 @@ return data['data']
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_interactable_account_item_clicked(index, item, object)}>
+                                    {this.render_interactable_account_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_interactable_account_item_clicked(index){
-        if (this.state.selected_interactable_account_event_item == index) {
-            this.setState({ selected_interactable_account_event_item: null })
-        } else {
-            this.setState({ selected_interactable_account_event_item: index })
-        }
+    when_interactable_account_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_interactable_account_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+        // if (this.state.selected_interactable_account_event_item == index) {
+        //     this.setState({ selected_interactable_account_event_item: null })
+        // } else {
+        //     this.setState({ selected_interactable_account_event_item: index })
+        // }
     }
 
-    render_interactable_account_event_item(item, object, index){
-        if (this.state.selected_interactable_account_event_item == index) {
+    render_interactable_account_event_item(item, object, index, full=false){
+        if (this.state.selected_interactable_account_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2600']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2601']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['159']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2600']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['159']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2600']/* 'Targeted Account' */, 'size': 'l', 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }
@@ -3924,7 +4128,7 @@ return data['data']
     }
 
     render_blocked_accounts_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'block_account'))
         if (items.length == 0) {
             items = [0, 1]
@@ -3948,7 +4152,7 @@ return data['data']
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_blocked_account_item_clicked(index)}>
@@ -3956,45 +4160,55 @@ return data['data']
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_blocked_account_item_clicked(index, item, object)}>
+                                    {this.render_blocked_account_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_blocked_account_item_clicked(index){
-        if (this.state.selected_blocked_account_event_item == index) {
-            this.setState({ selected_blocked_account_event_item: null })
-        } else {
-            this.setState({ selected_blocked_account_event_item: index })
-        }
+    when_blocked_account_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_blocked_account_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+        // if (this.state.selected_blocked_account_event_item == index) {
+        //     this.setState({ selected_blocked_account_event_item: null })
+        // } else {
+        //     this.setState({ selected_blocked_account_event_item: index })
+        // }
     }
 
-    render_blocked_account_event_item(item, object, index){
-        if (this.state.selected_blocked_account_event_item == index) {
+    render_blocked_account_event_item(item, object, index, full=false){
+        if (this.state.selected_blocked_account_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2429']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2430']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['159']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2429']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['159']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2429']/* 'Targeted Account' */, 'size': 'l', 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }

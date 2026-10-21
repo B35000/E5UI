@@ -84,19 +84,13 @@ class ContractDetailsSection extends Component {
             'e': [
                 ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2214d']/* 'participants' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */, this.props.app_state.loc['2214n']/* 'pre-purchases' */, this.props.app_state.loc['2214bj']/* 'prepurchase-requests 💳' */, this.props.app_state.loc['2214bq']/* 'obligation-configurations 🏛️' */, this.props.app_state.loc['2695n']/* 'obligations 🛡️' */], [1]
             ],
-            'events': [
-                ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
-            ],
-            'moderator-events': [
-                ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
-            ],
         }
         
         obj[this.props.app_state.loc['2119']/* events */] = [
-                ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
+            ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
         ]
         obj[this.props.app_state.loc['2120']/* moderator-events */] = [
-                ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
+            ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
         ]
 
         return obj
@@ -129,7 +123,11 @@ class ContractDetailsSection extends Component {
 
     async when_navigate_view_contract_list_detail_tags_object_updated(tag_obj) {
         this.setState({ navigate_view_contract_list_detail_tags_object: tag_obj })
-        var selected_item = this.get_selected_item(tag_obj, 'e');
+        const selected_item = this.get_selected_item(tag_obj, 'e');
+        if(this.load_history == null){
+            this.load_history = {'events':{}, 'moderators':{}, 'purchase':{}}
+        }
+
         if(selected_item == this.props.app_state.loc['2214n']/* 'pre-purchases' */){
             var contract_object = this.get_item_in_array(this.get_contract_items(), this.props.selected_contract_item)
             if(contract_object != null){
@@ -147,8 +145,30 @@ class ContractDetailsSection extends Component {
                     is_loading_prepurchase_balance_clone[contract_obj['e5_id']] = false
                     this.setState({is_loading_prepurchase_balance: is_loading_prepurchase_balance_clone})
                 }
+
+                if(this.load_history['purchase'][contract_object['e5_id']] != null && Date.now() - this.load_history['purchase'][contract_object['e5_id']] < (1000*60)) return;
+                this.load_history['purchase'][contract_object['e5_id']] = Date.now()
+                
                 await loading_prepurchase_balance(contract_object)
             }
+        }
+        else if(tag_obj['i'].active == this.props.app_state.loc['2119']/* 'events' */){
+            var object = this.get_item_in_array(this.get_contract_items(), this.props.selected_contract_item)
+            if(object == null) return;
+
+            if(this.load_history['events'][object['e5_id']] != null && Date.now() - this.load_history['events'][object['e5_id']] < (1000*60)) return;
+            this.load_history['events'][object['e5_id']] = Date.now()
+
+            await this.props.get_contract_event_data(object['id'], object['e5'])
+        }
+        else if(tag_obj['i'].active == this.props.app_state.loc['2120']/* moderator-events */){
+            var object = this.get_item_in_array(this.get_contract_items(), this.props.selected_contract_item)
+            if(object == null) return;
+
+            if(this.load_history['moderators'][object['e5_id']] != null && Date.now() - this.load_history['moderators'][object['e5_id']] < (1000*60)) return;
+            this.load_history['moderators'][object['e5_id']] = Date.now()
+
+            await this.props.get_moderator_event_data(object['id'], object['e5'])
         }
     }
 
@@ -2414,7 +2434,7 @@ class ContractDetailsSection extends Component {
     }
 
     render_pre_purchase_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_pre_purchase_spend_logs(object))
         if (items.length == 0) {
             items = [0, 1]
@@ -2632,12 +2652,20 @@ class ContractDetailsSection extends Component {
         )
     }
 
-
     render_created_proposal_item_logs(object) {
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'make_proposal'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2658,7 +2686,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_proposal_item_clicked(index)}>
@@ -2666,20 +2694,34 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_proposal_item_clicked(index, item, object)}>
+                                    {this.render_created_proposal_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_proposal_item_clicked(index) {
-        if (this.state.selected_proposal_event_item == index) {
-            this.setState({ selected_proposal_event_item: null })
-        } else {
-            this.setState({ selected_proposal_event_item: index })
-        }
-    }
+    when_proposal_item_clicked(index, item, object) {
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_created_proposal_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
 
+        // if (this.state.selected_proposal_event_item == index) {
+        //     this.setState({ selected_proposal_event_item: null })
+        // } else {
+        //     this.setState({ selected_proposal_event_item: index })
+        // }
+    }
 
     get_item_logs(object, event) {
         if (this.props.app_state.contract_events[object['id']] == null || this.should_hide_contract_info_because_private(object)) {
@@ -2688,28 +2730,25 @@ class ContractDetailsSection extends Component {
         return this.props.app_state.contract_events[object['id']][event]
     }
 
-
-    render_created_proposal_event_item(item, object, index) {
-        if (this.state.selected_proposal_event_item == index) {
+    render_created_proposal_event_item(item, object, index, full=false) {
+        if (this.state.selected_proposal_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_consensus_type(item.returnValues.p3), 'details': this.props.app_state.loc['346']/* 'Consensus Type' */, 'size': 's' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2178']/* 'Proposer Account ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p2, 'details': this.props.app_state.loc['1761']/* 'Proposal ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p5*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p5), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p6), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p2, 'details': this.props.app_state.loc['1761']/* 'Proposal ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p2, 'details': this.props.app_state.loc['1761']/* 'Proposal ID' */, 'size': 'l', 'footer': (new Date(item.returnValues.p5*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p5))})}
                 </div>
             )
         }
@@ -2719,7 +2758,6 @@ class ContractDetailsSection extends Component {
         var obj = { '0': this.props.app_state.loc['2180']/* 'Spend Proposal' */, '1': this.props.app_state.loc['2181']/* 'Reconfiguration Proposal' */, '6': this.props.app_state.loc['2182']/* 'Exchange-Transfer' */ }
         return obj[type]
     }
-
 
     get_sender_title_text(sender, object) {
         if (sender == this.props.app_state.user_account_id[object['e5']]) {
@@ -2755,12 +2793,20 @@ class ContractDetailsSection extends Component {
         )
     }
 
-
     render_modify_contract_item_logs(object) {
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'modify_object'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2781,7 +2827,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_modify_item_clicked(index)}>
@@ -2789,42 +2835,54 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_modify_item_clicked(index, item, object)}>
+                                    {this.render_modified_contract_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
+    when_modify_item_clicked(index, item, object) {
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_modified_contract_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
 
-    when_modify_item_clicked(index) {
-        if (this.state.selected_modify_event_item == index) {
-            this.setState({ selected_modify_event_item: null })
-        } else {
-            this.setState({ selected_modify_event_item: index })
-        }
+        // if (this.state.selected_modify_event_item == index) {
+        //     this.setState({ selected_modify_event_item: null })
+        // } else {
+        //     this.setState({ selected_modify_event_item: index })
+        // }
     }
 
-    render_modified_contract_event_item(item, object, index) {
-        if (this.state.selected_modify_event_item == index) {
+    render_modified_contract_event_item(item, object, index, full=false) {
+        if (this.state.selected_modify_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2179']/* 'Modifier' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2183']/* 'Targeted Modify Item' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.get_value_ui(item, object)}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p6*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p6), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p7), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2183']/* 'Targeted Modify Item' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2183']/* 'Targeted Modify Item' */, 'size': 'l', 'footer': (new Date(item.returnValues.p6*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p6)) })}
                 </div>
             )
         }
@@ -2849,7 +2907,6 @@ class ContractDetailsSection extends Component {
 
         return selected_key
     }
-
 
     get_value_ui(item, object) {
         var identifier = this.get_target_identifier(item)
@@ -2985,7 +3042,6 @@ class ContractDetailsSection extends Component {
         this.setState({enter_contract_search_text: text})
     }
 
-    //inefficient
     filter_enter_contract_event_logs(logs, typed_id, object){
         var results = []
         if(typed_id == '') return logs;
@@ -2997,12 +3053,20 @@ class ContractDetailsSection extends Component {
         return results
     }
 
-
     render_entered_contract_item_logs(object) {
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.filter_enter_contract_event_logs(this.get_item_logs(object, 'enter_contract'), this.state.enter_contract_search_text, object))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -3023,7 +3087,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_entered_contract_item_clicked(index)}>
@@ -3031,39 +3095,52 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_entered_contract_item_clicked(index, item, object)}>
+                                    {this.render_enter_contract_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_entered_contract_item_clicked(index) {
-        if (this.state.selected_enter_contract_event_item == index) {
-            this.setState({ selected_enter_contract_event_item: null })
-        } else {
-            this.setState({ selected_enter_contract_event_item: index })
-        }
+    when_entered_contract_item_clicked(index, item, object) {
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_enter_contract_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_enter_contract_event_item == index) {
+        //     this.setState({ selected_enter_contract_event_item: null })
+        // } else {
+        //     this.setState({ selected_enter_contract_event_item: index })
+        // }
     }
 
-    render_enter_contract_event_item(item, object, index) {
-        if (this.state.selected_enter_contract_event_item == index) {
+    render_enter_contract_event_item(item, object, index, full=false) {
+        if (this.state.selected_enter_contract_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2188']/* 'Entering Account ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_diff(item.returnValues.p4 - Date.now() / 1000), 'details': this.props.app_state.loc['2189']/* 'Entry Expiry' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p6), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2188']/* 'Entering Account ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2188']/* 'Entering Account ID' */, 'size': 'l' , 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7))})}
                 </div>
             )
         }
@@ -3097,10 +3174,19 @@ class ContractDetailsSection extends Component {
     }
 
     render_extend_contract_item_logs(object) {
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'extend_contract'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -3121,7 +3207,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_extend_contract_item_clicked(index)}>
@@ -3129,38 +3215,52 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_extend_contract_item_clicked(index, item ,object)}>
+                                    {this.render_extend_contract_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-    when_extend_contract_item_clicked(index) {
-        if (this.state.selected_extend_contract_event_item == index) {
-            this.setState({ selected_extend_contract_event_item: null })
-        } else {
-            this.setState({ selected_extend_contract_event_item: index })
-        }
+    when_extend_contract_item_clicked(index, item, object) {
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_extend_contract_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+
+        // if (this.state.selected_extend_contract_event_item == index) {
+        //     this.setState({ selected_extend_contract_event_item: null })
+        // } else {
+        //     this.setState({ selected_extend_contract_event_item: index })
+        // }
     }
 
-    render_extend_contract_event_item(item, object, index) {
-        if (this.state.selected_extend_contract_event_item == index) {
+    render_extend_contract_event_item(item, object, index, full=false) {
+        if (this.state.selected_extend_contract_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2191']/* 'Extending Account ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_diff(item.returnValues.p4 - Date.now() / 1000), 'details': this.props.app_state.loc['2192']/* 'Entry Expiry' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p6), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2191']/* 'Extending Account ID' */, 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2191']/* 'Extending Account ID' */, 'size': 'l', 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -3214,12 +3314,20 @@ class ContractDetailsSection extends Component {
         return results
     }
 
-
     render_exit_contract_item_logs(object) {
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 180;
         var items = [].concat(this.filter_exit_contract_event_logs(this.get_item_logs(object, 'exit_contract'), this.state.exit_contract_search_text, object))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -3240,7 +3348,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_exit_contract_item_clicked(index)}>
@@ -3248,38 +3356,50 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_exit_contract_item_clicked(index, item, object)}>
+                                    {this.render_exit_contract_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
+    when_exit_contract_item_clicked(index, item, object) {
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_exit_contract_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
 
-    when_exit_contract_item_clicked(index) {
-        if (this.state.selected_exit_contract_event_item == index) {
-            this.setState({ selected_exit_contract_event_item: null })
-        } else {
-            this.setState({ selected_exit_contract_event_item: index })
-        }
+        // if (this.state.selected_exit_contract_event_item == index) {
+        //     this.setState({ selected_exit_contract_event_item: null })
+        // } else {
+        //     this.setState({ selected_exit_contract_event_item: index })
+        // }
     }
 
-    render_exit_contract_event_item(item, object, index) {
-        if (this.state.selected_exit_contract_event_item == index) {
+    render_exit_contract_event_item(item, object, index, full=false) {
+        if (this.state.selected_exit_contract_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2194']/* 'Exiting Account ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title':number_with_commas(item.returnValues.p6), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2194']/* 'Exiting Account ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2194']/* 'Exiting Account ID' */, 'size': 'l' , 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7))})}
                 </div>
             )
         }
@@ -3315,10 +3435,19 @@ class ContractDetailsSection extends Component {
     }
 
     render_force_exit_contract_item_logs(object) {
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'force_exit'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -3339,7 +3468,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_force_exit_contract_item_clicked(index)}>
@@ -3347,41 +3476,52 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_force_exit_contract_item_clicked(index, item, object)}>
+                                    {this.render_force_exit_contract_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
+    when_force_exit_contract_item_clicked(index, item, object) {
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_force_exit_contract_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
 
-    when_force_exit_contract_item_clicked(index) {
-        if (this.state.selected_force_exit_contract_event_item == index) {
-            this.setState({ selected_force_exit_contract_event_item: null })
-        } else {
-            this.setState({ selected_force_exit_contract_event_item: index })
-        }
+        // if (this.state.selected_force_exit_contract_event_item == index) {
+        //     this.setState({ selected_force_exit_contract_event_item: null })
+        // } else {
+        //     this.setState({ selected_force_exit_contract_event_item: index })
+        // }
     }
 
-
-    render_force_exit_contract_event_item(item, object, index) {
-        if (this.state.selected_force_exit_contract_event_item == index) {
+    render_force_exit_contract_event_item(item, object, index, full=false) {
+        if (this.state.selected_force_exit_contract_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2196']/* 'Moderator Account ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p5, object), 'details': this.props.app_state.loc['2197']/* 'Exiting Account ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p6), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p5, object), 'details': this.props.app_state.loc['2197']/* 'Exiting Account ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p5, object), 'details': this.props.app_state.loc['2197']/* 'Exiting Account ID' */, 'size': 'l' , 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7))})}
                 </div>
             )
         }
@@ -3413,12 +3553,20 @@ class ContractDetailsSection extends Component {
         )
     }
 
-
     render_contract_transfer_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'transfer'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -3439,7 +3587,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index}>
@@ -3447,51 +3595,63 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_contract_transfer_item_clicked(index, item, object)}>
+                                    {this.render_contract_transfer_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
+    when_contract_transfer_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_contract_transfer_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
 
-    when_contract_transfer_item_clicked(index){
-        if (this.state.selected_contract_transfer_event_item == index) {
-            this.setState({ selected_contract_transfer_event_item: null })
-        } else {
-            this.setState({ selected_contract_transfer_event_item: index })
-        }
+        // if (this.state.selected_contract_transfer_event_item == index) {
+        //     this.setState({ selected_contract_transfer_event_item: null })
+        // } else {
+        //     this.setState({ selected_contract_transfer_event_item: index })
+        // }
     }
 
-
-    render_contract_transfer_event_item(item, object, index){
+    render_contract_transfer_event_item(item, object, index, full=false){
         var exchange_id = item['event'].returnValues.p1; 
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
-        if (this.state.selected_contract_transfer_event_item == index) {
+        if (this.state.selected_contract_transfer_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item['event'].returnValues.p5*1000).toLocaleString()),  'details': this.get_time_difference(item['event'].returnValues.p5), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item['event'].returnValues.p6), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' , 'footer': (new Date(item['event'].returnValues.p5*1000).toLocaleString()+' • '+this.get_time_difference(item['event'].returnValues.p5))})}
               
                 </div>
             )
@@ -3543,9 +3703,8 @@ class ContractDetailsSection extends Component {
         return this.props.app_state.moderator_events[object['id']][event]
     }
 
-
     render_modify_moderator_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'modify_moderator'))
         if (items.length == 0) {
             items = [0, 1]
@@ -3569,7 +3728,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_modify_moderator_item_clicked(index)}>
@@ -3577,47 +3736,56 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_modify_moderator_item_clicked(index, item, object)}>
+                                    {this.render_modify_moderator_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
+    when_modify_moderator_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_modify_moderator_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
 
-    when_modify_moderator_item_clicked(index){
-        if (this.state.selected_modify_moderator_event_item == index) {
-            this.setState({ selected_modify_moderator_event_item: null })
-        } else {
-            this.setState({ selected_modify_moderator_event_item: index })
-        }
+        // if (this.state.selected_modify_moderator_event_item == index) {
+        //     this.setState({ selected_modify_moderator_event_item: null })
+        // } else {
+        //     this.setState({ selected_modify_moderator_event_item: index })
+        // }
     }
 
-
-    render_modify_moderator_event_item(item, object, index){
+    render_modify_moderator_event_item(item, object, index, full=false){
         var authority_val_obj = {'0':this.props.app_state.loc['2211']/* 'Not Moderator' */, '1':this.props.app_state.loc['2212']/* 'Moderator' */}
         var authority_val = authority_val_obj[item.returnValues.p6]
-        if (this.state.selected_modify_moderator_event_item == index) {
+        if (this.state.selected_modify_moderator_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2214']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': authority_val, 'details': this.props.app_state.loc['2203']/* 'Authority value' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title':number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', {'title': authority_val, 'details': this.props.app_state.loc['2203']/* 'Authority value' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details':authority_val, 'size': 'l' , 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }
@@ -3652,9 +3820,8 @@ class ContractDetailsSection extends Component {
         )
     }
 
-
     render_interactable_checker_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'enable_interactible'))
         if (items.length == 0) {
             items = [0, 1]
@@ -3678,7 +3845,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_interactable_checker_item_clicked(index)}>
@@ -3686,43 +3853,57 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_interactable_checker_item_clicked(index, item, object)}>
+                                    {this.render_interactable_checker_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
+    when_interactable_checker_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_interactable_checker_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
 
-    when_interactable_checker_item_clicked(index){
-        if (this.state.selected_interactable_checker_event_item == index) {
-            this.setState({ selected_interactable_checker_event_item: null })
-        } else {
-            this.setState({ selected_interactable_checker_event_item: index })
-        }
+        // if (this.state.selected_interactable_checker_event_item == index) {
+        //     this.setState({ selected_interactable_checker_event_item: null })
+        // } else {
+        //     this.setState({ selected_interactable_checker_event_item: index })
+        // }
     }
 
-
-    render_interactable_checker_event_item(item, object, index){
-        var interactable_checker_obj = {'0':'Access Rights Disabled(Public)','1':'Access Rights Enabled(Private)'}
+    render_interactable_checker_event_item(item, object, index, full=false){
+        var interactable_checker_obj = {
+            '0':this.props.app_state.loc['2214cq']/* 'Access Rights Disabled (Public)' */,
+            '1':this.props.app_state.loc['2214cr']/* 'Access Rights Enabled (Private)' */
+        }
         var interactable_checker = interactable_checker_obj[item.returnValues.p6]
-        if (this.state.selected_interactable_checker_event_item == index) {
+        if (this.state.selected_interactable_checker_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2205']/* 'Access Rights Status' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2214']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2205']/* Acces Rights Status' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2205']/* Acces Rights Status' */, 'size': 'l' , 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7))})}
                 </div>
             )
         }
@@ -3756,9 +3937,8 @@ class ContractDetailsSection extends Component {
         )
     }
 
-
     render_interactable_accounts_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'add_interactible'))
         if (items.length == 0) {
             items = [0, 1]
@@ -3782,7 +3962,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_interactable_account_item_clicked(index)}>
@@ -3790,46 +3970,57 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_interactable_account_item_clicked(index, item, object)}>
+                                    {this.render_interactable_account_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-
-    when_interactable_account_item_clicked(index){
-        if (this.state.selected_interactable_account_event_item == index) {
-            this.setState({ selected_interactable_account_event_item: null })
-        } else {
-            this.setState({ selected_interactable_account_event_item: index })
-        }
+    when_interactable_account_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_interactable_account_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+        // if (this.state.selected_interactable_account_event_item == index) {
+        //     this.setState({ selected_interactable_account_event_item: null })
+        // } else {
+        //     this.setState({ selected_interactable_account_event_item: index })
+        // }
     }
 
-
-    render_interactable_account_event_item(item, object, index){
-        if (this.state.selected_interactable_account_event_item == index) {
+    render_interactable_account_event_item(item, object, index, full=false){
+        if (this.state.selected_interactable_account_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
+
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2214']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2208']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2208']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 'l', 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }
@@ -3869,7 +4060,7 @@ class ContractDetailsSection extends Component {
     }
 
     render_blocked_accounts_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_moderator_item_logs(object, 'block_account'))
         if (items.length == 0) {
             items = [0, 1]
@@ -3893,7 +4084,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div style={{  }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    {/* <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_blocked_account_item_clicked(index)}>
@@ -3901,46 +4092,56 @@ class ContractDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_blocked_account_item_clicked(index, item, object)}>
+                                    {this.render_blocked_account_event_item(item, object, index)}
+                                </div>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
+    when_blocked_account_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_blocked_account_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
 
-    when_blocked_account_item_clicked(index){
-        if (this.state.selected_blocked_account_event_item == index) {
-            this.setState({ selected_blocked_account_event_item: null })
-        } else {
-            this.setState({ selected_blocked_account_event_item: index })
-        }
+        // if (this.state.selected_blocked_account_event_item == index) {
+        //     this.setState({ selected_blocked_account_event_item: null })
+        // } else {
+        //     this.setState({ selected_blocked_account_event_item: index })
+        // }
     }
 
-    render_blocked_account_event_item(item, object, index){
-        if (this.state.selected_blocked_account_event_item == index) {
+    render_blocked_account_event_item(item, object, index, full=false){
+        if (this.state.selected_blocked_account_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2107']/* 'Moderator Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2117']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p7*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p7), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p8), 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2117']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 'l', 'footer': (new Date(item.returnValues.p7*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p7)) })}
                 </div>
             )
         }

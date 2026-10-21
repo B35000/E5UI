@@ -3617,7 +3617,7 @@ class PostListSection extends Component {
                     20/* videoport */: this.props.app_state.created_videos[e5],
                     21/* nitro */: this.props.app_state.created_nitros[e5]
                 }
-                const items = obj[object_type]
+                const items = obj[object_type] || []
                 const e5_object = items.find(e => e['id'] == id)
                 if(e5_object != null && object_type != null && object_type != 0){
                     //found an object

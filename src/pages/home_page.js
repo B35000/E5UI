@@ -6043,15 +6043,17 @@ class home_page extends Component {
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
-        
+        // this.props.show_loader_for_object_events(id, e5, true)
         await this.props.load_extra_token_data(object)
         await this.props.get_objects_showcased_certificates(object)
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        
+        // await this.props.get_exchange_event_data(id, e5)
+        // await this.props.get_moderator_event_data(id, e5)
+        // this.props.show_loader_for_object_events(id, e5, false)
 
-        this.props.get_exchange_event_data(id, e5)
-        this.props.get_moderator_event_data(id, e5)
-        this.props.load_exchanges_royalty_event_data(id, e5)
-        this.props.load_exchanges_royalty_payout_event_data(id, e5)
+        await this.props.load_exchanges_royalty_event_data(id, e5)
+        await this.props.load_exchanges_royalty_payout_event_data(id, e5)
         this.props.emit_view_object_event(id+e5)
         this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -6072,13 +6074,18 @@ class home_page extends Component {
         }
         this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1219']/* 'spends' */)
         this.reset_post_detail_object()
+
+        // this.props.show_loader_for_object_events(id, e5, true)
         await this.props.load_extra_token_data(object)
         await this.props.get_objects_showcased_certificates(object)
-        this.props.set_audio_pip_opacity_because_of_inactivity()
-        this.props.get_exchange_event_data(id, e5)
-        this.props.get_moderator_event_data(id, e5)
+        // await this.props.get_exchange_event_data(id, e5)
+        // await this.props.get_moderator_event_data(id, e5)
+        // this.props.show_loader_for_object_events(id, e5, false)
+        
         this.props.emit_view_object_event(id+e5)
         this.props.fetch_and_set_loaded_object_views([id], e5)
+        
+        this.props.set_audio_pip_opacity_because_of_inactivity()
     }
 
     when_E5_item_clicked(index, id){
@@ -6141,10 +6148,12 @@ class home_page extends Component {
             this.setState({viewed_contracts: viewed_contracts_clone})
             this.update_cookies()
         }
-
-        this.props.get_contract_event_data(id, e5)
-        this.props.get_moderator_event_data(id, e5)
         this.props.load_contracts_exchange_interactions_data(id, e5)
+        
+        // this.props.show_loader_for_object_events(id, e5, true)
+        // await this.props.get_contract_event_data(id, e5)
+        // await this.props.get_moderator_event_data(id, e5)
+        // this.props.show_loader_for_object_events(id, e5, false)
         
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
@@ -6173,9 +6182,12 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
 
-        this.props.get_subscription_event_data(id, e5)
-        this.props.get_moderator_event_data(id, e5)
+        // this.props.show_loader_for_object_events(id, e5, true)
         await this.props.get_objects_showcased_certificates(object)
+        
+        // await this.props.get_subscription_event_data(id, e5)
+        // await this.props.get_moderator_event_data(id, e5)
+        // this.props.show_loader_for_object_events(id, e5, false)
         
         this.props.set_audio_pip_opacity_because_of_inactivity()
         await this.props.emit_view_object_event(id+e5)
@@ -6736,14 +6748,19 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
-        // this.props.get_exchange_event_data(id, e5)
-        // this.props.get_moderator_event_data(id, e5)
+        
+        // this.props.show_loader_for_object_events(id, e5, true)
         await this.props.fetch_uploaded_files_for_object(object)
-        await this.props.get_certificate_bond_coupon_stagings(object)
-        await this.props.load_exchanges_royalty_payout_event_data(object['id'], object['e5'])
+        // await this.props.get_certificate_bond_coupon_stagings(object)
+        // await this.props.load_exchanges_royalty_payout_event_data(object['id'], object['e5'])
         await this.props.load_target_or_object_accounts_obligation_data([object['id']], object['e5'])
-        await this.props.perform_translation_of_specific_object(object)
         this.props.get_verified_certificate_data(object)
+        
+        // await this.props.get_exchange_event_data(id, e5)
+        // await this.props.get_moderator_event_data(id, e5)
+        // this.props.show_loader_for_object_events(id, e5, false)
+        
+        await this.props.perform_translation_of_specific_object(object)
         this.props.emit_view_object_event(id+e5)
         this.props.fetch_and_set_loaded_object_views([id], e5)
     }
@@ -6766,9 +6783,14 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.set_audio_pip_opacity_because_of_inactivity()
+        // this.props.show_loader_for_object_events(id, e5, true)
         await this.props.fetch_uploaded_files_for_object(object)
         await this.props.get_objects_showcased_certificates(object)
         await this.props.perform_translation_of_specific_object(object)
+
+        // await this.props.get_moderator_event_data(id, e5)
+        // this.props.show_loader_for_object_events(id, e5, false)
+
         this.props.emit_view_object_event(id+e5)
         this.props.fetch_and_set_loaded_object_views([id], e5)
     }

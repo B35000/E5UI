@@ -795,6 +795,12 @@ class DialogPage extends Component {
         else if(option == 'confirm_swap_coin_ether_via_near_intents_dialog'){
             return this.view_confirm_swap_coin_ether_via_near_intents_ui()
         }
+        else if(option == 'show_post_basic_details'){
+            return this.view_post_basic_details_ui()
+        }
+        else if(option == 'render_event_item_details'){
+            return this.render_event_item_details()
+        }
     }
 
 
@@ -9378,10 +9384,11 @@ return data['data']
         const item = this.state.data['item']
         const object = this.state.data['object']
         const items = item['price_data']
-        var is_application_accepted = item['is_response_accepted'];
+        const is_application_accepted = item['is_response_accepted'];
+        const me = this.props.app_state.user_account_id[object['e5']]
+        const message_target_account = me == item['applicant_id'] ? object['author'] : item['applicant_id']
+        
         if(is_application_accepted){
-            const me = this.props.app_state.user_account_id[object['e5']]
-            const message_target_account = me == item['applicant_id'] ? object['author'] : item['applicant_id']
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2498']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
@@ -9406,12 +9413,23 @@ return data['data']
                         </div>
                     )}
 
-                    <div style={{height: 10}}/>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['3055qo']/* 'Directly Message.' */, 'details':this.props.app_state.loc['3055vh']/* 'Send a message and start a private dialogue with the counterparty' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={() => this.open_direct_message_ui2(message_target_account, object['e5'])}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3055qq']/* 'Begin Chat' */, 'action':'', 'font':this.props.app_state.font})}
                     </div>
+
+                    {object['author'] != this.props.app_state.user_account_id[object['e5']] && (
+                        <div>
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bc']/* 'View Account' */, 'details':this.props.app_state.loc['3055bd']/* 'View the accounts entire activity on e.' */, 'size':'l'})}
+                            <div style={{height:10}}/>
+                            <div onClick={() => this.when_view_account_selected2(message_target_account, object['e5'])}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bc']/* 'View Account' */, 'action':'', 'font':this.props.app_state.font})}
+                            </div>
+                        </div>
+                    )}
 
                     {this.render_finish_job_and_make_payment(item, object)}
                 </div>
@@ -9437,6 +9455,26 @@ return data['data']
                             <div onClick={() => this.view_contract(item, object)}>
                                 {this.render_detail_item('5', {'text':this.props.app_state.loc['3055gl']/* 'View Contract' */, 'action':''},)}
                             </div>
+                        </div>
+                    )}
+
+                    {object['author'] != this.props.app_state.user_account_id[object['e5']] && (
+                        <div>
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bc']/* 'View Account' */, 'details':this.props.app_state.loc['3055bd']/* 'View the accounts entire activity on e.' */, 'size':'l'})}
+                            <div style={{height:10}}/>
+                            <div onClick={() => this.when_view_account_selected2(message_target_account, object['e5'])}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bc']/* 'View Account' */, 'action':'', 'font':this.props.app_state.font})}
+                            </div>
+
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'details':this.props.app_state.loc['3055bb']/* 'Hide the acccounts content from your feed, your content and the feed of your followers.' */, 'size':'l'})}
+                            <div style={{height:10}}/>
+                            <div onClick={() => this.when_block_contact_selected2(message_target_account, object['e5'])}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'action':'', 'font':this.props.app_state.font})}
+                            </div>
+                            <div style={{height:5}}/>
+                            {this.render_detail_item('10', {'text':this.props.app_state.loc['3055bi']/* 'If you do this, the changes will reflect on other feeds after your next run. This action cannot be undone.' */ , 'textsize':'10px', 'font':this.props.app_state.font})}
                         </div>
                     )}
                 </div>
@@ -9564,6 +9602,18 @@ return data['data']
         this.props.start_new_direct_message_chat(account, e5)
     }
 
+    when_block_contact_selected2(account, e5){
+        const me = this.props.app_state.user_account_id[e5]
+        if(me == account) return;
+        this.props.when_block_contact_selected(account, e5)
+    }
+
+    when_view_account_selected2(account, e5){
+        const me = this.props.app_state.user_account_id[e5]
+        if(me == account) return;
+        this.props.when_view_account_details_selected(account, e5)
+    }
+
 
 
 
@@ -9626,9 +9676,10 @@ return data['data']
         const is_application_accepted = item['is_response_accepted'];
         const items_to_deliver = object['ipfs']['bag_orders']
         const total_amounts = this.get_total_bag_value(items_to_deliver, object)
+        const me = this.props.app_state.user_account_id[object['e5']]
+        const message_target_account = me == item['applicant_id'] ? object['author'] : item['applicant_id']
+        
         if(is_application_accepted == true){
-            const me = this.props.app_state.user_account_id[object['e5']]
-            const message_target_account = me == item['applicant_id'] ? object['author'] : item['applicant_id']
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2054']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000).toLocaleString()), 'size':'l'})}
@@ -9663,6 +9714,17 @@ return data['data']
                     <div onClick={() => this.open_direct_message_ui2(message_target_account, object['e5'])}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['3055qq']/* 'Begin Chat' */, 'action':'', 'font':this.props.app_state.font})}
                     </div>
+
+                    {object['author'] != this.props.app_state.user_account_id[object['e5']] && (
+                        <div>
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bc']/* 'View Account' */, 'details':this.props.app_state.loc['3055bd']/* 'View the accounts entire activity on e.' */, 'size':'l'})}
+                            <div style={{height:10}}/>
+                            <div onClick={() => this.when_view_account_selected2(message_target_account, object['e5'])}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bc']/* 'View Account' */, 'action':'', 'font':this.props.app_state.font})}
+                            </div>
+                        </div>
+                    )}
                     
                     {this.render_finish_job_and_make_payment(item, object)}
                 </div>
@@ -9692,6 +9754,26 @@ return data['data']
                             <div onClick={() => this.view_contract2(item, object)}>
                                 {this.render_detail_item('5', {'text':this.props.app_state.loc['3055gl']/* 'View Contract' */, 'action':''},)}
                             </div>
+                        </div>
+                    )}
+
+                    {object['author'] != this.props.app_state.user_account_id[object['e5']] && (
+                        <div>
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['3055bc']/* 'View Account' */, 'details':this.props.app_state.loc['3055bd']/* 'View the accounts entire activity on e.' */, 'size':'l'})}
+                            <div style={{height:10}}/>
+                            <div onClick={() => this.when_view_account_selected2(message_target_account, object['e5'])}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055bc']/* 'View Account' */, 'action':'', 'font':this.props.app_state.font})}
+                            </div>
+
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'details':this.props.app_state.loc['3055bb']/* 'Hide the acccounts content from your feed, your content and the feed of your followers.' */, 'size':'l'})}
+                            <div style={{height:10}}/>
+                            <div onClick={() => this.when_block_contact_selected2(message_target_account, object['e5'])}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055ba']/* 'Block Account' */, 'action':'', 'font':this.props.app_state.font})}
+                            </div>
+                            <div style={{height:5}}/>
+                            {this.render_detail_item('10', {'text':this.props.app_state.loc['3055bi']/* 'If you do this, the changes will reflect on other feeds after your next run. This action cannot be undone.' */ , 'textsize':'10px', 'font':this.props.app_state.font})}
                         </div>
                     )}
                 </div>
@@ -19702,6 +19784,163 @@ return data['data']
         this.props.swap_ether_to_specified_target_via_near_intents(item, picked_amount, recipient_address, gas_price, my_balance, sender_address, swap_target, type, swap_target_data, near_intents_swap_object)
     }
 
+
+
+
+
+
+
+
+    view_post_basic_details_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.view_post_basic_details_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.view_post_basic_details_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.view_post_basic_details_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    view_post_basic_details_data(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const object_type = this.state.data['type']
+        const ipfs = object['ipfs']
+        const age = object['block']
+        const time = object['timestamp']
+        const number = this.is_post_anonymous(object) ? '???,???,???' : number_with_commas(age)
+        const relativepower = this.is_post_anonymous(object) ? '???' : this.get_time_difference(time)
+        return(
+            <div>
+                {this.render_detail_item('1', item['tags'])}
+                <div style={{height: 10}}/>
+                <div style={{'padding': '0px 0px 0px 0px'}}>
+                    {this.render_title_or_image_title(object_type, item, object)}
+                </div>
+                <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number}`, 'barcolor':'', 'relativepower':`${relativepower} `+this.props.app_state.loc['2495']/* ago */, 'number_when_tapped':this.is_post_anonymous(object) ? '???' :`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` })}
+                    </div>
+                </div>
+                {this.render_detail_item('0')}
+                {this.render_item_data(ipfs['entered_objects'])}
+                {this.render_item_images(ipfs['entered_image_objects'])}
+                {this.render_pdf_files_if_any(ipfs['entered_pdf_objects'])}
+                {this.render_zip_files_if_any(ipfs['entered_zip_objects'])}
+                {this.render_markdown_if_any(ipfs['markdown'])}
+            </div>
+        )
+    }
+
+    render_title_or_image_title(object_type, item, object){
+        if(object_type == 31/* token_exchange */){
+            if(object['ipfs'].certificate_models != null){
+                return this.render_detail_item('3', item['id'])
+            }
+            else if(object['ipfs'].token_target != null){
+                return this.render_detail_item('3', item['id'])
+            }
+            return(
+                <div>
+                    {this.render_detail_item('8', item['id'])}
+                </div>
+            )
+        }
+        else if(object_type == 19 || object_type == 20 || object_type == 21){
+            return(
+                <div>
+                    {this.render_detail_item('8', item['id'])}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div>
+                    {this.render_detail_item('3', item['id'])}
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+    render_event_item_details(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.state.data['view']}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.state.data['view']}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.state.data['view']}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(2)}
+                    </div>
+                </div>
+            )
+        }
+    }
 
 
 
