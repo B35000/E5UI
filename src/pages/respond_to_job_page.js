@@ -627,9 +627,35 @@ class RespondToJobPage extends Component {
     }
 
     render_application_prices_data(){
+        const { upper, lower } = this.get_minimum_amounts_in_end_and_spend()
+        const active_end_mint_limit = upper.end
+        const active_spend_mint_limit = upper.spend
+        const active_end_mint_bottom = lower.end
+        const active_spend_mint_bottom = lower.spend
+
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1321']/* 'Your preferred fee.' */, 'details':this.props.app_state.loc['1322']/* 'Set how much you want for the job. Select an exchange by its id, then the desired price and click add' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1154b']/* 'Obligated Upper Pay-Bound' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_end_mint_limit), 'number':this.format_account_balance_figure(active_end_mint_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_spend_mint_limit),
+                    'number':this.format_account_balance_figure(active_spend_mint_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1154c']/* ''Obligated Upper Pay-Bound in END and SPEND' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_end_mint_bottom), 'number':this.format_account_balance_figure(active_end_mint_bottom), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_spend_mint_bottom),
+                    'number':this.format_account_balance_figure(active_spend_mint_bottom), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, })}
+                </div>
 
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1332d']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
@@ -649,6 +675,115 @@ class RespondToJobPage extends Component {
 
             </div>
         )
+    }
+
+    get_minimum_amounts_in_end_and_spend(){
+        // if(this.props.app_state.default_obligation_contract.length == 0){
+        //     return {
+        //         upper: {
+        //             end:bigInt('1e72'), 
+        //             spend:bigInt('1e72')
+        //         }, 
+        //         lower: { 
+        //             end:bigInt(0), 
+        //             spend:bigInt(0) 
+        //         } 
+        //     };
+        // } 
+
+        const object_texts = this.get_object_texts()
+        let upper = bigInt('1e72')
+        let lower = bigInt(0);
+
+        const object_obligation_fulfiller = this.props.app_state.accounts[this.props.app_state.selected_e5].address
+        const author_oblication_contract_object = this.props.app_state.obligation_subscriptions[object_obligation_fulfiller] || {}
+        const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+        // console.log('get_minimum_amounts_in_end_and_spend', this.props.app_state.my_contract_obligation_subscription_data)
+        authors_obligation_contracts.forEach(contract => {
+            const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
+            var default_upper_pay_bound = configuration['ipfs'].default_upper_pay_bound;
+            var default_lower_pay_bound = configuration['ipfs'].default_lower_pay_bound;
+
+            const keywords = configuration['ipfs'].paybound_keywords
+            object_texts.forEach(text_to_check => {
+                const words_to_check = text_to_check.toLowerCase().split(' ');
+                words_to_check.forEach(word => {
+                    if(keywords[word] != null){
+                        if(bigInt(keywords[word]['upper']).lesser(default_upper_pay_bound) && bigInt(keywords[word]['lower']).greater(default_lower_pay_bound)){
+                            default_upper_pay_bound = keywords[word]['upper'];
+                            default_lower_pay_bound = keywords[word]['lower'];
+                        }
+                    }
+                });
+            });
+
+            if(bigInt(default_upper_pay_bound).lesser(upper)){
+                upper = default_upper_pay_bound
+            }
+            if(bigInt(default_lower_pay_bound).greater(lower)){
+                lower = default_lower_pay_bound
+            }
+        });
+
+        // console.log('get_minimum_amounts_in_end_and_spend','upper', upper)
+        const active_end_mint_limit = this.calculate_proportion(this.get_active_mint_limit(3), upper)
+        const active_spend_mint_limit = this.calculate_proportion(this.get_active_mint_limit(5), upper)
+        const active_end_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(3), lower)
+        const active_spend_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(5), lower)
+
+        return { 
+            upper: { 
+                end: active_end_mint_limit, 
+                spend: active_spend_mint_limit
+            }, 
+            lower: { 
+                end: active_end_mint_bottom, 
+                spend: active_spend_mint_bottom 
+            } 
+        };
+    }
+
+    get_object_texts(){
+        const object_texts = [this.state.custom_specifications]
+        const object = this.state.job_item
+        if(object['ipfs'].markdown != null) object_texts.push(object['ipfs'].markdown)
+        if(object['ipfs'].entered_title_text != null) object_texts.push(object['ipfs'].entered_title_text);
+        const indexing_tags = object['ipfs'].entered_indexing_tags || object['ipfs']['tags'] || []
+        indexing_tags.forEach(tag => {
+            object_texts.push(tag)
+        });
+        if(object['ipfs'].entered_objects != null){
+            object['ipfs'].entered_objects.forEach(text_object => {
+                const type = text_object['type']
+                const text = type == '11' ? text_object['data']['caption']['text'] : text_object['data']['text'];
+                object_texts.push(text)
+            });
+        }
+        return object_texts
+    }
+
+    get_active_mint_limit(token_id){
+        const e5 = this.state.e5
+        if(this.props.app_state.created_token_object_mapping[e5] == null || this.props.app_state.created_token_object_mapping[e5][token_id] == null){
+            if(e5 == 'E25') return bigInt('35000000') / 10;
+            else if(e5 == 'E35') return bigInt('3500000') / 10;
+            else return bigInt('72000000') /10;
+        }else{
+            let active_block_limit_reduction_proportion = this.props.app_state.created_token_object_mapping[e5][token_id]['data'][2][6/* <6>active_block_limit_reduction_proportion (denominator -> 10**18) */]
+
+            if(active_block_limit_reduction_proportion == 0){
+                active_block_limit_reduction_proportion = bigInt('100e16')
+            }
+
+            const mint_limit = this.props.app_state.created_token_object_mapping[e5][token_id]['data'][1][0/* <0>default_exchange_amount_buy_limit */]
+
+            const active_mint_limit =  ((active_block_limit_reduction_proportion / 10**18) * mint_limit).toLocaleString('fullwide', {useGrouping:false})
+            return bigInt(active_mint_limit)
+        }
+    }
+
+    calculate_proportion(number, proportion){
+        return bigInt(number).multiply(proportion).divide('100e16')
     }
 
     constructor(props) {
@@ -895,6 +1030,12 @@ class RespondToJobPage extends Component {
         else if(selected_time-Date.now()/1000 < 900){
             this.props.notify(this.props.app_state.loc['1332']/* 'You cant set an expiry time thats less than fifteen minutes from now.' */, 6600)
         }
+        else if(this.state.price_data.length == 0){
+            this.props.notify(this.props.app_state.loc['1154d']/* 'You need to specify a payment for fulfilling the bag.' */, 9000)
+        }
+        else if(!this.has_obligation_minimum_been_met()){
+            this.props.notify(this.props.app_state.loc['1154e']/* 'You need to specify payments that fit in your obligation pay-bounds.' */, 9000)
+        }
         else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.app_state.has_wallet_been_set){
             this.props.notify(this.props.app_state.loc['a2527p']/* 'You need to set your account first.' */, 5000)
         }
@@ -910,6 +1051,34 @@ class RespondToJobPage extends Component {
                 this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 600)
             }
         }
+    }
+
+    has_obligation_minimum_been_met(){
+        const { upper, lower } = this.get_minimum_amounts_in_end_and_spend()
+        const active_end_mint_limit = upper.end
+        const active_spend_mint_limit = upper.spend
+        const active_end_mint_bottom = lower.end
+        const active_spend_mint_bottom = lower.spend
+
+        const price_data = this.state.price_data
+        const end_amount = price_data.find((item) => {
+            return (item['id'] == '3')
+        })?.amount
+        const spend_amount = price_data.find((item) => {
+            return (item['id'] == '5')
+        })?.amount
+
+        if(price_data.length < 2){
+            return false
+        }
+        else if(end_amount == null || spend_amount == null){
+            return false
+        }
+        else if((end_amount > active_end_mint_limit || end_amount < active_end_mint_bottom) || (spend_amount > active_spend_mint_limit || spend_amount < active_spend_mint_bottom)){
+            return false
+        }
+        
+        return true
     }
 
     reset_state(){

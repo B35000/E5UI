@@ -574,7 +574,7 @@ class ViewGroups extends Component {
                 opacity = object_data['opacity'] == null ? 1.0 : object_data['opacity']
             }
             return(
-                <div /* onClick={()=> this.when_action_button_clicked(action)} */ style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
+                <div /* onClick={()=> this.when_action_button_clicked(action)} */ style={{'margin':'0px 0px 0px 0px','padding': '0px 3px 0px 3px'}}>
                     <style>{`
                         .button-click {
                             animation: clickAnim 0.2s ease;

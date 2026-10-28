@@ -81,32 +81,20 @@ class SearchedAccountPage extends Component {
             'e':[
                 ['or','',0], ['e','e.'+this.props.app_state.loc['1699']/* 'e.main-data' */,'e.'+this.props.app_state.loc['1700']/* 'e.subscription-data' */,'e.'+this.props.app_state.loc['1701']/* 'e.contract-data' */,'e.'+this.props.app_state.loc['1702']/* 'e.exchange-data' */], [0]
             ],
-            'main-data':[
-              ['xor','',0], [this.props.app_state.loc['1699']/* 'main-data' */ ,this.props.app_state.loc['1703']/* 'creations' */, this.props.app_state.loc['1770i']/* 'activity' */,this.props.app_state.loc['1704']/* 'withdraws' */,this.props.app_state.loc['1705']/* 'pending-withdraws' */,this.props.app_state.loc['1706']/* 'runs' */], [1],[1]
-            ],
-            'subscription-data':[
-              ['xor','',0], [this.props.app_state.loc['1700']/* 'subscription-data' */,this.props.app_state.loc['1707']/* 'payments' */,this.props.app_state.loc['1708']/* cancellations' */], [1],[1]
-            ],
-            'contract-data':[
-              ['xor','',0], [this.props.app_state.loc['1701']/* 'contract-data' */,this.props.app_state.loc['1709']/* 'entries' */,this.props.app_state.loc['1710']/* 'exits' */,this.props.app_state.loc['1711']/* 'votes' */], [1],[1]
-            ],
-            'exchange-data':[
-              ['xor','',0], [this.props.app_state.loc['1702']/* 'exchange-data' */,this.props.app_state.loc['1712']/* 'swaps' */,this.props.app_state.loc['1713']/* 'transfers' */], [1],[1]
-            ],
         };
 
         obj[this.props.app_state.loc['1699']/* 'main-data' */] = [
-              ['xor','',0], [this.props.app_state.loc['1699']/* 'main-data' */ ,this.props.app_state.loc['1703']/* 'creations' */, this.props.app_state.loc['1770i']/* 'activity' */,this.props.app_state.loc['1704']/* 'withdraws' */,this.props.app_state.loc['1705']/* 'pending-withdraws' */,this.props.app_state.loc['1706']/* 'runs' */], [1],[1]
-            ]
+            ['xor','',0], [this.props.app_state.loc['1699']/* 'main-data' */ ,this.props.app_state.loc['1703']/* 'creations' *//* , this.props.app_state.loc['1770i'] *//* 'activity' */,this.props.app_state.loc['1704']/* 'withdraws' */,this.props.app_state.loc['1705']/* 'pending-withdraws' */,this.props.app_state.loc['1706']/* 'runs' */], [1],[1]
+        ]
         obj[this.props.app_state.loc['1700']/* 'subscription-data' */] = [
-              ['xor','',0], [this.props.app_state.loc['1700']/* 'subscription-data' */,this.props.app_state.loc['1707']/* 'payments' */,this.props.app_state.loc['1708']/* cancellations' */], [1],[1]
-            ]
+            ['xor','',0], [this.props.app_state.loc['1700']/* 'subscription-data' */,this.props.app_state.loc['1707']/* 'payments' */,this.props.app_state.loc['1708']/* cancellations' */], [1],[1]
+        ]
         obj[this.props.app_state.loc['1701']/* 'contract-data' */] = [
-              ['xor','',0], [this.props.app_state.loc['1701']/* 'contract-data' */,this.props.app_state.loc['1709']/* 'entries' */,this.props.app_state.loc['1710']/* 'exits' */,this.props.app_state.loc['1711']/* 'votes' */], [1],[1]
-            ]
+            ['xor','',0], [this.props.app_state.loc['1701']/* 'contract-data' */,this.props.app_state.loc['1709']/* 'entries' */,this.props.app_state.loc['1710']/* 'exits' */,this.props.app_state.loc['1711']/* 'votes' */], [1],[1]
+        ]
         obj[this.props.app_state.loc['1702']/* 'exchange-data' */] = [
-              ['xor','',0], [this.props.app_state.loc['1702']/* 'exchange-data' */,this.props.app_state.loc['1712']/* 'swaps' */,this.props.app_state.loc['1713']/* 'transfers' */], [1],[1]
-            ]
+            ['xor','',0], [this.props.app_state.loc['1702']/* 'exchange-data' */,this.props.app_state.loc['1712']/* 'swaps' */,this.props.app_state.loc['1713']/* 'transfers' */], [1],[1]
+        ]
 
 
         return obj
@@ -1790,7 +1778,7 @@ class SearchedAccountPage extends Component {
         const objects2 = this.props.app_state.account_post_history2[account_id] || []
         const sorted = this.sortByAttributeDescending(objects.concat(objects2), 'timestamp')
         var items = this.filter_objects(sorted)
-        var middle = this.props.height - 250;
+        var middle = this.props.height - 260;
         if(items.length == 0){
             items = ['0','1'];
             if(this.state.loading_creations == true){

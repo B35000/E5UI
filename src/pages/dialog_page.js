@@ -200,7 +200,7 @@ class DialogPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', this.props.app_state.loc['3055kv']/* 'work-keywords 💼' */, this.props.app_state.loc['3055kw']/* 'explore-keywords 🧭' */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['3055kv']/* 'work-keywords 💼' */, this.props.app_state.loc['3055kw']/* 'explore-keywords 🧭' */, this.props.app_state.loc['3055vi']/* 'paybound-keywords 🖇️' */], [1]
             ],
         };
     }
@@ -11943,6 +11943,7 @@ return data['data']
         const item_obligation_configuration = item['ipfs']
         const work_keyword_count = Object.keys(item_obligation_configuration.work_keywords).length
         const explore_keyword_count = Object.keys(item_obligation_configuration.explore_keywords).length
+        const paybound_keywords = Object.keys((item_obligation_configuration.paybound_keywords || {})).length
         return(
             <div>
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055kt']/* 'Filter Targeted Keywords.' */, 'details': this.props.app_state.loc['3055ku']/* 'Filter and search for a targeted keyword in the configuration.' */, 'size': 'l' })}
@@ -11956,6 +11957,12 @@ return data['data']
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                     {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093eb']/* 'Targeted Explore Keywords' */, 'subtitle':this.format_power_figure(explore_keyword_count), 'barwidth':this.get_number_width(explore_keyword_count), 'number':`${this.format_account_balance_figure(explore_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
+                </div>
+                <div style={{height:10}}/>
+
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093hu']/* 'Targeted Paybound Keywords' */, 'subtitle':this.format_power_figure(paybound_keywords), 'barwidth':this.get_number_width(paybound_keywords), 'number':`${this.format_account_balance_figure(paybound_keywords)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
                 </div>
                 <div style={{height:10}}/>
                 
@@ -11984,6 +11991,9 @@ return data['data']
         }
         else if(selected_item == this.props.app_state.loc['3055kw']/* 'explore-keywords 🧭' */){
             Object.assign(all_keywords, item_obligation_configuration.explore_keywords)
+        }
+        else if(selected_item == this.props.app_state.loc['3055vi']/* 'paybound-keywords 🖇️' */){
+            Object.assign(all_keywords, item_obligation_configuration.paybound_keywords)
         }
         
         const all_items = [].concat(Object.keys(all_keywords))
@@ -12016,12 +12026,37 @@ return data['data']
 
     render_target_item(item, all_keywords){
         const object = all_keywords[item]
-        const proportion = object['proportion']
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.format_proportion(proportion), 'details':item, 'size':'l'})}
-            </div>
-        )
+        const selected_item = this.get_selected_item(this.state.get_obligation_keyword_filter_tags_object, 'e')
+        
+        if(selected_item == this.props.app_state.loc['3055kv']/* 'work-keywords 💼' */ || selected_item == this.props.app_state.loc['3055kw']/* 'explore-keywords 🧭' */){
+            const proportion = object['proportion']
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.format_proportion(proportion), 'details':item, 'size':'l'})}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['3055vi']/* 'paybound-keywords 🖇️' */){
+            const upper = object['upper']
+            const lower = object['lower']
+
+            const active_end_mint_limit = this.calculate_proportion(this.get_active_mint_limit(3), upper)
+            const active_spend_mint_limit = this.calculate_proportion(this.get_active_mint_limit(5), upper)
+
+            const active_end_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(3), lower)
+            const active_spend_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(5), lower)
+
+            const details = this.props.app_state.loc['3093ht']/* 'From $ END and % SPEND, to & END and # SPEND' */
+            .replace('$',this.format_account_balance_figure(active_end_mint_bottom))
+            .replace('%',this.format_account_balance_figure(active_spend_mint_bottom))
+            .replace('&',this.format_account_balance_figure(active_end_mint_limit))
+            .replace('#',this.format_account_balance_figure(active_spend_mint_limit))
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':item, 'details':details, 'size':'l'})}
+                </div>
+            )
+        }
     }
 
     get_deadline_date_object(deadline_datetime){
@@ -12030,6 +12065,26 @@ return data['data']
         const year = new Date().getFullYear()
         
         return new Date(`${year}-${month<10 ? '0'+month : month}-${day<10 ? '0'+day : day}`)  
+    }
+
+    get_active_mint_limit(token_id){
+        const e5 = this.state.data['object']['e5']
+        if(this.props.app_state.created_token_object_mapping[e5] == null || this.props.app_state.created_token_object_mapping[e5][token_id] == null){
+            if(e5 == 'E25') return bigInt('35000000') / 10;
+            else if(e5 == 'E35') return bigInt('3500000') / 10;
+            else return bigInt('72000000') /10;
+        }else{
+            const active_block_limit_reduction_proportion = this.props.app_state.created_token_object_mapping[e5][token_id]['data'][2][6/* <6>active_block_limit_reduction_proportion (denominator -> 10**18) */]
+
+            const mint_limit = this.props.app_state.created_token_object_mapping[e5][token_id]['data'][1][0/* <0>default_exchange_amount_buy_limit */]
+
+            const active_mint_limit =  ((active_block_limit_reduction_proportion / 10**18) * mint_limit).toLocaleString('fullwide', {useGrouping:false})
+            return bigInt(active_mint_limit)
+        }
+    }
+
+    calculate_proportion(number, proportion){
+        return bigInt(number).multiply(proportion).divide('100e16')
     }
 
 

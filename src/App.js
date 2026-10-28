@@ -14036,14 +14036,24 @@ class App extends Component {
 
     const all_author_ints = []
     all_authors.forEach(author => {
-      all_author_ints.push(parseInt(author).toString())
+      all_author_ints.push(parseInt(author))
     });
 
     const absolute_load_limit = 1771762377000
     const load_step = ((Date.now() - absolute_load_limit) - 10000)
+    //targets: any, 
+    // filter_tags: any, 
+    // application_responses?: any[], 
+    // absolute_load_limit?: number, 
+    // default_load_step?: number, 
+    // authors?: any[], 
+    // target_e5?: string, 
+    // recipients?: any[])
     await this.get_objects_from_socket_and_set_in_state(['obligation_subscription'],[],[], absolute_load_limit, load_step, [], '', all_author_ints);
 
     await this.wait(500)
+
+    console.log('load_targets_obligation_data','this.state.obligation_subscriptions', this.state.obligation_subscriptions)
 
     const contracts_to_load = []
     const author_address_mapping_clone = structuredClone(this.state.author_address_mapping)
@@ -26969,7 +26979,7 @@ class App extends Component {
   }
 
   encrypt_post_object = async (node_object_e5_id, data) => {
-    const node_details = node_object_e5_id == '' ? this.state.beacon_data :this.state.nitro_node_details[node_object_e5_id]
+    const node_details = node_object_e5_id == '' ? this.state.beacon_data : this.state.nitro_node_details[node_object_e5_id]
     const user_temp_encryption_key = node_details['user_temp_encryption_key']
     const user_temp_hash = node_details['user_temp_hash']
     const encrypted_data_string = await this.encrypt_data_string(JSON.stringify(data), user_temp_encryption_key)
@@ -34613,14 +34623,18 @@ class App extends Component {
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     await this.check_and_set_default_rpc()
+    console.log('load_e5_data', 'set default rpc')
     await this.wait(500)
     await this.update_nitro_privacy_signature(false)
+    console.log('load_e5_data', 'updated nitro privacy signature')
     await this.wait(500)
     await this.load_root_config()
+    console.log('load_e5_data', 'loaded root config')
     await this.wait(500)
-    await this.check_and_set_default_rpc()
-    await this.wait(1000)
+    // await this.check_and_set_default_rpc()
+    // await this.wait(1000)
     await this.load_coin_and_externals_data()
+    console.log('load_e5_data', 'loaded coin and externals data')
     await this.wait(500)
     if(this.is_allowed_in_e5()){
       this.enableConsole()
@@ -34636,17 +34650,24 @@ class App extends Component {
       this.set_document_title(this.state.document_title)
  
       await this.set_sunrise_sunset_times()
+      console.log('load_e5_data', 'loaded sunrise sunset times')
       await this.wait(300)
       await this.load_cities_data()
+      console.log('load_e5_data', 'loaded cities data')
       this.load_coin_and_ether_coin_prices()
+      console.log('load_e5_data', 'loaded coin and ether coin prices')
       
 
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
+        console.log('load_e5_data', 'checked if beacon node is online since manual beacon node is not disabled')
       }
       this.set_coin_icons_in_data()
+      console.log('load_e5_data', 'starting sync process')
       await this.start_synchronization_process()
+      console.log('load_e5_data', 'sync process started')
       await this.load_ether_and_coin_views_data()
+      console.log('load_e5_data', 'loadded ether and coin views data')
     }else{
       this.prompt_top_notification(this.getLocale()['2738']/* 'Not available in your region yet.' */, (35*60*1000))
       this.set_document_title('??(Beta)')
@@ -34658,23 +34679,27 @@ class App extends Component {
   load_e5_data2 = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     await this.check_and_set_default_rpc()
+    console.log('load_e5_data2', 'set default rpc')
     this.inc_synch_progress()
     await this.wait(500)
 
     await this.update_nitro_privacy_signature(false)
+    console.log('load_e5_data2', 'updated nitro privacy signature')
     this.inc_synch_progress()
     await this.wait(500)
 
     await this.load_root_config()
+    console.log('load_e5_data2', 'loaded root config')
     this.inc_synch_progress()
 
     await this.wait(1000)
     await this.load_coin_and_externals_data()
+    console.log('load_e5_data2', 'loaded coin and externals data')
     this.inc_synch_progress()
     await this.wait(500)
 
-    await this.check_and_set_default_rpc()
-    this.inc_synch_progress()
+    // await this.check_and_set_default_rpc()
+    // this.inc_synch_progress()
 
     if(this.is_allowed_in_e5()){
       this.enableConsole()
@@ -34687,19 +34712,24 @@ class App extends Component {
       this.set_document_title(this.state.document_title)
       this.inc_synch_progress()
       this.load_coin_and_ether_coin_prices()
+      console.log('load_e5_data2', 'loaded coin and ether coin prices')
       this.inc_synch_progress()
 
       await this.set_sunrise_sunset_times()
+      console.log('load_e5_data2', 'set sunrise sunset times')
       await this.wait(300)
       this.inc_synch_progress()
       await this.load_cities_data()
+      console.log('load_e5_data2', 'loaded cities')
       this.inc_synch_progress()
 
       if(this.state.manual_beacon_node_disabled == 'e'){
         await this.check_if_beacon_node_is_online()
+        console.log('load_e5_data2', 'manual beacon node loaded')
       }
       this.inc_synch_progress()
       this.start_synchronization_process()
+      console.log('load_e5_data2', 'started synchronization process')
       this.inc_synch_progress()
       while(this.state.syncronizing_progress < 100){
         this.inc_synch_progress()
@@ -34749,6 +34779,24 @@ class App extends Component {
   }
 
   async set_sunrise_sunset_times(){
+    const cached_root_data = (await this.get_cache_data_in_local_forage('set_sunrise_sunset_times')) || {};
+    const cached_time = (cached_root_data['time'] || 0) > Date.now() - (1000*60*60)
+
+    if(cached_time == true){
+      this.setState({
+        sunrise: cached_root_data.sunrise, 
+        sunset: cached_root_data.sunset, 
+        city: cached_root_data.user_city, 
+        region: cached_root_data.user_region,
+
+        device_country: cached_root_data.device_country,
+        device_city: cached_root_data.device_city,
+        device_region: cached_root_data.device_region,
+        device_country_code: cached_root_data.device_country_code,
+      })
+      return;
+    }
+
     try{
       const ipRes = await fetch('https://ipapi.co/json/');
       const loc = await ipRes.json();
@@ -34788,6 +34836,24 @@ class App extends Component {
           device_region: user_region, 
           device_country_code: this.get_country_code(country)
         })
+      }
+
+      await this.wait(500)
+
+      if(cached_time == false){
+        this.set_cache_data_in_local_forage({
+          sunrise: sunrise,
+          sunset: sunset,
+          user_city: user_city,
+          user_region: user_region,
+
+          device_country: this.state.device_country,
+          device_city: this.state.device_city,
+          device_region: this.state.device_region,
+          device_country_code: this.state.device_country_code,
+
+          time: Date.now()
+        }, 'set_sunrise_sunset_times');
       }
     }catch(e){
       console.log('apppage', e)
@@ -34845,6 +34911,25 @@ class App extends Component {
   }
 
   load_coin_and_externals_data = async () => {
+    const cached_load_coin_and_externals_data = (await this.get_cache_data_in_local_forage('load_coin_and_externals_data')) || {};
+    console.log('load_coin_and_externals_data', 'cached_load_coin_and_externals_data', cached_load_coin_and_externals_data)
+    const cached_time = (cached_load_coin_and_externals_data['time'] || 0) > Date.now() - (1000*60*60)
+
+    if(cached_time == true){
+      console.log('load_coin_and_externals_data', 'cached_load_coin_and_externals_data', 'cached time is true', cached_time)
+
+      this.setState({
+        fees_object: cached_load_coin_and_externals_data.fees_object, 
+        exchange_rates: cached_load_coin_and_externals_data.exchange_rates, 
+        coin_chart_info: cached_load_coin_and_externals_data.coin_chart_info, 
+        ether_usage_chart_info: cached_load_coin_and_externals_data.ether_usage_chart_info
+      })
+      await this.wait(700)
+      await this.load_coinlore_coin_and_ether_ids()
+      return;
+    }
+
+
     var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
     if(this.state.beacon_chain_url != ''){
       beacon_node = this.state.beacon_chain_url;
@@ -34853,6 +34938,7 @@ class App extends Component {
       beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
     }
     
+    console.log('load_coin_and_externals_data', 'beacon_node being used: ', beacon_node)
     const request = `${beacon_node}/coin_and_externals_data`
     try{
       const response = await fetch(request);
@@ -34869,13 +34955,28 @@ class App extends Component {
       console.log('load_coin_and_externals_data', 'fees_object', fees_object)
       console.log('load_coin_and_externals_data', 'coin_chart_info', coin_chart_info)
       console.log('load_coin_and_externals_data', 'ether_usage_chart_info', ether_usage_chart_info)
-      this.setState({fees_object: fees_object, exchange_rates: exchange_rates, coin_chart_info: coin_chart_info, ether_usage_chart_info: ether_usage_chart_info})
+      this.setState({
+        fees_object: fees_object, 
+        exchange_rates: exchange_rates, 
+        coin_chart_info: coin_chart_info, 
+        ether_usage_chart_info: ether_usage_chart_info
+      })
 
-      await this.wait(900)
+      await this.wait(700)
       await this.load_coinlore_coin_and_ether_ids()
+
+      if(cached_time == false){
+        this.set_cache_data_in_local_forage({
+          fees_object: fees_object, 
+          exchange_rates: exchange_rates, 
+          coin_chart_info: coin_chart_info, 
+          ether_usage_chart_info: ether_usage_chart_info,
+          time: Date.now()
+        }, 'load_coin_and_externals_data');
+      }
     }
     catch(e){
-      console.log('apppage', 'something went wrong with get_socket_data', e)
+      console.log('apppage', 'something went wrong with load_coin_and_externals_data', e)
     }
   }
 
@@ -35092,8 +35193,8 @@ class App extends Component {
     this.set_cookies()
     this.set_up_socket_connection_and_initialize_listeners(0)
     this.fetch_specific_coin_receipts(this.state.accounts['E25'].address)
-    
-    
+
+
     await this.wait(3000)
     await this.generate_account_data_for_each_coin(seed)
   }
@@ -38388,6 +38489,8 @@ class App extends Component {
       },
       body: JSON.stringify(await this.encrypt_post_object('', arg_obj))
     }
+    console.log('pre_launch_fetch', 'beacon_node being used: ', beacon_node)
+
     var request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'pre_launch_fetch')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
     try{
       const response = await fetch(request, body);
@@ -38955,31 +39058,20 @@ class App extends Component {
   }
 
   load_root_config = async () => {
-    // const e5 = root_e5
-    // const account = root_account
-    // const web3_url = this.get_web3_url_from_e5(e5)
-    // const web3 = new Web3(web3_url);
-    // const contractArtifact = require('./contract_abis/E5.json');
-    // const contractAddress = this.state.e5s[e5].e5_address
-    // const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
-
-    // var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: this.get_first_block(e5), toBlock: this.get_first_block(e5)+20 }, (error, events) => {})
-    // var contract_addresses = contract_addresses_events[0].returnValues.p5
-
-    // const E52contractArtifact = require('./contract_abis/E52.json');
-    // const E52_address = contract_addresses[1];
-    // const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-
-    // var root_data_events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: {p1/* target_id */: 24/* 24(dialer admin registry) */, p2/* context */:account/* sender_acc_id */} }, (error, events) => {})
-    
-    var root_data_events = await this.load_root_data_events()
+    const cached_root_data = (await this.get_cache_data_in_local_forage('root_data')) || {};
+    const cached_time = (cached_root_data['time'] || 0) > Date.now() - (1000*60*60)
+    var root_data_events = cached_time == true ? cached_root_data['root_data_events'] :  await this.load_root_data_events()
 
     console.log('load_root_config', 'root_data_events', root_data_events)
 
     if(root_data_events.length > 0){
       var latest_event = root_data_events[root_data_events.length - 1];
-      var root_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+      
+      var root_data = cached_time == true ? cached_root_data['data'] : await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4)
+      
       if(root_data != null){
+        if(cached_time == false) this.set_cache_data_in_local_forage({data: root_data, root_data_events: root_data_events, time: Date.now()}, 'root_data');
+
         const allowed_countries = root_data.data['allowed_countries']
         const logo_title = this.get_selected_item(root_data.get_logo_title_tags_object, 'e')
         const selected_dark_emblem_country = root_data.selected_dark_emblem_country
@@ -39535,6 +39627,17 @@ class App extends Component {
   }
 
   load_cities_data = async () => {
+    const cached_root_data = (await this.get_cache_data_in_local_forage('load_cities_data')) || {};
+    const cached_time = (cached_root_data['time'] || 0) > Date.now() - (1000*60*60)
+
+    if(cached_time == true){
+      this.setState({
+        admin: cached_root_data.admin,
+        all_cities: cached_root_data.all_cities,
+      })
+      return;
+    }
+
     const my_country_code = this.get_country_code(this.state.device_country)
     const request = this.state.static_assets['all_cities']
     const final_request = `${request}/${my_country_code}.json`
@@ -39570,6 +39673,15 @@ class App extends Component {
       }
       // console.log('apppage', 'finished up storage obj', storage_obj)
       this.setState({all_cities: storage_obj})
+      await this.wait(500)
+
+      if(cached_time == false){
+        this.set_cache_data_in_local_forage({
+          admin: this.state.admin, 
+          all_cities: this.state.all_cities, 
+          time: Date.now()
+        }, 'load_cities_data');
+      }
     }
     catch(e){
       console.log('apppage','cities_loader', e)
@@ -39672,7 +39784,6 @@ class App extends Component {
     if(is_syncing){
       this.inc_synch_progress()
     }
-
 
 
     var height = pre_launch_data[e5] != null ? pre_launch_data[e5]['transaction_height'] : await contractInstance.methods.f147(6).call((error, result) => {});
@@ -39868,6 +39979,10 @@ class App extends Component {
     //   this.inc_synch_progress()
     // }
 
+
+
+
+    await this.load_and_set_my_contract_subscriptions(e5, account)
 
 
 
@@ -40229,14 +40344,28 @@ class App extends Component {
       // await load_repost_and_following_data()
     }
 
-    console.log('get_accounts_data', 'obligation_subscriptions', this.state.obligation_subscriptions, this.state.has_wallet_been_set)
+    // console.log('get_accounts_data', 'obligation_subscriptions', this.state.obligation_subscriptions, this.state.has_wallet_been_set)
 
+    
+
+    // this.get_total_supply_of_ether(e5)
+    this.set_e5_as_loading(e5, false)
+    /* ---------------------------------------- ------------------------------------------- */
+    /* ---------------------------------------- ------------------------------------------- */
+    /* ---------------------------------------- ------------------------------------------- */
+    /* ---------------------------------------- ------------------------------------------- */
+  }
+
+  async load_and_set_my_contract_subscriptions(e5, account){
     if(this.state.has_wallet_been_set == true){
-      if(e5 == 'E25'){
+      const object_obligation_fulfiller = this.state.accounts[e5].address
+      await this.load_targets_obligation_data([account], e5)
+
+      if(e5 == 'E25' || true){
         if(
-          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address] != null &&
-          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'] != null && 
-          this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'].length > 0
+          this.state.obligation_subscriptions[object_obligation_fulfiller] != null &&
+          this.state.obligation_subscriptions[object_obligation_fulfiller]['data'] != null && 
+          this.state.obligation_subscriptions[object_obligation_fulfiller]['data'].length > 0
         ){
           if(this.state.default_obligation_contract.length > 0){
             for(var c=0; c<this.state.default_obligation_contract.length; c++){
@@ -40255,18 +40384,10 @@ class App extends Component {
               await this.wait(500)
               if(should_emit == true) await this.emit_update_subscriptions_for_obligations_event()
             }
-          }
-          
+          } 
         }
       }
     }
-
-    // this.get_total_supply_of_ether(e5)
-    this.set_e5_as_loading(e5, false)
-    /* ---------------------------------------- ------------------------------------------- */
-    /* ---------------------------------------- ------------------------------------------- */
-    /* ---------------------------------------- ------------------------------------------- */
-    /* ---------------------------------------- ------------------------------------------- */
   }
 
   save_pre_launch_data(pre_launch_data, e5){
@@ -45685,7 +45806,7 @@ class App extends Component {
     all_events.forEach(token_event => {
       var exchange = token_event['event'].returnValues.p1
       if(!data.includes(exchange)){
-        data.push(exchange)
+        data.push(parseInt(exchange))
       }
     });
 
@@ -54682,6 +54803,7 @@ class App extends Component {
     }
 
     var node_url = this.get_nitro_link_from_e5_id(my_preferred_nitro)
+    
     var file_object = JSON.stringify(data)
     var arg_obj = {
       signature_data: block_hash_and_signature.data,
@@ -55460,7 +55582,9 @@ class App extends Component {
 
   get_nitro_link_from_e5_id(e5_id){
     var all_nitro_pointer_mappings = this.get_all_sorted_objects_mappings(this.state.nitro_links)
-    return all_nitro_pointer_mappings[e5_id]
+    var url = all_nitro_pointer_mappings[e5_id]
+    // if(url == 'https://kamatera.twentythreeinreverse.com') url = 'https://server.twentythreeinreverse.com';
+    return url;
   }
 
   load_lyric_subtitle_data = async (cid_data, is_lyric) => {
@@ -62582,7 +62706,7 @@ class App extends Component {
     if(this.state.nitro_privacy_signature == null){
       const get_sync_block_from_nitro = link != this.state.beacon_chain_url
       await this.update_nitro_privacy_signature(get_sync_block_from_nitro)
-      await this.wait(350)
+      await this.wait(550)
     }
     var request = `${link}/${this.state.nitro_privacy_signature}`
     try{
@@ -62766,7 +62890,11 @@ class App extends Component {
         const nitro_link_directory_data_clone = structuredClone(this.state.nitro_link_directory_data)
         nitro_link_directory_data_clone[beacon_node] = nitro_link_directory
         
-        this.setState({beacon_node_enabled: true, nitro_link_directory_data: nitro_link_directory_data_clone, default_nitro_e5_id: default_nitro_option})
+        this.setState({
+          beacon_node_enabled: true, 
+          nitro_link_directory_data: nitro_link_directory_data_clone, 
+          default_nitro_e5_id: default_nitro_option
+        })
         
         await this.wait(700)
         await this.record_beacon_node_key_in_nitro_node(obj, beacon_node, beacon_e5_id)
@@ -66943,8 +67071,8 @@ class App extends Component {
   }
 
   async prepare_obligation_subscription_object_message(obligation_subscriptions_array_clone){
-    const country = this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address].my_original_country || this.state.device_country
-    const city = this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address].my_original_city || this.state.device_city
+    const country = this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]?.my_original_country || this.state.device_country
+    const city = this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]?.my_original_city || this.state.device_city
     const message_obj = {
       'obligation_subscriptions':obligation_subscriptions_array_clone, 
       'my_accounts': this.state.user_account_id,

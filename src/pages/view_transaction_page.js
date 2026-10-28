@@ -9047,6 +9047,7 @@ return data['data']
         const date_object = this.get_deadline_date_object(transaction_item.deadline_datetime)
         const work_keyword_count = Object.keys(transaction_item.work_keywords).length
         const explore_keyword_count = Object.keys(transaction_item.explore_keywords).length
+        const paybound_keywords = Object.keys((transaction_item.paybound_keywords || {})).length
         const locale = navigator.language || navigator.userLanguage || 'en-US'
         return(
             <div>
@@ -9074,6 +9075,11 @@ return data['data']
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                     {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093eb']/* 'Targeted Explore Keywords' */, 'subtitle':this.format_power_figure(explore_keyword_count), 'barwidth':this.get_number_width(explore_keyword_count), 'number':`${this.format_account_balance_figure(explore_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093hu']/* 'Targeted Paybound Keywords' */, 'subtitle':this.format_power_figure(paybound_keywords), 'barwidth':this.get_number_width(paybound_keywords), 'number':`${this.format_account_balance_figure(paybound_keywords)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
                 </div>
                 <div style={{height:10}}/>
 

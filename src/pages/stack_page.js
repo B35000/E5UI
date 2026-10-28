@@ -14308,7 +14308,10 @@ class StackPage extends Component {
             const data = fulfilment_data[contract]
             const exchanges = Object.keys(data)
 
-            obj[1].push(contract_id)
+            const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
+            const recipient_account = configuration['ipfs'].contract_payment_recipients?.[this.props.app_state.selected_e5] || contract_id
+
+            obj[1].push(recipient_account)
             obj[2].push(23)
             obj[3].push(50/* fulfil_obligation_container */)
 

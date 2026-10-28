@@ -2344,6 +2344,15 @@ class SubscriptionDetailsSection extends Component {
         var items = [].concat(this.get_moderator_item_logs(object, 'modify_moderator'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2463,6 +2472,15 @@ class SubscriptionDetailsSection extends Component {
         var items = [].concat(this.get_moderator_item_logs(object, 'enable_interactible'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2574,6 +2592,15 @@ class SubscriptionDetailsSection extends Component {
         var items = [].concat(this.get_moderator_item_logs(object, 'add_interactible'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2688,6 +2715,15 @@ class SubscriptionDetailsSection extends Component {
         var items = [].concat(this.get_moderator_item_logs(object, 'block_account'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>

@@ -84,7 +84,9 @@ class ConfigureObligationsPage extends Component {
         
         typed_certificate_account:'', verified_certificates:[], throttled_address:'', throttled_addresses:[], throttled_account: '', throttled_accounts:[],
 
-        device_city: '', selected_device_cities:[],
+        device_city: '', selected_device_cities:[], typed_contract_account2:'',contract_payment_recipients:{}, 
+        
+        default_upper_pay_bound:0, default_lower_pay_bound:0, default_target_upper_pay_bound:0, default_target_lower_pay_bound:0, targeted_paybound_keyword:'', paybound_keywords:{},
     };
 
     get_configure_obligations_title_tags_object(){
@@ -93,7 +95,7 @@ class ConfigureObligationsPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */, this.props.app_state.loc['3093er']/* 'sub-contracts 🔗' */, this.props.app_state.loc['3093gf']/* 'throttled-accounts ☣️' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */, this.props.app_state.loc['3093er']/* 'sub-contracts 🔗' */, this.props.app_state.loc['3093hf']/* 'payment-recipients 🤲' */, 'e.'+this.props.app_state.loc['3093hg']/* 'pay-bounds' */, this.props.app_state.loc['3093gf']/* 'throttled-accounts ☣️' */], [0]
             ],
         };
 
@@ -103,6 +105,10 @@ class ConfigureObligationsPage extends Component {
 
         obj[this.props.app_state.loc['3093f']/* 'explore-obligations' */] = [
             ['xor','',0], [this.props.app_state.loc['3093f']/* 'explore-obligations' */,this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */, this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */], [1]
+        ]
+
+        obj[this.props.app_state.loc['3093hg']/* 'pay-bounds' */] = [
+            ['xor','',0], [this.props.app_state.loc['3093hg']/* 'pay-bounds' */, this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */, this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */], [1]
         ]
 
         return obj
@@ -199,6 +205,14 @@ class ConfigureObligationsPage extends Component {
                 )
             }
         }
+        else if(active == this.props.app_state.loc['3093hg']/* 'pay-bounds' */){
+            if(selected_item == this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */){
+                return this.render_paybound_default_settings_obligations_ui()
+            }
+            else if(selected_item == this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */){
+                return this.render_paybound_keyword_target_settings_obligations_ui()
+            }
+        }
         else if(active == 'e' && selected_item == this.props.app_state.loc['3093g']/* 'wallet-obligations 👛' */){
             return(
                 <div>
@@ -223,7 +237,18 @@ class ConfigureObligationsPage extends Component {
         else if(active == 'e' && selected_item == this.props.app_state.loc['3093gf']/* 'throttled-accounts ☣️' */){
             return this.render_throttled_accounts_ui()
         }
+        else if(active == 'e' && selected_item == this.props.app_state.loc['3093hf']/* 'payment-recipients 🤲' */){
+            return this.render_recipient_accounts_ui()
+        }
     }
+
+
+
+
+
+
+
+
 
     render_default_general_info(){
         var size = this.props.app_state.size
@@ -423,6 +448,7 @@ class ConfigureObligationsPage extends Component {
     render_set_values(){
         const work_keyword_count = Object.keys(this.state.work_keywords).length
         const explore_keyword_count = Object.keys(this.state.explore_keywords).length
+        const paybound_keywords = Object.keys(this.state.paybound_keywords).length
         return(
             <div>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -433,6 +459,12 @@ class ConfigureObligationsPage extends Component {
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                     {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093eb']/* 'Targeted Explore Keywords' */, 'subtitle':this.format_power_figure(explore_keyword_count), 'barwidth':this.get_number_width(explore_keyword_count), 'number':`${this.format_account_balance_figure(explore_keyword_count)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
+                </div>
+                <div style={{height:10}}/>
+
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['3093hu']/* 'Targeted Paybound Keywords' */, 'subtitle':this.format_power_figure(paybound_keywords), 'barwidth':this.get_number_width(paybound_keywords), 'number':`${this.format_account_balance_figure(paybound_keywords)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['3093ec']/* words */, })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -839,9 +871,9 @@ class ConfigureObligationsPage extends Component {
         // else if(this.hasWhiteSpace(keyword)){
         //     this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
         // }
-        else if(keyword.length > this.props.app_state.tag_size){
-            this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
-        }
+        // else if(keyword.length > this.props.app_state.tag_size){
+        //     this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
+        // }
         else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(keyword)){
             this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
         }
@@ -1170,9 +1202,9 @@ class ConfigureObligationsPage extends Component {
         // else if(this.hasWhiteSpace(keyword)){
         //     this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
         // }
-        else if(keyword.length > this.props.app_state.tag_size){
-            this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
-        }
+        // else if(keyword.length > this.props.app_state.tag_size){
+        //     this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
+        // }
         else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(keyword)){
             this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
         }
@@ -1557,9 +1589,9 @@ class ConfigureObligationsPage extends Component {
         // else if(this.hasWhiteSpace(keyword)){
         //     this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
         // }
-        else if(keyword.length > this.props.app_state.tag_size){
-            this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
-        }
+        // else if(keyword.length > this.props.app_state.tag_size){
+        //     this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
+        // }
         else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(keyword)){
             this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
         }
@@ -2463,6 +2495,563 @@ class ConfigureObligationsPage extends Component {
 
 
 
+    render_recipient_accounts_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_recipient_accounts_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_contract_recipients()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_recipient_accounts_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_contract_recipients()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_recipient_accounts_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_contract_recipients()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_recipient_accounts_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gy']/* 'Recipient Accounts.' */, 'details': this.props.app_state.loc['3093ha']/* 'Specify the public contracts that will be the recipients of the obligation fulfilment payments.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <div style={{width: '98%'}}>
+                    <div className="row">
+                        <div className="col-11">
+                            <TextInput height={30} placeholder={this.props.app_state.loc['3093et']/* 'Contract Account...' */} when_text_input_field_changed={this.when_typed_recipient_contract_account_input_field_changed.bind(this)} text={this.state.typed_contract_account2} theme={this.props.theme}/>
+                        </div>
+                        <div className="col-1" onClick={()=> this.search_contract_id2()}>
+                            <div className="text-end" style={{'padding': '5px 10px 0px 0px'}} >
+                                <div className="text-end">
+                                    {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{ height:10 }}/>
+                {this.render_searched_contract2()}
+            </div>
+        )
+    }
+    
+    when_typed_recipient_contract_account_input_field_changed(text){
+        this.setState({typed_contract_account2: text})
+    }
+
+    async search_contract_id2(){
+        const typed_contract_account = this.state.typed_contract_account2.trim().replace('e', '')
+        const selected_e5 = this.state.selected_e5
+        const typed_contract_e5_id = typed_contract_account+selected_e5
+
+        if(isNaN(typed_contract_account) || parseInt(typed_contract_account) < 1001){
+            this.props.notify(this.props.app_state.loc['3093eu']/* 'That ID is not valid.' */)
+        }
+        else if(typed_contract_e5_id == this.state.contract['e5_id']){
+            this.props.notify(this.props.app_state.loc['3093ev']/* 'That account is the default.' */)
+        }
+        else{
+            this.props.notify(this.props.app_state.loc['3093ew']/* 'Searching...' */)
+            const type = await this.props.load_obligation_contract(typed_contract_account, selected_e5)
+            this.setState({searched_contract_e5_id2: typed_contract_e5_id})
+            
+            if(type != 30/* contract_object */){
+                this.props.notify(this.props.app_state.loc['3093eu']/* 'That ID is not valid.' */)
+            }
+        }
+    }
+
+    render_searched_contract2(){
+        const all_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
+        const searched_contract_e5_id = this.state.searched_contract_e5_id2;
+        const matching_contract = all_contracts.filter((object) => {
+            return (object['e5_id'] == searched_contract_e5_id)
+        })
+        if(matching_contract.length == 0){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }else{
+            return(
+                <div onClick={() => this.when_searched_contract_clicked2(matching_contract[0])}>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093gv']/* 'Matching Contract Found.' */, 'details': this.props.app_state.loc['3093hb']/* 'A contract matching the Id youve specified has been found. Tap it to add it as the primary recipient account in the E5 youve selected.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
+                    {this.render_contract(matching_contract[0])}
+                </div>
+            )
+        }
+    }
+
+    when_searched_contract_clicked2(object){
+        const contract_type = object['ipfs'].contract_type || 'custom'
+        if(object['e5_id'] == this.state.contract['e5_id']){
+            this.props.notify(this.props.app_state.loc['3093ex']/* 'You cant set that contract.' */, 4400);
+        }
+        else if(contract_type != 'public'){
+            this.props.notify(this.props.app_state.loc['3093ey']/* 'only public contracts are allowed.' */, 4400);
+        }
+        else{
+            const clone = structuredClone(this.state.contract_payment_recipients)
+            clone[object['e5']] = object['id']
+            this.setState({contract_payment_recipients: clone})
+        }
+        
+    }
+
+    render_set_contract_recipients(){
+        const items = Object.keys(this.state.contract_payment_recipients)
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093hc']/* 'Public Contract Payment Recipients' */, 'details': this.props.app_state.loc['3093hd']/* 'When you set a contract recipient, it will show here.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        return(
+            <div style={{}}>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093hc']/* 'Public Contract Payment Recipients' */, 'details': this.props.app_state.loc['3093he']/* 'All the public contracts set to receive obligation fulfilment payments.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    <SwipeableList>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    <SwipeableListItem
+                                        swipeLeft={{
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3093eq']/* Delete */}</p>,
+                                        action: () =>this.when_payment_recipient_item_clicked(item)
+                                        }}>
+                                        <div style={{width:'100%'}}>
+                                            {this.render_contract(this.get_contract_object(this.state.contract_payment_recipients[item], item))}
+                                        </div>
+                                    </SwipeableListItem>
+                                </div>
+                            </li> 
+                        ))}
+                    </SwipeableList>
+                    
+                </ul>
+            </div>
+        )
+    }
+
+    when_payment_recipient_item_clicked(item){
+        const clone = structuredClone(this.state.contract_payment_recipients)
+        delete clone[item]
+        this.setState({contract_payment_recipients: clone})
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_paybound_default_settings_obligations_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_paybound_default_obligations_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_paybound_default_obligations_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_paybound_default_obligations_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+    
+    render_paybound_default_obligations_data(){
+        const active_end_mint_limit = this.calculate_proportion(this.get_active_mint_limit(3), this.state.default_upper_pay_bound)
+        const active_spend_mint_limit = this.calculate_proportion(this.get_active_mint_limit(5), this.state.default_upper_pay_bound)
+
+        const active_end_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(3), this.state.default_lower_pay_bound)
+        const active_spend_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(5), this.state.default_lower_pay_bound)
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093hh']/* 'Default Pay-Bound Obligations' */, 'details': this.props.app_state.loc['3093hi']/* 'Configure the default minimum and maximum pay received by contractors for work done.' */, 'size': 'l' })}
+
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3093hm']/* 'You\'re setting proportions here that will be used with the network mint and buy limits to determine the final limits.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093hj']/* 'Upper Bounds' */, 'details': this.props.app_state.loc['3093hk']/* 'The maximum amount a contractor can make for work done if no keyword target is found. If set to 0, the bound will be unlimited.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3093hl']/* 'Current Default Upper Pay-Bounds' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_end_mint_limit), 'number':this.format_account_balance_figure(active_end_mint_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_spend_mint_limit),
+                    'number':this.format_account_balance_figure(active_spend_mint_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_upper_pay_bound_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+                
+                
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093hn']/* 'Lower Bounds' */, 'details': this.props.app_state.loc['3093ho']/* 'The minimum amount a contractor can make for work done if no keyword target is found.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3093hp']/* 'Current Default Lower Pay-Bounds' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_end_mint_bottom), 'number':this.format_account_balance_figure(active_end_mint_bottom), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_spend_mint_bottom),
+                    'number':this.format_account_balance_figure(active_spend_mint_bottom), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_lower_pay_bound_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+
+            </div>
+        )   
+    }
+    
+    get_active_mint_limit(token_id){
+        const e5 = this.state.contract['e5']
+        if(this.props.app_state.created_token_object_mapping[e5] == null || this.props.app_state.created_token_object_mapping[e5][token_id] == null){
+            if(e5 == 'E25') return bigInt('35000000') / 10;
+            else if(e5 == 'E35') return bigInt('3500000') / 10;
+            else return bigInt('72000000') /10;
+        }else{
+            let active_block_limit_reduction_proportion = this.props.app_state.created_token_object_mapping[e5][token_id]['data'][2][6/* <6>active_block_limit_reduction_proportion (denominator -> 10**18) */]
+
+            if(active_block_limit_reduction_proportion == 0){
+                active_block_limit_reduction_proportion = bigInt('100e16')
+            }
+
+            const mint_limit = this.props.app_state.created_token_object_mapping[e5][token_id]['data'][1][0/* <0>default_exchange_amount_buy_limit */]
+
+            const active_mint_limit =  ((active_block_limit_reduction_proportion / 10**18) * mint_limit).toLocaleString('fullwide', {useGrouping:false})
+            return bigInt(active_mint_limit)
+        }
+    }
+
+    calculate_proportion(number, proportion){
+        return bigInt(number).multiply(proportion).divide('100e16')
+    }
+
+    when_default_upper_pay_bound_proportion(number){
+        this.setState({default_upper_pay_bound: number})
+    }
+
+    when_default_lower_pay_bound_proportion(number){
+        this.setState({default_lower_pay_bound: number})
+    }
+
+
+
+
+
+
+
+
+
+
+
+    render_paybound_keyword_target_settings_obligations_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_paybound_keyword_target_settings_obligations_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_paybound_keywords()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_paybound_keyword_target_settings_obligations_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_paybound_keywords()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_paybound_keyword_target_settings_obligations_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_paybound_keywords()}
+                    </div>
+                </div>
+            )
+        }
+    }
+    
+    render_paybound_keyword_target_settings_obligations_data(){
+        const active_end_mint_limit = this.calculate_proportion(this.get_active_mint_limit(3), this.state.default_target_upper_pay_bound)
+        const active_spend_mint_limit = this.calculate_proportion(this.get_active_mint_limit(5), this.state.default_target_upper_pay_bound)
+
+        const active_end_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(3), this.state.default_target_lower_pay_bound)
+        const active_spend_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(5), this.state.default_target_lower_pay_bound)
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bg']/* 'Keyword Target Obligation Settings.' */, 'details': this.props.app_state.loc['3093hq']/* 'Configure the keywords that when used, will activate the paybounds you specify below.' */, 'size': 'l' })}
+
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['3093hr']/* 'These keywords targets will be applied in jobs and contractor work exclusively.' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bj']/* 'New Targeted Keyword' */, 'details': this.props.app_state.loc['3093bk']/* 'Type a keyword you wish to target with a specified obligation.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3093bl']/* 'Keyword...' */} when_text_input_field_changed={this.when_targeted_paybound_keyword_input_field_changed.bind(this)} text={this.state.targeted_paybound_keyword} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093hj']/* 'Upper Bounds' */, 'details': this.props.app_state.loc['3093hk']/* 'The maximum amount a contractor can make for work done if no keyword target is found. If set to 0, the bound will be unlimited.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3093hl']/* 'Current Default Upper Pay-Bounds' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_end_mint_limit), 'number':this.format_account_balance_figure(active_end_mint_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_spend_mint_limit),
+                    'number':this.format_account_balance_figure(active_spend_mint_limit), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_keyword_upper_pay_bound_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+                
+                
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093hn']/* 'Lower Bounds' */, 'details': this.props.app_state.loc['3093ho']/* 'The minimum amount a contractor can make for work done if no keyword target is found.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3093hp']/* 'Current Default Lower Pay-Bounds' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_end_mint_bottom), 'number':this.format_account_balance_figure(active_end_mint_bottom), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(active_spend_mint_bottom),
+                    'number':this.format_account_balance_figure(active_spend_mint_bottom), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['3079']/* 'SPEND' */, })}
+                </div>
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_keyword_lower_pay_bound_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+
+                <div style={{ height: 10 }} />
+                <div onClick={() => this.add_paybound_keyword_obligation()}>
+                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['3093bo']/* 'Add Keyword' */, 'action': '' })}
+                </div>
+            </div>
+        )
+    }
+
+    when_targeted_paybound_keyword_input_field_changed(text){
+        this.setState({targeted_paybound_keyword: text})
+    }
+
+    when_keyword_upper_pay_bound_proportion(number){
+        this.setState({default_target_upper_pay_bound: number})
+    }
+
+    when_keyword_lower_pay_bound_proportion(number){
+        this.setState({default_target_lower_pay_bound: number})
+    }
+
+    add_paybound_keyword_obligation(){
+        const keyword = this.state.targeted_paybound_keyword.trim().toLowerCase()
+        const upper_proportion = this.state.default_target_upper_pay_bound
+        const lower_proportion = this.state.default_target_lower_pay_bound
+
+        if(keyword == ''){
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
+        }
+        // else if(this.hasWhiteSpace(keyword)){
+        //     this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
+        // }
+        // else if(keyword.length > this.props.app_state.tag_size){
+        //     this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
+        // }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(keyword)){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
+        else if(lower_proportion > upper_proportion){
+            this.props.notify(this.props.app_state.loc['3093hv'], 6400)/* 'The lower bounds cannot be higher than the upper bounds.' */
+        }
+        else{
+            const clone = structuredClone(this.state.paybound_keywords)
+            clone[keyword] = {'upper': upper_proportion, 'lower':lower_proportion}
+            this.setState({paybound_keywords: clone, targeted_paybound_keyword: ''})
+        }
+    }
+
+    render_set_paybound_keywords(){
+        const items = [].concat(Object.keys(this.state.paybound_keywords))
+
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bu']/* 'Added Keywords' */, 'details': this.props.app_state.loc['3093bv']/* 'When you add an obligation, it will show here.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+
+        return(
+            <div style={{}}>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bu']/* 'Added Keywords' */, 'details': this.props.app_state.loc['3093hs']/* 'All the keywords targeted for paybound obligations.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    <SwipeableList>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    <SwipeableListItem
+                                        swipeLeft={{
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3093bt']/* Edit */}</p>,
+                                        action: () =>this.when_paybound_keyword_target_clicked(item)
+                                        }}>
+                                        <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                            {this.render_target_item3(item)}
+                                        </div>
+                                    </SwipeableListItem>
+                                </div>
+                            </li> 
+                        ))}
+                    </SwipeableList>
+                    
+                </ul>
+            </div>
+        )
+    }
+
+    render_target_item3(item){
+        const object = this.state.paybound_keywords[item]
+        const upper = object['upper']
+        const lower = object['lower']
+
+        const active_end_mint_limit = this.calculate_proportion(this.get_active_mint_limit(3), upper)
+        const active_spend_mint_limit = this.calculate_proportion(this.get_active_mint_limit(5), upper)
+
+        const active_end_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(3), lower)
+        const active_spend_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(5), lower)
+
+        const details = this.props.app_state.loc['3093ht']/* 'From $ END and % SPEND, to & END and # SPEND' */
+        .replace('$',this.format_account_balance_figure(active_end_mint_bottom))
+        .replace('%',this.format_account_balance_figure(active_spend_mint_bottom))
+        .replace('&',this.format_account_balance_figure(active_end_mint_limit))
+        .replace('#',this.format_account_balance_figure(active_spend_mint_limit))
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':item, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_paybound_keyword_target_clicked(item){
+        const clone = structuredClone(this.state.paybound_keywords)
+        const object = clone[item]
+        const upper = object['upper']
+        const lower = object['lower']
+        this.setState({
+            default_target_upper_pay_bound:upper, 
+            default_target_lower_pay_bound:lower, 
+            targeted_paybound_keyword: item
+        })
+        delete clone[item];
+        this.setState({paybound_keywords: clone})
+    }
+
+
+
+
+
+
+
 
 
 
@@ -2534,6 +3123,9 @@ class ConfigureObligationsPage extends Component {
         else if(this.check_if_configure_obligations_already_exists()){
             this.props.notify(this.props.app_state.loc['3093ef']/* 'You cant configure obligations for a given contract twice in one run.' */, 9500)
         }
+        else if(this.state.default_lower_pay_bound > this.state.default_upper_pay_bound){
+            this.props.notify(this.props.app_state.loc['3093hv'], 6400)/* 'The lower bounds cannot be higher than the upper bounds.' */
+        }
         else{
             this.props.add_configure_obligations_transaction_to_stack(this.state)
             this.props.notify(this.props.app_state.loc['18'], 1700);
@@ -2550,6 +3142,11 @@ class ConfigureObligationsPage extends Component {
         }
         return false
     }
+
+
+
+
+
 
 
 

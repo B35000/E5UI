@@ -2829,10 +2829,19 @@ class ProposalDetailsSection extends Component {
     }
 
     render_contract_transfer_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'transfer'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2852,16 +2861,30 @@ class ProposalDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} >
+                // <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index} >
+                //                     {this.render_contract_transfer_event_item(item, object, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_contract_transfer_item_clicked(index, item, object)}>
                                     {this.render_contract_transfer_event_item(item, object, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
@@ -2874,43 +2897,44 @@ class ProposalDetailsSection extends Component {
         return this.props.app_state.proposal_events[object['id']][event]
     }
 
-    when_contract_transfer_item_clicked(index){
-        if (this.state.selected_contract_transfer_event_item == index) {
-            this.setState({ selected_contract_transfer_event_item: null })
-        } else {
-            this.setState({ selected_contract_transfer_event_item: index })
-        }
+    when_contract_transfer_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_contract_transfer_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+        // if (this.state.selected_contract_transfer_event_item == index) {
+        //     this.setState({ selected_contract_transfer_event_item: null })
+        // } else {
+        //     this.setState({ selected_contract_transfer_event_item: index })
+        // }
     }
 
-    render_contract_transfer_event_item(item, object, index){
+    render_contract_transfer_event_item(item, object, index, full=false){
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text3(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text3(item['event'].returnValues.p2, object)
-        if (this.state.selected_contract_transfer_event_item == index) {
+        if (this.state.selected_contract_transfer_event_item == index || full == true) {
             return (
                 <div>
-                    <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                    <div>
                         {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 'l' })}
                     </div>
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
 
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id]+this.props.app_state.loc['2553']/* ', depth: ' */+depth, 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id]+this.props.app_state.loc['2553']/* ', depth: ' */+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item['event'].returnValues.p5*1000).toLocaleString()),  'details': this.get_time_difference(item['event'].returnValues.p5), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item['event'].returnValues.p6), 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
-                <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Amount: '+this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' })}
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Amount: '+this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l', 'footer': (new Date(item['event'].returnValues.p5*1000).toLocaleString()+' • '+this.get_time_difference(item['event'].returnValues.p5)) })}
                 </div>
             )
         }
@@ -2961,12 +2985,20 @@ class ProposalDetailsSection extends Component {
         )
     }
 
-
     render_vote_event_item_logs(object){
-        var middle = this.props.height - 120;
+        var middle = this.props.height - 149;
         var items = [].concat(this.get_item_logs(object, 'vote'))
         if (items.length == 0) {
             items = [0, 1]
+            if(this.props.app_state.object_event_loader[object['e5_id']] == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{ height: 5 }} />
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
@@ -2986,58 +3018,73 @@ class ProposalDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
-                        {items.map((item, index) => (
-                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_proposal_vote_item_clicked(index)}>
+                // <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                //     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                //         {items.map((item, index) => (
+                //             <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                //                 <div key={index} onClick={() => this.when_proposal_vote_item_clicked(index)}>
+                //                     {this.render_proposal_vote_event_item(item, object, index)}
+                //                 </div>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div>
+                    <Virtuoso
+                        style={{ height: middle }}
+                        totalCount={items.length}
+                        itemContent={(index) => {
+                            const item = items[index];
+                            return (
+                                <div style={{ 'padding': '2px 5px 2px 5px' }}  onClick={() => this.when_proposal_vote_item_clicked(index, item, object)}>
                                     {this.render_proposal_vote_event_item(item, object, index)}
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        }}
+                    />
                 </div>
             )
         }
     }
 
-
-    when_proposal_vote_item_clicked(index){
-        if (this.state.selected_proposal_vote_event_item == index) {
-            this.setState({ selected_proposal_vote_event_item: null })
-        } else {
-            this.setState({ selected_proposal_vote_event_item: index })
-        }
+    when_proposal_vote_item_clicked(index, item, object){
+        if(this.props.app_state.dialog_bottomsheet == true) return;
+        this.props.show_dialog_bottomsheet({'view':this.render_proposal_vote_event_item(item, object, index, true), 'item':item}, 'render_event_item_details')
+        // if (this.state.selected_proposal_vote_event_item == index) {
+        //     this.setState({ selected_proposal_vote_event_item: null })
+        // } else {
+        //     this.setState({ selected_proposal_vote_event_item: index })
+        // }
     }
 
-
-    render_proposal_vote_event_item(item, object, index){
-        var obj = {'1':this.props.app_state.loc['2555']/* 'Yes!' */, '2':this.props.app_state.loc['2556']/* 'Wait..' */, '3':this.props.app_state.loc['2557']/* 'No.' */}
+    render_proposal_vote_event_item(item, object, index, full=false){
+        var obj = {
+            '1':this.props.app_state.loc['2555']/* 'Yes!' */, 
+            '2':this.props.app_state.loc['2556']/* 'Wait..' */,
+            '3':this.props.app_state.loc['2557']/* 'No.' */,
+        }
         var vote = obj[item.returnValues.p4]
 
-        if (this.state.selected_proposal_vote_event_item == index) {
+        if (this.state.selected_proposal_vote_event_item == index || full == true) {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text2(item.returnValues.p3, object), 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    <div style={{ height: 5 }} />
                     {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': this.props.app_state.loc['2558']/* 'Contract ID' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['2549']/* 'Age' */, 'size': 'l' })}
-                    <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
-                    <div style={{ height: '1px', 'background-color': this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px' }} />
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', {'title': (new Date(item.returnValues.p5*1000).toLocaleString()),  'details': this.get_time_difference(item.returnValues.p5), 'size': 'l' })}
+                    <div style={{ height: 5 }} />
+                    {this.render_detail_item('3', { 'title': number_with_commas(item.returnValues.p6), 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' })}
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['2420']/* 'From: ' */+ this.get_sender_title_text2(item.returnValues.p3, object), 'size': 'l' })}
-                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['2420']/* 'From: ' */+ this.get_sender_title_text2(item.returnValues.p3, object), 'size': 'l', 'footer': (new Date(item.returnValues.p5*1000).toLocaleString()+' • '+this.get_time_difference(item.returnValues.p5)) })}
                 </div>
             )
         }
     }
-
 
     get_sender_title_text2(sender, object) {
         if (sender == this.props.app_state.user_account_id[object['e5']]) {
