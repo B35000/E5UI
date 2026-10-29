@@ -5934,7 +5934,9 @@ class App extends Component {
       all_message_files: this.get_all_my_message_media_file_data(),
       preserved_state: this.get_preserved_state(),
       xmr_wallet_info: await this.store_xmr_wallet_data_in_db(),
-      translation_data: this.get_translation_data()
+      translation_data: this.get_translation_data(),
+      obligation_subscriptions: this.state.obligation_subscriptions,
+      my_contract_obligation_subscription_data: this.filter_my_contract_obligation_subscription_data_for_my_personal_subscriptions()
     }
   }
 
@@ -5969,6 +5971,8 @@ class App extends Component {
       var preserved_state = state.preserved_state || {}
       var xmr_wallet_info = state.xmr_wallet_info || null
       var translation_data = state.translation_data || {}
+      var obligation_subscriptions = state.obligation_subscriptions || {}
+      var my_contract_obligation_subscription_data = state.my_contract_obligation_subscription_data || {}
 
       // if(cached_tracks != null){
       //   this.set_cached_tracks_data(cached_tracks)
@@ -6001,6 +6005,12 @@ class App extends Component {
       }
       if(translation_data != null){
         this.setState({translation_data: translation_data})
+      }
+      if(obligation_subscriptions != null){
+        this.setState({obligation_subscriptions: obligation_subscriptions})
+      }
+      if(my_contract_obligation_subscription_data != null){
+        this.setState({my_contract_obligation_subscription_data: my_contract_obligation_subscription_data})
       }
       
 
@@ -6805,6 +6815,17 @@ class App extends Component {
     });
 
     return new_translation_data
+  }
+
+  filter_my_contract_obligation_subscription_data_for_my_personal_subscriptions(){
+    const object_obligation_fulfiller = this.state.accounts[this.state.selected_e5].address
+    const author_oblication_contract_object = this.state.obligation_subscriptions[object_obligation_fulfiller] || {}
+    const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+    const new_object_to_save = {}
+    authors_obligation_contracts.forEach(contract => {
+      new_object_to_save[contract] = this.state.my_contract_obligation_subscription_data[contract];
+    })
+    return new_object_to_save;
   }
 
 

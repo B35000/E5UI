@@ -167,7 +167,8 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "postinstall": "node -e \"require('fs').copyFileSync('node_modules/monero-ts/dist/monero.worker.js', 'public/monero.worker.js')\""
+    "postinstall": "node -e \"require('fs').copyFileSync('node_modules/monero-ts/dist/monero.worker.js', 'public/monero.worker.js')\"",
+    "postbuild": "node scripts/build-manifest.js"
   },
   "eslintConfig": {
     "extends": [

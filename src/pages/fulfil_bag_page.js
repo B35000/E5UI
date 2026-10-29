@@ -646,8 +646,8 @@ class FulfilBagPage extends Component {
         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
         authors_obligation_contracts.forEach(contract => {
             const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
-            const default_upper_pay_bound = configuration['ipfs'].default_upper_pay_bound;
-            const default_lower_pay_bound = configuration['ipfs'].default_lower_pay_bound
+            const default_upper_pay_bound = configuration['ipfs']?.default_upper_pay_bound || bigInt('1e72');
+            const default_lower_pay_bound = configuration['ipfs']?.default_lower_pay_bound || bigInt(0)
 
             if(bigInt(default_upper_pay_bound).lesser(upper)){
                 upper = default_upper_pay_bound

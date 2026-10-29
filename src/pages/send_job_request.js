@@ -1028,10 +1028,10 @@ return data['data']
         const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
         authors_obligation_contracts.forEach(contract => {
             const configuration = this.props.app_state.my_contract_obligation_subscription_data[contract];
-            var default_upper_pay_bound = configuration['ipfs'].default_upper_pay_bound;
-            var default_lower_pay_bound = configuration['ipfs'].default_lower_pay_bound;
+            var default_upper_pay_bound = configuration['ipfs']?.default_upper_pay_bound || bigInt('1e72');
+            var default_lower_pay_bound = configuration['ipfs']?.default_lower_pay_bound || bigInt(0);
 
-            const keywords = configuration['ipfs'].paybound_keywords
+            const keywords = configuration['ipfs']?.paybound_keywords || []
             object_texts.forEach(text_to_check => {
                 const words_to_check = text_to_check.toLowerCase().split(' ');
                 words_to_check.forEach(word => {
