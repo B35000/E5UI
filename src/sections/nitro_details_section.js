@@ -36,6 +36,7 @@ import { ViewPager, Frame, Track, View } from 'react-view-pager'
 import { Virtuoso } from "react-virtuoso";
 import { VList } from "virtua";
 
+const { getDomain } = require("tldjs");
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -1096,6 +1097,11 @@ class NitroDetailsSection extends Component {
                     {this.render_version_if_available(node_details)}
                     
                     {this.render_detail_item('3', {'title':''+(new Date(node_details['start_up_time']).toLocaleString()), 'details':this.props.app_state.loc['c2527l']/* 'Start Up Time' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={() => this.open_e5_on_indexer(object)}>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['c2527em']/* 'Launch App Mirror.' */, 'details':this.props.app_state.loc['c2527en']/* ''Indexers host a mirror of e. Click this to launch the app under this indexers domain.'' */, 'footer':getDomain(object['ipfs'].node_url), 'size':'l'})}
+                    </div>
 
                     {this.render_socket_synchronization_level_if_synching(node_details)}
 
@@ -1106,6 +1112,10 @@ class NitroDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    open_e5_on_indexer(object){
+        window.open(object['ipfs'].node_url, "_blank", "noopener,noreferrer");
     }
 
     render_socket_synchronization_level_if_synching(node_details){

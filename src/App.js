@@ -12062,6 +12062,7 @@ class App extends Component {
   }
 
   open_stack_bottomsheet(){
+    this.check_for_updates()
     if(this.is_minimalist_mode_enabled()){
       if(this.state.active_full_stack_snap_point == null || this.state.active_full_stack_snap_point == '55px' || this.state.active_full_stack_snap_point == '0px'){
         this.setState({active_full_stack_snap_point: '705px'})

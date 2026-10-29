@@ -2,7 +2,7 @@
   "name": "E5(Beta)",
   "homepage": "https://page.twentythreeinreverse.com",
   "hmepage": ".",
-  "version": "10.0",
+  "version": "10",
   "private": true,
   "dependencies": {
     "@aptos-labs/ts-sdk": "^7.3.0",
