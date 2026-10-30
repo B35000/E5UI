@@ -1269,6 +1269,7 @@ class ContractDetailsSection extends Component {
         const contract_type = object['ipfs'].contract_type || 'custom'
 
         if(object['id'] != 2 && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
+            
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1277,6 +1278,13 @@ class ContractDetailsSection extends Component {
                     <div onClick={() => this.search_account_obligations(object)}>
                         {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214bz']/* 'Search.' */, 'action': '' })}
                     </div>
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214cs']/* '📆 Preceding Year\'s Obligation Metrics' */, 'details': this.props.app_state.loc['2214ct']/* 'View and export the accounts that failed to fulfil their obligation promises for the period of last year.' */, 'size': 'l' })}
+                    <div style={{ height: 10 }} />
+                    <div onClick={() => this.view_obligation_payment_data(object)}>
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214cu']/* 'view.' */, 'action': '' })}
+                    </div>
                 </div>
             )
         }
@@ -1284,6 +1292,11 @@ class ContractDetailsSection extends Component {
 
     search_account_obligations(object){
         this.props.show_dialog_bottomsheet({'object':object}, 'view_accounts_obligation_promise_history')
+    }
+
+    view_obligation_payment_data(object){
+        this.props.load_contract_obligation_fulfilment_info(object['e5_id'])
+        this.props.show_dialog_bottomsheet({'object':object}, 'view_contract_obligation_fulfilment_info')
     }
 
 

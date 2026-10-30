@@ -76,7 +76,7 @@ class ConfigureObligationsPage extends Component {
         /* default_trust_fee_obligation:0, */
         default_certificate_acquisition_obligation:0, default_certificate_transfer_obligation:0, default_coupon_payment_obligation:0,
 
-        default_keyword_combination:0, deadline_datetime:'1:1',
+        default_keyword_combination:0, deadline_datetime:'1:4',
 
         reserved_keyword:'', reserved_keywords:[],
 

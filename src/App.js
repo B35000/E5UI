@@ -2123,7 +2123,7 @@ class App extends Component {
 
     focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(), my_applications2:[], my_bag_applications2:[], account_message_history2:{}, account_post_history2:{},
 
-    object_event_loader:{}
+    object_event_loader:{}, contract_obligation_payment_info:{},
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -8956,7 +8956,7 @@ class App extends Component {
 
           get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)} perform_translation_of_specific_object={this.perform_translation_of_specific_object.bind(this)}
           when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}
-          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)} show_loader_for_object_events={this.show_loader_for_object_events.bind(this)}
+          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)} show_loader_for_object_events={this.show_loader_for_object_events.bind(this)} load_contract_obligation_fulfilment_info={this.load_contract_obligation_fulfilment_info.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -22674,7 +22674,7 @@ class App extends Component {
 
         add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} show_select_certificate_bottomsheet={this.show_select_certificate_bottomsheet.bind(this)} show_certificate_chain_bottomsheet={this.show_certificate_chain_bottomsheet.bind(this)} get_blockexplorer_link={this.get_blockexplorer_link.bind(this)} lock_run={this.lock_run.bind(this)} set_hash={this.set_hash.bind(this)}
 
-        delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} mute_unmute_address={this.mute_unmute_address.bind(this)} add_file_to_collection={this.add_file_to_collection.bind(this)} begin_sharing_location_with_target={this.begin_sharing_location_with_target.bind(this)} swap_ether_to_specified_target_via_near_intents={this.swap_ether_to_specified_target_via_near_intents.bind(this)} show_terms_of_service_bottomsheet={this.show_terms_of_service_bottomsheet.bind(this)}
+        delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} mute_unmute_address={this.mute_unmute_address.bind(this)} add_file_to_collection={this.add_file_to_collection.bind(this)} begin_sharing_location_with_target={this.begin_sharing_location_with_target.bind(this)} swap_ether_to_specified_target_via_near_intents={this.swap_ether_to_specified_target_via_near_intents.bind(this)} show_terms_of_service_bottomsheet={this.show_terms_of_service_bottomsheet.bind(this)} export_all_fulfilled_obligation_data={this.export_all_fulfilled_obligation_data.bind(this)}
         />
       </div>
     )
@@ -22808,6 +22808,7 @@ class App extends Component {
       'confirm_swap_coin_ether_via_near_intents_dialog':550,
       'show_post_basic_details':590,
       'render_event_item_details':300,
+      'view_contract_obligation_fulfilment_info':550
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -25704,6 +25705,104 @@ class App extends Component {
     }
     this.setState({broadcast_config: clone, is_sharing_location: true})
     this.prompt_top_notification(this.getLocale()['3055vc']/* 'Sharing your location.' */, 1500)
+  }
+
+  async load_contract_obligation_fulfilment_info(contract_e5_id){
+    if(this.state.contract_obligation_payment_info[contract_e5_id] != null) return;
+    this.setState({is_getting_contract_obligation_payment_info: true})
+
+    await this.load_my_accounts_obligation_data([contract_e5_id]);
+    await this.wait(700)
+    const configuration = this.state.my_contract_obligation_subscription_data[contract_e5_id];
+    const deadline_date_time = this.get_deadline_date_object(configuration['ipfs'].deadline_datetime);
+    const data = await this.get_contract_obligation_payment_info(contract_e5_id, deadline_date_time);
+    /* 
+      return {
+        fulfiled_accounts: fulfiled_accounts,
+        unfulfilled_accounts: unfulfilled_accounts,
+        total_amounts: total_amounts,
+        total_unfulfiled_amounts: total_unfulfiled_amounts,
+        unfulfiled_pending_data: unfulfiled_accounts_owed_amounts,
+        from: previous_year_in_seconds,
+        to: this_year_in_seconds,
+        time: Date.now()
+      }
+    */
+    const clone = structuredClone(this.state.contract_obligation_payment_info)
+    clone[contract_e5_id] = data
+    this.setState({contract_obligation_payment_info: data, is_getting_contract_obligation_payment_info: null})
+  }
+
+  get_deadline_date_object(deadline_datetime){
+    const day = deadline_datetime.split(':')[0]
+    const month = deadline_datetime.split(':')[1]
+    const year = new Date().getFullYear()
+    
+    return new Date(`${year}-${month<10 ? '0'+month : month}-${day<10 ? '0'+day : day}`).now() 
+  }
+
+  async get_contract_obligation_payment_info(contract_e5_id, deadline_date_time, updated_signature=false){
+    var beacon_node = `${process.env.REACT_APP_BEACON_NITRO_NODE_BASE_URL}`
+    var beacon_e5_id = ''
+    if(this.state.beacon_chain_url != ''){
+      beacon_node = this.state.beacon_chain_url;
+    }
+    if(this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null && this.state.nitro_node_details[this.state.my_preferred_nitro] != null){
+      beacon_node = this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro)
+      beacon_e5_id = this.state.my_preferred_nitro
+    }
+    
+    const arg_obj = {
+      contract_e5_id: contract_e5_id,
+      deadline_date_time: deadline_date_time,
+    }
+
+    const body = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json" // Set content type to JSON
+      },
+      body: JSON.stringify(await this.encrypt_post_object(beacon_e5_id, arg_obj))
+    }
+
+    const request = `${beacon_node}/${this.load_registered_endpoint_from_link(beacon_node, 'contract_obligation_info')}/${await this.fetch_nitro_privacy_signature(beacon_node)}`
+    try{
+      const response = await fetch(request, body);
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve data. Status: ${response}`);
+      }
+      var data = await response.text();
+      var obj = await this.process_nitro_api_call_result(data, beacon_node);
+      if(obj['message'] == 'Invalid signature' && updated_signature != true){
+        await this.update_nitro_privacy_signature(false)
+        await this.wait(300)
+        return await this.get_contract_obligation_payment_info(contract_e5_id, deadline_date_time, true)
+      }
+      return obj['contract_obligation_info']
+    }
+    catch(e){
+      console.log('apppage', 'get_contract_obligation_payment_info', 'something went wrong with get_contract_obligation_payment_info', e)
+    }
+  }
+
+  async export_all_fulfilled_obligation_data(object, fulfiled_accounts, unfulfilled_accounts, total_amounts, total_unfulfiled_amounts, unfulfiled_pending_data, from, to, time){
+    this.prompt_top_notification(this.getLocale()['2642bc']/* The export should begin shortly.. */, 3000)
+    await this.wait(2500)
+    const final_object = {}
+    final_object[this.getLocale()['3055wa']/* contract_id */] = object['id']
+    final_object[this.getLocale()['3055wb']/* contract_e5 */] = object['e5']
+    final_object[this.getLocale()['3055wc']/* fulfiled_accounts */] = fulfiled_accounts;
+    final_object[this.getLocale()['3055wd']/* unfulfilled_accounts */] = unfulfilled_accounts;
+    final_object[this.getLocale()['3055we']/* total_amounts */] = total_amounts;
+    final_object[this.getLocale()['3055wf']/* total_unfulfiled_amounts */] = total_unfulfiled_amounts;
+    final_object[this.getLocale()['3055wg']/* unfulfiled_pending_data */] = unfulfiled_pending_data;
+    final_object[this.getLocale()['3055wh']/* start_time */] = (new Date(from * 1000).toLocaleString());
+    final_object[this.getLocale()['3055wi']/* to */] = (new Date(to * 1000).toLocaleString());
+    final_object[this.getLocale()['3055wj']/* calculation_time */] = new Date(time).toLocaleString();
+
+    const contract_e5_id = object['e5']+':'+object['id']
+    const file_name = this.getLocale()['3055wk']/* 'obligation-fulfilment-export: ' */+new Date()+'-'+contract_e5_id+'.json'
+    this.download_file({'e':final_object}, file_name)
   }
 
 
@@ -36136,8 +36235,36 @@ class App extends Component {
   }
 
   get_dash_utxos = async (address) => {
-    const request = `https://insight.dash.org/insight-api/addr/${address}/utxo`
     if(!this.is_address_set(address)) return []
+
+    // const request = `https://insight.dash.org/insight-api/addr/${address}/utxo`
+    // try{
+    //   const response = await fetch(request);
+    //   if (!response.ok) {
+    //     console.log(response)
+    //     throw new Error(`Failed to retrieve data. Status: ${response}`);
+    //     return []
+    //   }
+    //   var data = await response.text();
+    //   return JSON.parse(data)
+    // }
+    // catch(e){
+    //   console.log(e)
+    //   return []
+    // }
+
+    const request = `https://api.blockcypher.com/v1/dash/main/addrs/${address}?unspentOnly=true&includeScript=true&limit=200`
+    const normalize = (data) => (data.txrefs || []).concat(data.unconfirmed_txrefs || []).map(u => ({
+      address,
+      txid: u.tx_hash,
+      vout: u.tx_output_n,
+      satoshis: parseInt(u.value),
+      amount: u.value / 1e8,
+      confirmations: u.confirmations,
+      height: u.block_height,
+      scriptPubKey: u.script,
+    }));
+
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -36146,7 +36273,7 @@ class App extends Component {
         return []
       }
       var data = await response.text();
-      return JSON.parse(data)
+      return normalize(JSON.parse(data))
     }
     catch(e){
       console.log(e)
@@ -40394,7 +40521,11 @@ class App extends Component {
               const default_obligation_contract = this.state.default_obligation_contract[c]
               const should_emit = this.add_my_default_subscription_to_my_obligation_list(default_obligation_contract)
               await this.wait(500)
-              if(should_emit == true) await this.emit_update_subscriptions_for_obligations_event()
+              if(should_emit == true){
+                await this.emit_update_subscriptions_for_obligations_event()
+                await this.wait(3000)
+                await this.emit_log_account_in_subscribed_public_contract(default_obligation_contract, true)
+              } 
             }
           }
           await this.load_my_accounts_obligation_data(this.state.obligation_subscriptions[this.state.accounts[this.state.selected_e5].address]['data'])
@@ -40404,7 +40535,11 @@ class App extends Component {
               const default_obligation_contract = this.state.default_obligation_contract[c]
               const should_emit = this.add_my_default_subscription_to_my_obligation_list(default_obligation_contract)
               await this.wait(500)
-              if(should_emit == true) await this.emit_update_subscriptions_for_obligations_event()
+              if(should_emit == true){
+                await this.emit_update_subscriptions_for_obligations_event()
+                await this.wait(3000)
+                await this.emit_log_account_in_subscribed_public_contract(default_obligation_contract, true)
+              }
             }
           } 
         }
@@ -64755,7 +64890,9 @@ class App extends Component {
       }
     }
 
+    let is_adding_subscription = true;
     if(obligation_subscriptions_array_clone.includes(object_e5_id)){
+      is_adding_subscription = false
       const index = obligation_subscriptions_array_clone.indexOf(object_e5_id)
       obligation_subscriptions_array_clone.splice(index, 1)
       subcontracts.forEach(subcontract => {
@@ -64784,6 +64921,9 @@ class App extends Component {
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
 
+    await this.wait(3000)
+    await this.emit_log_account_in_subscribed_public_contract(object_e5_id, is_adding_subscription)
+
     await this.load_my_accounts_obligation_data([object_e5_id])
   }
 
@@ -64809,6 +64949,13 @@ class App extends Component {
     const room_id = 'obligation_subscription'
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("chatroom_message", {roomId: room_id, message: message_object.message, target: room_id, object_hash: message_object.object_hash});
+  }
+
+  async emit_log_account_in_subscribed_public_contract(object_e5_id, is_subscribing){
+    const comment_message_object = await this.prepare_new_contract_subscription_log_message(object_e5_id, is_subscribing)
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", {roomId: object_e5_id, message: comment_message_object.message, target: object_e5_id, object_hash: comment_message_object.object_hash});
   }
 
   add_my_default_subscription_to_my_obligation_list(object_e5_id){
@@ -65273,6 +65420,17 @@ class App extends Component {
     return targets_address
   }
 
+  generate_app_signature = async (data) => {
+    const seed = process.env.REACT_APP_PRIVACY_SIGNATURE_KEY
+    const web3_url = this.get_web3_url_from_e5('E25')
+    const account = this.get_account_from_seed(seed, web3_url)
+    const address = account.address
+    const web3 = new Web3(web3_url);
+    web3.eth.accounts.wallet.add(account.privateKey);
+    const signature = await web3.eth.sign(data.toString(), address)
+    return signature;
+  }
+
 
 
 
@@ -65338,7 +65496,9 @@ class App extends Component {
       show_job_after_broadcast,
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
-      item_type: state_object.object_type
+      item_type: state_object.object_type,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, target, object_hash }
@@ -65397,6 +65557,8 @@ class App extends Component {
       block: parseInt(block_number),
       recipient_unique_crosschain_identifier: await this.get_unique_crosschain_identifier_number(state_object.target_recipient, state_object.recipients_e5),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65469,6 +65631,8 @@ class App extends Component {
       block: parseInt(block_number),
       recipient_unique_crosschain_identifier: await this.get_unique_crosschain_identifier_number(state_object['recipient'], state_object['recipients_e5']),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65513,6 +65677,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65582,6 +65748,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65654,7 +65822,9 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
-      object_e5: message_obj['e5']
+      object_e5: message_obj['e5'],
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65697,6 +65867,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65774,6 +65946,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65846,6 +66020,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65902,6 +66078,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65965,6 +66143,8 @@ class App extends Component {
       int_data: t.request_item['job_request_id'],
       target: t.contractor_object['id'],
       signature:signature,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -65981,8 +66161,20 @@ class App extends Component {
     const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
 
     const purchase_object = {
-      'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.state.user_account_id[this.state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.state.accounts[this.state.selected_e5].address, this.state.selected_e5), 'options':t.purchase_option_tags_array, 'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups), 'pins': t.pins,
-      'price_data':t.selected_variant['price_data'], 'shipping_price_data':t.storefront_item['ipfs'].shipping_price_data, 'indexer_order':true, 'purchase_identifier': this.hash_data(this.make_number_id(12)),
+      'shipping_detail':t.fulfilment_location, 
+      'custom_specifications':t.custom_specifications, 
+      'variant_id':t.selected_variant['variant_id'], 
+      'purchase_unit_count':t.purchase_unit_count, 
+      'sender_account':this.state.user_account_id[this.state.selected_e5], 
+      'signature_data':Date.now(), 
+      'sender_address':this.format_address(this.state.accounts[this.state.selected_e5].address, this.state.selected_e5), 
+      'options':t.purchase_option_tags_array, 
+      'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups), 
+      'pins': t.pins,
+      'price_data':t.selected_variant['price_data'],
+      'shipping_price_data':t.storefront_item['ipfs'].shipping_price_data, 
+      'indexer_order':true, 
+      'purchase_identifier': this.hash_data(this.make_number_id(12)),
     }
 
     const object = t.storefront_item['ipfs']
@@ -66038,7 +66230,9 @@ class App extends Component {
       block: parseInt(block_number),
       context,
       target: t.storefront_item['ipfs'].target_receiver,
-      storefront_e5_id: t.storefront_item['e5_id']
+      storefront_e5_id: t.storefront_item['e5_id'],
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66151,6 +66345,8 @@ class App extends Component {
       block: parseInt(block_number),
       storefront_id: order_storefront['id'],
       storefront_e5: order_storefront['e5'],
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66201,6 +66397,8 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66250,6 +66448,9 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
+      no_record: true,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66295,6 +66496,8 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66388,6 +66591,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       signature,
+      verify_signature: await this.generate_signature(object_as_string),
+      app_signature: await this.generate_app_signature(object_as_string),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66431,6 +66636,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       purchase_identifier: item['purchase_identifier'],
+      verify_signature: await this.generate_signature(object_as_string),
+      app_signature: await this.generate_app_signature(object_as_string),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66487,6 +66694,8 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66524,7 +66733,7 @@ class App extends Component {
     const lan = ''
     const state = ''
 
-    
+    const hashed_data = this.hash_message_for_id(call_password)
     const message = {
       type: 'call_metadata',
       message_identifier: this.make_number_id(12),
@@ -66536,11 +66745,13 @@ class App extends Component {
       e5: e5,
       lan: lan,
       state: state,
-      data: this.hash_message_for_id(call_password),
+      data: hashed_data,
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
-      call_id
+      call_id,
+      verify_signature: await this.generate_signature(hashed_data),
+      app_signature: await this.generate_app_signature(hashed_data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66589,6 +66800,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66646,7 +66859,9 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
-      signature: signature
+      signature: signature,
+      verify_signature: await this.generate_signature(data_to_sign),
+      app_signature: await this.generate_app_signature(data_to_sign),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66696,6 +66911,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       signature,
+      verify_signature: await this.generate_signature(object_as_string),
+      app_signature: await this.generate_app_signature(object_as_string),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66742,6 +66959,8 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66792,6 +67011,8 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66840,6 +67061,8 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66888,6 +67111,8 @@ class App extends Component {
       block: parseInt(block_number),
       recipient_unique_crosschain_identifier: await this.get_unique_crosschain_identifier_number(state_object['recipient'], state_object['recipients_e5']),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66926,6 +67151,8 @@ class App extends Component {
       context,
       object_e5: object['e5'],
       object_type,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -66963,6 +67190,8 @@ class App extends Component {
       block: parseInt(block_number),
       context,
       object_e5: object['e5'],
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67008,7 +67237,9 @@ class App extends Component {
       context,
       record_view: true,
       record_type:'object_views',
-      record_id: [object_e5_id]
+      record_id: [object_e5_id],
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67047,7 +67278,9 @@ class App extends Component {
       context,
       record_view: true,
       record_type:'object_views',
-      record_id: object_e5_ids
+      record_id: object_e5_ids,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67086,7 +67319,9 @@ class App extends Component {
       context,
       record_view: true,
       record_type: record_type,
-      record_id: object_e5_ids
+      record_id: object_e5_ids,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67135,6 +67370,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67190,6 +67427,8 @@ class App extends Component {
       block: parseInt(block_number),
       object_id: state_object['id'],
       object_e5: state_object['e5'],
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67237,7 +67476,9 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       object_tag_id: object_tag_id,
-      object_type: object_type
+      object_type: object_type,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67277,6 +67518,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       signature,
+      verify_signature: await this.generate_signature(object_as_string),
+      app_signature: await this.generate_app_signature(object_as_string),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67333,6 +67576,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67408,6 +67653,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67468,6 +67715,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67509,7 +67758,9 @@ class App extends Component {
       block: parseInt(block_number),
       context,
       int_data: t.request_item['job_request_id'],
-      target: t.storefront_object['id']
+      target: t.storefront_object['id'],
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67600,7 +67851,9 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
-      object_e5: object['e5']
+      object_e5: object['e5'],
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67665,6 +67918,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67717,6 +67972,8 @@ class App extends Component {
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
       context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67773,6 +68030,8 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67868,7 +68127,9 @@ class App extends Component {
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: parseInt(block_number),
-      item_type: state_object.object_type
+      item_type: state_object.object_type,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, target, object_hash }
@@ -67919,6 +68180,8 @@ class App extends Component {
       block: 0,
       signature,
       no_record: true,
+      verify_signature: await this.generate_signature(object_as_string),
+      app_signature: await this.generate_app_signature(object_as_string),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67963,11 +68226,13 @@ class App extends Component {
       e5: this.state.selected_e5,
       lan: lan,
       state: state,
-      data: object_as_string,
+      data: data,
       nitro_id: this.get_my_nitro_id(),
       time: Math.round(Date.now()/1000),
       block: 0,
       no_record: true,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
@@ -67992,6 +68257,64 @@ class App extends Component {
     recipent_data[await this.get_my_unique_crosschain_identifier_number2()] = my_encrypted_key
 
     return {'obj':encrypted_obj, 'recipient_data':recipent_data, 'encryptor_pub_key':this.uint8ToBase64(uint8array)}
+  }
+
+
+
+
+
+
+  async prepare_new_contract_subscription_log_message(contract_e5_id, is_subscribing){
+    const e5_to_use = 'E'+(contract_e5_id.split('E')[1])
+    const message_obj = {
+      'contract_obj':contract_e5_id,
+      'time':Date.now(),
+      'sender_account': this.state.user_account_id[e5_to_use],
+      'sender_account_e5': e5_to_use,
+      'address':this.state.accounts[e5].address,
+      'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+      'is_subscribing': is_subscribing
+    }
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(e5_to_use))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[e5_to_use]
+    const e5 = e5_to_use
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+
+    const data = JSON.stringify(message_obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+
+    const context = 0
+    const message = {
+      type: 'contract_subscription_log',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
   }
 
   

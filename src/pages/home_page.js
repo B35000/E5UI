@@ -7071,6 +7071,8 @@ class home_page extends Component {
                 get_ether_blockexplorer_link={this.props.get_ether_blockexplorer_link.bind(this)}
                 auto_stack_subscription={this.auto_stack_subscription.bind(this)} perform_translation_of_specific_object={this.props.perform_translation_of_specific_object.bind(this)} broadcast_my_location_under_specific_pretense={this.props.broadcast_my_location_under_specific_pretense.bind(this)}
 
+                load_contract_obligation_fulfilment_info={this.props.load_contract_obligation_fulfilment_info.bind(this)}
+
                 />
             </div>
         )

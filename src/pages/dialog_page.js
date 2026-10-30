@@ -801,6 +801,9 @@ class DialogPage extends Component {
         else if(option == 'render_event_item_details'){
             return this.render_event_item_details()
         }
+        else if(option == 'view_contract_obligation_fulfilment_info'){
+            return this.render_contract_obligation_fulfilment_ui()
+        }
     }
 
 
@@ -11923,19 +11926,19 @@ return data['data']
         var card_shadow_color = this.props.theme['card_shadow_color']
 
         return(
-                <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                    <div style={{'padding': '0px 0px 0px 5px'}}>
-                        {this.render_detail_item('1', item['tags'])}
-                        <div style={{height: 10}}/>
-                        <div style={{'padding': '0px 0px 0px 0px'}}>
-                            {this.render_detail_item('3', item['id'])}
-                        </div>
-                        <div style={{'padding': '20px 0px 0px 0px'}}>
-                            {this.render_detail_item('2', item['age'])}
-                        </div>
-                    </div>         
-                </div>
-            )
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
     }
 
     render_keyword_search(){
@@ -16428,7 +16431,7 @@ return data['data']
                         <div style={{'padding': '0px 0px 0px 0px'}}>
                             {this.render_detail_item('3', item['id'])}
                         </div>
-                        <div style={{'padding': '20px 0px 0px 0px'}} /* onClick={() => this.when_contract_item_clicked(index, object)} */>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
                             {this.render_detail_item('2', item['age'])}
                         </div>
                         
@@ -19998,6 +20001,210 @@ return data['data']
     }
 
 
+
+
+
+
+
+    render_contract_obligation_fulfilment_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_contract_obligation_fulfilment_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_contract_obligation_fulfilment_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_obligation_fulfilment_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_obligation_fulfilment_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_obligation_fulfilment_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_obligation_fulfilment_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_contract_obligation_fulfilment_data(){
+        if(this.props.app_state.is_getting_contract_obligation_payment_info == true){
+            return(
+                <div>
+                    {this.render_skeleton_object()}
+                </div>
+            )
+        }
+        const object = this.state.data['object']
+        const { fulfiled_accounts, unfulfilled_accounts, total_amounts, total_unfulfiled_amounts, unfulfiled_pending_data, from, to, time } = this.props.app_state.contract_obligation_payment_info[object['e5_id']]
+
+        const end_token_balance = total_amounts[3]
+        const spend_token_balance = total_amounts[5]
+        const unfulfiled_end_token_balance = total_unfulfiled_amounts[3]
+        const unfulfiled_spend_token_balance = total_unfulfiled_amounts[5]
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055vj']/* 'Preceding Year\'s Obligation Metrics' */, 'details': this.props.app_state.loc['3055vk']/* 'Quickly search or export the accounts that failed to fulfil their obligations.' */, 'size': 'l' })}
+
+                <div style={{ height: 10 }}/>
+                {this.render_contract(object)}
+
+                <div style={{ height: 10 }}/>
+                {this.render_detail_item('3', { 'title': number_with_commas(fulfiled_accounts.length), 'details': this.props.app_state.loc['3055vl']/* 'Fulfiled Accounts' */, 'size': 'l' })}
+
+                <div style={{ height: 10 }}/>
+                {this.render_detail_item('3', { 'title': number_with_commas(unfulfilled_accounts.length), 'details': this.props.app_state.loc['3055vm']/* 'Unfulfiled Accounts' */, 'size': 'l' })}
+
+                {this.render_detail_item('0')}
+                
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 5px 0px 5px','padding': '10px 5px 5px 5px','border-radius': '8px'}}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3055vn']/* 'Fulfiled END and SPEND' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+                    
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
+                </div>
+
+                <div style={{ height: 10 }}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 5px 0px 5px','padding': '10px 5px 5px 5px','border-radius': '8px'}}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['3055vo']/* 'Unfulfiled END and SPEND' */}</p>
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(unfulfiled_end_token_balance), 'number':this.format_account_balance_figure(unfulfiled_end_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+                    
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(unfulfiled_spend_token_balance), 'number':this.format_account_balance_figure(unfulfiled_spend_token_balance), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
+                </div>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055vx']/* 'Export All The Data.' */, 'details': this.props.app_state.loc['3055vy']/* 'Export all the fulfilment data including the accounts that failed to fulfil their obligations for the previous year in a JSON file.' */, 'size': 'l' })}
+                <div style={{ height: 10 }} />
+                <div onClick={() => this.props.export_all_fulfilled_obligation_data(object, fulfiled_accounts, unfulfilled_accounts, total_amounts, total_unfulfiled_amounts, unfulfiled_pending_data, from, to, time)}>
+                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['3055vz']/* 'Export Data' */, 'action': '' })}
+                </div>
+            </div>
+        )
+    }
+
+    render_contract_obligation_fulfilment_data2(){
+        if(this.props.app_state.is_getting_contract_obligation_payment_info == true){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+        const object = this.state.data['object']
+        const { fulfiled_accounts, unfulfilled_accounts, total_amounts, total_unfulfiled_amounts, unfulfiled_pending_data, from, to } = this.props.app_state.contract_obligation_payment_info[object['e5_id']]
+
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055vp']/* 'Quick Search and Index' */, 'details': this.props.app_state.loc['3055vq']/* 'Check whether an account failed to fulfil their obligations for the previous year.' */, 'size': 'l' })}
+
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1407r']/* 'Alias or Account ID' */} when_text_input_field_changed={this.when_obligation_search_account_input_field_changed.bind(this)} text={this.state.obligation_search_account} theme={this.props.theme}/>
+                
+                <div style={{height:10}}/>
+                <div onClick={()=> this.search_contract_obligation_fulfilment_search(fulfiled_accounts, unfulfilled_accounts, unfulfiled_pending_data)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055kz']/* 'Search Account' */, 'action':''},)}
+                </div>
+                <div style={{height:10}}/>
+                {this.render_contract_obligation_fulfilment_search_results()}
+            </div>
+        )
+    }
+
+    async search_contract_obligation_fulfilment_search(fulfiled_accounts, unfulfilled_accounts, unfulfiled_pending_data){
+        const account = this.state.obligation_search_account.trim()
+        const recipient_id = await this.get_typed_alias_id(account)
+        const contract = this.state.data['object']
+
+        if(isNaN(recipient_id) || recipient_id =='' || parseInt(recipient_id) < 1001){
+            this.props.notify(this.props.app_state.loc['1569']/* 'That ID is not valid' */, 3800)
+        }
+        else{
+            if(fulfiled_accounts.includes(parseInt(recipient_id))){
+                this.setState({searched_account: recipient_id, searched_account_exists: true, obligations_fulfiled: true})
+            }
+            else if(unfulfilled_accounts.includes(parseInt(recipient_id))){
+                const pending_transfers = unfulfiled_pending_data[parseInt(recipient_id)]
+                this.setState({
+                    searched_account: recipient_id, 
+                    searched_account_exists: true, 
+                    obligations_fulfiled: false, 
+                    pending_transfers: pending_transfers
+                })
+            }
+            else{
+                this.setState({searched_account: recipient_id, searched_account_exists: false})
+            }
+        }
+    }
+
+    render_contract_obligation_fulfilment_search_results(){
+        if(this.state.searched_account_exists == null){
+            return this.render_empty_views(2)
+        }
+        else if(this.state.searched_account_exists == false){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055vs']/* 'Account Nonexistent' */, 'details': this.props.app_state.loc['3055vr']/* 'The account $ doesnt exist in your obligations.' */.replace('$', number_with_commas(this.state.searched_account)), 'size': 'l' })}
+                </div>
+            )
+        }
+        else if(this.state.searched_account_exists == true && this.state.obligations_fulfiled == true){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055vt']/* 'Account\'s Obligations Fulfiled' */, 'details': this.props.app_state.loc['3055vu']/* 'The account $ fulfiled its obligations for the previous year.' */.replace('$', number_with_commas(this.state.searched_account)), 'size': 'l' })}
+                </div>
+            )
+        }
+        else if(this.state.searched_account_exists == true && this.state.obligations_fulfiled == false){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055vv']/* 'Account\'s Obligations Unfulfilled' */, 'details': this.props.app_state.loc['3055vw']/* 'The account $ failed to fulfil its obligations for the previous year.' */.replace('$', number_with_commas(this.state.searched_account)), 'size': 'l' })}
+                    <div style={{height:10}}/>
+                    {this.render_unfulfiled_obligation_amounts(this.state.pending_transfers)}
+                </div>
+            )
+        }
+    }
+
+    render_unfulfiled_obligation_amounts(price_data){
+        const e5 = this.state.data['object']['e5']
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                    {price_data.map((item, index) => (
+                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['exchange']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['exchange']], 'subtitle':this.format_power_figure(this.calculate_final_amount(item['amount'])), 'barwidth':this.calculate_bar_width(this.calculate_final_amount(item['amount'])), 'number':this.format_account_balance_figure(this.calculate_final_amount(item['amount'])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}
+                        </li>
+                    ))}
+                </ul>
+            </div> 
+        )
+    }
 
 
 
