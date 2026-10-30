@@ -25730,7 +25730,7 @@ class App extends Component {
     */
     const clone = structuredClone(this.state.contract_obligation_payment_info)
     clone[contract_e5_id] = data
-    this.setState({contract_obligation_payment_info: data, is_getting_contract_obligation_payment_info: null})
+    this.setState({contract_obligation_payment_info: clone, is_getting_contract_obligation_payment_info: null})
   }
 
   get_deadline_date_object(deadline_datetime){
@@ -25738,7 +25738,8 @@ class App extends Component {
     const month = deadline_datetime.split(':')[1]
     const year = new Date().getFullYear()
     
-    return new Date(`${year}-${month<10 ? '0'+month : month}-${day<10 ? '0'+day : day}`).now() 
+    const deadline = new Date(`${year}-${month<10 ? '0'+month : month}-${day<10 ? '0'+day : day}`)
+    return deadline.getMilliseconds()
   }
 
   async get_contract_obligation_payment_info(contract_e5_id, deadline_date_time, updated_signature=false){
@@ -25778,6 +25779,7 @@ class App extends Component {
         await this.wait(300)
         return await this.get_contract_obligation_payment_info(contract_e5_id, deadline_date_time, true)
       }
+      console.log('get_contract_obligation_payment_info', 'contract_obligation_info', obj)
       return obj['contract_obligation_info']
     }
     catch(e){

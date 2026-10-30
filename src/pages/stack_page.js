@@ -17914,19 +17914,28 @@ class StackPage extends Component {
     render_wallet_address(){
         var ether_name = this.props.app_state.e5s[this.props.app_state.selected_e5].token
         if(this.props.app_state.has_wallet_been_set || this.props.app_state.has_account_been_loaded_from_storage){
+            const display = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1 ? '0000' : this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        
+            const obj = this.props.app_state.alias_bucket[this.props.app_state.selected_e5] || {}
+            const alias = (obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : obj[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
+
+            const alias_message = display + ' • ' + alias
+
             return(
                 <div>
                     <div onClick={() => this.copy_to_clipboard(this.get_account_address())}>
-                        {this.render_detail_item('3', {'title':/* ether_name+' '+ */this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.get_account_address(), 'size':'l'})}
+                        {this.render_detail_item('3', {'title':/* ether_name+' '+ */this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.get_account_address(), 'footer':alias_message, 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
             )
         }else{
+            const alias_message = '0000' + ' • ' + this.props.app_state.loc['1584']/* 'Alias Unknown' */
+
             return(
                 <div>
                     <div>
-                        {this.render_detail_item('3', {'title':/* ether_name+' '+ */this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.format_address('0x0000000000000000000000000000000000000000', this.props.app_state.selected_e5), 'size':'l'})}
+                        {this.render_detail_item('3', {'title':/* ether_name+' '+ */this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.format_address('0x0000000000000000000000000000000000000000', this.props.app_state.selected_e5), 'size':'l', 'footer':alias_message})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -17945,13 +17954,13 @@ class StackPage extends Component {
         return(
             <div style={{'padding': '0px 0px 0px 0px'}}>
                 <div onClick={() => when_seed_input_title_tapped()}>
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Type a word then click \'e\' to add it, or tap the word to remove it. Also, double tap the text area to unmask.' */, 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Type a word or multiple words separated by spaces, then click \'e|\' to add them, or tap the word to remove it. Also, tap this or double tap the text area to unmask.' */, 'size':'l'})}
                 </div>
                 <div style={{height: 10}}/>
                 
                 <div className="row" style={{width:w, 'margin':'0px 0px 0px 1px'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput ref={(el) => (this.seed_word_input = el)} font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_wallet_text_input_field_changed.bind(this)} text={this.mask_word_in_input_field(this.state.typed_word)} adjust_height={false} theme={this.props.theme} type={'password'}/>
+                        <TextInput ref={(el) => (this.seed_word_input = el)} font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_wallet_text_input_field_changed.bind(this)} text={this.mask_word_in_input_field(this.state.typed_word)} adjust_height={false} theme={this.props.theme} type={'password'} when_enter_tapped={() => this.when_add_word_button_tapped()} />
                     </div>
                     <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
