@@ -748,6 +748,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
  */
 
 /*!
+ * reading-time
+ * Copyright (c) Nicolas Gryman <ngryman@gmail.com>
+ * MIT Licensed
+ */
+
+/*!
  * shallow-clone <https://github.com/jonschlinkert/shallow-clone>
  *
  * Copyright (c) 2015-present, Jon Schlinkert.
