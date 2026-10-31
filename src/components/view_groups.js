@@ -1207,7 +1207,7 @@ class ViewGroups extends Component {
             else if(this.state.reader_status == 'ended'){
                 speak_message = '↻ Restart Speaking'
             }
-            const reading_time_message = '⏳ '+this.get_time_diff(reading_time_seconds)+ ' Read' + ' • ' + speak_message
+            const reading_time_message = '⏱️ '+this.get_time_diff(reading_time_seconds)+ ' Read' + ' • ' + speak_message
 
             const createReader = (markdown, { rate = 1, lang = 'en-US' } = {}) => {
                 const plain = removeMarkdown(markdown.replace(/```[\s\S]*?```/g, ''));
