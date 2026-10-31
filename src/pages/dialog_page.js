@@ -20065,6 +20065,7 @@ return data['data']
         const spend_token_balance = total_amounts[5]
         const unfulfiled_end_token_balance = total_unfulfiled_amounts[3]
         const unfulfiled_spend_token_balance = total_unfulfiled_amounts[5]
+        const fulfilment_rate = (fulfiled_accounts.length / (fulfiled_accounts.length + unfulfilled_accounts.length)) * 100 
         return(
             <div>
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055vj']/* 'Preceding Year\'s Obligation Metrics' */, 'details': this.props.app_state.loc['3055vk']/* 'Quickly search or export the accounts that failed to fulfil their obligations.' */, 'size': 'l' })}
@@ -20077,6 +20078,9 @@ return data['data']
 
                 <div style={{ height: 10 }}/>
                 {this.render_detail_item('3', { 'title': number_with_commas(unfulfilled_accounts.length), 'details': this.props.app_state.loc['3055vm']/* 'Unfulfiled Accounts' */, 'size': 'l' })}
+
+                <div style={{ height: 10 }}/>
+                {this.render_detail_item('3', { 'title': fulfilment_rate.toFixed(2) + '%', 'details': this.props.app_state.loc['3055wl']/* 'Fulfilment Rate.' */, 'size': 'l' })}
 
                 {this.render_detail_item('0')}
                 

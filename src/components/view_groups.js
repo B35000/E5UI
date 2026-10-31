@@ -38,6 +38,9 @@ import { Line } from 'react-chartjs-2';
 import words from 'profane-words'
 import * as naughtyWords from 'naughty-words';
 
+import readingTime from 'reading-time';
+import removeMarkdown from 'remove-markdown';
+
 
 var bigInt = require("big-integer");
 
@@ -153,21 +156,21 @@ class ViewGroups extends Component {
             );
         },
 
-        h1: ({ node, ...props }) => <h1 style={{ color:this.props.theme['primary_text_color'] }} {...props} />,
+        h1: ({ node, ...props }) => <h1 style={{ color:this.props.theme['primary_text_color'], 'font-family': this.props.font }} {...props} />,
 
-        h2: ({ node, ...props }) => <h2 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+        h2: ({ node, ...props }) => <h2 style={{ color: this.props.theme['primary_text_color'], 'font-family': this.props.font }} {...props} />,
 
-        h3: ({ node, ...props }) => <h3 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+        h3: ({ node, ...props }) => <h3 style={{ color: this.props.theme['primary_text_color'], 'font-family': this.props.font }} {...props} />,
 
-        h4: ({ node, ...props }) => <h4 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+        h4: ({ node, ...props }) => <h4 style={{ color: this.props.theme['primary_text_color'], 'font-family': this.props.font }} {...props} />,
 
-        h5: ({ node, ...props }) => <h5 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+        h5: ({ node, ...props }) => <h5 style={{ color: this.props.theme['primary_text_color'], 'font-family': this.props.font }} {...props} />,
 
-        h6: ({ node, ...props }) => <h6 style={{ color: this.props.theme['primary_text_color'] }} {...props} />,
+        h6: ({ node, ...props }) => <h6 style={{ color: this.props.theme['primary_text_color'], 'font-family': this.props.font }} {...props} />,
 
-        li: ({ node, ...props }) => <li style={{ color: this.props.theme['secondary_text_color'] }} {...props} />,
+        li: ({ node, ...props }) => <li style={{ color: this.props.theme['secondary_text_color'], 'font-family': this.props.font }} {...props} />,
 
-        a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'], 'text-decoration':'underline', cursor: 'pointer'}} {...props} href={undefined} onMouseDown={(e) => this.handleLinkClick(props.href, e)} />,
+        a: ({ node, ...props }) => <a style={{ color: this.props.theme['secondary_text_color'], 'text-decoration':'underline', cursor: 'pointer', 'font-family': this.props.font}} {...props} href={undefined} onMouseDown={(e) => this.handleLinkClick(props.href, e)} />,
 
         hr: ({ node, ...props }) => <hr style={{ color: this.props.theme['line_color'] }} {...props} />,
 
@@ -1193,17 +1196,82 @@ class ViewGroups extends Component {
             
             const is_expanded = this.state.markdown_expanded;
             const show_toggle = this.state.markdown_needs_toggle;
-            // return(
-            //     <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':this.props.theme['view_group_card_item_background']}}>
-            //         <Markdown components={this.markdown_components}>{source}</Markdown>
-            //     </div>
-            // )
+            const reading_time_seconds = this.reading_time_seconds(source)
+            let speak_message = '🗣 Speak Aloud'
+            if(this.state.reader_status == 'playing'){
+                speak_message = '⏸️ Pause Speaking'
+            }
+            else if(this.state.reader_status == 'paused'){
+                speak_message = '▶ Resume Speaking'
+            }
+            else if(this.state.reader_status == 'ended'){
+                speak_message = '↻ Restart Speaking'
+            }
+            const reading_time_message = '⏳ '+this.get_time_diff(reading_time_seconds)+ ' Read' + ' • ' + speak_message
+
+            const createReader = (markdown, { rate = 1, lang = 'en-US' } = {}) => {
+                const plain = removeMarkdown(markdown.replace(/```[\s\S]*?```/g, ''));
+                const chunks = plain.match(/[^.!?\n]+[.!?]*\s*/g) ?? [plain];
+                let cancelled = false;
+                const me = this;
+
+                const pickVoice = () => speechSynthesis.getVoices().find(v => v.lang === lang) ?? null;
+
+                return {
+                    async play() {
+                        cancelled = false;
+                        for (const chunk of chunks) {
+                            if (cancelled) break;
+                            await new Promise((resolve) => {
+                                const u = new SpeechSynthesisUtterance(chunk);
+                                u.rate = rate;
+                                u.lang = lang;
+                                u.voice = pickVoice();
+                                u.onend = u.onerror = resolve;
+                                speechSynthesis.speak(u);
+                            });
+                        }
+                        cancelled = true;
+                        speechSynthesis.cancel()
+                        me.setState({reader_status: 'ended'})
+                    },
+                    pause: () => speechSynthesis.pause(),
+                    resume: () => speechSynthesis.resume(),
+                    stop() {
+                        cancelled = true;
+                        speechSynthesis.cancel();
+                    },
+                };
+            }
+            let reader = createReader(source, { rate: 1.1 });
+            
+            const start_or_stop_reading = () => {
+                if(this.state.reader_status == null){
+                    reader.play()
+                    this.setState({reader_status: 'playing'})
+                }
+                else if(this.state.reader_status == 'playing'){
+                    reader.pause()
+                    this.setState({reader_status: 'paused'})
+                }
+                else if(this.state.reader_status == 'paused'){
+                    reader.resume()
+                    this.setState({reader_status: 'playing'})
+                }
+                else if(this.state.reader_status == 'ended'){
+                    reader = createReader(source, { rate: 1.1 });
+                    reader.play()
+                    this.setState({reader_status: 'playing'})
+                }
+            }
             return(
                 <div style={{padding:'5px 10px 5px 10px', width:'100%', 'border-radius': border_radius, 'background-color':this.props.theme['view_group_card_item_background']}}>
+                    <div onClick={() => start_or_stop_reading()}>
+                        {this.render_detail_item('10', {'text':reading_time_message, 'textsize':'10px', 'font':this.props.font})}
+                    </div>
                     <div style={{ position: 'relative' }}>
-                        <div ref={this.markdown_content_ref}
-                            style={{ maxHeight: is_expanded ? 'none' : this.markdown_collapsed_height + 'px', overflow: 'hidden', wordWrap: word_wrap_value, }}>
-                                <Markdown components={this.markdown_components}>{source}</Markdown>
+                        <div ref={this.markdown_content_ref} style={{ maxHeight: is_expanded ? 'none' : this.markdown_collapsed_height + 'px', overflow: 'hidden', wordWrap: word_wrap_value, }}>
+                            <Markdown components={this.markdown_components}>{source}</Markdown>
                         </div>
 
                         {!is_expanded && show_toggle && (
@@ -1771,7 +1839,6 @@ class ViewGroups extends Component {
             .reduce((maxLength, word) => Math.max(maxLength, word.length), 0);
     }
 
-
     format_text_if_empty_or_null(text){
         if(text == '' || text == null){
             return '...';
@@ -1953,7 +2020,6 @@ class ViewGroups extends Component {
         this.props.show_view_iframe_link_bottomsheet(url)
     };
 
-
     get_image_from_file(ecid){
         try{
             if(ecid == null) return empty_image
@@ -2000,6 +2066,45 @@ class ViewGroups extends Component {
 
     check_if_is_account_link = (part) => {
         return isNaN(part.replace('@', '')) && part.startsWith('@') && (part.match(/@/g) || []).length == 1;
+    }
+
+    reading_time_seconds(markdown, wordsPerMinute = 235) {
+        const plain = removeMarkdown(markdown);
+        const { time } = readingTime(plain, { wordsPerMinute });
+        return Math.round(time / 1000); // `time` is in milliseconds
+    }
+
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = parseInt(diff)
+            var s = num > 1 ? 's': '';
+            return num+ 'sec'
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + 'min' 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + 'hr' + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + 'dy' + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + 'wk' + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return num + 'yr' + s;
+        }
     }
 
 }

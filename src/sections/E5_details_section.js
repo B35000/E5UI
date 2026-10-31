@@ -214,6 +214,12 @@ class E5DetailsSection extends Component {
                                             {this.render_detail_item('3', item['address'])}
                                         </div>
                                     )}
+                                    {index == 2 && (
+                                        <div>
+                                            {this.show_e5_locked_message_if_locked(e5)}
+                                        </div>
+                                    )}
+                                    
                                     
 
                                     {index == 3 && (<div style={{height:10}}/>)}
@@ -476,6 +482,33 @@ class E5DetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    show_e5_locked_message_if_locked(e5){
+        const currrent_e5 = e5
+        if(this.props.app_state.created_contract_mapping[currrent_e5] == null) return;
+        const contract_obj = this.props.app_state.created_contract_mapping[currrent_e5][2]
+
+        if(contract_obj['primary_account'] != null && contract_obj['primary_account_tx_period'] != null){
+            const time_diff = (Date.now()/1000) - contract_obj['primary_account_last_tx_time']
+            const time_remainder = contract_obj['primary_account_tx_period'] - time_diff
+            if(time_diff > contract_obj['primary_account_tx_period']){
+                return(
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2336ce']/* '⚠️ $ Has Been Locked' */.replace('$', currrent_e5), 'details':this.props.app_state.loc['2336cf']/* 'Function e has locked itself because the primary account has not made a transaction in the designated time period.' */, 'size':'l'})}
+                    </div>
+                )
+            }
+            else if(time_remainder < (60*60*24*5)){
+                return(
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1593jc']/* Upcoming Lock Time.' */, 'details':this.props.app_state.loc['1593lf']/* e will be locked in $' */.replace('$', this.get_time_diff(time_remainder)), 'size':'l'})}
+                    </div>
+                )
+            }
+        }
     }
 
     render_last_transaction_time_data(e5){
