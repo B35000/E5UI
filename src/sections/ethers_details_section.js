@@ -26,6 +26,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { from } from "@iotexproject/iotex-address-ts";
 
 var bigInt = require("big-integer");
+const { getDomain } = require("tldjs");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 
 function bgN(number, power) {
@@ -303,8 +304,11 @@ class EthersDetailsSection extends Component {
                     
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['ether_symbol'])}
+
+                    {this.render_ether_website_and_whitepaper(item)}
                     
-                    <div style={{height: 10}}/>
+                    {this.render_detail_item('0')}
+
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['number_label_large'])}
                     </div>
@@ -340,7 +344,7 @@ class EthersDetailsSection extends Component {
 
                     {supply != null && (
                         <div>
-                            <div style={{height: 10}}/>
+                            {this.render_detail_item('0')}
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                                 <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2481u']/* 'Ether\'s Supply.' */, 'number':supply, 'relativepower':this.props.app_state.loc['2738cw']/* ether */})}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2481u']/* 'Ether\'s Supply.' */, 'subtitle':this.format_power_figure(supply), 'barwidth':this.calculate_bar_width(supply), 'number':''+this.format_account_balance_figure(supply), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['2738cw']/* ether */, })}
@@ -1809,6 +1813,235 @@ class EthersDetailsSection extends Component {
     //         return ``
     //     }
     // }
+
+
+
+
+
+
+
+
+    render_ether_website_and_whitepaper(item){
+        const ether = item['symbol']
+        const coin_website_whitepaper_data = this.get_ether_website_link(ether)
+        if(coin_website_whitepaper_data.site == `` && coin_website_whitepaper_data.whitepaper == ``) return;
+
+        return(
+            <div>
+                {coin_website_whitepaper_data.site != `` && (
+                    <div onClick={() => this.when_ether_website_or_link_clicked(coin_website_whitepaper_data.site)}>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2927ca']/* 'Project Website. */,'details':this.props.app_state.loc['2481bz']/* 'Open and view the ethers website and project description.' */, 'size':'l', 'footer':getDomain(coin_website_whitepaper_data.site)})}
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
+                {coin_website_whitepaper_data.whitepaper != `` && (
+                    <div onClick={() => this.when_ether_website_or_link_clicked(coin_website_whitepaper_data.whitepaper)}>
+                        {coin_website_whitepaper_data.site == `` && (
+                            <div style={{height: 10}}/>
+                        )}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2927cc']/* 'Project Whitepaper' */,'details':this.props.app_state.loc['2481ca']/* 'Open and view the ethers whitepaper.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    when_ether_website_or_link_clicked(link){
+        this.props.show_view_iframe_link_bottomsheet(link)
+    }
+
+    get_ether_website_link(symbol){
+        if(symbol == 'ETC'){
+            return { site: `https://ethereumclassic.org`, whitepaper: `https://ethereum.org/content/whitepaper/whitepaper-pdf/Ethereum_Whitepaper_-_Buterin_2014.pdf` }
+        }
+        else if(symbol == 'AVAX'){
+            return { site: `https://www.avalanche.com`, whitepaper: `https://cdn.prod.website-files.com/5d80307810123f5ffbb34d6e/6008d7bbf8b10d1eb01e7e16_Avalanche%20Platform%20Whitepaper.pdf` }
+        }
+        else if(symbol == 'CELO'){
+            return { site: `https://celo.org`, whitepaper: `https://drive.google.com/file/d/19etUe_T4E3yb8dN8zuLZgsKukP7VRoPd/view?usp=drive_link` }
+        }
+        else if(symbol == 'FLR'){
+            return { site: `https://flare.network/`, whitepaper: `https://dev.flare.network/pdf/whitepapers/20221231-TheFlareNetworkAndFLRToken.pdf` }
+        }
+        else if(symbol == 'XDAI'){
+            return { site: `https://www.gnosis.io/chain`, whitepaper: `` }
+        }
+        else if(symbol == 'FUSE'){
+            return { site: `https://www.fuse.io`, whitepaper: `https://www.fuse.io/whitepaper` }
+        }
+        else if(symbol == 'XDC'){
+            return { site: `https://xdc.org`, whitepaper: `https://xinfin.org/docs/whitepaper-tech.pdf`}
+        }
+        else if(symbol == 'POL'){
+            return { site: `https://polygon.technology`, whitepaper: `` }
+        }
+        else if(symbol == 'BNB'){
+            return { site: `https://www.bnbchain.org`, whitepaper: `https://dex-bin.bnbstatic.com/static/Whitepaper_%20Binance%20Smart%20Chain.pdf` }
+        }
+        else if(symbol == 'SEI'){
+            return { site: `https://www.sei.io`, whitepaper: `` }
+        }
+        else if(symbol == 'BERA'){
+            return { site: `https://www.berachain.com`, whitepaper: `https://docs.berachain.com/general/help/honeypaper` }
+        }
+        else if(symbol == 'VIC'){
+            return { site: `https://viction.xyz/`, whitepaper: `https://1198941402-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FPmPMaOPJdK9KcdXtJdQH%2Fuploads%2FZUMv9nKNTKxJS8MlRULO%2FVICTION%20Economics%20Paper%202.0.pdf?alt=media&token=e9480ae4-4a67-4c1f-8fb4-acd529607746` }
+        }
+        else if(symbol == 'XPL'){
+            return { site: `https://www.plasma.org/network`, whitepaper: ``}
+        }
+        else if(symbol == 'ETH'){
+            return { site: `https://ethereum.org`, whitepaper: `https://ethereum.org/content/whitepaper/whitepaper-pdf/Ethereum_Whitepaper_-_Buterin_2014.pdf`}
+        }
+        else if(symbol == 'OETH'){
+            return { site: `https://optimism.io`, whitepaper: `https://ethereum.org/developers/docs/scaling/optimistic-rollups/`}
+        }
+        else if(symbol == 'BETH'){
+            return { site: `https://www.base.org`, whitepaper: `https://ethereum.org/developers/docs/scaling/optimistic-rollups/`}
+        }
+        else if(symbol == 'AETH'){
+            return { site: `https://arbitrum.io`, whitepaper: `https://ethereum.org/developers/docs/scaling/optimistic-rollups/`}
+        }
+        else if(symbol == 'ASTR'){
+            return { site: `https://astar.network`, whitepaper: ``}
+        }
+        else if(symbol == 'CRO'){
+            return { site: `https://cronos.com`, whitepaper: `https://resources.cryptocompare.com/asset-management/116/1671016145015.pdf`}
+        }
+        else if(symbol == 'KAVA'){
+            return { site: `https://www.kava.io`, whitepaper: ``}
+        }
+        else if(symbol == 'MNT'){
+            return { site: `https://www.mantle.xyz`, whitepaper: ``}
+        }
+        else if(symbol == 'IOTX'){
+            return { site: `https://iotex.io/chain`, whitepaper: `https://cdn.iotex.io/whitepaper/iotex_whitepaper_eu.pdf`}
+        }
+        else if(symbol == 'CFX'){
+            return { site: `https://www.confluxnetwork.org`, whitepaper: `https://confluxnetwork.org/files/Conflux_Economic_Paper_20201230.pdf`}
+        }
+        else if(symbol == 'TLOS'){
+            return { site: `https://telos.net`, whitepaper: ``}
+        }
+        else if(symbol == 'RBTC'){
+            return { site: `https://rootstock.io`, whitepaper: `https://rootstock.io/static/a79b27d4889409602174df4710102056/RS-whitepaper.pdf`}
+        }
+        else if(symbol == 'HBARE'){
+            return { site: `https://hedera.com`, whitepaper: `https://hedera.com/wp-content/uploads/2025/12/hh_whitepaper.pdf`}
+        }
+        else if(symbol == 'IOTAE'){
+            return { site: `https://www.iota.org/products/evm`, whitepaper: `https://files.iota.org/papers/IOTA_2.0_Incentives_And_Tokenomics_Whitepaper.pdf`}
+        }
+        else if(symbol == 'KAIA'){
+            return { site: `https://www.kaia.io`, whitepaper: `https://docs.kaia.io/kaiatech/kaia-white-paper/`}
+        }
+        else if(symbol == 'S'){
+            return { site: `https://www.soniclabs.com`, whitepaper: `https://www.soniclabs.com/whitepaper`}
+        }
+        else if(symbol == 'HYPE'){
+            return { site: `https://hyperliquid.xyz`, whitepaper: ``}
+        }
+        else if(symbol == 'XRPE'){
+            return { site: `https://www.xrplevm.org`, whitepaper: `https://docs.xrplevm.org/pages/users/introduction/what-is-the-xrplevm`}
+        }
+        else if(symbol == 'APE'){
+            return { site: `https://apechain.com`, whitepaper: ``}
+        }
+        else if(symbol == 'BOETH'){
+            return { site: `https://www.gobob.xyz`, whitepaper: `https://docs.gobob.xyz/whitepaper.pdf`}
+        }
+        else if(symbol == 'CORE'){
+            return { site: `https://coredao.org`, whitepaper: `https://whitepaper.coredao.org/core-white-paper-v1.0.7`}
+        }
+        else if(symbol == 'XTZE'){
+            return { site: `https://www.etherlink.com`, whitepaper: `https://23136104.fs1.hubspotusercontent-na1.net/hubfs/23136104/The%20Tezos%20Foundation%20_%20Etherlink%20Report.pdf`}
+        }
+        else if(symbol == 'FRAX'){
+            return { site: `https://frax.com`, whitepaper: `https://docs.frax.com/fraxtal`}
+        }
+        else if(symbol == 'IETH'){
+            return { site: `https://inkonchain.com`, whitepaper: `https://ethereum.org/developers/docs/scaling/optimistic-rollups/`}
+        }
+        else if(symbol == 'LETH'){
+            return { site: `https://linea.build`, whitepaper: ``}
+        }
+        else if(symbol == 'MBTC'){
+            return { site: `https://merlinchain.io`, whitepaper: ``}
+        }
+        else if(symbol == 'METH'){
+            return { site: `https://metall2.com`, whitepaper: `https://ethereum.org/developers/docs/scaling/optimistic-rollups/`}
+        }
+        else if(symbol == 'METIS'){
+            return { site: `https://www.metis.io`, whitepaper: ``}
+        }
+        else if(symbol == 'MOETH'){
+            return { site: `https://www.mode.network/`, whitepaper: `https://ethereum.org/developers/docs/scaling/optimistic-rollups/`}
+        }
+        else if(symbol == 'GAS'){
+            return { site: `https://x.neo.org`, whitepaper: `https://files.coinswitch.co/white_paper/neo-whitepaper.pdf`}
+        }
+        else if(symbol == 'OBNB'){
+            return { site: `https://opbnb.bnbchain.org`, whitepaper: `https://ethereum.org/developers/docs/scaling/optimistic-rollups/`}
+        }
+        else if(symbol == 'RON'){
+            return { site: `https://www.roninchain.com`, whitepaper: `https://www.securities.io/wp-content/uploads/2024/10/Ronin_Whitepaper_v2.pdf`}
+        }
+        else if(symbol == 'SETH'){
+            return { site: `https://scroll.io`, whitepaper: `https://scroll.io/files/whitepaper.pdf`}
+        }
+        else if(symbol == 'SONETH'){
+            return { site: `https://soneium.org`, whitepaper: `https://ethereum.org/developers/docs/scaling/optimistic-rollups/`}
+        }
+        else if(symbol == 'TETH'){
+            return { site: `https://taiko.xyz`, whitepaper: ``}
+        }
+        else if(symbol == 'UETH'){
+            return { site: `https://www.unichain.org`, whitepaper: `https://ethereum.org/developers/docs/scaling/optimistic-rollups/`}
+        }
+        else if(symbol == 'WOETH'){
+            return { site: `https://world.org/world-chain`, whitepaper: `https://ethereum.org/developers/docs/scaling/optimistic-rollups/`}
+        }
+        else if(symbol == 'OKB'){
+            return { site: `https://web3.okx.com/xlayer`, whitepaper: `https://space.unlocks.app/public/references/OKB%20WP%202023.pdf`}
+        }
+        else if(symbol == 'ZETH'){
+            return { site: `https://www.zircuit.com`, whitepaper: ``}
+        }
+        else if(symbol == 'ZKETH'){
+            return { site: `https://www.zksync.io/`, whitepaper: ``}
+        }
+        else if(symbol == 'MAETH'){
+            return { site: `https://manta.network`, whitepaper: ``}
+        }
+        else if(symbol == 'FILE'){
+            return { site: `https://fvm.filecoin.io`, whitepaper: ``}
+        }
+        else if(symbol == 'MON'){
+            return { site: `https://monad.xyz`, whitepaper: ``}
+        }
+        else if(symbol == 'ZOETH'){
+            return { site: `https://zora.co`, whitepaper: ``}
+        }
+        else if(symbol == 'IMX'){
+            return { site: `https://www.immutable.com/chain`, whitepaper: ``}
+        }
+        else if(symbol == 'KITE'){
+            return { site: `https://gokite.ai`, whitepaper: `https://gokite.ai/kite-whitepaper`}
+        }
+        else if(symbol == 'INJE'){
+            return { site: `https://injective.com`, whitepaper: ``}
+        }
+        else if(symbol == 'SOMI'){
+            return { site: `https://somnia.network`, whitepaper: ``}
+        }
+        else if(symbol == ''){
+            return { site: ``, whitepaper: ``}
+        }
+
+        return { site: ``, whitepaper: ``}
+    }
 
 
 

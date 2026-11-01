@@ -21,6 +21,7 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import { motion, AnimatePresence } from "framer-motion";
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+const { getDomain } = require("tldjs");
 
 var bigInt = require("big-integer");
 
@@ -255,7 +256,10 @@ class CoinsDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':item['name'], 'details':this.props.app_state.loc['2910']/* Coin Name' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':item['symbol'], 'details':this.props.app_state.loc['2911']/* Coin Symbol' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
+
+                    {this.render_coin_website_and_whitepaper(item)}
+
+                    {this.render_detail_item('0')}
 
                     {this.render_detail_item('3', {'title':item['consensus_mechanism'], 'details':this.props.app_state.loc['2927a']/* Ledger Consensus Mechanism.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
@@ -277,7 +281,7 @@ class CoinsDetailsSection extends Component {
 
                     {supply != null && (
                         <div>
-                            <div style={{height: 10}}/>
+                            {this.render_detail_item('0')}
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                                 <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['2927s']/* 'Coin\'s Supply.' */, 'number':supply, 'relativepower':item['symbol']})}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2927s']/* 'Coin\'s Supply.' */, 'subtitle':this.format_power_figure(supply), 'barwidth':this.calculate_bar_width(supply), 'number':''+this.format_account_balance_figure(supply), 'barcolor':'#606060', 'relativepower':item['symbol'], })}
@@ -1410,7 +1414,133 @@ class CoinsDetailsSection extends Component {
         else if(item['symbol'] == 'EGLD'){
             return `https://explorer.multiversx.com/accounts/${hash}`
         }
+    }
 
+
+
+
+
+
+    render_coin_website_and_whitepaper(item){
+        const symbol = item['symbol']
+        const coin_website_whitepaper_data = this.get_coin_website_link(symbol)
+        if(coin_website_whitepaper_data.site == `` && coin_website_whitepaper_data.whitepaper == ``) return;
+
+        return(
+            <div>
+                {coin_website_whitepaper_data.site != `` && (
+                    <div onClick={() => this.when_coin_website_or_link_clicked(coin_website_whitepaper_data.site)}>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2927ca']/* 'Project Website. */,'details':this.props.app_state.loc['2927cb']/* 'Open and view the coins website and project description.' */, 'size':'l', 'footer':getDomain(coin_website_whitepaper_data.site)})}
+                    </div>
+                )}
+                {coin_website_whitepaper_data.whitepaper != `` && (
+                    <div onClick={() => this.when_coin_website_or_link_clicked(coin_website_whitepaper_data.whitepaper)}>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2927cc']/* 'Project Whitepaper' */,'details':this.props.app_state.loc['2927cd']/* 'Open and view the coins whitepaper.' */, 'size':'l'})}
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    when_coin_website_or_link_clicked(link){
+        this.props.show_view_iframe_link_bottomsheet(link)
+    }
+
+    get_coin_website_link(symbol){
+        if(symbol == 'BTC'){
+            return { site: `https://bitcoin.org`, whitepaper: `https://bitcoin.org/bitcoin.pdf`}
+        }
+        else if(symbol == 'BCH'){
+            return { site: `https://bitcoincash.org`, whitepaper: `https://bitcoincash.org/bitcoin.pdf`}
+        }
+        else if(symbol == 'LTC'){
+            return { site: `https://litecoin.com`, whitepaper: `https://files.coinswitch.co/white_paper/litecoin-whitepaper.pdf`}
+        }
+        else if(symbol == 'DOGE'){
+            return { site: `https://dogecoin.com`, whitepaper: ``}
+        }
+        else if(symbol == 'DASH'){
+            return { site: `https://www.dash.org`, whitepaper: ``}
+        }
+        else if(symbol == 'TRX'){
+            return { site: `https://tron.network`, whitepaper: `https://tron.network/static/doc/white_paper_v_2_1.pdf`}
+        }
+        else if(symbol == 'XRP'){
+            return { site: `https://xrpl.org`, whitepaper: `https://ripple.com/files/ripple_consensus_whitepaper.pdf`}
+        }
+        else if(symbol == 'XLM'){
+            return { site: `https://stellar.org`, whitepaper: `https://www.stellar.org/papers/stellar-consensus-protocol.pdf`}
+        }
+        else if(symbol == 'DOT'){
+            return { site: `https://polkadot.com`, whitepaper: `https://assets.polkadot.network/Polkadot-whitepaper.pdf`}
+        }
+        else if(symbol == 'KSM'){
+            return { site: `https://kusama.network`, whitepaper: ``}
+        }
+        else if(symbol == 'ALGO'){
+            return { site: `https://algorand.co`, whitepaper: `https://algorand.co/hubfs/Website-2024/PDFs/Algorand%20-%20Whitepaper.pdf`}
+        }
+        else if(symbol == 'XTZ'){
+            return { site: `https://tezos.com`, whitepaper: `https://tezos.com/whitepaper.pdf`}
+        }
+        else if(symbol == 'ATOM'){
+            return { site: `https://cosmos.network`, whitepaper: ``}
+        }
+        else if(symbol == 'FIL'){
+            return { site: `https://filecoin.io`, whitepaper: `https://filecoin.io/filecoin.pdf`}
+        }
+        else if(symbol == 'SOL'){
+            return { site: `https://solana.com`, whitepaper: `https://solana.com/solana-whitepaper.pdf`}
+        }
+        else if(symbol == 'APT'){
+            return { site: `https://aptosnetwork.com`, whitepaper: `https://aptosnetwork.com/whitepaper/aptos-whitepaper_en.pdf`}
+        }
+        else if(symbol == 'ADA'){
+            return { site: `https://cardano.org`, whitepaper: ``}
+        }
+        else if(symbol == 'STX'){
+            return { site: `https://www.stacks.co`, whitepaper: `https://stacks-network.github.io/stacks/stacks.pdf`}
+        }
+        else if(symbol == 'AR'){
+            return { site: `https://www.arweave.org`, whitepaper: `https://www.arweave.org/yellow-paper.pdf`}
+        }
+        else if(symbol == 'SUI'){
+            return { site: `https://www.sui.io`, whitepaper: `https://docs.sui.io/paper/sui.pdf`}
+        }
+        else if(symbol == 'TIA'){
+            return { site: `https://celestia.org`, whitepaper: ``}
+        }
+        else if(symbol == 'IOTA'){
+            return { site: `https://www.iota.org`, whitepaper: `https://files.iota.org/papers/IOTA_2.0_Incentives_And_Tokenomics_Whitepaper.pdf`}
+        }
+        else if(symbol == 'HBAR'){
+            return { site: `https://hedera.com`, whitepaper: `https://hedera.com/wp-content/uploads/2025/12/hh_whitepaper.pdf`}
+        }
+        else if(symbol == 'INJ'){
+            return { site: `https://injective.com`, whitepaper: ``}
+        }
+        else if(symbol == 'NEAR'){
+            return { site: `https://www.near.org`, whitepaper: `https://collected-satchel-ntp-tq.t3.storageapi.dev/cms/e3ef4da798012d26.pdf`}
+        }
+        else if(symbol == 'ICP'){
+            return { site: `https://internetcomputer.org`, whitepaper: `https://internetcomputer.org/whitepaper.pdf`}
+        }
+        else if(symbol == 'ZEC'){
+            return { site: `https://z.cash`, whitepaper: ``}
+        }
+        else if(symbol == 'GRAM'){
+            return { site: `https://ton.org`, whitepaper: ``}
+        }
+        else if(symbol == 'EGLD'){
+            return { site: `https://multiversx.com`, whitepaper: `https://files.multiversx.com/multiversx-whitepaper.pdf`}
+        }
+        else if(symbol == '???'){
+            return { site: ``, whitepaper: ``}
+        }
+
+        return { site: ``, whitepaper: ``}
     }
 
 
