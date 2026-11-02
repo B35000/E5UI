@@ -1832,16 +1832,12 @@ class EthersDetailsSection extends Component {
                     <div onClick={() => this.when_ether_website_or_link_clicked(coin_website_whitepaper_data.site)}>
                         <div style={{height: 10}}/>
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['2927ca']/* 'Project Website. */,'details':this.props.app_state.loc['2481bz']/* 'Open and view the ethers website and project description.' */, 'size':'l', 'footer':getDomain(coin_website_whitepaper_data.site)})}
-                        <div style={{height: 10}}/>
                     </div>
                 )}
                 {coin_website_whitepaper_data.whitepaper != `` && (
                     <div onClick={() => this.when_ether_website_or_link_clicked(coin_website_whitepaper_data.whitepaper)}>
-                        {coin_website_whitepaper_data.site == `` && (
-                            <div style={{height: 10}}/>
-                        )}
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2927cc']/* 'Project Whitepaper' */,'details':this.props.app_state.loc['2481ca']/* 'Open and view the ethers whitepaper.' */, 'size':'l'})}
                         <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2927cc']/* 'Project Whitepaper' */,'details':this.props.app_state.loc['2481ca']/* 'Open and view the ethers whitepaper.' */, 'size':'l'})}
                     </div>
                 )}
             </div>
