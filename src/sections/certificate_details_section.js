@@ -1489,7 +1489,12 @@ class CertificateDetailsSection extends Component {
     is_certificate_publicly_searchable(object){
         if(object['ipfs'].get_object_private_or_public_certificate_tags_option == null) return true;
         const selected_item = this.get_selected_item2(this.state.get_object_private_or_public_certificate_tags_option, 'e')
-        return selected_item == 1;
+        const is_public = selected_item == 1;
+        const my_account = this.props.app_state.user_account_id[object['e5']]
+        if(!is_public && (object['moderators'].includes(my_account) || object['author'] == my_account)){
+            return true;
+        }
+        else return false;
     }
 
     render_search_by_page(object){
