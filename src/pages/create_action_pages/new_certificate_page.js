@@ -96,6 +96,7 @@ class NewCertificatePage extends Component {
         edit_text_item_pos:-1,
 
         get_content_channeling_object:this.get_content_channeling_object(), entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], get_new_certificate_fractionalizable_tags_object:this.get_new_certificate_fractionalizable_tags_object(), get_new_certificate_verification_tags_object:this.get_new_certificate_verification_tags_object(),
+        get_object_private_or_public_certificate_tags_option:this.get_object_private_or_public_certificate_tags_option(),
 
         new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         exchange_authority:'',moderator_id:'', moderators:[], interactible_id:'',  interactibles:[], interactible_timestamp:0, 
@@ -255,6 +256,17 @@ class NewCertificatePage extends Component {
             },
             'e':[
                 ['or','',0], ['e',this.props.app_state.loc['a311em']/* 'delisted' */], [0]
+            ],
+        };
+    }
+
+    get_object_private_or_public_certificate_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['d311cz']/* 'public' */, this.props.app_state.loc['d311cy']/* 'private' */], [0]
             ],
         };
     }
@@ -506,6 +518,16 @@ class NewCertificatePage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['d311bu']/* 'Fractionalizable Certificate.' */, 'details':this.props.app_state.loc['d311bv']/* 'If set to enabled, users will be able to fractionalize certificates aquired from this exchange.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_fractionalizable_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_fractionalizable_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                
+
+
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311da']/* 'Searchable Certificates.' */, 'details':this.props.app_state.loc['d311db']/* 'If set to private, users will be unable to search and index certificate information minted by other accounts.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_private_or_public_certificate_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_private_or_public_certificate_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
 
 
 
@@ -524,6 +546,10 @@ class NewCertificatePage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_object_private_or_public_certificate_tags_option_updated(tag_obj){
+        this.setState({get_object_private_or_public_certificate_tags_option: tag_obj})
     }
 
     when_get_object_delisted_setting_tags_option_updated(tag_obj){

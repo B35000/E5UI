@@ -107,7 +107,8 @@ class EditCertificatePage extends Component {
         get_new_active_archived_model_settings_tags_object: this.get_new_active_archived_model_settings_tags_object(),
         get_new_certificate_bond_enabled_tags_object: this.get_new_certificate_bond_enabled_tags_object(), bond_interest_rate:0, coupon_frequency:0, bond_maturity: (Date.now()+(1000*60*60*24*365))/1000,
 
-        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()
+        get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option(),
+        get_object_private_or_public_certificate_tags_option:this.get_object_private_or_public_certificate_tags_option(),
     };
 
 
@@ -247,6 +248,17 @@ class EditCertificatePage extends Component {
         };
     }
 
+    get_object_private_or_public_certificate_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['d311cz']/* 'public' */, this.props.app_state.loc['d311cy']/* 'private' */], [0]
+            ],
+        };
+    }
+
 
 
 
@@ -262,7 +274,17 @@ class EditCertificatePage extends Component {
         if(this.state.get_object_delisted_setting_tags_option == null){
             this.setState({get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option()})
         }
+        if(this.state.get_object_private_or_public_certificate_tags_option == null){
+            this.setState({get_object_private_or_public_certificate_tags_option: this.get_object_private_or_public_certificate_tags_option()})
+        }
     }
+
+
+
+
+
+
+
 
     render(){
         return(
@@ -466,6 +488,16 @@ class EditCertificatePage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311eo']/* 'Delisted Item.' */, 'details':this.props.app_state.loc['a311en']/* 'If set to delisted, the object will be completely hidden from the all and targeted sections of peoples feed.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311da']/* 'Searchable Certificates.' */, 'details':this.props.app_state.loc['d311db']/* 'If set to private, users will be unable to search and index certificate information minted by other accounts.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_private_or_public_certificate_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_private_or_public_certificate_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
+
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311dc']/* 'Current post size.' */, 'details':this.props.app_state.loc['a311dd']/* 'Below is the size of your new post with all the details youve set.' */, 'size':'l'})}
@@ -473,6 +505,10 @@ class EditCertificatePage extends Component {
                 {this.render_transaction_size_indicator()}
             </div>
         )
+    }
+
+    when_get_object_private_or_public_certificate_tags_option_updated(tag_obj){
+        this.setState({get_object_private_or_public_certificate_tags_option: tag_obj})
     }
 
     when_get_object_delisted_setting_tags_option_updated(tag_obj){

@@ -1486,6 +1486,12 @@ class CertificateDetailsSection extends Component {
         this.setState({get_my_account_or_another_accounts_certificate_data: tag_obj})
     }
 
+    is_certificate_publicly_searchable(object){
+        if(object['ipfs'].get_object_private_or_public_certificate_tags_option == null) return true;
+        const selected_item = this.get_selected_item2(this.state.get_object_private_or_public_certificate_tags_option, 'e')
+        return selected_item == 1;
+    }
+
     render_search_by_page(object){
         const selected_item = this.get_selected_item(this.state.get_my_account_or_another_accounts_certificate_data, 'e')
 
@@ -1498,12 +1504,14 @@ class CertificateDetailsSection extends Component {
                 </div>
             )
         }else{
+            const publicly_searchable = this.is_certificate_publicly_searchable(object)
+            const alpha = publicly_searchable == true ? 1.0 : 0.5
             return(
-                <div>
+                <div style={{opacity: alpha}}>
                     <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
                         <div className="row" style={{width:'100%'}}>
                             <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
-                                <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['3098v']/* 'Search a certificate...' */} when_text_input_field_changed={this.when_account_input_field_changed.bind(this)} text={this.state.searched_account_id} theme={this.props.theme}/>
+                                <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['3098br']/* 'Account ID or Alias...' */} when_text_input_field_changed={this.when_account_input_field_changed.bind(this)} text={this.state.searched_account_id} theme={this.props.theme}/>
                             </div>
                             <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                                 <div onClick={()=>this.perform_search(object)}>
@@ -1526,7 +1534,10 @@ class CertificateDetailsSection extends Component {
     }
 
     async perform_search(object){
-        var typed_account = await this.get_typed_alias_id(this.state.searched_account_id.trim())
+        const publicly_searchable = this.is_certificate_publicly_searchable(object)
+        if(publicly_searchable == false) return;
+        
+        const typed_account = await this.get_typed_alias_id(this.state.searched_account_id.trim())
 
         if(typed_account == ''){
             this.props.notify(this.props.app_state.loc['128']/* 'Type something.' */, 3800)
