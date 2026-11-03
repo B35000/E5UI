@@ -3122,9 +3122,8 @@ class App extends Component {
       this.get_token('BNB', 'Binance S.C.', 'E135'),
       this.get_token('SEI', 'Sei', 'E145'),
       this.get_token('BERA', 'Berachain', 'E155'),
-      this.get_token('VIC', 'Viction', 'E165'),
+      this.get_token('VIC', 'Viction', 'E165', true),
       this.get_token('XPL', 'Plasma', 'E175'),
-      
 
       this.get_token('ETH', 'Ethereum', 'E185'),
       this.get_token('OETH', 'Optimism', 'E195'),

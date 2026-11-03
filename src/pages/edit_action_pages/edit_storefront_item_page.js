@@ -392,7 +392,7 @@ class NewStorefrontItemPage extends Component {
                     </div>
                 </div> */}
                 
-                <div style={{'margin':'0px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(120 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
+                <div style={{'margin':'0px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-(127 + (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 0 : 20 ))}}>
                     <div style={{'width':'98%'}}>
                         {this.render_everything()}
                     </div>  
