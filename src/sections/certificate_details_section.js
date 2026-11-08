@@ -112,7 +112,7 @@ class CertificateDetailsSection extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */, this.props.app_state.loc['3098bn']/* 'other-account 👤' */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */, this.props.app_state.loc['3098bn']/* 'other-account 👤' */, this.props.app_state.loc['3098bs']/* 'all-certificates ∞' */], [1]
             ],
         };
     }
@@ -1482,8 +1482,20 @@ class CertificateDetailsSection extends Component {
         )
     }
 
-    when_get_my_account_or_another_accounts_certificate_data_updated(tag_obj){
+    async when_get_my_account_or_another_accounts_certificate_data_updated(tag_obj){
         this.setState({get_my_account_or_another_accounts_certificate_data: tag_obj})
+        const selected_item = this.get_selected_item(tag_obj, 'e');
+        const object = this.get_item_in_array(this.get_certificate_items(), this.props.selected_certificate_item);
+        if(selected_item == this.props.app_state.loc['3098bs']/* 'all-certificates ∞' */){
+            if(this.is_certificate_publicly_searchable(object)){
+                this.setState({searched_account: 0})
+                await this.props.load_accounts_non_fungible_token_data(object, 0)
+            }
+        }
+        else if(selected_item == this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */){
+            const my_account = this.props.app_state.user_account_id[object['e5']];
+            await this.props.load_accounts_non_fungible_token_data(object, my_account)
+        }
     }
 
     is_certificate_publicly_searchable(object){
@@ -1500,7 +1512,7 @@ class CertificateDetailsSection extends Component {
     render_search_by_page(object){
         const selected_item = this.get_selected_item(this.state.get_my_account_or_another_accounts_certificate_data, 'e')
 
-        if(selected_item == this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */){
+        if(selected_item == this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */ || selected_item == this.props.app_state.loc['3098bs']/* 'all-certificates ∞' */){
             return(
                 <div>
                     <div style={{margin:'5px 10px 0px 10px'}}>
@@ -1611,6 +1623,7 @@ class CertificateDetailsSection extends Component {
 
         if(items.length == 0){
             const account = selected_item == this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */ ? this.props.app_state.user_account_id[object['e5']] : (this.state.searched_account || 0)
+
             const nft_loading_data = this.props.app_state.nft_loading_data[object['e5_id']+account] || []
             if(nft_loading_data.length > 0){
                 return(
@@ -1649,7 +1662,7 @@ class CertificateDetailsSection extends Component {
     get_acquired_tokens(object){
         const non_fungible_token_data = this.props.app_state.non_fungible_token_data[object['e5_id']] || {}
         const selected_item = this.get_selected_item(this.state.get_my_account_or_another_accounts_certificate_data, 'e')
-        const my_account = selected_item == this.props.app_state.loc['3098bn']/* 'other-account 👤' */ ? this.state.searched_account : this.props.app_state.user_account_id[object['e5']]
+        const my_account = (selected_item == this.props.app_state.loc['3098bn']/* 'other-account 👤' */ || selected_item == this.props.app_state.loc['3098bs']/* 'all-certificates ∞' */) ? this.state.searched_account : this.props.app_state.user_account_id[object['e5']]
         const account_data = non_fungible_token_data[object['e5']+':'+my_account] || {}
         // console.log('get_acquired_tokens', this.props.app_state.non_fungible_token_data)
         return this.sortByAttributeDescending(Object.values(account_data), 'time')
@@ -1666,7 +1679,9 @@ class CertificateDetailsSection extends Component {
         const class_name = model_config['class_name']
         const maximum_supply = model_config['maximum_supply']
         const identifier_text = this.props.app_state.loc['3098be']/* '$ out of &' */.replace('$', depth_data['identifier']).replace('&', maximum_supply)
-        const title = identifier_text + ' • '+ class_name
+        const selected_item = this.get_selected_item(this.state.get_my_account_or_another_accounts_certificate_data, 'e')
+        const gem_text = selected_item != this.props.app_state.loc['3098bs']/* 'all-certificates ∞' */ ? '' : (item['owner_type'] == 31/* 31(token_exchange) */ ? '💠 ' : '💎 ')
+        const title = gem_text+ identifier_text + ' • '+ class_name
         const details = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
         const op = model_config['archived'] == true ? 0.6 : 1.0
         return(

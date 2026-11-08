@@ -1296,6 +1296,9 @@ class ContractDetailsSection extends Component {
 
     view_obligation_payment_data(object){
         this.props.load_contract_obligation_fulfilment_info(object['e5_id'])
+        const object_obligation_fulfiller = object['id'];
+        const tags = [object_obligation_fulfiller]
+        this.get_objects_from_socket_and_set_in_state(['certificate_assessment'], tags, [], 1771762377000);
         this.props.show_dialog_bottomsheet({'object':object}, 'view_contract_obligation_fulfilment_info')
     }
 
@@ -1642,7 +1645,7 @@ class ContractDetailsSection extends Component {
             <div style={{'margin':'10px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {data.all_exchange_data.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
                             {this.render_balance_item(item, data.exchanges_from_sync, object, balance_obj)}
                         </li>
                     ))}

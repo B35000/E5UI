@@ -22892,6 +22892,7 @@ class StackPage extends Component {
     render_my_obligation_items(){
         const total_amounts_handled_data = this.calculate_total_amount_handled(this.props.app_state.user_obligation_data)
         const each_type_number_entries = this.get_number_of_entries_for_each_type(this.props.app_state.user_obligation_data)
+        const total_certificate_amounts_handled_data = this.get_this_years_certificate_obligations()
 
         return(
             <div>
@@ -22906,6 +22907,12 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lo']/* 'Entry Distribution.' */, 'details':this.props.app_state.loc['3055lp']/* 'The distribution of the accounts obligation entries.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_each_type_entry_count(each_type_number_entries)}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593nu']/* 'Certificate Obligation Amounts.' */, 'details':this.props.app_state.loc['1593nv']/* 'The total amounts set to be fulfilled as payments for your owned certificates as per their assessments.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_selected_year_paid_amounts2(total_certificate_amounts_handled_data)}
             </div>
         )
     }
@@ -22951,6 +22958,79 @@ class StackPage extends Component {
         });
 
         return totals_obj
+    }
+
+    get_this_years_certificate_obligations(){
+        const totals_obj = {}
+        const my_owned_certificates = this.get_my_owned_certificate_objects()
+        console.log('get_this_years_certificate_obligations', 'my_owned_certificates', my_owned_certificates)
+        my_owned_certificates.forEach(object => {
+            const assessment_data = this.props.app_state.certificate_assessments[object['e5_id']] || {}
+            const token_balance_data = object['token_balances_data']
+            Object.keys(assessment_data).forEach(depth_item => {
+                const ownership_stake = object['ipfs']['fractionalized_asset'] == true ? object['balance'] : (token_balance_data[depth_item] != null && token_balance_data[depth_item] >=1 ? bigInt('100e16').toString() : null)
+                console.log('get_this_years_certificate_obligations', object['e5_id'], 'ownership_stake', ownership_stake)
+                if(ownership_stake != null && ownership_stake >= 1){
+                    const assessments = assessment_data[depth_item] || [];
+                    const contract_assessments_mapping = {}
+                    assessments.forEach(assessment_item => {
+                        const contract_obj = assessment_item['contract_obj']
+                        if(contract_assessments_mapping[contract_obj] == null){
+                            contract_assessments_mapping[contract_obj] = []
+                        }
+                        contract_assessments_mapping[contract_obj].push(assessment_item)
+                    });
+                    const focused_assessments = []
+                    Object.keys(contract_assessments_mapping).forEach(contract_obj => {
+                        const contracts_assessments = contract_assessments_mapping[contract_obj];
+                        const latest_assessment = this.sortByAttributeDescending(contracts_assessments, 'time')[0]
+                        focused_assessments.push(latest_assessment)
+                    });
+
+                    if(focused_assessments.length > 0){
+                        focused_assessments.forEach(assessment => {
+                            const transfers = assessment['price_data']
+                            const proportions = assessment['promises']
+
+                            transfers.forEach(transfer => {
+                                const exchange = transfer['id']
+                                const amount = transfer['amount']
+                                if(totals_obj[exchange] == null){
+                                    totals_obj[exchange] = bigInt(0)
+                                }
+                                let obligation_amount = bigInt(0)
+                                proportions.forEach(proportion => {
+                                    const obligation = bigInt(amount).multiply(proportion).divide('100e16')
+                                    obligation_amount = bigInt(obligation_amount).plus(obligation).multiply(ownership_stake).divide('100e16')
+                                });
+                                totals_obj[exchange] = bigInt(totals_obj[exchange]).plus(obligation_amount)
+                            });
+                        });
+                    }
+                }
+            });
+        });
+
+        return totals_obj
+    }
+
+    get_my_owned_certificate_objects(){
+        const all_tokens = this.get_all_sorted_objects(this.props.app_state.created_certificates)
+        const main_tokens = all_tokens.filter(function (object) {
+            return (object['balance'] != 0 || object['interacted'] == true)
+        })
+        return main_tokens.concat(this.get_my_owned_fractionalized_certificate_objects())
+    }
+
+    get_my_owned_fractionalized_certificate_objects(){
+        const all_fractionalized_assets = this.get_all_sorted_objects(this.props.app_state.fractionalized_assets)
+        let main_tokens = []
+        Object.keys(all_fractionalized_assets).forEach(certificate_e5_id => {
+            main_tokens = main_tokens.concat(Object.values(all_fractionalized_assets[certificate_e5_id]).filter(function (object) {
+                return (object['balance'] != 0 || object['interacted'] == true)
+            }))
+        });
+        return main_tokens
     }
 
     get_number_of_entries_for_each_type(user_obligation_data){
@@ -23044,6 +23124,35 @@ class StackPage extends Component {
         const year = this.state.selected_obligation_year
         const data = total_amounts_handled_data[year] || {}
         const exchanges = Object.keys(data)
+        const e5 = this.props.app_state.selected_e5
+        if(exchanges.length == 0){
+            const item = '5';
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width(0), 'number':this.format_account_balance_figure(0), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {exchanges.map((item, index) => (
+                            <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(data[item]), 'barwidth':this.calculate_bar_width(data[item]), 'number':this.format_account_balance_figure(data[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_selected_year_paid_amounts2(total_amounts_handled_data){
+        const data = total_amounts_handled_data
+        const exchanges = Object.keys(total_amounts_handled_data)
         const e5 = this.props.app_state.selected_e5
         if(exchanges.length == 0){
             const item = '5';
@@ -23179,8 +23288,65 @@ class StackPage extends Component {
             } 
         });
 
+
+        const my_owned_certificates = this.get_my_owned_certificate_objects()
+        my_owned_certificates.forEach(object => {
+            const assessment_data = this.props.app_state.certificate_assessments[object['e5_id']] || {}
+            const token_balance_data = object['token_balances_data']
+            Object.keys(assessment_data).forEach(depth_item => {
+                const ownership_stake = object['ipfs']['fractionalized_asset'] == true ? object['balance'] : (token_balance_data[depth_item] != null && token_balance_data[depth_item] >=1 ? bigInt('100e16').toString() : null);
+                if(ownership_stake != null && ownership_stake >= 1){
+                    const assessments = assessment_data[depth_item] || [];
+                    const contract_assessments_mapping = {}
+                    assessments.forEach(assessment_item => {
+                        const contract_obj = assessment_item['contract_obj']
+                        if(contract_assessments_mapping[contract_obj] == null){
+                            contract_assessments_mapping[contract_obj] = []
+                        }
+                        contract_assessments_mapping[contract_obj].push(assessment_item)
+                    });
+                    const focused_assessments = []
+                    const contracts = []
+                    Object.keys(contract_assessments_mapping).forEach(contract_obj => {
+                        const contracts_assessments = contract_assessments_mapping[contract_obj];
+                        const latest_assessment = this.sortByAttributeDescending(contracts_assessments, 'time')[0]
+                        focused_assessments.push(latest_assessment)
+                        contracts.push(contract_obj)
+                    });
+
+                    if(focused_assessments.length > 0){
+                        focused_assessments.forEach((assessment, index) => {
+                            const contract = contracts[index]
+                            if(totals_obj[contract] == null){
+                                totals_obj[contract] = {}
+                            }
+                            const transfers = assessment['price_data']
+                            const proportions = assessment['promises']
+
+                            transfers.forEach(transfer => {
+                                const exchange = transfer['id']
+                                const amount = transfer['amount']
+                                if(totals_obj[contract][exchange] == null){
+                                    totals_obj[contract][exchange] = bigInt(0)
+                                }
+                                let obligation_amount = bigInt(0)
+                                proportions.forEach(proportion => {
+                                    const obligation = bigInt(amount).multiply(proportion).divide('100e16')
+                                    obligation_amount = bigInt(obligation_amount).plus(obligation).multiply(ownership_stake).divide('100e16')
+                                });
+                                totals_obj[contract][exchange] = bigInt(totals_obj[contract][exchange]).plus(obligation_amount)
+                                transfer_exists = true;
+                            });
+                        });
+                    }
+                }
+            });
+        });
+
         return {totals_obj, transfer_exists}
     }
+
+
 
 
 

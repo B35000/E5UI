@@ -566,6 +566,7 @@ class RespondToJobPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1332a']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1332b']/* 'You can also include extra information for the job your applying for.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1114e']/* 'Custom Specifications...' */} when_text_input_field_changed={this.when_custom_specifications_input_field_changed.bind(this)} text={this.state.custom_specifications} theme={this.props.theme}/>
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.entered_text_max_length - this.state.custom_specifications.length)})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1332g']/* 'Application Indexing' */, 'details':this.props.app_state.loc['1332h']/* 'If set to blockchain, the reference to your new application will be recorded on a blockchain and indexer while if left to indexer, your new application will be referenced in an indexer only.' */, 'size':'l'})}
@@ -577,6 +578,7 @@ class RespondToJobPage extends Component {
     }
 
     when_custom_specifications_input_field_changed(text){
+        if(text.length > this.props.app_state.entered_text_max_length) return;
         this.setState({custom_specifications: text})
     }
 

@@ -61,12 +61,33 @@ class TextInput extends Component {
     selected: 0,
     set_text:this.props.text || '',
     input_type: this.props.type || 'text',
+    expiry_data:{}
   };
 
   constructor(props) {
     super(props);
     this.inputRef = React.createRef();
   }
+
+  componentDidMount() {
+    // if(this.props.type == 'password'){
+    //   this.interval = setInterval(() => this.remove_expired_inputs(), 500);
+    // }
+  }
+
+  componentWillUnmount() {
+    // if(this.interval) clearInterval(this.interval);
+  }
+
+  // remove_expired_inputs(){
+  //   const expiry_data = structuredClone(this.state.expiry_data)
+  //   Object.keys(expiry_data).forEach(pos => {
+  //     if(expiry_data[pos] < Date.now()){
+  //       delete expiry_data[pos]
+  //     }
+  //   });
+  //   this.setState({expiry_data: expiry_data})
+  // }
 
   componentDidUpdate(prevProps){
     if(prevProps.text != this.props.text && this.props.text == '' && this.inputRef.current != null){
@@ -80,6 +101,22 @@ class TextInput extends Component {
     if(prevProps.text != this.props.text && this.props.text != '' && this.state.set_text == ''){
       this.setState({set_text: this.props.text})
     }
+
+    // if(prevProps.text != this.props.text && this.props.text.length > prevProps.text.length && this.props.type == 'password'){
+    //   const expiry_data = {}
+    //   for(var i=prevProps.text.length-1; i<this.props.text.length; i++){
+    //     const expiry_time = Date.now() + 800
+    //     expiry_data[i] = expiry_time
+    //   }
+    //   this.setState({expiry_data: expiry_data})
+    // }
+    // else if(prevProps.text != this.props.text && this.props.text.length < prevProps.text.length && this.props.type == 'password'){
+    //   const expiry_data = structuredClone(this.state.expiry_data)
+    //   for(var i=this.props.text.length-1; i<prevProps.text.length; i++){
+    //     delete expiry_data[i]
+    //   }
+    //   this.setState({expiry_data: expiry_data})
+    // }
   }
 
   render(){
@@ -114,11 +151,26 @@ class TextInput extends Component {
     var os = getOS()
     var height = this.props.height
     if(height < 0 || this.props.adjust_height == false){
-      var text_type = this.state.input_type == null ? 'text' : this.state.input_type
+      var text_type = this.state.input_type == null ? 'text' : 
+      // (this.state.input_type == 'password' ? 'text' : this.state.input_type)
+      this.state.input_type;
       if(text_type == 'number' && (os != 'Android' && os != 'iOS')){
         text_type = 'tel'
       }
       var step = text_type == 'number' ? 'any' : ''
+      // const process_text = () => {
+      //   let t = ''
+      //   const visible_keys = Object.keys(this.state.expiry_data).map(e => parseInt(e))
+      //   this.props.text.split('').forEach((char, index) => {
+      //     if(visible_keys.includes(index) || char == ' ' || this.state.input_type == 'text' || this.state.input_type == 'number'){
+      //       t = t+char
+      //     }
+      //     else{
+      //       t=t+'*'
+      //     }
+      //   });
+      //   return t
+      // }
       return(
         <div style={{width: '100%','background-color': this.props.theme['text_input_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 1px','padding': '5px 5px 0px 5px','border-radius': '0px 10px 10px 0px' }} onClick={() => this.when_textarea_clicked()}>
           <style>

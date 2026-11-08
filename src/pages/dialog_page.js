@@ -16,6 +16,7 @@
 // OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
+
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
@@ -803,6 +804,9 @@ class DialogPage extends Component {
         }
         else if(option == 'view_contract_obligation_fulfilment_info'){
             return this.render_contract_obligation_fulfilment_ui()
+        }
+        else if(option == 'show_certificate_assessment_item_details'){
+            return this.render_certificate_assessment_item_ui()
         }
     }
 
@@ -15149,6 +15153,17 @@ return data['data']
                     </div>
                 )}
 
+                {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && data['archived'] != true && (verification_data['verified'] == true || verification == 1) && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055wm']/* '📊 Value Assessent.' */, 'details':this.props.app_state.loc['3055wn']/* 'View, assess and record the obligation value of this minted certificate.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        <div onClick={()=>this.assess_certificate_value(data)}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055wo']/* 'View and assess.' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+
                 {view_only == true && neglect_certificate_chain == false && certificate_chain_data.length > 0 && (
                     <div>
                         {this.render_detail_item('0')}
@@ -15801,6 +15816,14 @@ return data['data']
         );
     }
 
+    assess_certificate_value(model_data){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const certificate_ui = this.render_targeted_certificate_object_item(object, 31/* token_exchange */)
+        this.props.open_dialog_bottomsheet()
+        this.props.show_assess_certificate_bottomsheet(item, object, model_data, certificate_ui, bigInt('100e16').toString(), 'certificate')
+    }
+
 
 
 
@@ -15896,6 +15919,13 @@ return data['data']
                 <div onClick={()=>this.transfer_fractionalized_stake(data)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055pl']/* 'Begin Transfer' */, 'action':''})}
                 </div> 
+
+                {/* {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055wm'] '📊 Value Assessent.', 'details':this.props.app_state.loc['3055ww'] 'View, assess and record the obligation value of this fractionalized certificate.', 'size':'l'})}
+                <div style={{height:10}}/>
+                <div onClick={()=>this.assess_fractionalized_certificate_value()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055wo'] 'View and assess.', 'action':''})}
+                </div> */}
             </div>
         )
     }
@@ -15920,6 +15950,15 @@ return data['data']
         const object = this.state.data['object']
         this.props.show_transfer_stake_bottomsheet(item, object)
     }
+
+    // assess_fractionalized_certificate_value(){
+    //     const item = this.state.data['item']
+    //     const object = this.state.data['object']
+    //     const my_balance = item['balance']
+    //     const certificate_ui = this.render_targeted_certificate_object_item(object, 31/* token_exchange */)
+    //     this.props.open_dialog_bottomsheet()
+    //     this.props.show_assess_certificate_bottomsheet(item['ipfs']['depth_item'], object, item['ipfs']['model_data'], certificate_ui, my_balance, 'fractionalized_certificate', item)
+    // }
 
 
 
@@ -17632,6 +17671,7 @@ return data['data']
     render_my_obligation_items(){
         const total_amounts_handled_data = this.calculate_total_amount_handled2(this.props.app_state.user_obligation_data)
         const each_type_number_entries = this.get_number_of_entries_for_each_type2(this.props.app_state.user_obligation_data)
+        const total_certificate_amounts_handled_data = this.get_this_years_certificate_obligations()
 
         return(
             <div>
@@ -17646,8 +17686,97 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3055lo']/* 'Entry Distribution.' */, 'details':this.props.app_state.loc['3055lp']/* 'The distribution of the accounts obligation entries.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_each_type_entry_count2(each_type_number_entries)}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593nu']/* 'Certificate Obligation Amounts.' */, 'details':this.props.app_state.loc['3055wx']/* 'The total amounts set to be fulfilled as payments for the accounts owned certificates as per their assessments.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_selected_year_paid_amounts3(total_certificate_amounts_handled_data)}
             </div>
         )
+    }
+
+    get_this_years_certificate_obligations(){
+        const object = this.state.data['object']
+        const my_account_id = object['id']
+        const totals_obj = {}
+        const balance_obj = object['balance_obj'] || {}
+        const exchanges_or_certificates = Object.keys(balance_obj)
+        const { exchanges_from_sync, exchange_depth_mapping, exchange_parent_certificate_mapping } = this.resolve_exchanges(exchanges_or_certificates, object['e5'])
+        const my_valid_exchanges = Object.keys(exchanges_from_sync)
+
+        my_valid_exchanges.forEach(exchange_id => {
+            const certificate_object_id = exchange_parent_certificate_mapping[exchange_id]
+            const object_e5_id = certificate_object_id+object['e5']
+            const assessment_data = this.props.app_state.certificate_assessments[object_e5_id] || {}
+            
+            Object.keys(assessment_data).forEach(depth_item => {
+                const exchange = exchange_depth_mapping[depth_item]
+                if(exchange != null){
+                    const ownership_stake = balance_obj[exchange]['balance']
+                    if(ownership_stake != null && ownership_stake >= 1){
+                        const assessments = assessment_data[depth_item] || [];
+                        const contract_assessments_mapping = {}
+                        assessments.forEach(assessment_item => {
+                            const contract_obj = assessment_item['contract_obj']
+                            if(contract_assessments_mapping[contract_obj] == null){
+                                contract_assessments_mapping[contract_obj] = []
+                            }
+                            contract_assessments_mapping[contract_obj].push(assessment_item)
+                        });
+                        const focused_assessments = []
+                        Object.keys(contract_assessments_mapping).forEach(contract_obj => {
+                            const contracts_assessments = contract_assessments_mapping[contract_obj];
+                            const latest_assessment = this.sortByAttributeDescending(contracts_assessments, 'time')[0]
+                            focused_assessments.push(latest_assessment)
+                        });
+
+                        if(focused_assessments.length > 0){
+                            focused_assessments.forEach(assessment => {
+                                const transfers = assessment['price_data']
+                                const proportions = assessment['promises']
+
+                                transfers.forEach(transfer => {
+                                    const exchange = transfer['id']
+                                    const amount = transfer['amount']
+                                    if(totals_obj[exchange] == null){
+                                        totals_obj[exchange] = bigInt(0)
+                                    }
+                                    let obligation_amount = bigInt(0)
+                                    proportions.forEach(proportion => {
+                                        const obligation = bigInt(amount).multiply(proportion).divide('100e16')
+                                        obligation_amount = bigInt(obligation_amount).plus(obligation).multiply(ownership_stake).divide('100e16')
+                                    });
+                                    totals_obj[exchange] = bigInt(totals_obj[exchange]).plus(obligation_amount)
+                                });
+                            });
+                        }
+                    }
+                }
+            });
+        });
+
+        return totals_obj
+    }
+
+    resolve_exchanges(exchanges, e5){
+        const certificate_ids = Object.keys(this.props.app_state.fractionalized_assets)
+        const exchanges_from_sync = {}
+        const exchange_depth_mapping = {}
+        const exchange_parent_certificate_mapping = {}
+        certificate_ids.forEach(certificate_id => {
+            const exchange_ids = Object.keys(this.props.app_state.fractionalized_assets[certificate_id])
+            exchange_ids.forEach(exchange_id => {
+                const fractionalized_exchange_object = this.props.app_state.fractionalized_assets[certificate_id][exchange_id]
+                if(fractionalized_exchange_object['e5'] == e5 && exchanges.includes(fractionalized_exchange_object['id'])){
+                    exchanges_from_sync[fractionalized_exchange_object['id']] = fractionalized_exchange_object
+                    exchange_depth_mapping[fractionalized_exchange_object['ipfs']['depth_item']['depth']] = fractionalized_exchange_object['id']
+                    exchange_parent_certificate_mapping[fractionalized_exchange_object['id']] = certificate_id
+                }
+            });
+        });
+
+        return { exchanges_from_sync, exchange_depth_mapping, exchange_parent_certificate_mapping }
     }
 
     calculate_total_amount_handled2(user_obligation_data){
@@ -17812,6 +17941,35 @@ return data['data']
         )
     }
 
+    render_selected_year_paid_amounts3(total_amounts_handled_data){
+        const data = total_amounts_handled_data
+        const exchanges = Object.keys(total_amounts_handled_data)
+        const e5 = this.props.app_state.selected_e5
+        if(exchanges.length == 0){
+            const item = '5';
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(0), 'barwidth':this.calculate_bar_width(0), 'number':this.format_account_balance_figure(0), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {exchanges.map((item, index) => (
+                            <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':data[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(data[item]), 'barwidth':this.calculate_bar_width(data[item]), 'number':this.format_account_balance_figure(data[item]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
 
     render_each_type_entry_count2(each_type_number_entries){
         const year = this.state.selected_obligation_year
@@ -17924,6 +18082,68 @@ return data['data']
                     } 
                 });
             } 
+        });
+
+        const balance_obj = object['balance_obj'] || {}
+        const exchanges_or_certificates = Object.keys(balance_obj)
+        const { exchanges_from_sync, exchange_depth_mapping, exchange_parent_certificate_mapping } = this.resolve_exchanges(exchanges_or_certificates, object['e5'])
+        const my_valid_exchanges = Object.keys(exchanges_from_sync)
+
+        my_valid_exchanges.forEach(exchange_id => {
+            const certificate_object_id = exchange_parent_certificate_mapping[exchange_id]
+            const object_e5_id = certificate_object_id+object['e5']
+            const assessment_data = this.props.app_state.certificate_assessments[object_e5_id] || {}
+            
+            Object.keys(assessment_data).forEach(depth_item => {
+                const exchange = exchange_depth_mapping[depth_item]
+                if(exchange != null){
+                    const ownership_stake = balance_obj[exchange]['balance']
+                    if(ownership_stake != null && ownership_stake >= 1){
+                        const assessments = assessment_data[depth_item] || [];
+                        const contract_assessments_mapping = {}
+                        assessments.forEach(assessment_item => {
+                            const contract_obj = assessment_item['contract_obj']
+                            if(contract_assessments_mapping[contract_obj] == null){
+                                contract_assessments_mapping[contract_obj] = []
+                            }
+                            contract_assessments_mapping[contract_obj].push(assessment_item)
+                        });
+                        const focused_assessments = []
+                        const contracts = []
+                        Object.keys(contract_assessments_mapping).forEach(contract_obj => {
+                            const contracts_assessments = contract_assessments_mapping[contract_obj];
+                            const latest_assessment = this.sortByAttributeDescending(contracts_assessments, 'time')[0]
+                            focused_assessments.push(latest_assessment)
+                            contracts.push(contract_obj)
+                        });
+
+                        if(focused_assessments.length > 0){
+                            focused_assessments.forEach((assessment, index) => {
+                                const contract = contracts[index]
+                                if(totals_obj[contract] == null){
+                                    totals_obj[contract] = {}
+                                }
+                                const transfers = assessment['price_data']
+                                const proportions = assessment['promises']
+
+                                transfers.forEach(transfer => {
+                                    const exchange = transfer['id']
+                                    const amount = transfer['amount']
+                                    if(totals_obj[contract][exchange] == null){
+                                        totals_obj[contract][exchange] = bigInt(0)
+                                    }
+                                    let obligation_amount = bigInt(0)
+                                    proportions.forEach(proportion => {
+                                        const obligation = bigInt(amount).multiply(proportion).divide('100e16')
+                                        obligation_amount = bigInt(obligation_amount).plus(obligation).multiply(ownership_stake).divide('100e16')
+                                    });
+                                    totals_obj[contract][exchange] = bigInt(totals_obj[contract][exchange]).plus(obligation_amount)
+                                });
+                            });
+                        }
+                    }
+                }
+            });
         });
 
         const obligation_amounts = structuredClone(totals_obj)
@@ -20059,7 +20279,7 @@ return data['data']
             )
         }
         const object = this.state.data['object']
-        const { fulfiled_accounts, unfulfilled_accounts, total_amounts, total_unfulfiled_amounts, unfulfiled_pending_data, from, to, time } = this.props.app_state.contract_obligation_payment_info[object['e5_id']]
+        const { fulfiled_accounts, unfulfilled_accounts, total_amounts, total_unfulfiled_amounts, unfulfiled_pending_data, from, to, time, unassessed_accounts } = this.props.app_state.contract_obligation_payment_info[object['e5_id']]
 
         const end_token_balance = total_amounts[3]
         const spend_token_balance = total_amounts[5]
@@ -20078,6 +20298,9 @@ return data['data']
 
                 <div style={{ height: 10 }}/>
                 {this.render_detail_item('3', { 'title': number_with_commas(unfulfilled_accounts.length), 'details': this.props.app_state.loc['3055vm']/* 'Unfulfiled Accounts' */, 'size': 'l' })}
+
+                <div style={{ height: 10 }}/>
+                {this.render_detail_item('3', { 'title': number_with_commas(unassessed_accounts.length), 'details': this.props.app_state.loc['3055wy']/* 'Unassessed Accounts.' */, 'size': 'l', 'footer':this.props.app_state.loc['3055wz']/* 'Accounts found sharing ownership of certificates with accounts subscribed to your contract that you haven\'t assessed.' */ })}
 
                 <div style={{ height: 10 }}/>
                 {this.render_detail_item('3', { 'title': fulfilment_rate.toFixed(2) + '%', 'details': this.props.app_state.loc['3055wl']/* 'Fulfilment Rate.' */, 'size': 'l' })}
@@ -20199,16 +20422,143 @@ return data['data']
         const e5 = this.state.data['object']['e5']
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {price_data.map((item, index) => (
-                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['exchange']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}>
+                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['exchange']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}>
                             {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['exchange']], 'subtitle':this.format_power_figure(this.calculate_final_amount(item['amount'])), 'barwidth':this.calculate_bar_width(this.calculate_final_amount(item['amount'])), 'number':this.format_account_balance_figure(this.calculate_final_amount(item['amount'])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']]})}
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div> 
         )
     }
+
+
+
+
+
+
+
+
+
+
+
+    render_certificate_assessment_item_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_certificate_assessment_item_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_certificate_assessment_item_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_assessment_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_assessment_item_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_assessment_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_assessment_item_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_certificate_assessment_item_data(){
+        const assessment = this.state.data['assesssment']
+        const item = this.state.data['item']
+        const certificate = this.state.data['object']
+        const certificate_ui = this.state.data['certificate_ui']
+        const data = this.state.data['model_data']
+        const assessment_account = assessment['alias'] == null ? assessment['sender_account'] :  assessment['sender_account'] +' • '+ assessment['alias']
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055wp']/* 'Assessment Details.' */, 'details':this.props.app_state.loc['3055wq']/* 'The details recorded by a assessor of this certificate.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3118v']/* 'Recorded On $' */.replace('$', (new Date(assessment['time']).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(assessment['time'] / 1000)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':assessment_account, 'details':this.props.app_state.loc['3055wr']/* 'Assessment Account.' */, 'size':'l', 'title_image':this.props.app_state.e5s[assessment['sender_account_e5']].e5_img})}
+                <div style={{height: 10}}/>
+
+                <div onClick={() => this.when_copy_to_clipboard_selected(assessment['address'])}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055ws']/* 'Assessment Account Address' */, 'details':start_and_end(assessment['address']), 'size':'l'})}
+                </div>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055wt']/* 'Assessment Description.' */, 'details':assessment['assessment_description'], 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_assessment_certificate_or_loader(assessment['contract_obj'])}
+            </div>
+        )
+    }
+
+    render_assessment_certificate_or_loader(contract_e5_id){
+        const contract_id = parseInt(contract_e5_id.split('E')[0])
+        const contract_e5 = 'E'+contract_e5_id.split('E')[1]
+        const contracts = this.props.app_state.created_contracts[contract_e5] || []
+        const contract_obj = contracts.find((obj) => {
+            return obj['e5_id'] == contract_e5_id
+        })
+
+        if(contract_obj == null){
+            return this.render_skeleton_object()
+        }
+        else{
+            return this.render_contract_item(contract_obj)
+        }
+    }
+
+    render_certificate_assessment_item_data2(){
+        const certificate = this.state.data['object']
+        const assessment = this.state.data['assesssment']
+        const e5 = certificate['e5']
+        const price_data = assessment['price_data']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055wu']/* 'Certificate Value.' */, 'details':this.props.app_state.loc['3055wv']/* 'The value of the certificate as per the assessment of your subscribed contract is shown below.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {price_data.map((item, index) => (
+                            <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                            </div>
+                        ))}
+                    </div>
+                </div> 
+            </div>
+        )
+    }
+
+
 
 
 

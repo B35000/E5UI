@@ -4788,6 +4788,15 @@ class home_page extends Component {
         }
     }
 
+    get_my_direct_message_objects(){
+        const messages = []
+        Object.keys(this.props.app_state.direct_messages).forEach(e5_account => {
+            messages.push(this.props.app_state.direct_messages[e5_account])
+        });
+
+        return messages;
+    }
+
 
 
 
@@ -5960,6 +5969,7 @@ class home_page extends Component {
 
     when_direct_message_object_item_clicked(object, ignore_set_details_data){
         this.setState({selected_direct_message_item: object['convo_id']})
+        this.add_to_tab(object['convo_id'], object['convo_id'], '?', this.props.app_state.loc['1264bo']/* 'direct-message 💬' */)
         if(ignore_set_details_data == null){
             this.set_detail_data();
         }
@@ -5977,6 +5987,7 @@ class home_page extends Component {
 
     async when_ether_object_clicked(index, id, e5){
         this.setState({selected_ether_item: id})
+        this.add_to_tab(this.props.app_state.e5s[e5].token, id, 'w', this.props.app_state.loc['1217']/* 'ethers ⚗️' */)
         this.set_detail_data()
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
@@ -5993,6 +6004,7 @@ class home_page extends Component {
     async when_coin_object_clicked(item, item_object){
         this.setState({selected_coin_item: item})
         this.set_detail_data()
+        this.add_to_tab(item_object['symbol'], item, 'w', this.props.app_state.loc['1264j']/* 'coins 🪙' */)
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
@@ -6865,7 +6877,12 @@ class home_page extends Component {
                 }
             }
         }
-        var obj = {'selected_tag':selected_tag, 'selected_page':selected_page, 'e5_id':object_e5_id, 'id':object_id}
+        var obj = {
+            'selected_tag':selected_tag, 
+            'selected_page':selected_page, 
+            'e5_id':object_e5_id, 
+            'id':object_id
+        }
         clone.push(obj)
 
 
@@ -8130,8 +8147,37 @@ class home_page extends Component {
                 return tem['e5_id']
             }
         }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
+            const get_convo_in_array = (object_array, id) => {
+                var object = object_array.find(x => x['convo_id'] === id);
+                return object
+            }
+            var object = get_convo_in_array(this.get_my_direct_message_objects(), tem['e5_id']);
+            if(object != null){
+                const recipient = this.get_account_alias(object['account_id'], object['account_e5'])
+                return this.props.app_state.loc['1264cc']/* 'With $' */.replace('$',recipient)
+            }
+        }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
+            const state_list = this.props.app_state.ether_data
+            const ether_obj = state_list.find(e => e['symbol'] == tem['e5_id'])
+            if(ether_obj != null) return ether_obj['name']
+        }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264j']/* 'coins 🪙' */){
+            const coins = this.props.app_state.coins
+            return coins[tem['e5_id']]['name'];
+        }
         
         return ''
+    }
+
+    get_account_alias(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['2785']/* 'You' */
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
     }
 
     render_tab_item(item){
@@ -8152,7 +8198,7 @@ class home_page extends Component {
     }
 
     get_title(item){
-        var obj = {'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'posts':'📰','channels':'📡','E5tokens':'🪙','externals':'🌕', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'ends ☝️':'', 'spends 🫰':'', 'audioport':'🎧', 'videoport':'📺', 'nitro':'🛰️', 'polls':'📊'}
+        var obj = {}
         obj[this.props.app_state.loc['1197']/* contracts */] = '📑'
         obj[this.props.app_state.loc['1196']/* jobs */] = '💼'
         obj[this.props.app_state.loc['1198']/* contractors */] = '👷🏻‍♀️'
@@ -8174,7 +8220,11 @@ class home_page extends Component {
         obj[this.props.app_state.loc['1264ao']/* 'polls' */] = '📊'
         obj[this.props.app_state.loc['1264bw']/* 'certificates' */] = '📜'
         obj[this.props.app_state.loc['1264bx']/* 'cross-exchanges' */] = '✚'
-        return `${obj[item['selected_tag']]} ${item['selected_tag']}`
+        obj[this.props.app_state.loc['1264bo']/* 'direct-message 💬' */] = '💬'
+        obj[this.props.app_state.loc['1217']/* 'ethers ⚗️' */] = '⚗️'
+        obj[this.props.app_state.loc['1264j']/* 'coins 🪙' */] = '🪙'
+
+        return `${obj[item['selected_tag']]} ${item['selected_tag'].replace(/[\p{Extended_Pictographic}\p{Emoji_Component}\uFE0F\u200D]/gu, '')}`
     }
 
     is_tab_active(tem){
@@ -8332,6 +8382,30 @@ class home_page extends Component {
                 }
             }
         }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
+            var selected_item = this.state.selected_direct_message_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
+            var selected_item = this.state.selected_ether_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264j']/* 'coins 🪙' */){
+            var selected_item = this.state.selected_coin_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
         
         
 
@@ -8457,6 +8531,34 @@ class home_page extends Component {
             if(object != null) this.props.load_extra_token_data(object);
 
             this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_crossexchange_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264bo']/* 'direct-message 💬' */){
+            const get_convo_in_array = (object_array, id) => {
+                var object = object_array.find(x => x['convo_id'] === id);
+                return object
+            }
+            var object = get_convo_in_array(this.get_my_direct_message_objects(), tem['e5_id']);
+            if(object != null)this.props.reload_all_messages(object);
+
+            this.setState({
+                detail_page: tem['selected_page'], 
+                detail_selected_tag:tem['selected_tag'], 
+                selected_direct_message_item: tem['e5_id']
+            })
+        }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1217']/* 'ethers ⚗️' */){
+            this.setState({
+                detail_page: tem['selected_page'], 
+                detail_selected_tag:tem['selected_tag'], 
+                selected_ether_item: tem['e5_id']
+            })
+        }
+        else if(tem['selected_tag'] == this.props.app_state.loc['1264j']/* 'coins 🪙' */){
+            this.setState({
+                detail_page: tem['selected_page'], 
+                detail_selected_tag:tem['selected_tag'], 
+                selected_coin_item: tem['e5_id']
+            })
         }
         
     }

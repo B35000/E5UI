@@ -87,6 +87,8 @@ class ConfigureObligationsPage extends Component {
         device_city: '', selected_device_cities:[], typed_contract_account2:'',contract_payment_recipients:{}, 
         
         default_upper_pay_bound:0, default_lower_pay_bound:0, default_target_upper_pay_bound:0, default_target_lower_pay_bound:0, targeted_paybound_keyword:'', paybound_keywords:{},
+
+        default_certificate_ownership_obligation:0, targeted_certificate_keyword:'', targeted_certificate_keyword_obligation:0, certificate_keywords:{}, value_assessor_accounts:[], assessor_id:'',
     };
 
     get_configure_obligations_title_tags_object(){
@@ -95,7 +97,7 @@ class ConfigureObligationsPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */, this.props.app_state.loc['3093er']/* 'sub-contracts 🔗' */, this.props.app_state.loc['3093hf']/* 'payment-recipients 🤲' */, 'e.'+this.props.app_state.loc['3093hg']/* 'pay-bounds' */, this.props.app_state.loc['3093gf']/* 'throttled-accounts ☣️' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['3093e']/* 'work-obligations' */, 'e.'+this.props.app_state.loc['3093f']/* 'explore-obligations' */, 'e.'+this.props.app_state.loc['3093hg']/* 'pay-bounds' */, 'e.'+this.props.app_state.loc['3093hw']/* 'certificate-obligations' */, this.props.app_state.loc['3093g']/* 'wallet-obligations' */, this.props.app_state.loc['3093be']/* 'reserved-keywords ®' */, this.props.app_state.loc['3093er']/* 'sub-contracts 🔗' */, this.props.app_state.loc['3093hf']/* 'payment-recipients 🤲' */, this.props.app_state.loc['3093gf']/* 'throttled-accounts ☣️' */], [0]
             ],
         };
 
@@ -109,6 +111,10 @@ class ConfigureObligationsPage extends Component {
 
         obj[this.props.app_state.loc['3093hg']/* 'pay-bounds' */] = [
             ['xor','',0], [this.props.app_state.loc['3093hg']/* 'pay-bounds' */, this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */, this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */], [1]
+        ]
+
+        obj[this.props.app_state.loc['3093hw']/* 'certificate-obligations' */] = [
+            ['xor','',0], [this.props.app_state.loc['3093hw']/* 'certificate-obligations' */, this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */, this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */, this.props.app_state.loc['3093hx']/* 'value-assessors 🕵' */], [1]
         ]
 
         return obj
@@ -211,6 +217,17 @@ class ConfigureObligationsPage extends Component {
             }
             else if(selected_item == this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */){
                 return this.render_paybound_keyword_target_settings_obligations_ui()
+            }
+        }
+        else if(active == this.props.app_state.loc['3093hw']/* 'certificate-obligations' */){
+            if(selected_item == this.props.app_state.loc['3093k']/* 'default-settings ℹ️' */){
+                return this.render_certificate_obligations_default_settings_ui()
+            }
+            else if(selected_item == this.props.app_state.loc['3093l']/* 'keyword-targets 🎯' */){
+                return this.render_certificate_obligations_keyword_target_settings_ui()
+            }
+            else if(selected_item == this.props.app_state.loc['3093hx']/* 'value-assessors 🕵' */){
+                return this.render_certificate_obligation_default_value_assessors_ui()
             }
         }
         else if(active == 'e' && selected_item == this.props.app_state.loc['3093g']/* 'wallet-obligations 👛' */){
@@ -362,6 +379,8 @@ class ConfigureObligationsPage extends Component {
             default_award_payment_obligation:default_proportion, default_direct_purchase_obligation:default_proportion, default_fulfilled_bags_obligation:default_proportion, default_audiopost_purchase_obligation:default_proportion, default_videopost_purchase_obligation:default_proportion, default_creator_group_payout_obligation:default_proportion, 
 
             default_direct_transfer_obligation:default_proportion, default_iTransfer_obligation:default_proportion, default_bill_payment_obligation:default_proportion, default_token_acquisition_obligation:default_proportion, default_coupon_payment_obligation:default_proportion,default_certificate_transfer_obligation:default_proportion, default_certificate_acquisition_obligation:default_proportion, default_token_remarket_obligation:default_proportion, default_royalty_payout_obligation:default_proportion, default_liquidity_deposit_withdraw_obligation:default_proportion,
+
+            default_certificate_ownership_obligation:default_proportion,
         })
     }
 
@@ -1172,7 +1191,7 @@ class ConfigureObligationsPage extends Component {
                 {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bm']/* 'The Keyword\'s Obligation.' */, 'details': this.props.app_state.loc['3093bn']/* 'Set the obligation for the specified keyword.' */, 'size': 'l' })}
                 <div style={{ height:10 }}/>
 
-                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_explore_keyword_obligation), 'details':this.props.app_state.loc['3093y']/* 'Proposal Bounty Obligation' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_explore_keyword_obligation), 'details':this.props.app_state.loc['3093bm']/* 'The Keyword\'s Obligation.' */, 'size':'l'})}
 
                 <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_explore_keyword_obligation_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
 
@@ -3056,6 +3075,604 @@ class ConfigureObligationsPage extends Component {
 
 
 
+
+
+    render_certificate_obligations_default_settings_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_certificate_obligations_default_settings_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_obligations_default_settings_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_obligations_default_settings_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_certificate_obligations_default_settings_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093hy']/* 'Default Certificate Ownership Obligations.' */, 'details': this.props.app_state.loc['3093hz']/* 'Configure the default obligations that shall be used on assessed certificates owned by your subscribers.' */, 'size': 'l' })}
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ia']/* 'Certificate Value Obligation Proportion' */, 'details': this.props.app_state.loc['3093ib']/* 'Set the default obligation proportion applied on the value of all certificates assessed for your subscribers.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_certificate_ownership_obligation), 'details':this.props.app_state.loc['3093ia']/* 'Certificate Value Obligation Proportion' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_default_certificate_ownership_obligation.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+            </div>
+        )
+    }
+
+    when_default_certificate_ownership_obligation(number){
+        this.setState({default_certificate_ownership_obligation: number})
+    }
+
+
+
+
+
+
+
+
+    render_certificate_obligations_keyword_target_settings_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_certificate_obligations_keyword_target_settings_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_certificate_obligation_keywords()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_obligations_keyword_target_settings_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_certificate_obligation_keywords()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_obligations_keyword_target_settings_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_certificate_obligation_keywords()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_certificate_obligations_keyword_target_settings_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ic']/* 'Certificate Keyword Target Obligation Settings.' */, 'details': this.props.app_state.loc['3093id']/* 'Configure the keywords you wish to target in the certificates assessed for your subscribers.' */, 'size': 'l' })}
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bj']/* 'New Targeted Keyword' */, 'details': this.props.app_state.loc['3093bk']/* 'Type a keyword you wish to target with a specified obligation.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3093bl']/* 'Keyword...' */} when_text_input_field_changed={this.when_targeted_certificate_keyword_input_field_changed.bind(this)} text={this.state.targeted_certificate_keyword} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bm']/* 'The Keyword\'s Obligation.' */, 'details': this.props.app_state.loc['3093bn']/* 'Set the obligation for the specified keyword.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.targeted_certificate_keyword_obligation), 'details':this.props.app_state.loc['3093bm']/* 'The Keyword\'s Obligation.' */, 'size':'l'})}
+
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_targeted_certificate_keyword_obligation_proportion.bind(this)} theme={this.props.theme} power_limit={9} decimal_count={16} pick_with_text_area={true} text_area_hint={'1.35%'}/>
+
+                <div style={{ height: 10 }} />
+                <div onClick={() => this.add_certificate_keyword_obligation()}>
+                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['3093bo']/* 'Add Keyword' */, 'action': '' })}
+                </div>
+            </div>
+        )
+    }
+
+    when_targeted_certificate_keyword_input_field_changed(text){
+        this.setState({targeted_certificate_keyword: text})
+    }
+
+    when_targeted_certificate_keyword_obligation_proportion(number){
+        this.setState({targeted_certificate_keyword_obligation: number})
+    }
+
+    add_certificate_keyword_obligation(){
+        const keyword = this.state.targeted_certificate_keyword.trim().toLowerCase()
+        const proportion = this.state.targeted_certificate_keyword_obligation
+
+        if(keyword == ''){
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
+        }
+        // else if(this.hasWhiteSpace(keyword)){
+        //     this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
+        // }
+        // else if(keyword.length > this.props.app_state.tag_size){
+        //     this.props.notify(this.props.app_state.loc['3093bp']/* 'That word is too long.' */, 2400)
+        // }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(keyword)){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
+        else if(proportion > bigInt('51e16')){
+            this.props.notify(this.props.app_state.loc['3093br'], 6400)/* 'You cant set a target higher than 51%' */
+        }
+        else if(proportion == 0){
+            this.props.notify(this.props.app_state.loc['3093bs'], 6400)/* 'You cant set a target of 0%' */
+        }
+        else{
+            const clone = structuredClone(this.state.certificate_keywords)
+            clone[keyword] = {'proportion': proportion }
+            this.setState({certificate_keywords: clone, targeted_certificate_keyword: ''})
+        }
+    }
+
+
+    render_set_certificate_obligation_keywords(){
+        const items = [].concat(Object.keys(this.state.certificate_keywords))
+
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bu']/* 'Added Keywords' */, 'details': this.props.app_state.loc['3093bv']/* 'When you add an obligation, it will show here.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+
+        return(
+            <div style={{}}>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093bu']/* 'Added Keywords' */, 'details': this.props.app_state.loc['3093ie']/* 'All the keywords targeted for the certificates assessed.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+                <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                    <SwipeableList>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    <SwipeableListItem
+                                        swipeLeft={{
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3093bt']/* Edit */}</p>,
+                                        action: () =>this.when_certificate_keyword_target_clicked(item)
+                                        }}>
+                                        <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                            {this.render_target_item4(item)}
+                                        </div>
+                                    </SwipeableListItem>
+                                </div>
+                            </li> 
+                        ))}
+                    </SwipeableList>
+                    
+                </ul>
+            </div>
+        )
+    }
+
+    render_target_item4(item){
+        const object = this.state.certificate_keywords[item]
+        const proportion = object['proportion']
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.format_proportion(proportion), 'details':item, 'size':'l'})}
+            </div>
+        )
+    }
+
+    when_certificate_keyword_target_clicked(item){
+        const clone = structuredClone(this.state.certificate_keywords)
+        const object = clone[item]
+        const proportion = object['proportion']
+        this.setState({targeted_certificate_keyword: item, targeted_certificate_keyword_obligation: proportion})
+        delete clone[item];
+        this.setState({certificate_keywords: clone})
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_certificate_obligation_default_value_assessors_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_certificate_obligation_default_value_assessors_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_added_assessors()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_obligation_default_value_assessors_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_added_assessors()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_certificate_obligation_default_value_assessors_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_added_assessors()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_certificate_obligation_default_value_assessors_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3093if']/* 'Certificate Value Assessors.' */, 'details':this.props.app_state.loc['3093ig']/* 'Specify which accounts can assess the value of obligations for your obligation subscribers.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['c311ci']/* Alias or Account ID... */} when_text_input_field_changed={this.when_assessor_id_input_field_changed.bind(this)} text={this.state.assessor_id} theme={this.props.theme}/>
+                
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['c311cm']/* You can specify multiple accounts at once separated by commas, eg ( E25:1002,E25:1204... ) */, 'textsize':'11px', 'font':this.props.app_state.font})}
+                
+                {this.load_account_suggestions('assessors')}
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_assessors_button_tapped()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3093ih']/* 'Add Assessor' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_assessor_id_input_field_changed(text){
+        this.setState({assessor_id: text})
+    }
+
+    async when_add_assessors_button_tapped(){
+        const typed_text = this.state.assessor_id.trim()
+        if(typed_text.includes(',')){
+            this.add_multiple_assessors(typed_text)
+            return;
+        }
+        const participant_id = await this.get_typed_alias_id(typed_text)
+        const participant_e5 = isNaN(typed_text) ? await this.get_alias_e5(typed_text) : this.state.e5
+        const final_value = participant_e5+':'+participant_id
+        const participants_clone = this.state.value_assessor_accounts.slice()
+        if(typed_text == ''){
+            this.props.notify(this.props.app_state.loc['c311cs']/* Type something */, 3600)
+        }
+        else if(isNaN(participant_id) || parseInt(participant_id) < 1000 || participant_id == ''){
+            this.props.notify(this.props.app_state.loc['c311i']/* That account is invalid. */, 3600)
+        }
+        else if(participants_clone.includes(final_value)){
+            this.props.notify(this.props.app_state.loc['c311j']/* 'Youve already added that account.' */, 4600)
+        }
+        else{
+            participants_clone.push(final_value)
+            this.setState({value_assessor_accounts: participants_clone, assessor_id:''});
+        }
+    }
+
+    async get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        await this.props.get_account_id_from_alias(alias)
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)
+        var id = (obj[alias] == null ? alias : obj[alias])
+        return id
+    }
+
+    async get_alias_e5(recipient){
+        await this.props.get_account_id_from_alias(recipient)
+        var e5s = this.props.app_state.e5s['data']
+        var recipients_e5 = this.props.app_state.selected_e5
+        for (let i = 0; i < e5s.length; i++) {
+            var e5 = e5s[i]
+            if(this.props.app_state.alias_owners[e5] != null){
+                var id = this.props.app_state.alias_owners[e5][recipient]
+                if(id != null && !isNaN(id)){
+                    recipients_e5 = e5
+                }
+            }
+        }
+        return recipients_e5
+    }
+
+    get_data(item){
+        var obj = item.split(':')
+        return { e5: obj[0], id: obj[1]}
+    }
+
+    add_multiple_assessors(data){
+        var entities = data.split(',')
+        var final_obj = []
+        var account_entries = 0
+        var participants_clone = this.state.value_assessor_accounts.slice()
+        entities.forEach(account_data => {
+            if(account_data != null && account_data != ''){
+                var data_point_array = account_data.split(':')
+                var e5 = ''
+                var account = ''
+                if(data_point_array.length == 2){
+                    e5 = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                    account = data_point_array[1].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                }
+                else if(data_point_array.length == 1){
+                    e5 = this.state.e5
+                    account = data_point_array[0].trim().replace(/[^\p{L}\p{N} ]/gu, '')
+                }
+                if(e5 != '' && account != ''){
+                    if(this.props.app_state.e5s['data'].includes(e5) && this.props.app_state.e5s[e5].active == true){
+                        if(!isNaN(account) && parseInt(account) < 10**16){
+                            var final_value = e5+':'+parseInt(account)
+                            if(!participants_clone.includes(final_value) && !final_obj.includes(final_value)){
+                                final_obj.push(final_value)
+                                account_entries++
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        if(account_entries == 0){
+            this.props.notify(this.props.app_state.loc['c311cn']/* 'No accounts added.' */, 1200)
+        }else{
+            participants_clone = participants_clone.concat(final_obj)
+            this.setState({value_assessor_accounts: participants_clone, assessor_id:''});
+            this.props.notify(this.props.app_state.loc['c311co']/* '$ accounts added.' */.replace('$', account_entries), 1200)
+        }
+    }
+
+    render_added_assessors(){
+        var items = [].concat(this.state.value_assessor_accounts)
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{}}>
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['3093ii']/* 'Added Assessor Accounts.' */, 'details': this.props.app_state.loc['3093ij']/* 'When you add an assessor account, it will show here.' */, 'size': 'l' })}
+                    <div style={{ height:10 }}/>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_added_assessor_tapped(item, index)
+                                    }}>
+                                    <div style={{width:'100%', /* 'background-color':this.props.theme['send_receive_ether_background_color'] */}}>
+                                        <li style={{'padding': '3px'}}>
+                                        {this.render_detail_item('3', {'title':' • '+this.get_data(item).id, 'details':this.get_senders_name(item), 'size':'l', 'title_image':this.props.app_state.e5s[this.get_data(item).e5].e5_img})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_senders_name(item){
+        var data_item = this.get_data(item)
+        var sender = data_item.id
+        var e5 = data_item.e5
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return this.props.app_state.loc['1694']/* 'You' */
+        }else{
+            var obj = this.props.app_state.alias_bucket[e5]
+            var alias = (obj[sender] == null ? this.props.app_state.loc['c311m']/* 'Account' */ : obj[sender])
+            return alias
+        }
+    }
+
+    when_added_assessor_tapped(item, index){
+        var cloned_array = this.state.value_assessor_accounts.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({value_assessor_accounts: cloned_array})
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    load_account_suggestions(target_type){
+        var items = [].concat(this.get_suggested_accounts(target_type))
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_suggested_accounts(target_type){
+        var me = this.props.app_state.user_account_id[this.state.e5]
+        if(me == null || me == 1){
+            return this.get_account_suggestions(target_type)
+        }
+        return[
+            {'id':me, 'label':{'title':this.props.app_state.loc['c311l']/* My Account. */, 'details':this.props.app_state.loc['c311m']/* 'Account' */, 'size':'s'}},
+        ].concat(this.get_account_suggestions(target_type))
+    }
+
+    get_account_suggestions(target_type){
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
+        if(contacts == null) contacts = [];
+        var return_array = []
+
+        if(target_type == 'participants'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.value_assessor_accounts)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+            return_array = this.filter_and_add_other_accounts(this.state.value_assessor_accounts, return_array)
+        }
+        
+        return return_array;
+    }
+
+    filter_and_add_other_accounts(typed_name, return_array){
+        if(typed_name.length < 3){
+            return return_array
+        }
+        const added_aliases = []
+        return_array.forEach(item => {
+            added_aliases.push(item['label']['details'])
+        });
+
+        return return_array.concat(this.get_all_aliases(added_aliases, typed_name))
+    }
+
+    get_all_aliases(added_aliases, typed_name){
+        const aliases = []
+        // const e5s = Object.keys(this.props.app_state.alias_bucket)
+        // e5s.forEach(e5 => {
+        //     const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
+        //     accounts.forEach(account_id => {
+        //         const alias = this.props.app_state.alias_bucket[e5][account_id]
+        //         if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
+        //             aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
+        //         }
+        //     });
+        // });
+        const e5 = this.state.e5
+        if(this.props.app_state.alias_bucket[e5] == null) return []
+        const accounts = Object.keys(this.props.app_state.alias_bucket[e5])
+        accounts.forEach(account_id => {
+            const alias = this.props.app_state.alias_bucket[e5][account_id]
+            if(!added_aliases.includes(alias) && alias.startsWith(typed_name.toLowerCase())){
+                aliases.push({'id':account_id,'label':{'title':account_id, 'details':alias, 'size':'s'}})
+            }
+        });
+
+        return aliases
+    }
+
+    get_contact_alias(contact){
+        var obj = this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)
+        return (obj[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : obj[contact['id']])
+    }
+
+    when_suggestion_clicked(item, pos, target_type){
+        if(target_type == 'assessors'){
+            this.setState({assessor_id: item['id']})
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     finish(){
         if(
             this.state.default_job_contractor_income_obligation > bigInt('51e16') ||
@@ -3083,7 +3700,8 @@ class ConfigureObligationsPage extends Component {
             // this.state.default_trust_fee_obligation > bigInt('51e16')
             this.state.default_certificate_acquisition_obligation > bigInt('51e16') ||
             this.state.default_token_acquisition_obligation > bigInt('51e16') ||
-            this.state.default_coupon_payment_obligation > bigInt('51e16')
+            this.state.default_coupon_payment_obligation > bigInt('51e16') ||
+            this.state.default_certificate_ownership_obligation > bigInt('51e16')
         ){
             this.props.notify(this.props.app_state.loc['3093br'], 6400)/* 'You cant set a target higher than 51%' */
         }
@@ -3113,7 +3731,8 @@ class ConfigureObligationsPage extends Component {
             // this.state.default_trust_fee_obligation == 0
             this.state.default_certificate_transfer_obligation == 0 ||
             this.state.default_certificate_acquisition_obligation == 0 ||
-            this.state.default_coupon_payment_obligation == 0
+            this.state.default_coupon_payment_obligation == 0 || 
+            this.state.default_certificate_ownership_obligation == 0 
         ){
             this.props.notify(this.props.app_state.loc['3093bs'], 6400)/* 'You cant set a target of 0%' */
         }

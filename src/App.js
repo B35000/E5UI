@@ -700,6 +700,7 @@ import CouponPaymentPage from './pages/token_action_pages/coupon_payment_page';
 import StagedCouponPage from './pages/token_action_pages/view_staged_coupon_page';
 import QuickTransferPage from './pages/token_action_pages/quick_transfer_page';
 import CrossexchangeSwapPage from './pages/token_action_pages/crossexchange_swap_page';
+import AssessCertificatePage from './pages/token_action_pages/assess_certificate_page';
 
 import VoteProposalPage from './pages/proposal_action_pages/vote_proposal_page';
 import SubmitProposalPage from './pages/proposal_action_pages/submit_proposal_page';
@@ -2003,7 +2004,7 @@ class App extends Component {
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
     fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
     quick_send_bottomsheet:false, edit_crossexchange_bottomsheet: false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false,
-    quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false,
+    quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -2123,7 +2124,7 @@ class App extends Component {
 
     focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(), my_applications2:[], my_bag_applications2:[], account_message_history2:{}, account_post_history2:{},
 
-    object_event_loader:{}, contract_obligation_payment_info:{},
+    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{},
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -5300,6 +5301,7 @@ class App extends Component {
     this.certificate_chain_page = React.createRef();
     this.quick_purchase_storage_page = React.createRef();
     this.terms_of_service_page = React.createRef();
+    this.assess_certificate_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -6603,7 +6605,7 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false, quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false, quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false,
 
       })
 
@@ -8801,6 +8803,8 @@ class App extends Component {
           {this.render_select_certificate_bottomsheet()}
           {this.render_certificate_chain_bottomsheet()}
           {this.render_new_bag_bottomsheet()}
+          {this.render_assess_certificate_bottomsheet()}
+
 
           {this.render_set_map_location_bottomsheet()}
           {this.render_dialog_bottomsheet()}
@@ -20658,12 +20662,11 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['2906']/* 'You need to set your wallet first.' */, 5000)
       return;
     }
-    const web3 = new Web3(this.state.web3);
-    var address = this.state.accounts[this.state.default_e5].address
-    web3.eth.accounts.wallet.add(this.state.accounts[this.state.default_e5].privateKey);
-
-    var signature = await web3.eth.sign(data.toString(), address)
-    return signature
+    const e5 = this.state.selected_e5
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    var address = this.state.accounts[e5].address
+    web3.eth.accounts.wallet.add(this.state.accounts[e5].privateKey);
+    return await web3.eth.sign(data.toString(), address)
   }
 
   confirm_signature = async (signature, data, address) => {
@@ -22674,6 +22677,8 @@ class App extends Component {
         add_recognise_certificate_transaction_to_stack={this.add_recognise_certificate_transaction_to_stack.bind(this)} open_private_contract={this.open_private_contract.bind(this)} start_quick_purchase_subscription_action={this.start_quick_purchase_subscription_action.bind(this)} begin_bridging_of_coin={this.begin_bridging_of_coin.bind(this)} start_quick_video_purchase_action={this.start_quick_video_purchase_action.bind(this)} start_quick_audio_purchase_action={this.start_quick_audio_purchase_action.bind(this)} begin_xmr_sync={this.begin_xmr_sync.bind(this)} add_fulfil_obligations_transaction_to_stack={this.add_fulfil_obligations_transaction_to_stack.bind(this)} swap_ether_to_specified_target={this.swap_ether_to_specified_target.bind(this)} swap_ether_to_specified_target_via_changenow={this.swap_ether_to_specified_target_via_changenow.bind(this)} set_password_tries={this.set_password_tries.bind(this)} get_object_by_id_and_type={this.get_object_by_id_and_type.bind(this)} show_select_certificate_bottomsheet={this.show_select_certificate_bottomsheet.bind(this)} show_certificate_chain_bottomsheet={this.show_certificate_chain_bottomsheet.bind(this)} get_blockexplorer_link={this.get_blockexplorer_link.bind(this)} lock_run={this.lock_run.bind(this)} set_hash={this.set_hash.bind(this)}
 
         delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} mute_unmute_address={this.mute_unmute_address.bind(this)} add_file_to_collection={this.add_file_to_collection.bind(this)} begin_sharing_location_with_target={this.begin_sharing_location_with_target.bind(this)} swap_ether_to_specified_target_via_near_intents={this.swap_ether_to_specified_target_via_near_intents.bind(this)} show_terms_of_service_bottomsheet={this.show_terms_of_service_bottomsheet.bind(this)} export_all_fulfilled_obligation_data={this.export_all_fulfilled_obligation_data.bind(this)}
+
+        show_assess_certificate_bottomsheet={this.show_assess_certificate_bottomsheet.bind(this)}
         />
       </div>
     )
@@ -22759,7 +22764,7 @@ class App extends Component {
       'view_job_application_details':550,
       'view_bag_application_details':550,
       'confirm_respond_to_signature_request':300,
-      'request_cookies_permission':290,
+      'request_cookies_permission':320,
       'start_voice_call':650,
       'enter_voice_call':530,
       'confirm_leave_call':200,
@@ -22807,7 +22812,8 @@ class App extends Component {
       'confirm_swap_coin_ether_via_near_intents_dialog':550,
       'show_post_basic_details':590,
       'render_event_item_details':300,
-      'view_contract_obligation_fulfilment_info':550
+      'view_contract_obligation_fulfilment_info':550,
+      'show_certificate_assessment_item_details':500,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -34588,6 +34594,75 @@ class App extends Component {
 
 
 
+  render_assess_certificate_bottomsheet(){
+    if(this.state.assess_certificate_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <AssessCertificatePage ref={this.assess_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} show_images={this.show_images.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} load_objects={this.load_objects.bind(this)} emit_certificate_assessment_for_account_obligation={this.emit_certificate_assessment_for_account_obligation.bind(this)}
+      />,
+      this.state.assess_certificate_bottomsheet,
+      this.open_assess_certificate_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_assess_certificate_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_assess_certificate_bottomsheet')
+    if(this.state.assess_certificate_bottomsheet == true){
+      //closing
+      this.assess_certificate_bottomsheet = this.assess_certificate_page.current?.state;
+
+      this.setState({assess_certificate_bottomsheet: !this.state.assess_certificate_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({assess_certificate_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({assess_certificate_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({assess_certificate_bottomsheet: !me.state.assess_certificate_bottomsheet});
+
+          if(me.assess_certificate_bottomsheet != null){
+            me.assess_certificate_page.current?.setState(me.assess_certificate_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  async show_assess_certificate_bottomsheet(item, object, model_data, certificate_ui, balance, type, fractionalized_token_exchange){
+    this.open_assess_certificate_bottomsheet()
+    setTimeout(() => {
+      this.assess_certificate_page.current?.set_data(item, object, model_data, certificate_ui, balance, type, fractionalized_token_exchange)
+    }, (1 * 1100));
+
+    this.setState({is_loading_certificate_owner_obligations: true})
+    const object_obligation_fulfiller = item['account'];
+    const tags = [object['e5_id'], item['depth']];
+
+    await this.get_objects_from_socket_and_set_in_state(['certificate_assessment'], tags, [], 1771762377000);
+    await this.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
+    this.setState({is_loading_certificate_owner_obligations: null})
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -35165,7 +35240,7 @@ class App extends Component {
       beacon_node = this.state.my_preferred_nitro_link
     }
 
-    var request = `${beacon_node}/${this.state.nitro_privacy_signature}`
+    var request = `${beacon_node}/root_data/${this.state.nitro_privacy_signature}`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -38661,6 +38736,7 @@ class App extends Component {
           await this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [], ['object', 'lock_unlock_wallet'])
           await this.set_page_objects_that_should_be_in_focus(this.state.focused_items)
           this.set_socket_entries_in_memory(obj.all_return_data['socket_objects_data'], [], [], ['object', 'lock_unlock_wallet'])
+          await this.set_socket_entries_in_memory(obj.all_return_data['certificate_assessment_data'], [])
           this.set_socket_entries_in_memory(obj.all_return_data['socket_view_objects_data'], [])
         }, (35 * 1000));
       }
@@ -44422,7 +44498,7 @@ class App extends Component {
     }
 
 
-    const exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(id, e5, {})
+    const { exchanges_to_load_first, exchange_depth_data } = await this.load_accounts_exchange_interactions_data(id, e5, {})
     const focused_exchanges = [];
     const depths = []
     exchanges_to_load_first.forEach(exchange_id => {
@@ -45046,7 +45122,7 @@ class App extends Component {
       created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
     }
     
-    const exchanges_to_load_first = await this.load_accounts_exchange_interactions_data(account, e5, pre_launch_data)
+    const { exchanges_to_load_first, exchange_depth_data } = await this.load_accounts_exchange_interactions_data(account, e5, pre_launch_data)
 
     // console.log('get_token_data','token events to load', created_token_events)
     // const test_load = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
@@ -45112,11 +45188,12 @@ class App extends Component {
 
     const focused_exchanges = [3, 5];
     const depths = [0, 0]
-    exchanges_to_load_first.forEach(exchange_id => {
-      depths.push(0)
-      if(!focused_exchanges.includes(parseInt(exchange_id))){
+    console.log('token_balance_data', e5, 'exchange_depth_data', exchange_depth_data)
+    Object.keys(exchange_depth_data).forEach(exchange_id => {
+      exchange_depth_data[exchange_id].forEach(depth_item => {
+        depths.push(depth_item)
         focused_exchanges.push(parseInt(exchange_id))
-      }
+      });
     });
 
     this.record_number_of_items(e5, 'tokens', created_tokens.length)
@@ -45157,11 +45234,20 @@ class App extends Component {
     const token_balances_data = token_balances_and_data['bal_data']
 
     const balance_obj = {}
+    const interacted_with_exchanges = []
     focused_exchanges.forEach((exchange, index) => {
-      balance_obj[exchange] = {'token_balance':token_balances[index], 'token_balance_data':token_balances_data[index]}
+      if(balance_obj[exchange] == null){
+        balance_obj[exchange] = {
+          'token_balance':token_balances[index], 
+          'token_balance_data':token_balances_data[index]
+        }
+      }else{
+        balance_obj[exchange]['token_balance_data'][depths[index]] = token_balances_data[index]
+      }
+      if(!interacted_with_exchanges.includes(parseInt(exchange))) interacted_with_exchanges.push(parseInt(exchange));
     });
 
-    console.log('token_balance_data', e5, 'balance_obj', balance_obj)
+    console.log('token_balance_data', e5, 'balance_obj', balance_obj, 'interacted_with_exchanges', interacted_with_exchanges)
 
     created_tokens.forEach(created_id => {
       if(balance_obj[created_id] == null){
@@ -45275,7 +45361,7 @@ class App extends Component {
       const is_crossexchange = created_token_data[i][2][18/* <18>classic_swap_exchange_parent_token */] != null && created_token_data[i][2][18/* <18>classic_swap_exchange_parent_token */] > 0
         
       var token_obj = {
-        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':is_certificate == true ? created_certificate_object_data.length : (is_crossexchange == true ? created_crossexchange_object_data.length: created_token_object_data.length), 'spend_balance':spend_balance, 'object_type':is_certificate == true ? 'certificate': (is_crossexchange == true ? 'crossexchange' : 'token'), 'interacted':exchanges_to_load_first.includes(token_id)
+        'id':token_id, 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':[0,0,0,0]/* accounts_exchange_data[i] */, 'exchanges_balances':depth_values/* exchanges_balances */, 'moderators':[]/* moderators */, 'access_rights_enabled':true/* interactible_checker_status_values[i] */,'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':[]/* update_exchange_ratio_event_data */, 'proportion_ratio_data':[]/* update_proportion_ratio_event_data */, 'author':author, 'e5_id':token_id+e5, 'token_balances_data':token_balance_data, 'hidden':true, 'pos':is_certificate == true ? created_certificate_object_data.length : (is_crossexchange == true ? created_crossexchange_object_data.length: created_token_object_data.length), 'spend_balance':spend_balance, 'object_type':is_certificate == true ? 'certificate': (is_crossexchange == true ? 'crossexchange' : 'token'), 'interacted':interacted_with_exchanges.includes(token_id)
       }
 
 
@@ -45878,13 +45964,17 @@ class App extends Component {
     const depths_used = []
     const all_depths_used = []
     const depth_use_times = []
+    const owner_data = {}
     all_depth_mint_events.forEach(event => {
       const depth = event.returnValues.p6/* depth */;
       const time = event.returnValues.p4/* timestamp */;
       if(!depths_used.includes(depth)){
         all_depths_used.push(depth);
         depth_use_times.push(time);
-        if(event.returnValues.p2/* receiver */ == account) depths_used.push(depth);
+        if(event.returnValues.p2/* receiver */ == account || account == 0) {
+          depths_used.push(depth);
+          owner_data[depth] = event.returnValues.p2/* receiver */
+        }
       }
     });
     all_depth_transfer_events.forEach(event => {
@@ -45893,18 +45983,22 @@ class App extends Component {
       if(!depths_used.includes(depth)){
         all_depths_used.push(depth);
         depth_use_times.push(time);
-        if(event.returnValues.p3/* receiver */ == account) depths_used.push(depth);
+        if(event.returnValues.p3/* receiver */ == account){
+          depths_used.push(depth);
+          owner_data[depth] = event.returnValues.p3/* receiver */
+        } 
       }else{
         if(event.returnValues.p2/* sender */ == account){
           const index = depths_used.indexOf(depth)
           if(index != -1){
             depths_used.splice(index, 1)
           }
+          owner_data[depth] = event.returnValues.p3/* receiver */
         }
       }
     });
     if(depths_used.length > 0){
-      await this.load_my_non_fungible_token_data(object, depths_used, account, depth_use_times)
+      await this.load_my_non_fungible_token_data(object, depths_used, account, depth_use_times, owner_data)
     } 
   }
 
@@ -45925,17 +46019,19 @@ class App extends Component {
         [web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id}],
         [web3, H52contractInstance, 'power', e5, {p3/* receiver */: account_id, p2/* action */:2/* depth_auth_mint */}],
       ]
-      var all_events;
-      if(pre_launch_data[e5] != null){
-        all_events = [
-          pre_launch_data[e5]['received_tokens_event_data'],
-          pre_launch_data[e5]['update_balance_event_data'],
-          pre_launch_data[e5]['stack_depth_swap_event_data'],
-        ]
-      }else{
-        var return_data = await this.load_multiple_events_from_nitro(event_params)
-        all_events = return_data.all_events
-      }
+      // var all_events;
+      // if(pre_launch_data[e5] != null){
+      //   all_events = [
+      //     pre_launch_data[e5]['received_tokens_event_data'],
+      //     pre_launch_data[e5]['update_balance_event_data'],
+      //     pre_launch_data[e5]['stack_depth_swap_event_data'],
+      //   ]
+      //   console.log('token_balance_data', e5, 'all_events from pre-launch data', all_events)
+      // }else{
+      // }
+      let return_data = await this.load_multiple_events_from_nitro(event_params)
+      var all_events = return_data.all_events
+
       received_tokens_event_data = all_events[0]
       update_balance_event_data = all_events[1]
       stack_depth_swap_event_data = all_events[2]
@@ -45949,26 +46045,51 @@ class App extends Component {
 
     }
 
-    var all_events = [];
+    const all_event_data = [];
     for(var i=0; i<update_balance_event_data.length; i++){
-      all_events.push({'event':update_balance_event_data[i], 'action':'Update', 'timestamp':update_balance_event_data[i].returnValues.p4})
+      all_event_data.push({
+        'event':update_balance_event_data[i], 
+        'action':'Update', 
+        'timestamp':update_balance_event_data[i].returnValues.p4,
+        'depth':update_balance_event_data[i].returnValues.p6/* depth */
+      })
     }
     for(var i=0; i<received_tokens_event_data.length; i++){
-      all_events.push({'event':received_tokens_event_data[i], 'action':'Received', 'timestamp':received_tokens_event_data[i].returnValues.p5})
+      all_event_data.push({
+        'event':received_tokens_event_data[i], 
+        'action':'Received', 
+        'timestamp':received_tokens_event_data[i].returnValues.p5,
+        'depth':received_tokens_event_data[i].returnValues.p7/* depth */
+      })
     }
     for(var i=0; i<stack_depth_swap_event_data.length; i++){
-      all_events.push({'event':stack_depth_swap_event_data[i], 'action':'DepthMint', 'timestamp':stack_depth_swap_event_data[i].returnValues.p7})
+      all_event_data.push({
+        'event':stack_depth_swap_event_data[i], 
+        'action':'DepthMint', 
+        'timestamp':stack_depth_swap_event_data[i].returnValues.p7,
+        'depth':stack_depth_swap_event_data[i].returnValues.p4/* depth_val */
+      })
     }
 
-    var data = []
-    all_events.forEach(token_event => {
-      var exchange = token_event['event'].returnValues.p1
-      if(!data.includes(exchange)){
-        data.push(parseInt(exchange))
+    console.log('token_balance_data', e5, 'all_event_data', all_event_data)
+    const exchanges_to_load_first = []
+    const exchange_depth_data = {}
+    all_event_data.forEach(token_event => {
+      const exchange = token_event['event'].returnValues.p1
+      if(!exchanges_to_load_first.includes(exchange)){
+        exchanges_to_load_first.push(parseInt(exchange))
+      }
+      if(token_event['depth'] != null){
+        if(exchange_depth_data[exchange] == null){
+          exchange_depth_data[exchange] = []
+        }
+        if(!exchange_depth_data[exchange].includes(token_event['depth'])){
+          exchange_depth_data[exchange].push(token_event['depth']);
+        }
       }
     });
 
-    return data
+    return { exchanges_to_load_first, exchange_depth_data }
   }
 
   load_received_tokens_events = async (web3, H52contractInstance, e5, account) => {
@@ -45985,7 +46106,7 @@ class App extends Component {
     this.setState({my_token_event_notifications: my_token_event_notifications_clone});
   }
 
-  async load_my_non_fungible_token_data(object, depths_used, account, depth_use_times){
+  async load_my_non_fungible_token_data(object, depths_used, account, depth_use_times, owner_data={}){
     const nft_loading_data_clone = this.structuredClone(this.state.nft_loading_data)
     nft_loading_data_clone[object['e5_id']+account] = depths_used
     this.setState({nft_loading_data: nft_loading_data_clone})
@@ -46004,6 +46125,15 @@ class App extends Component {
     const H52contractArtifact = require('./contract_abis/H52.json');
     const H52_address = contract_addresses[6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const owners_of_certificates = Object.values(owner_data);
+    var certificate_owner_account_types = await E52contractInstance.methods.f134(owners_of_certificates).call((error, result) => {});
+    const owner_type_mapping = {}
+    certificate_owner_account_types.forEach((type, index) => {
+      const certificate_owner = owners_of_certificates[index]
+      owner_type_mapping[certificate_owner] = type
+    });
+
 
     const valid_depths = []
     console.log('load_my_non_fungible_token_data', 'depths_used', depths_used)
@@ -46097,12 +46227,14 @@ class App extends Component {
       console.log('load_my_non_fungible_token_data', 'valid_data_events object_data', object_data)
       if(object_data != null){
         const depth_data = this.deconstruct_depth_data(depth)
+        const owner_of_certificate = owner_data[depth] == null ? account : owner_data[depth]
         const data_object = {
-          'depth': depth,
-          'depth_data': depth_data,
-          'ipfs': object_data,
-          'event': event,
-          'account':account,
+          'depth':depth,
+          'depth_data':depth_data,
+          'ipfs':object_data,
+          'event':event,
+          'account':owner_of_certificate,
+          'owner_type':owner_type_mapping[owner_of_certificate] || 0,
           'time': parseInt(event.returnValues.p6/* timestamp */)
         }
 
@@ -57488,22 +57620,15 @@ class App extends Component {
 
 
   get_balance_from_multiple_exchanges = async (exchanges, account, H52contractInstance, exchanges_depth, e5) => {
-    const interacted_exchange_depth_data = await this.load_accounts_exchange_depth_interactions_data(account, e5)
+    // const interacted_exchange_depth_data = await this.load_accounts_exchange_depth_interactions_data(account, e5)
     const exchange_ids = []
     const depths = []
     const positions = []
     // console.log('token_balance_data', e5, 'exchanges', exchanges, 'exchanges_depth', exchanges_depth)
     for(var j=0; j<exchanges.length; j++){
-      const exchange_depth = parseInt(exchanges_depth[j])
-      for(var i=exchange_depth; i>=0; i--){
-        if((interacted_exchange_depth_data[exchanges[j]] != null && interacted_exchange_depth_data[exchanges[j]].includes(i)) || i == 0){
-          exchange_ids.push(exchanges[j])
-          depths.push(i)
-          positions.push(j)
-        }else{
-          // console.log('token_balance_data', e5, 'not adding ', exchanges[j], 'at depth', i, 'in position', j)
-        }
-      }
+      exchange_ids.push(exchanges[j])
+      depths.push(exchanges_depth[j])
+      positions.push(j)
     }
     
     const token_balances = await H52contractInstance.methods.f140e(exchange_ids, account, depths).call((error, result) => {});
@@ -57526,14 +57651,14 @@ class App extends Component {
       balance_data[bal_pos][depths[i]] = token_balances[i].toString().toLocaleString('fullwide', {useGrouping:false})
     }
 
-    for(var k=0; k<exchanges.length; k++){
-      const exchange_depth = exchanges_depth[j]
-      for(var l=exchange_depth; l>=0; l--){
-        if(interacted_exchange_depth_data[exchanges[k]] == null || !interacted_exchange_depth_data[exchanges[k]].includes(l)){
-          balance_data[k][l] = '0'
-        }
-      }
-    }
+    // for(var k=0; k<exchanges.length; k++){
+    //   const exchange_depth = exchanges_depth[j]
+    //   for(var l=exchange_depth; l>=0; l--){
+    //     if(interacted_exchange_depth_data[exchanges[k]] == null || !interacted_exchange_depth_data[exchanges[k]].includes(l)){
+    //       balance_data[k][l] = '0'
+    //     }
+    //   }
+    // }
 
 
 
@@ -57550,25 +57675,29 @@ class App extends Component {
 
     var received_tokens_event_data;
     var stack_depth_swap_event_data;
+    var minted_token_event_data;
 
     if(this.state.beacon_node_enabled == true){
       var event_params = [
         [web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id}],
+        [web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id}],
         [web3, H52contractInstance, 'power'/* StackDepthSwap */, e5, {p3/* receiver */: account_id}],
       ]
       var event_data = await this.load_multiple_events_from_nitro(event_params)
       var all_events = event_data.all_events
       received_tokens_event_data = all_events[0] || []
-      stack_depth_swap_event_data = all_events[1] || []
+      minted_token_event_data = all_events[1] || []
+      stack_depth_swap_event_data = all_events[2] || []
     }else{
       received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id})
+      minted_token_event_data = await this.load_event_data(web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id})
       stack_depth_swap_event_data = await this.load_event_data(web3, H52contractInstance, 'power'/* StackDepthSwap */, e5, {p3/* receiver */: account_id})
     }
 
     var all_event_data = {}
     for(var i=0; i<stack_depth_swap_event_data.length; i++){
       var exchange = parseInt(stack_depth_swap_event_data[i].returnValues.p1/* exchange */)
-      var depth = parseInt(stack_depth_swap_event_data[i].returnValues.p4/* depth_val */)
+      var depth = stack_depth_swap_event_data[i].returnValues.p4/* depth_val */
       if(all_event_data[exchange] == null){
         all_event_data[exchange] = []
       }
@@ -57578,7 +57707,7 @@ class App extends Component {
     }
     for(var i=0; i<received_tokens_event_data.length; i++){
       var exchange = parseInt(received_tokens_event_data[i].returnValues.p1/* exchange */)
-      var depth = parseInt(received_tokens_event_data[i].returnValues.p7/* depth */)
+      var depth = received_tokens_event_data[i].returnValues.p7/* depth */
       if(all_event_data[exchange] == null){
         all_event_data[exchange] = []
       }
@@ -57586,6 +57715,16 @@ class App extends Component {
         all_event_data[exchange].push(depth)
       }
     }
+    minted_token_event_data.forEach(event_item => {
+      var exchange = parseInt(event_item.returnValues.p1/* exchange */)
+      var depth = event_item.returnValues.p6/* depth */
+      if(all_event_data[exchange] == null){
+        all_event_data[exchange] = []
+      }
+      if(!all_event_data[exchange].includes(depth)){
+        all_event_data[exchange].push(depth)
+      }
+    });
 
     return all_event_data
   }
@@ -62866,7 +63005,7 @@ class App extends Component {
       await this.update_nitro_privacy_signature(get_sync_block_from_nitro)
       await this.wait(550)
     }
-    var request = `${link}/${this.state.nitro_privacy_signature}`
+    var request = `${link}/root_data/${this.state.nitro_privacy_signature}`
     try{
       const response = await fetch(request);
       if (!response.ok) {
@@ -62883,7 +63022,7 @@ class App extends Component {
       }
     }
     catch(e){
-      console.log('apppage', 'request: ', request, e)
+      // console.log('apppage', 'request: ', request, e)
       if(attempts < 3){
         await this.wait(5000)
         return await this.load_nitro_directory_details(link, attempts+1)
@@ -63898,6 +64037,8 @@ class App extends Component {
     socket.emit('join_chatroom', 'object_views');
     await this.wait(1800)
     socket.emit('join_chatroom', 'obligation_subscription')
+    await this.wait(1800)
+    socket.emit('join_chatroom', 'certificate_assessment')
     await this.wait(1800)
 
     for(var i=0; i<this.state.active_rooms.length; i++){
@@ -65355,6 +65496,31 @@ class App extends Component {
 
     await this.reconnect_socket_if_unconnected()
     this.state.socket.emit("send_message", {to: address, message: private_location_object.message, target: target, object_hash: private_location_object.object_hash, secondary_target: secondary_target });
+  }
+
+  async emit_certificate_assessment_for_account_obligation(price_data, assessment_description, selected_obligation_contract, object, item, fractionalized_token_exchange){
+    this.prompt_top_notification(this.getLocale()['3118r']/* 'Recording Assessment...' */, 1900)
+    
+    const roomId = 'certificate_assessment'
+    const assessment_message_object = await this.prepare_assessment_object_message(price_data, assessment_description, selected_obligation_contract, object, item, fractionalized_token_exchange)
+    
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(assessment_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const target = 'certificate_assessment'
+    const broadcasat_object = {
+      roomId: roomId, 
+      message: assessment_message_object.message, 
+      target: target, 
+      object_hash: assessment_message_object.object_hash
+    }
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
+    await this.wait(3000)
+
+    this.process_new_received_assessment(assessment_message_object.message, assessment_message_object.object_hash)
   }
   
 
@@ -68296,6 +68462,85 @@ class App extends Component {
     const context = 0
     const message = {
       type: 'contract_subscription_log',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_assessment_object_message(price_data, assessment_description, selected_obligation_contract, object, item, fractionalized_token_exchange){
+    const contract_e5_id = selected_obligation_contract['contract']
+    const e5_to_use = selected_obligation_contract['my_assessor_e5']
+    const certificate_owner = item['account']
+    const certificate_owner_address = item['owner_type'] == 31/* 31(token_exchange) */ ? '' : await this.get_recipient_address(certificate_owner, object['e5'])
+    const balance_query_id = item['owner_type'] == 31/* 31(token_exchange) */ ? certificate_owner : object['id'];
+    const balance_query_depth = item['owner_type'] == 31/* 31(token_exchange) */ ? 0 : item['depth']
+    const type = item['owner_type'] == 31/* 31(token_exchange) */ ? 'fractionalized_certificate' : selected_obligation_contract['type'];
+
+    const message_obj = {
+      'contract_obj':contract_e5_id,
+      'sender_account': this.state.user_account_id[e5_to_use],
+      'sender_account_e5': e5_to_use,
+      'address':this.state.accounts[e5_to_use].address,
+      'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+      'price_data':price_data,
+      'assessment_description':assessment_description,
+      'time':Date.now(),
+      'certificate_object_id':object['e5_id'],
+      'depth':item['depth'],
+      'depth_data':item['depth_data'],
+      'promises':selected_obligation_contract['promises'],
+      'balance':selected_obligation_contract['balance'],
+      'type':type,
+      'owner':certificate_owner,
+      'owner_e5': object['e5'],
+      'owner_address':certificate_owner_address,
+      'balance_query_id':balance_query_id,
+      'balance_query_depth':balance_query_depth,
+      'identifier':this.make_number_id(12),
+    }
+    const tags = [
+      object['e5_id'], 
+      item['depth'], 
+      object['e5']+balance_query_id+balance_query_depth,
+      contract_e5_id, 
+      certificate_owner
+    ]
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(e5_to_use))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[e5_to_use]
+    const e5 = e5_to_use
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+
+    const data = JSON.stringify(message_obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+
+    const context = 0
+    const message = {
+      type: 'certificate_assessment',
       message_identifier: this.make_number_id(12),
       author: author,
       author_address: this.state.accounts[e5].address,
@@ -71405,6 +71650,57 @@ class App extends Component {
     this.setState({notification_object: clone})
   }
 
+  async process_new_received_assessment(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[message['e5']].address == message['author_address']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+
+    const ipfs_data = JSON.parse(message.data)
+    /* 
+      const message_obj = {
+        'contract_obj':contract_e5_id,
+        'sender_account': this.state.user_account_id[e5_to_use],
+        'sender_account_e5': e5_to_use,
+        'address':this.state.accounts[e5].address,
+        'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+        'price_data':price_data,
+        'assessment_description':assessment_description,
+        'time':Date.now(),
+        'certificate_object_id':object['e5_id'],
+        'depth':item['depth'],
+        'depth_data':item['depth_data'],
+        'promises':selected_obligation_contract['promises'],
+        'balance':selected_obligation_contract['balance'],
+        'type':selected_obligation_contract['type'],
+      }
+    */
+    const contract_obj = ipfs_data['contract_obj']
+    const certificate_object_id = ipfs_data['certificate_object_id']
+    const depth = ipfs_data['depth']
+    const clone = structuredClone(this.state.certificate_assessments)
+
+    if(clone[certificate_object_id] == null){
+      clone[certificate_object_id] = {}
+    }
+    if(clone[certificate_object_id][depth] == null){
+      clone[certificate_object_id][depth] = []
+    }
+    const existing = clone[certificate_object_id][depth].find(e => e.time == ipfs_data.time)
+    if(existing == null) clone[certificate_object_id][depth].push(ipfs_data)
+    this.setState({certificate_assessments: clone})
+  }
+
   
 
 
@@ -71772,48 +72068,48 @@ class App extends Component {
       }
     }
 
-    return;
-    if(Object.keys(object_data_mappings).length == 0){
-      return;
-    }
+    // return;
+    // if(Object.keys(object_data_mappings).length == 0){
+    //   return;
+    // }
 
-    console.log('set_socket_entries_in_memory', 'object_data_mappings', object_data_mappings)
-    console.log('set_socket_entries_in_memory', 'object_data_mappings_to_decrypt', object_data_mappings_to_decrypt)
-    const decryted_object_data_mappings = await this.bulk_decrypt_objects(object_data_mappings_to_decrypt)
-    const decrypted_id_keys = Object.keys(decryted_object_data_mappings)
+    // console.log('set_socket_entries_in_memory', 'object_data_mappings', object_data_mappings)
+    // console.log('set_socket_entries_in_memory', 'object_data_mappings_to_decrypt', object_data_mappings_to_decrypt)
+    // const decryted_object_data_mappings = await this.bulk_decrypt_objects(object_data_mappings_to_decrypt)
+    // const decrypted_id_keys = Object.keys(decryted_object_data_mappings)
 
-    console.log('set_socket_entries_in_memory', 'decryted_object_data_mappings', decryted_object_data_mappings)
+    // console.log('set_socket_entries_in_memory', 'decryted_object_data_mappings', decryted_object_data_mappings)
     
-    for(var m=0; m<decrypted_id_keys.length; m++){
-      const decyphered_data_object_array = decryted_object_data_mappings[decrypted_id_keys[m]].return_data
-      const decyphered_data_object_unsuccessful = decryted_object_data_mappings[decrypted_id_keys[m]].unsuccessful_pos
-      const decyphered_data_object_internal = decryted_object_data_mappings[decrypted_id_keys[m]].decrypted_with_key_data
+    // for(var m=0; m<decrypted_id_keys.length; m++){
+    //   const decyphered_data_object_array = decryted_object_data_mappings[decrypted_id_keys[m]].return_data
+    //   const decyphered_data_object_unsuccessful = decryted_object_data_mappings[decrypted_id_keys[m]].unsuccessful_pos
+    //   const decyphered_data_object_internal = decryted_object_data_mappings[decrypted_id_keys[m]].decrypted_with_key_data
 
-      for(var n=0; n<decyphered_data_object_array.length; n++){
-        const specific_item_data = object_data_mappings[decrypted_id_keys[m]][n]
-        const bulk_decyphered_package = {
-          'data':decyphered_data_object_array[n], 
-          'successful':(!decyphered_data_object_unsuccessful.includes(n)),
-          'internal': decyphered_data_object_internal[n]
-        }
-        if(decrypted_id_keys[m] == 'direct_message'){
-          console.log('set_socket_entries_in_memory', decrypted_id_keys[m], 'bulk_decyphered_package', bulk_decyphered_package)
-        }
-        await this.call_object_data_specific_function(specific_item_data.target_entry, specific_item_data.object_data, specific_item_data.object_hash, application_responses, false, bulk_decyphered_package, specific_item_data.i, specific_item_data.object_hashes)
-        await this.wait(300)
-      }
-    }
+    //   for(var n=0; n<decyphered_data_object_array.length; n++){
+    //     const specific_item_data = object_data_mappings[decrypted_id_keys[m]][n]
+    //     const bulk_decyphered_package = {
+    //       'data':decyphered_data_object_array[n], 
+    //       'successful':(!decyphered_data_object_unsuccessful.includes(n)),
+    //       'internal': decyphered_data_object_internal[n]
+    //     }
+    //     if(decrypted_id_keys[m] == 'direct_message'){
+    //       console.log('set_socket_entries_in_memory', decrypted_id_keys[m], 'bulk_decyphered_package', bulk_decyphered_package)
+    //     }
+    //     await this.call_object_data_specific_function(specific_item_data.target_entry, specific_item_data.object_data, specific_item_data.object_hash, application_responses, false, bulk_decyphered_package, specific_item_data.i, specific_item_data.object_hashes)
+    //     await this.wait(300)
+    //   }
+    // }
 
-    if(unencrypted.length > 0){
-      for(var p=0; p<unencrypted.length; p++){
-        const decyphered_data_object_array = object_data_mappings[unencrypted[p]]
-        for(var n=0; n<decyphered_data_object_array.length; n++){
-          const specific_item_data = decyphered_data_object_array[n]
-          await this.call_object_data_specific_function(specific_item_data.target_entry, specific_item_data.object_data, specific_item_data.object_hash, application_responses, false, null, specific_item_data.i, specific_item_data.object_hashes)
-          await this.wait(300)
-        }
-      }
-    }
+    // if(unencrypted.length > 0){
+    //   for(var p=0; p<unencrypted.length; p++){
+    //     const decyphered_data_object_array = object_data_mappings[unencrypted[p]]
+    //     for(var n=0; n<decyphered_data_object_array.length; n++){
+    //       const specific_item_data = decyphered_data_object_array[n]
+    //       await this.call_object_data_specific_function(specific_item_data.target_entry, specific_item_data.object_data, specific_item_data.object_hash, application_responses, false, null, specific_item_data.i, specific_item_data.object_hashes)
+    //       await this.wait(300)
+    //     }
+    //   }
+    // }
   }
 
   bulk_decrypt_objects = async (objects) => {
@@ -72060,7 +72356,10 @@ class App extends Component {
       await this.process_new_commented_posts_list_message(object_data, object_hash, object_data['author_address'], true, bulk_decyphered_package)
     }
     else if(object_data['type'] == 'quick_itransfer_message'){
-      me.process_new_mempool_itransfer_action_message(object_data, object_hash, object_data['author_address'], true)
+      await this.process_new_mempool_itransfer_action_message(object_data, object_hash, object_data['author_address'], true)
+    }
+    else if(object_data['type'] == 'certificate_assessment'){
+      await this.process_new_received_assessment(object_data, object_hash)
     }
   }
 
