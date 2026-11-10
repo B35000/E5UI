@@ -109,6 +109,8 @@ class EditCertificatePage extends Component {
 
         get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option(),
         get_object_private_or_public_certificate_tags_option:this.get_object_private_or_public_certificate_tags_option(),
+
+        get_certificate_type_tags_option:this.get_certificate_type_tags_option(),
     };
 
 
@@ -254,7 +256,18 @@ class EditCertificatePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['d311cz']/* 'public' */, this.props.app_state.loc['d311cy']/* 'private' */], [0]
+                ['xor','',0], ['e',this.props.app_state.loc['d311cz']/* 'public' */, this.props.app_state.loc['d311cy']/* 'private' */], [1]
+            ],
+        };
+    }
+
+    get_certificate_type_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['d311dc']/* 'ordinary' */, this.props.app_state.loc['d311dd']/* 'ticket' */], [1]
             ],
         };
     }
@@ -276,6 +289,9 @@ class EditCertificatePage extends Component {
         }
         if(this.state.get_object_private_or_public_certificate_tags_option == null){
             this.setState({get_object_private_or_public_certificate_tags_option: this.get_object_private_or_public_certificate_tags_option()})
+        }
+        if(this.state.get_certificate_type_tags_option == null){
+            this.setState({get_certificate_type_tags_option: this.get_certificate_type_tags_option()})
         }
     }
 

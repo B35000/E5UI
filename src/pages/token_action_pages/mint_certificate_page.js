@@ -100,7 +100,7 @@ class MintCertificatePage extends Component {
         edit_text_item_pos:-1,
         entered_pdf_objects:[], markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[], base_fee_price_multiplier:0,
 
-        certificate_target:'', certificate_target_type: null, certificate_target_author: null
+        certificate_target:'', certificate_target_type: null, certificate_target_author: null, purchase_count:1
     };
 
 
@@ -129,14 +129,14 @@ class MintCertificatePage extends Component {
         };
 
         obj[this.props.app_state.loc['115']] = [
-                ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
-            ]
+            ['or','',0], [this.props.app_state.loc['115'], 'e.'+this.props.app_state.loc['120'], 'e.'+this.props.app_state.loc['121']], [0]
+        ]
         obj[this.props.app_state.loc['116']] = [
-                ['xor','e',1], [this.props.app_state.loc['116'],'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
-            ]
+            ['xor','e',1], [this.props.app_state.loc['116'],'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
+        ]
         obj[this.props.app_state.loc['117']] = [
-                ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
-            ]
+            ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
+        ]
         return obj;
     }
 
@@ -156,13 +156,28 @@ class MintCertificatePage extends Component {
 
 
 
+    constructor(props) {
+        super(props);
+        this.screen = React.createRef()
+    }
+
+    componentDidUpdate(prevProps){
+        if(this.screen.current?.offsetWidth != this.state.screen_width){
+            this.setState({screen_width: this.screen.current?.offsetWidth})
+        }
+    }
+
+
+
+
+
 
     render(){
         return(
             <div style={{'padding':'10px 20px 0px 10px'}}>
                 <div className="row">
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.new_mint_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_mint_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} app_state={this.props.app_state} page_tags_object={this.state.new_mint_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_mint_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
@@ -245,18 +260,6 @@ class MintCertificatePage extends Component {
 
 
 
-    constructor(props) {
-        super(props);
-        this.screen = React.createRef()
-    }
-
-    componentDidUpdate(prevProps){
-        if(this.screen.current?.offsetWidth != this.state.screen_width){
-            this.setState({screen_width: this.screen.current?.offsetWidth})
-        }
-    }
-
-
 
 
 
@@ -316,6 +319,14 @@ class MintCertificatePage extends Component {
         const base_fee_price_multiplier = data['base_fee_price_multiplier']
         const e5 = object['e5']
         // const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
+        const certificate_type = object['ipfs'].get_certificate_type_tags_option != null ? this.get_selected_item2(object['ipfs'].get_certificate_type_tags_option, 'e') : 1
+        
+        const room = object['e5_id']+item['id']
+        const logged_purchases = this.props.app_state.logged_purchases[room] || []
+        let total_purchase_count = 0
+        logged_purchases.forEach(purchase => {
+            total_purchase_count += purchase['purchase_count']
+        });
         return(
             <div ref={this.screen}>
                 {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
@@ -324,17 +335,34 @@ class MintCertificatePage extends Component {
                 {this.render_detail_item('3', {'title':this.format_account_balance_figure(maximum_supply), 'details':this.props.app_state.loc['3055ox']/* 'Class Maimum Supply' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':(new Date(purchase_start_time).toLocaleString()), 'details':this.props.app_state.loc['3055oy']/* 'Purchase Start Time' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':(new Date(purchase_start_time*1000).toLocaleString()), 'details':this.props.app_state.loc['3055oy']/* 'Purchase Start Time' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':(new Date(purchase_end_time).toLocaleString()), 'details':this.props.app_state.loc['3055oz']/* 'Purchase Deadline' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':(new Date(purchase_end_time*1000).toLocaleString()), 'details':this.props.app_state.loc['3055oz']/* 'Purchase Deadline' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb'] 'Every $'.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']'Split Period', 'size':'l'})}
                 <div style={{height: 10}}/> */}
 
+                {certificate_type == 2 && (
+                    <div>
+                        {this.render_detail_item('3', {'title':number_with_commas(total_purchase_count), 'details':this.props.app_state.loc['3099s']/* 'Number of Tickets Already Minted.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3099n']/* 'Purchase Count.' */, 'details':this.props.app_state.loc['3099o']/* 'Set the number of tickets you are purchasing for your account. They are non-transferrable.' */, 'size':'l'})}
+                        <div style={{height:10}}/>
+                        
+                        <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3099q']/* 'Number Of Tickets.' */, 'subtitle':this.format_power_figure(this.state.purchase_count), 'barwidth':this.calculate_bar_width(this.state.purchase_count), 'number':this.format_account_balance_figure(this.state.purchase_count), 'barcolor':'', 'relativepower':this.props.app_state.loc['3099p']/* 'tickets' */, })}
+                        </div>
+                        <div style={{height:10}}/>
+                        
+                        <TextInput height={30} placeholder={this.props.app_state.loc['1058f']/* 'Amount...' */} when_text_input_field_changed={this.when_purchase_count_input_field_changed.bind(this)} text={this.state.purchase_count.toString()} theme={this.props.theme}/>
+                        <div style={{height:10}}/>
+                    </div>
+                )}
                 
-                {this.render_multiplied_prices(price_data, base_fee_price_multiplier, e5)}
+                {this.render_multiplied_prices(price_data, base_fee_price_multiplier, e5, certificate_type)}
 
                 {base_fee_price_multiplier == 0 && (
                     <div>
@@ -349,15 +377,25 @@ class MintCertificatePage extends Component {
                     </div>
                 )}
 
-                <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3099i']/* 'Certificate Target (Optional)' */, 'details':this.props.app_state.loc['3099j']/* 'You may optionally specify a target for the new certificate.' */, 'size':'l'})}
-                
-                <div style={{height: 10}}/>
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3099m']/* 'Object Id...' */} when_text_input_field_changed={this.when_certificate_target_input_field_changed.bind(this)} text={this.state.certificate_target} theme={this.props.theme} adjust_height={false}/>
-                
-                {this.render_certificate_target_type_and_author_if_set()}
+                {certificate_type == 1 && (
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3099i']/* 'Certificate Target (Optional)' */, 'details':this.props.app_state.loc['3099j']/* 'You may optionally specify a target for the new certificate.' */, 'size':'l'})}
+                        
+                        <div style={{height: 10}}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3099m']/* 'Object Id...' */} when_text_input_field_changed={this.when_certificate_target_input_field_changed.bind(this)} text={this.state.certificate_target} theme={this.props.theme} adjust_height={false}/>
+                        
+                        {this.render_certificate_target_type_and_author_if_set()}
+                    </div>
+                )}
             </div>
         )
+    }
+
+    when_purchase_count_input_field_changed(text){
+        if(!isNaN(text)){
+            this.setState({purchase_count: parseInt(text)})
+        }
     }
 
     when_certificate_target_input_field_changed(text){
@@ -416,17 +454,17 @@ class MintCertificatePage extends Component {
         return parseInt(purchase_start_time) + (periodCount * parseInt(split_period))
     }
 
-    render_multiplied_prices(price_data, base_fee_price_multiplier, e5){
+    render_multiplied_prices(price_data, base_fee_price_multiplier, e5, certificate_type){
         if(base_fee_price_multiplier == 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pw']/* 'Variable Price Set.' */, 'details':this.props.app_state.loc['3055px']/* 'You are free to acquire this certificate with whichever price you wish.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pw']/* 'Variable Price Set.' */, 'details':certificate_type == 2 ? this.props.app_state.loc['3099v']/* 'You are free to acquire the ticket with whichever price you wish.' */ : this.props.app_state.loc['3055px']/* 'You are free to acquire this certificate with whichever price you wish.' */, 'size':'l'})}
                 </div>
             )
         }
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':certificate_type == 2 ? this.props.app_state.loc['3099w']/* 'Ticket Price.' */ : this.props.app_state.loc['3055pc']/* 'Certificate Price.' */, 'details':certificate_type == 2 ? this.props.app_state.loc['3099x']/* 'The fee for acquiring this class of this ticket.' */ : this.props.app_state.loc['3055pd']/* 'The fee for acquiring and minting this class of this certificate.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {price_data.map((item, index) => (
@@ -1631,11 +1669,25 @@ class MintCertificatePage extends Component {
         const price_data = object['ipfs'].price_data
         const e5 = object['e5']
         const data = item
+        const maximum_supply = data['maximum_supply']
         const base_fee_price_multiplier = data['base_fee_price_multiplier'] == 0 ? this.state.base_fee_price_multiplier : data['base_fee_price_multiplier']
         const certificate_target = this.state.certificate_target 
         const certificate_target_type = this.state.certificate_target_type
+        const purchase_count = this.state.purchase_count;
 
-        if(this.check_if_sender_has_enough_tokens_for_buy(price_data, base_fee_price_multiplier) == false){
+        const certificate_type = object['ipfs'].get_certificate_type_tags_option != null ? this.get_selected_item2(object['ipfs'].get_certificate_type_tags_option, 'e') : 1
+
+        const room = object['e5_id']+item['id']
+        const logged_purchases = this.props.app_state.logged_purchases[room] || []
+        let total_purchase_count = 0
+        logged_purchases.forEach(purchase => {
+            total_purchase_count += purchase['purchase_count']
+        });
+
+        if(purchase_count < 1){
+            this.props.notify(this.props.app_state.loc['3099r']/* 'That purchase count is invalid.' */, 4500)
+        }
+        else if(this.check_if_sender_has_enough_tokens_for_buy(price_data, base_fee_price_multiplier) == false){
             this.props.notify(this.props.app_state.loc['3099g']/* 'Your balance is insufficient to fulfil this mint.' */, 4500)
         }
         else if(!this.check_if_sender_can_interact_with_exchange()){
@@ -1644,20 +1696,30 @@ class MintCertificatePage extends Component {
         else if(certificate_target != '' && certificate_target_type == null){
             this.props.notify(this.props.app_state.loc['3099l']/* 'You need to set a valid certificate target.' */, 4200)
         }
+        else if(this.props.app_state.is_loading_mint_certificate_data == true){
+            this.props.notify(this.props.app_state.loc['3099u']/* 'Wait a bit.' */, 7200)
+        }
+        else if(certificate_type == 2 && purchase_count + total_purchase_count > maximum_supply){
+            this.props.notify(this.props.app_state.loc['3099t']/* 'You\'re attempting to exceed the maximum supply to be issued.' */, 7200)
+        }
         else{
-            this.props.add_mint_certificate_to_stack(this.state)
-            this.setState({
-                entered_text:'', 
-                entered_text_objects:[], 
-                entered_image_objects:[], 
-                entered_objects:[], 
-                edit_text_item_pos:-1, 
-                entered_pdf_objects:[],
-                markdown:'',
-                get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(),
-                entered_zip_objects:[],
-            })
-            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1600)
+            if(certificate_type == 2){
+                this.props.confirm_purchase_of_tickets(this.state)
+            }else{
+                this.props.add_mint_certificate_to_stack(this.state)
+                this.setState({
+                    entered_text:'', 
+                    entered_text_objects:[], 
+                    entered_image_objects:[], 
+                    entered_objects:[], 
+                    edit_text_item_pos:-1, 
+                    entered_pdf_objects:[],
+                    markdown:'',
+                    get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(),
+                    entered_zip_objects:[],
+                })
+                this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1600)
+            }
         }
     }
 
@@ -1667,7 +1729,7 @@ class MintCertificatePage extends Component {
         const required_amounts = []
         price_data.forEach(price => {
             buy_tokens.push(price['id'])
-            required_amounts.push(bigInt(price['amount']).multiply(base_fee_price_multiplier))
+            required_amounts.push(bigInt(price['amount']).multiply(base_fee_price_multiplier).multiply(this.state.purchase_count))
         });
         var affordable = true;
         for(var i=0; i<buy_tokens.length; i++){

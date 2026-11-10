@@ -272,22 +272,22 @@ class NewBagPage extends Component {
         const opacity = is_bag_frequency_enabled == true ? 1.0 : 0.5
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058p']/* 'Frequency Bag.' */, 'details':this.props.app_state.loc['1058q']/* 'If set to enabled, you will be requiring the contractor to deliver the items in your new bag cyclically.' */, 'size':'l'})}
+                {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['1058p'] 'Frequency Bag.', 'details':this.props.app_state.loc['1058q'] 'If set to enabled, you will be requiring the contractor to deliver the items in your new bag cyclically.' , 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_frequency_bag_object} tag_size={'l'} when_tags_updated={this.when_get_frequency_bag_object_updated.bind(this)} theme={this.props.theme}/>
                 
                 {this.render_detail_item('0')}
 
                 <div style={{opacity: opacity}}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058r']/* 'Delivery Frequency Duration.' */, 'details':this.props.app_state.loc['1058s']/* 'If frequency bag is enabled, you are required to set the frequency period for the delivery of your bag items.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058r'] 'Delivery Frequency Duration.' , 'details':this.props.app_state.loc['1058s'] 'If frequency bag is enabled, you are required to set the frequency period for the delivery of your bag items.' , 'size':'l'})}
                     <div style={{height:10}}/>
                     
-                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.delivery_frequency_time), 'details':this.props.app_state.loc['1058u']/* 'Estimated time between deliveries.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.delivery_frequency_time), 'details':this.props.app_state.loc['1058u'] 'Estimated time between deliveries.' , 'size':'l'})}
 
                     <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_delivery_frequency_time_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
-                </div>
+                </div> */}
 
-                {this.render_detail_item('0')}
+                {/* {this.render_detail_item('0')} */}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3114b']/* 'Delete After Broadcast.' */, 'details':this.props.app_state.loc['3114c']/* 'If enabled, the bag will be deleted after its broadcasting on the blockchain or the indexers.' */, 'size':'l'})}
                 <div style={{height:10}}/>

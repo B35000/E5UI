@@ -109,7 +109,7 @@ class NewCertificatePage extends Component {
         get_new_certificate_bond_enabled_tags_object: this.get_new_certificate_bond_enabled_tags_object(), bond_interest_rate:0, coupon_frequency:0, bond_maturity: (Date.now()+(1000*60*60*24*365))/1000,
 
         get_object_delisted_setting_tags_option: this.get_object_delisted_setting_tags_option(),
-        typed_search_acquired_tokens:''
+        typed_search_acquired_tokens:'', get_certificate_type_tags_option:this.get_certificate_type_tags_option(),
     };
 
 
@@ -266,7 +266,18 @@ class NewCertificatePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['d311cz']/* 'public' */, this.props.app_state.loc['d311cy']/* 'private' */], [0]
+                ['xor','',0], ['e',this.props.app_state.loc['d311cz']/* 'public' */, this.props.app_state.loc['d311cy']/* 'private' */], [1]
+            ],
+        };
+    }
+
+    get_certificate_type_tags_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['d311dc']/* 'ordinary' */, this.props.app_state.loc['d311dd']/* 'ticket' */], [1]
             ],
         };
     }
@@ -482,6 +493,11 @@ class NewCertificatePage extends Component {
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311de']/* 'Certificate Type.' */, 'details':this.props.app_state.loc['d311df']/* 'If set to ticket, your certificates will be issued and tracked as events instead of mapping literals on the blockchain.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_certificate_type_tags_option} tag_size={'l'} when_tags_updated={this.when_get_certificate_type_tags_option_updated.bind(this)} theme={this.props.theme}/>
+
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['a311bl']/* 'Content Channeling' */, 'details':this.props.app_state.loc['a311bm']/* 'Specify the conetnt channel you wish to publish your new post. This setting cannot be changed.' */, 'size':'l'})}
@@ -494,6 +510,7 @@ class NewCertificatePage extends Component {
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_object_delisted_setting_tags_option} tag_size={'l'} when_tags_updated={this.when_get_object_delisted_setting_tags_option_updated.bind(this)} theme={this.props.theme}/>
 
+    
 
 
                 {this.render_detail_item('0')}
@@ -513,12 +530,15 @@ class NewCertificatePage extends Component {
     }
 
     render_title_tags_part2(){
+        const selected_type = this.get_selected_item(this.state.get_certificate_type_tags_option, 'e')
+        const opacity = selected_type == this.props.app_state.loc['d311dc']/* 'ordinary' */ ? 1.0 : 0.5
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311bu']/* 'Fractionalizable Certificate.' */, 'details':this.props.app_state.loc['d311bv']/* 'If set to enabled, users will be able to fractionalize certificates aquired from this exchange.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_fractionalizable_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_fractionalizable_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                
+                <div style={{opacity: opacity}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311bu']/* 'Fractionalizable Certificate.' */, 'details':this.props.app_state.loc['d311bv']/* 'If set to enabled, users will be able to fractionalize certificates aquired from this exchange.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_fractionalizable_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_fractionalizable_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                </div>
 
 
                 
@@ -530,11 +550,13 @@ class NewCertificatePage extends Component {
 
 
 
+                <div style={{opacity: opacity}}>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311cv']/* 'Certificate Recognition.' */, 'details':this.props.app_state.loc['d311cw']/* 'If set to manual, you will be required to verify and recognise every certificate that\'s minted in this new exchange.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_verification_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_verification_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                </div>
 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311cv']/* 'Certificate Recognition.' */, 'details':this.props.app_state.loc['d311cw']/* 'If set to manual, you will be required to verify and recognise every certificate that\'s minted in this new exchange.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_verification_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_verification_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
 
                 {this.render_previous_edits_if_existing()}
@@ -548,6 +570,10 @@ class NewCertificatePage extends Component {
         )
     }
 
+    when_get_certificate_type_tags_option_updated(tag_obj){
+        this.setState({get_certificate_type_tags_option: tag_obj})
+    }
+
     when_get_object_private_or_public_certificate_tags_option_updated(tag_obj){
         this.setState({get_object_private_or_public_certificate_tags_option: tag_obj})
     }
@@ -557,10 +583,14 @@ class NewCertificatePage extends Component {
     }
 
     when_get_new_certificate_verification_tags_object_updated(tag_obj){
+        const selected_type = this.get_selected_item(this.state.get_certificate_type_tags_option, 'e')
+        if(selected_type != this.props.app_state.loc['d311dc']/* 'ordinary' */) return;
         this.setState({get_new_certificate_verification_tags_object: tag_obj})
     }
 
     when_get_new_certificate_fractionalizable_tags_object_updated(tag_obj){
+        const selected_type = this.get_selected_item(this.state.get_certificate_type_tags_option, 'e')
+        if(selected_type != this.props.app_state.loc['d311dc']/* 'ordinary' */) return;
         this.setState({get_new_certificate_fractionalizable_tags_object: tag_obj})
     }
 
@@ -2582,6 +2612,9 @@ class NewCertificatePage extends Component {
     render_set_certificate_model_part2(){
         const selected_item = this.get_selected_item(this.state.get_new_certificate_bond_enabled_tags_object, 'e') == this.props.app_state.loc['616']/* 'enabled' */
         const opac = selected_item == true ? 1.0 : 0.5
+
+        const selected_type = this.get_selected_item(this.state.get_certificate_type_tags_option, 'e')
+        const opacity = selected_type == this.props.app_state.loc['d311dc']/* 'ordinary' */ ? 1.0 : 0.5
         return(
             <div>
                 {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['d311y'] 'Split Periods.', 'details':this.props.app_state.loc['d311z']'You may optionally specify a periodic split, meaning the certificates will be purchased in a specified frequency within the time bounds set.', 'size':'l'})}
@@ -2612,12 +2645,14 @@ class NewCertificatePage extends Component {
                 {this.render_detail_item('0')}
 
 
+                <div style={{opacity: opacity}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ci']/* 'Bond Enabled.' */, 'details':this.props.app_state.loc['d311cj']/* 'If set to enabled, you will be required to repay the value of the certificate upon maturity.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ci']/* 'Bond Enabled.' */, 'details':this.props.app_state.loc['d311cj']/* 'If set to enabled, you will be required to repay the value of the certificate upon maturity.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_bond_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_bond_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:20}}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_certificate_bond_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_get_new_certificate_bond_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height:20}}/>
+                </div>
+                
                 
                 <div style={{opacity: opac}}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['d311ck']/* 'Interest Rate.' */, 'details':this.props.app_state.loc['d311cl']/* 'The interest rate that you will pay for the bond upon being purchased.' */, 'size':'l'})}
@@ -2698,6 +2733,8 @@ class NewCertificatePage extends Component {
     }
 
     when_get_new_certificate_bond_enabled_tags_object_updated(tag_obj){
+        const selected_type = this.get_selected_item(this.state.get_certificate_type_tags_option, 'e')
+        if(selected_type != this.props.app_state.loc['d311dc']/* 'ordinary' */) return;
         this.setState({get_new_certificate_bond_enabled_tags_object: tag_obj})
     }
 
@@ -2871,7 +2908,7 @@ class NewCertificatePage extends Component {
 
     render_model_item(data){
         const title = data['class_name']
-        const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']).toLocaleString()))
+        const details = this.props.app_state.loc['3098bh']/* '$ Issued' */.replace('$', number_with_commas(data['maximum_supply'])) + ' • ' + this.props.app_state.loc['d311bm']/* 'from $' */.replace('$', (new Date(data['purchase_start_time']*1000).toLocaleString()))
         const opacity = this.state.edit_id == data['id'] ? 0.5 : 1.0
         return(
             <div style={{opacity: opacity}} onClick={() => this.edit_model_item(data)}>

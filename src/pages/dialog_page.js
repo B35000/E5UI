@@ -808,6 +808,12 @@ class DialogPage extends Component {
         else if(option == 'show_certificate_assessment_item_details'){
             return this.render_certificate_assessment_item_ui()
         }
+        else if(option == 'confirm_purchase_of_tickets'){
+            return this.render_confirm_purchase_of_tickets_ui()
+        }
+        else if(option == 'view_acquired_ticket_item_details'){
+            return this.render_view_acquired_ticket_item_ui()
+        }
     }
 
 
@@ -14801,11 +14807,23 @@ return data['data']
         const e5 = object['e5']
         // const split_time = this.get_current_split_time(split_period, purchase_start_time, purchase_end_time)
         const now = Date.now() / 1000
-        const class_mint_count = this.get_class_mint_count(object, this.construct_depth_item(data))
+
+        const certificate_type = object['ipfs'].get_certificate_type_tags_option != null ? this.get_selected_item2(object['ipfs'].get_certificate_type_tags_option, 'e') : 1
+
+        const room = object['e5_id']+item['id']
+        const logged_purchases = this.props.app_state.logged_purchases[room] || []
+        let total_purchase_count = 0
+        logged_purchases.forEach(purchase => {
+            total_purchase_count += purchase['purchase_count']
+        });
+
+        const class_mint_count = certificate_type == 2 ? total_purchase_count : this.get_class_mint_count(object, this.construct_depth_item(data))
         const bond_enabled = data['bond_enabled']
         const bond_interest_rate = data['bond_interest_rate']
         const coupon_frequency = data['coupon_frequency']
         const bond_maturity = data['bond_maturity']
+        
+        const certificates_or_tickets = certificate_type == 2 ? this.props.app_state.loc['3055xj']/* 'Tickets Purchased.' */ : this.props.app_state.loc['3055pt']/* 'Certificates Minted.' */
 
         return(
             <div>
@@ -14821,7 +14839,7 @@ return data['data']
                 {this.render_detail_item('3', {'title':(new Date(purchase_end_time*1000).toLocaleString()), 'details':this.props.app_state.loc['3055oz']/* 'Purchase Deadline' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':number_with_commas(class_mint_count), 'details':this.props.app_state.loc['3055pt']/* 'Certificates Minted.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':number_with_commas(class_mint_count), 'details':certificates_or_tickets, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 {/* {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pb']'Every $'.replace('$', this.get_time_diff(split_period)), 'details':this.props.app_state.loc['3055pa']'Split Period', 'size':'l'})}
@@ -14846,10 +14864,10 @@ return data['data']
                 {now > parseInt(purchase_start_time) && now < parseInt(purchase_end_time) && class_mint_count < maximum_supply && (
                     <div>
                         {this.render_detail_item('0')}
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['3055pe']/* 🌱 Mint New Certificate.' */, 'details':this.props.app_state.loc['3055pf']/* 'Create and mint a new certificate token with your preferred details.' */, 'size':'l'})}
+                        {this.render_detail_item('3', {'title':certificate_type == 2 ? this.props.app_state.loc['3055xk']/* '🎫 Purchase New Ticket.' */ : this.props.app_state.loc['3055pe']/* 🌱 Mint New Certificate.' */, 'details': certificate_type == 2 ? this.props.app_state.loc['3055xl']/* 'Purchase a new ticket with your preferred details.' */ : this.props.app_state.loc['3055pf']/* 'Create and mint a new certificate token with your preferred details.' */, 'size':'l'})}
                         <div style={{height:10}}/>
                         <div onClick={()=>this.mint_new_certificate()}>
-                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055pg']/* 'Mint Token' */, 'action':''})}
+                            {this.render_detail_item('5', {'text': certificate_type == 2 ? this.props.app_state.loc['3055xm']/* 'Purchase Ticket.' */ : this.props.app_state.loc['3055pg']/* 'Mint Token' */, 'action':''})}
                         </div>
                     </div>
                 )}
@@ -20559,6 +20577,351 @@ return data['data']
     }
 
 
+
+
+
+
+
+
+
+
+
+
+    render_confirm_purchase_of_tickets_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_confirm_purchase_of_tickets_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_confirm_purchase_of_tickets_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_purchase_of_tickets_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_purchase_of_tickets_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_purchase_of_tickets_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_purchase_of_tickets_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_confirm_purchase_of_tickets_data(){
+        const state = this.state.data['state']
+        const item = state.selected_class
+        const object = state.token_item
+        const data = item
+        const name = data['class_name']
+        const maximum_supply = data['maximum_supply']
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        const price_data = object['ipfs'].price_data
+        const base_fee_price_multiplier = data['base_fee_price_multiplier']
+        const e5 = object['e5']
+
+        const purchase_count = state.purchase_count
+        const total_amounts_to_be_paid = this.get_total_amount_to_be_paid(state)
+
+        const room = object['e5_id']+item['id']
+        const logged_purchases = this.props.app_state.logged_purchases[room] || []
+        let total_purchase_count = 0
+        logged_purchases.forEach(purchase => {
+            total_purchase_count += purchase['purchase_count']
+        });
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':number_with_commas(total_purchase_count) + ' / '+ number_with_commas(maximum_supply), 'details':this.props.app_state.loc['3099s']/* 'Number of Tickets Already Minted.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['3099q']/* 'Number Of Tickets.' */, 'subtitle':this.format_power_figure(purchase_count), 'barwidth':this.calculate_bar_width(purchase_count), 'number':this.format_account_balance_figure(purchase_count), 'barcolor':'', 'relativepower':this.props.app_state.loc['3099p']/* 'tickets' */, })}
+                </div>
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055xa']/* 'Final Fee.' */, 'details':this.props.app_state.loc['3055xb']/* 'The total amount you will be paying for purchasing the tickets.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_total_amount_to_be_paid(total_amounts_to_be_paid, e5)}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055xc']/* 'Your Available Balance.' */, 'details':this.props.app_state.loc['3055xd']/* 'The amount of money you have available to fulfil the purchases.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_my_balances_for_purchasing_ticket(price_data, e5)}
+            </div>
+        )
+    }
+
+    render_confirm_purchase_of_tickets_data2(){
+        const state = this.state.data['state']
+        const object = state.token_item
+        const is_running = this.props.app_state.is_running[object['e5']]
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3055qs']/* 'You may optionally set the gas price, or how quickly your run is to be validated. Slow is the default used.' */, 'title':this.props.app_state.loc['3055qr']/* 'Select Gas Price.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_gas_price_options()}
+
+                {this.props.app_state.locked_wallet_hashed_password != '' && (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2954m']/* 'Wallet Password.' */, 'details':this.props.app_state.loc['2954n']/* 'If you locked your wallet, set the password used here.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3055nm']/* 'Passcode...' */} when_text_input_field_changed={this.when_passcode_input_field_changed.bind(this)} text={this.state.cypher_passcode} theme={this.props.theme} adjust_height={false} type={'password'} />
+                        <div style={{height: 10}}/>
+                    </div>
+                )}
+
+
+                {is_running == true || (this.props.app_state.did_just_set_wallet == true && this.props.app_state.pre_launch_fetch_loading == true) ? (
+                    <div style={{'padding': '5px'}}>
+                        {this.render_small_skeleton_object()}
+                    </div>
+                ) : (
+                    <div>
+                        <div style={{'padding': '5px'}} onClick={() => this.begin_ticket_purchases()}>
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['3055rj']/* Run Purchases.' */, 'action':''})}
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    render_my_balances_for_purchasing_ticket(price_data, e5){
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_data.map((item, index) => (
+                        <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':this.props.calculate_actual_balance(e5, item['id']), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(this.props.calculate_actual_balance(e5, item['id'])), 'barwidth':this.calculate_bar_width(this.props.calculate_actual_balance(e5, item['id'])), 'number':this.format_account_balance_figure(this.props.calculate_actual_balance(e5, item['id'])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    get_total_amount_to_be_paid(state){
+        const object = state.token_item
+        const item = state.selected_class
+        const e5 = object['e5']
+        const data = item
+
+        const price_data = object['ipfs'].price_data
+        const base_fee_price_multiplier = data['base_fee_price_multiplier'] == 0 ? state.base_fee_price_multiplier : data['base_fee_price_multiplier']
+
+        const buy_tokens = []
+        price_data.forEach(price => {
+            buy_tokens.push({
+                'id':price['id'],
+                'amount': bigInt(price['amount']).multiply(base_fee_price_multiplier).multiply(state.purchase_count)
+            })
+        });
+
+        return buy_tokens
+    }
+
+    render_total_amount_to_be_paid(price_data, e5){
+        return(
+            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                {price_data.map((item, index) => (
+                    <div style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':bigInt(item['amount']), 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle':this.format_power_figure(bigInt(item['amount'])), 'barwidth':this.calculate_bar_width(bigInt(item['amount'])), 'number':this.format_account_balance_figure(bigInt(item['amount'])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    async begin_ticket_purchases(){
+        const state = this.state.data['state']
+        const object = state.token_item
+        const item = state.selected_class
+        const data = item
+        const maximum_supply = data['maximum_supply']
+        const total_amounts_to_be_paid = this.get_total_amount_to_be_paid(state)
+
+        const room = object['e5_id']+item['id']
+        const logged_purchases = this.props.app_state.logged_purchases[room] || []
+        let total_purchase_count = 0
+        logged_purchases.forEach(purchase => {
+            total_purchase_count += purchase['purchase_count']
+        });
+
+        if(this.props.app_state.locked_wallet_hashed_password != '' && this.state.cypher_passcode.trim() == ''){
+            this.props.notify(this.props.app_state.loc['1593mg']/* 'You need to set your password.' */, 4000)
+        }
+        else if(this.props.app_state.locked_wallet_hashed_password != '' && !this.does_password_match_hash(this.state.cypher_passcode.trim())){
+            this.props.notify(this.props.app_state.loc['2954o']/* 'The password you\'ve set is incorrect.' */, 4000)
+        }
+        else if(this.props.app_state.is_loading_mint_certificate_data == true){
+            this.props.notify(this.props.app_state.loc['3099u']/* 'Wait a bit.' */, 7200)
+        }
+        else if(state.purchase_count + total_purchase_count > maximum_supply){
+            this.props.notify(this.props.app_state.loc['3099t']/* 'You\'re attempting to exceed the maximum supply to be issued.' */, 7200)
+        }
+        else{
+            const selected_gas_prices = this.get_selected_gas_price_data()            
+            await this.props.start_ticket_purchase_action(object, selected_gas_prices, state, total_amounts_to_be_paid)
+        }
+    }
+
+
+
+
+
+
+
+
+    render_view_acquired_ticket_item_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_view_acquired_ticket_item_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_view_acquired_ticket_item_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_acquired_ticket_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_acquired_ticket_item_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_acquired_ticket_item_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_view_acquired_ticket_item_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_view_acquired_ticket_item_data(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const e5 = object['e5']
+        const ipfs = item['ipfs']
+        const event = item['event']
+        const time = item['time']
+        const owner = item['account']
+        const data = this.get_model_ticket_config(object, item)
+
+        const name = data['class_name']
+        const maximum_supply = data['maximum_supply']
+        const purchase_start_time = data['purchase_start_time']
+        const purchase_end_time = data['purchase_end_time']
+        const now = Date.now() / 1000
+
+        const owner_title = this.get_senders_name2(owner, object) == owner ? owner : owner+' • '+this.get_senders_name2(owner, object)
+        const all_transfers_exist = item['all_transfers_exist']
+
+        const purchase_count = item['ipfs'].purchase_count
+        const price_data = item['ipfs'].total_amounts_to_be_paid
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':name, 'details':this.props.app_state.loc['3055ow']/* 'Class Name' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':owner_title, 'details':this.props.app_state.loc['3055vg']/* 'Owner' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':number_with_commas(purchase_count), 'details':this.props.app_state.loc['3055xi']/* 'Tickets Purchased.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString())), 'details':this.get_time_diff((Date.now()/1000) - (parseInt(time)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_targeted_certificate_object_item(object, 31/* 31(token_exchange) */)}
+
+                {this.render_detail_item('0')}
+
+                {all_transfers_exist == true ? this.render_detail_item('3', {'title':this.props.app_state.loc['3055xe']/* '✓ Transfers Verified.' */, 'details':this.props.app_state.loc['3055xf']/* 'Transfer records for this purchased ticket exist on the blockchain.' */, 'size':'l'}) 
+                : 
+                this.render_detail_item('3', {'title':this.props.app_state.loc['3055xg']/* '❌ Transfers NOT Verified.' */, 'details':this.props.app_state.loc['3055xh']/* 'No valid transfer records for this ticket exist on the blockchain.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_total_amount_to_be_paid(price_data, e5)}
+            </div>
+        )
+    }
+
+    render_view_acquired_ticket_item_data2(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const ipfs = item['ipfs']
+        return(
+            <div>
+                {this.render_item_data(ipfs['entered_objects'])}
+                {this.render_item_images(ipfs['entered_image_objects'])}
+                {this.render_pdf_files_if_any(ipfs['entered_pdf_objects'])}
+                {this.render_zip_files_if_any(ipfs['entered_zip_objects'])}
+                {this.render_markdown_if_any(ipfs['markdown'])}
+            </div>
+        )
+    }
+
+    get_model_ticket_config(object, item){
+        const certificate_models = object['ipfs'].certificate_models
+        const valid_models = []
+        Object.keys(certificate_models).forEach(model => {
+          if(certificate_models[model]['id'] == item['ipfs']['class']['id']){
+            valid_models.push(certificate_models[model])
+          }
+        });
+        return this.filter_valid_models_by_acquired_time(valid_models, item['time'])
+    }
 
 
 

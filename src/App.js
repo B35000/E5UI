@@ -817,6 +817,7 @@ import { CrossChainMessenger, ETHBridgeAdapter } from "@eth-optimism/sdk";
 import { createClient, ChainId, getQuote, convertQuoteToRoute, executeRoute, getConnections, getStatus } from '@lifi/sdk';
 import { EthereumProvider } from '@lifi/sdk-provider-ethereum';
 import { OpenAPI, OneClickService, QuoteRequest } from '@defuse-protocol/one-click-sdk-typescript';
+import { constants } from 'fs/promises';
 
 
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -2124,7 +2125,7 @@ class App extends Component {
 
     focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(), my_applications2:[], my_bag_applications2:[], account_message_history2:{}, account_post_history2:{},
 
-    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{},
+    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{}, logged_purchases:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -8959,7 +8960,7 @@ class App extends Component {
 
           get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)} perform_translation_of_specific_object={this.perform_translation_of_specific_object.bind(this)}
           when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}
-          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)} show_loader_for_object_events={this.show_loader_for_object_events.bind(this)} load_contract_obligation_fulfilment_info={this.load_contract_obligation_fulfilment_info.bind(this)}
+          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)} show_loader_for_object_events={this.show_loader_for_object_events.bind(this)} load_contract_obligation_fulfilment_info={this.load_contract_obligation_fulfilment_info.bind(this)} enter_chatroom_if_socket_enabled={this.enter_chatroom_if_socket_enabled.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -22678,7 +22679,7 @@ class App extends Component {
 
         delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} mute_unmute_address={this.mute_unmute_address.bind(this)} add_file_to_collection={this.add_file_to_collection.bind(this)} begin_sharing_location_with_target={this.begin_sharing_location_with_target.bind(this)} swap_ether_to_specified_target_via_near_intents={this.swap_ether_to_specified_target_via_near_intents.bind(this)} show_terms_of_service_bottomsheet={this.show_terms_of_service_bottomsheet.bind(this)} export_all_fulfilled_obligation_data={this.export_all_fulfilled_obligation_data.bind(this)}
 
-        show_assess_certificate_bottomsheet={this.show_assess_certificate_bottomsheet.bind(this)}
+        show_assess_certificate_bottomsheet={this.show_assess_certificate_bottomsheet.bind(this)} start_ticket_purchase_action={this.start_ticket_purchase_action.bind(this)}
         />
       </div>
     )
@@ -22814,6 +22815,8 @@ class App extends Component {
       'render_event_item_details':300,
       'view_contract_obligation_fulfilment_info':550,
       'show_certificate_assessment_item_details':500,
+      'confirm_purchase_of_tickets':500,
+      'view_acquired_ticket_item_details':550,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -24416,8 +24419,8 @@ class App extends Component {
     const obligation_inclusive = ipfs_index_data.obligation_inclusive
     const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
 
-    var end_mint_limit = this.get_mint_limit(3)
-    var spend_mint_limit = this.get_mint_limit(5)
+    var end_mint_limit = this.get_mint_limit(3, e5)
+    var spend_mint_limit = this.get_mint_limit(5, e5)
     var transaction_time_limit = (Date.now/1000) - (60*60*6)
     if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
       if(this.state.dialog_bottomsheet == true){
@@ -24495,7 +24498,7 @@ class App extends Component {
       }
     }
 
-    const signed = await web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey)
+    const signed = await web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey)
     const hash = signed.transactionHash
     const broadcast = () => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
@@ -24633,8 +24636,8 @@ class App extends Component {
     const obligation_inclusive = ipfs_index_data.obligation_inclusive
     const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
 
-    var end_mint_limit = this.get_mint_limit(3)
-    var spend_mint_limit = this.get_mint_limit(5)
+    var end_mint_limit = this.get_mint_limit(3, e5)
+    var spend_mint_limit = this.get_mint_limit(5, e5)
     var transaction_time_limit = (Date.now/1000) - (60*60*6)
     if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
       if(this.state.dialog_bottomsheet == true){
@@ -24783,7 +24786,7 @@ class App extends Component {
       me.setState({my_videoposts: my_videoposts, my_videos: my_videos})
     }
 
-    const signed = await web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey)
+    const signed = await web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey)
     const hash = signed.transactionHash
     const broadcast = () => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
@@ -24886,8 +24889,8 @@ class App extends Component {
     const obligation_inclusive = ipfs_index_data.obligation_inclusive
     const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
 
-    var end_mint_limit = this.get_mint_limit(3)
-    var spend_mint_limit = this.get_mint_limit(5)
+    var end_mint_limit = this.get_mint_limit(3, e5)
+    var spend_mint_limit = this.get_mint_limit(5, e5)
     var transaction_time_limit = (Date.now/1000) - (60*60*6)
     if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
       if(this.state.dialog_bottomsheet == true){
@@ -24951,6 +24954,8 @@ class App extends Component {
     strs.push(string_obj)
     adds.push([])
     ints.push(obj)
+
+
 
     const account_data_object = [ /* set data */
       [20000, 13, 0],
@@ -25037,7 +25042,7 @@ class App extends Component {
       me.setState({my_albums: my_albums, my_tracks: my_tracks})
     }
 
-    const signed = await web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey)
+    const signed = await web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey)
     const hash = signed.transactionHash
     const broadcast = () => {
       web3.eth.sendSignedTransaction(signed.rawTransaction)
@@ -25144,6 +25149,33 @@ class App extends Component {
       const data = {'my_videoposts': my_videoposts, 'my_videos':my_videos, 'time':Date.now()}
       ipfs_index_object['myvideo'] = data
       ipfs_index_array.push({'id':'myvideo', 'data':data})
+    }
+    else if(type == this.getLocale()['3099']/* 'mint-certificate' */){
+      const data = tx.state
+      const certificate_data = {
+        'token_id': data.token_item['id'],
+        'token_e5': data.token_item['e5'],
+        'class': data.selected_class,
+        'entered_image_objects': data.entered_image_objects,
+        'entered_objects': data.entered_objects,
+        'content_channeling_setting':data.content_channeling_setting,
+        'device_language_setting':data.device_language_setting,
+        'device_country':data.device_country,
+        'device_region':data.device_region,
+        'my_country':data.my_country,
+        'my_city':data.my_city,
+        'entered_pdf_objects':data.entered_pdf_objects,
+        'markdown':data.markdown,
+        'entered_zip_objects':data.entered_zip_objects,
+        'certificate_target': data.certificate_target,
+        'certificate_target_type':data.certificate_target_type,
+        'certificate_target_author':data.certificate_target_author,
+        'ecid_encryption_passwords':data.ecid_encryption_passwords,
+        'purchase_count':data.purchase_count,
+        'total_amounts_to_be_paid':tx.total_amounts_to_be_paid
+      }
+      ipfs_index_object[data.id] = certificate_data
+      ipfs_index_array.push({'id':data.id, 'data':certificate_data})
     }
 
     
@@ -25389,39 +25421,39 @@ class App extends Component {
         });
 
         if(authors_obligation_contracts.length > 0){
-            const obligation_promise_data = { 
-                'id': tx.type, 
-                'identifier':tx.id,
-                'city':this.state.city,
-                'region':this.state.region,
-                'hard_id':'buy-album', 
-                'confirm_transfers':true,
-                'obligation_fulfiller':object_obligation_fulfiller, 
-                'e5':object['e5'],
-                'obligation_fulfiller_address':address_key,
-                'promises':{},
-            }
-            authors_obligation_contracts.forEach(contract => {
-                const configuration = this.state.my_contract_obligation_subscription_data[contract];
+          const obligation_promise_data = { 
+              'id': tx.type, 
+              'identifier':tx.id,
+              'city':this.state.city,
+              'region':this.state.region,
+              'hard_id':'buy-album', 
+              'confirm_transfers':true,
+              'obligation_fulfiller':object_obligation_fulfiller, 
+              'e5':object['e5'],
+              'obligation_fulfiller_address':address_key,
+              'promises':{},
+          }
+          authors_obligation_contracts.forEach(contract => {
+              const configuration = this.state.my_contract_obligation_subscription_data[contract];
 
-                const default_obligation_proportion = configuration['ipfs'].default_audiopost_purchase_obligation
+              const default_obligation_proportion = configuration['ipfs'].default_audiopost_purchase_obligation
 
-                const progressive_proportions = {}
-                final_object_value_transfer_data.forEach((transfer_item, index) => {
-                    const exchange_id = transfer_item['exchange']
-                    const amount = transfer_item['amount']
-                    progressive_proportions[index] = {}
-                    progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
-                });
+              const progressive_proportions = {}
+              final_object_value_transfer_data.forEach((transfer_item, index) => {
+                  const exchange_id = transfer_item['exchange']
+                  const amount = transfer_item['amount']
+                  progressive_proportions[index] = {}
+                  progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+              });
 
-                obligation_promise_data['promises'][contract] = {
-                    'proportions':[default_obligation_proportion],
-                    'transfers':final_object_value_transfer_data,
-                    progressive_proportions
-                }
-            });
-            obligation_object['data'].push(obligation_promise_data)
-        }
+              obligation_promise_data['promises'][contract] = {
+                  'proportions':[default_obligation_proportion],
+                  'transfers':final_object_value_transfer_data,
+                  progressive_proportions
+              }
+          });
+          obligation_object['data'].push(obligation_promise_data)
+      }
     }
     else if(type == this.getLocale()['a2962a']/* 'buy-video' */){
         const object = tx['object']
@@ -25532,6 +25564,78 @@ class App extends Component {
               const configuration = this.state.my_contract_obligation_subscription_data[contract];
 
               const default_obligation_proportion = configuration['ipfs'].default_liquidity_deposit_withdraw_obligation
+
+              const progressive_proportions = {}
+              final_object_value_transfer_data.forEach((transfer_item, index) => {
+                  const exchange_id = transfer_item['exchange']
+                  const amount = transfer_item['amount']
+                  progressive_proportions[index] = {}
+                  progressive_proportions[index][default_obligation_proportion.toString().toLocaleString('fullwide', {useGrouping:false})] = calculate_final_progressive_obligation(configuration['ipfs'].progressive_obligation_proportion, default_obligation_proportion, exchange_id, amount)
+              });
+
+              obligation_promise_data['promises'][contract] = {
+                  'proportions':[default_obligation_proportion],
+                  'transfers':final_object_value_transfer_data,
+                  progressive_proportions
+              }
+          });
+          obligation_object['data'].push(obligation_promise_data)
+      }
+    }
+    else if(type == this.getLocale()['3099']/* 'mint-certificate' */){
+      const object = tx.state.token_item
+      const item = tx.state.selected_class
+      const buy_sell_recipient =  this.state.user_account_id[e5];
+      const buy_sell_amount = item['base_fee_price_multiplier'] == 0 ? tx.state.base_fee_price_multiplier : item['base_fee_price_multiplier']
+      const purchase_count = tx.state.purchase_count
+      const final_object_value_transfer_data = []
+      for(var p=0; p<purchase_count; p++){
+        final_object_value_transfer_data.push({
+          'exchange':object['id'], 
+          'amount':buy_sell_amount, 
+          'swap_tokens_used':{
+            'ids':object['data'][3], 
+            'amounts':object['data'][4], 
+            'depths': object['data'][5]
+          }
+        })
+      }
+
+      const object_obligation_fulfiller = this.state.user_account_id[e5]
+      await this.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
+      const address_key = this.state.author_address_mapping[object['e5']][object_obligation_fulfiller]
+      const author_oblication_contract_object = this.state.obligation_subscriptions[address_key] || {}
+      const authors_obligation_contracts = author_oblication_contract_object['data'] || [];
+
+      final_object_value_transfer_data.forEach(transfer_object => {
+        if(transfer_object['exchange'] == '3'){
+          moving_end = moving_end.plus(transfer_object['amount'])
+        }
+        else if(transfer_object['exchange'] == '5'){
+          moving_spend = moving_spend.plus(transfer_object['amount'])
+        }
+        else if(is_throttled){
+          is_restricted = true
+        }
+      });
+
+      if(authors_obligation_contracts.length > 0){
+          const obligation_promise_data = { 
+            'id': tx.type, 
+            'identifier':tx.id,
+            'city':this.state.city,
+            'region':this.state.region,
+            'hard_id':'mint-certificate', 
+            'confirm_transfers':false,
+            'obligation_fulfiller':object_obligation_fulfiller, 
+            'e5':object['e5'],
+            'obligation_fulfiller_address':address_key,
+            'promises':{},
+          }
+          authors_obligation_contracts.forEach(contract => {
+              const configuration = this.state.my_contract_obligation_subscription_data[contract];
+
+              const default_obligation_proportion = configuration['ipfs'].default_certificate_acquisition_obligation || 0
 
               const progressive_proportions = {}
               final_object_value_transfer_data.forEach((transfer_item, index) => {
@@ -25810,6 +25914,205 @@ class App extends Component {
     const contract_e5_id = object['e5']+':'+object['id']
     const file_name = this.getLocale()['3055wk']/* 'obligation-fulfilment-export: ' */+new Date()+'-'+contract_e5_id+'.json'
     this.download_file({'e':final_object}, file_name)
+  }
+
+  get_mint_limit(token_id, e5){
+    if(this.state.created_token_object_mapping[e5] == null || this.state.created_token_object_mapping[e5][token_id] == null){
+      if(e5 == 'E25') return bigInt('35000000')
+      else if(e5 == 'E35') return bigInt('3500000')
+      else return bigInt('72000000')
+    }else{
+      return this.state.created_token_object_mapping[e5][token_id]['data'][1][0/* <0>default_exchange_amount_buy_limit */]
+    }
+  }
+
+  async start_ticket_purchase_action(object, selected_gas_prices, my_state, total_amounts_to_be_paid){
+    this.prompt_top_notification(this.getLocale()['3055ro']/* 'Running your purchase...' */, 4600);
+    this.lock_run_in_stack(true);
+    await this.emit_ticket_purchase_event(object, my_state, total_amounts_to_be_paid);
+    const e5 = object['e5']
+    const web3_url = this.get_web3_url_from_e5(e5)
+    const web3 = new Web3(web3_url);
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.get_contract_from_e5(e5)
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
+    const me = this
+
+    const now = await contractInstance.methods.f147(2).call((error, result) => {})
+    const run_expiry_time = parseInt(now) + parseInt(60*60*5)
+
+    const v5/* t_limits */ = [100000000000000, run_expiry_time];
+    var network_run_gas_price = await web3.eth.getGasPrice()
+    var run_gas_price = selected_gas_prices.run_gas_price == 0 ? network_run_gas_price : selected_gas_prices.run_gas_price
+    console.log("gasPrice: "+run_gas_price);
+    const gasLimit = this.get_gas_limit(e5) || 3_500_000;
+    const nonce = await web3.eth.getTransactionCount(me.state.accounts[e5].address, 'pending');
+
+    const adds = []
+    const ints = []
+    const strs = []
+
+    const tx = {
+      'object_id': object['id'],
+      'object': object,
+      'state': my_state,
+      'total_amounts_to_be_paid': total_amounts_to_be_paid,
+      'id': Date.now().toString(),
+      'type': this.getLocale()['3099']/* 'mint-certificate' */,
+    }
+    const ipfs_index_data = await this.get_ipfs_index_object(tx, this.getLocale()['3099']/* 'mint-certificate' */, e5, false)
+    const ipfs_index = ipfs_index_data.link
+    const obligation_inclusive = ipfs_index_data.obligation_inclusive
+    const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
+
+    var end_mint_limit = this.get_mint_limit(3, e5)
+    var spend_mint_limit = this.get_mint_limit(5, e5)
+    var transaction_time_limit = (Date.now/1000) - (60*60*6)
+    if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
+      if(this.state.dialog_bottomsheet == true){
+        this.open_dialog_bottomsheet()
+        await this.wait(1200)
+      }
+      this.show_dialog_bottomsheet({ 'moving_end':moving_end, 'moving_spend':moving_spend, 'last_transaction_time':last_transaction_time, 'restricted_accounts':restricted_accounts }, 'throttled_address_transactions')
+      this.lock_run_in_stack(false)
+      return;
+    }
+
+
+    const purchase_recipient = object['id']
+
+    const award_transfer = [/* send awwards */
+      [30000, 7, 0],
+      [purchase_recipient], [23],/* target receivers */
+      [44],/* awward contexts */
+      
+      [], [],/* exchange ids for first target receiver */
+      [],/* amounts for first target receiver */
+      [],/* depths for the first targeted receiver*/
+    ]
+    const string_obj = [[]]
+
+    total_amounts_to_be_paid.forEach(transfer => {
+      const exchange = transfer['id'].toString().toLocaleString('fullwide', {useGrouping:false});
+      const amount = transfer['amount'].toString().toLocaleString('fullwide', {useGrouping:false});
+
+      award_transfer[4].push(exchange)
+      award_transfer[5].push(23)
+      award_transfer[6].push(amount)
+      award_transfer[7].push(0)
+    });
+
+    const award_object = {}
+    const string_data = await this.get_object_ipfs_index(award_object, false, ipfs_index, my_state.id);
+    string_obj[0].push(string_data)
+
+    strs.push(string_obj)
+    adds.push([])
+    ints.push(award_transfer)
+
+
+
+    const account_data_object = [ /* set data */
+      [20000, 13, 0],
+      [], [],/* target objects */
+      [], /* contexts */
+      [] /* int_data */
+    ]
+    const account_data_string_obj = [[]]
+
+    if(obligation_inclusive == true){
+      account_data_object[1].push(32)
+      account_data_object[2].push(23)
+      account_data_object[3].push(35/* context */)
+      account_data_object[4].push(0)
+      account_data_string_obj[0].push(ipfs_index)
+    }
+
+    if(account_data_object[1].length > 0){
+      strs.push(account_data_string_obj)
+      adds.push([])
+      ints.push(account_data_object)
+    }
+
+
+
+
+
+    ///////
+
+
+    const encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
+
+    var run_tx = {
+      nonce,
+      gas: gasLimit,
+      value: '0',
+      to: contractAddress,
+      data: encoded,
+      gasPrice: run_gas_price.toString(),
+    }
+
+    if(this.state.e5s[e5].type == '1559'){
+      const block = await web3.eth.getBlock('pending');
+      run_gas_price = selected_gas_prices.picked_max_priority_per_gas_amount == 0 ?  Number(block.baseFeePerGas) : selected_gas_prices.picked_max_priority_per_gas_amount
+      const maxPriorityFeePerGas = ((run_gas_price == null || run_gas_price == 0) ? 10**9 : run_gas_price);
+      const maxFeePerGas = selected_gas_prices.picked_max_fee_per_gas_amount == 0 ? (maxPriorityFeePerGas * 2) : selected_gas_prices.picked_max_fee_per_gas_amount
+
+      run_tx = {
+        nonce,
+        gas: gasLimit,
+        value: '0',
+        to: contractAddress,
+        data: encoded,
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        type: '0x2', // explicitly mark as EIP-1559
+      }
+    }
+
+    const signed = await web3.eth.accounts.signTransaction(run_tx, me.state.accounts[e5].privateKey)
+    const hash = signed.transactionHash
+    const broadcast = () => {
+      web3.eth.sendSignedTransaction(signed.rawTransaction)
+      .on('transactionHash', (hash) => {
+        console.log('TX broadcasted to mempool:', hash);
+      })
+      .on('receipt', async (receipt) => {
+        me.prompt_top_notification(me.getLocale()['2700']/* 'run complete!' */, 4600)
+        me.lock_run_in_stack(false)
+        me.reload_my_balances()
+        if(me.state.dialog_bottomsheet == true) me.open_dialog_bottomsheet();
+        me.get_wallet_data_for_specific_e5(e5, true)
+
+        setTimeout(async () => {
+          await me.load_accounts_ticket_data(object, me.state.user_account_id[e5])
+        }, (3 * 60 * 1000));
+        
+      })
+      .on('error', (error) => {
+        console.error('Transaction error:', error);
+        me.prompt_top_notification(me.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
+        me.lock_run_in_stack(false)
+        me.get_wallet_data_for_specific_e5(e5, true)
+      });
+    }
+    const get_tx_status = async () => {
+      const [tx, receipt] = await Promise.all([
+        web3.eth.getTransaction(hash).catch(() => null),
+        web3.eth.getTransactionReceipt(hash).catch(() => null),
+      ]);
+
+      if (receipt) return receipt.status ? 'mined_success' : 'mined_reverted';
+      if (tx) return 'in_mempool'; 
+    }
+    broadcast()
+
+    setTimeout(async () => {
+      const status = await get_tx_status()
+      if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
+        broadcast()
+      }
+    }, (1 * 1900));
   }
 
 
@@ -31720,7 +32023,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <MintCertificatePage ref={this.mint_certificate_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_mint_certificate_to_stack={this.add_mint_certificate_to_stack.bind(this)}
-      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_images={this.show_images.bind(this)} load_item_author_and_type={this.load_item_author_and_type.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} show_images={this.show_images.bind(this)} load_item_author_and_type={this.load_item_author_and_type.bind(this)} confirm_purchase_of_tickets={this.confirm_purchase_of_tickets.bind(this)}
       />,
       this.state.mint_certificate_bottomsheet,
       this.open_mint_certificate_bottomsheet,
@@ -31755,14 +32058,20 @@ class App extends Component {
     }
   }
 
-  show_mint_certificate_bottomsheet(item, object){
+  async show_mint_certificate_bottomsheet(item, object){
     this.open_mint_certificate_bottomsheet()
     var me = this;
     setTimeout(function() {
       if(me.mint_certificate_page.current != null){
-      me.mint_certificate_page.current.set_token(item, object)
-    }
+        me.mint_certificate_page.current.set_token(item, object)
+      }
     }, (1 * 1100));
+
+    this.setState({is_loading_mint_certificate_data: true})
+    const roomId = object['e5_id']+item['id']
+    await this.enter_chatroom_if_socket_enabled(roomId)
+    await this.get_objects_from_socket_and_set_in_state([roomId], [], [], 1771762377000);
+    this.setState({is_loading_mint_certificate_data: false})
   }
 
   add_mint_certificate_to_stack(state_obj){
@@ -31817,6 +32126,10 @@ class App extends Component {
     }
     const items = obj[type] || []
     return items.find(e => e['id'] == id)
+  }
+  
+  confirm_purchase_of_tickets(state_obj){
+    this.show_dialog_bottomsheet({'state': state_obj}, 'confirm_purchase_of_tickets')
   }
 
 
@@ -32423,8 +32736,8 @@ class App extends Component {
       const obligation_inclusive = ipfs_index_data.obligation_inclusive
       const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
 
-      var end_mint_limit = this.get_mint_limit(3)
-      var spend_mint_limit = this.get_mint_limit(5)
+      var end_mint_limit = this.get_mint_limit(3, e5)
+      var spend_mint_limit = this.get_mint_limit(5, e5)
       var transaction_time_limit = (Date.now/1000) - (60*60*6)
       if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
         if(this.state.dialog_bottomsheet == true){
@@ -32494,8 +32807,8 @@ class App extends Component {
       const obligation_inclusive = ipfs_index_data.obligation_inclusive
       const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
 
-      var end_mint_limit = this.get_mint_limit(3)
-      var spend_mint_limit = this.get_mint_limit(5)
+      var end_mint_limit = this.get_mint_limit(3, e5)
+      var spend_mint_limit = this.get_mint_limit(5, e5)
       var transaction_time_limit = (Date.now/1000) - (60*60*6)
       if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
         if(this.state.dialog_bottomsheet == true){
@@ -34301,7 +34614,7 @@ class App extends Component {
     this.prompt_top_notification(this.getLocale()['3115d']/* 'Running your Purchase...' */, 4600);
     this.lock_run_in_stack(true);
     this.setState({is_confirming_storage_purchase: true, quick_purchase_transaction_hash: null, quick_purchase_waiting_for_indexer_confirmation: false})
-    const e5 = this.state.selected_e5
+    const e5 = object['e5']
     const web3_url = this.get_selected_web3_url()
     const web3 = new Web3(web3_url);
     const contractArtifact = require('./contract_abis/E5.json');
@@ -34338,8 +34651,8 @@ class App extends Component {
     const obligation_inclusive = ipfs_index_data.obligation_inclusive
     const { moving_end, moving_spend, is_restricted, is_throttled, last_transaction_time, restricted_accounts } = ipfs_index_data
 
-    var end_mint_limit = this.get_mint_limit(3)
-    var spend_mint_limit = this.get_mint_limit(5)
+    var end_mint_limit = this.get_mint_limit(3, e5)
+    var spend_mint_limit = this.get_mint_limit(5, e5)
     var transaction_time_limit = (Date.now/1000) - (60*60*6)
     if(is_restricted == true || moving_end > end_mint_limit * 0.01 || moving_spend > spend_mint_limit * 0.01 || last_transaction_time > transaction_time_limit){
       this.prompt_top_notification(this.getLocale()['3055uf']/* 'You cant make this quick purchase, your address has been throttled.' */, 11000)
@@ -43612,7 +43925,7 @@ class App extends Component {
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 33/* subscription_object */, p1:this.get_valid_post_index(web3, e5)}],
         [web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */:account}]
       ]
-      var all_events = this.state.saved_pre_launch_events[e5] != null && (this.state.created_subscriptions[e5] == null || this.state.created_subscriptions[e5].length < 5 || return_created_object_events_only == true) ? [
+      var all_events = this.state.saved_pre_launch_events[e5] != null && (this.state.created_subscriptions[e5] == null || this.state.created_subscriptions[e5].length < 5 || return_created_object_events_only == true) && true == false ? [
         this.state.saved_pre_launch_events[e5]['created_subscription_events'],
         this.state.saved_pre_launch_events[e5]['my_paid_subscription_events'],
         this.state.saved_pre_launch_events[e5]['created_subscripion_index_events'],
@@ -44139,7 +44452,7 @@ class App extends Component {
         [web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:3}],
         [web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 30/* contract_obj_id */, p1:this.get_valid_post_index(web3, e5)}],
       ]
-      var all_events = this.state.saved_pre_launch_events[e5] != null && (this.state.created_contracts[e5] == null || this.state.created_contracts[e5].length < 5 || return_created_object_events_only == true) ? [
+      var all_events = this.state.saved_pre_launch_events[e5] != null && (this.state.created_contracts[e5] == null || this.state.created_contracts[e5].length < 5 || return_created_object_events_only == true) && true == false ? [
         this.state.saved_pre_launch_events[e5]['created_contract_events'],
         this.state.saved_pre_launch_events[e5]['entered_contract_events'],
         this.state.saved_pre_launch_events[e5]['created_index_events'],
@@ -44913,7 +45226,7 @@ class App extends Component {
     var load_pos = this.state.sliced_object_load_count
 
     for(var i=0; i<my_proposal_ids.length; i++){
-      var proposals_data = all_data[my_proposal_ids[i]] == null ? await this.fetch_objects_data(my_proposal_ids[i], web3, e5, contract_addresses) : all_data[my_proposal_ids[i]]
+      var proposals_data = all_data[my_proposal_ids[i]] == null ? await this.fetch_objects_data(my_proposal_ids[i], web3, e5, contract_addresses)  : all_data[my_proposal_ids[i]]
       var event = my_proposals_events[i]
       
       if(proposals_data == null){
@@ -45115,7 +45428,8 @@ class App extends Component {
 
 
   get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account, prioritized_accounts, specific_items, pre_launch_data={}, extra_data={}) => {
-    var created_token_events = extra_data['created_object_events_mapping'] != null ? extra_data['created_object_events_mapping'][e5] : (pre_launch_data[e5] != null ? pre_launch_data[e5]['exchange_objects_data']['created_object_events'] : await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */}))
+    // var created_token_events = extra_data['created_object_events_mapping'] != null ? extra_data['created_object_events_mapping'][e5] : (pre_launch_data[e5] != null ? pre_launch_data[e5]['exchange_objects_data']['created_object_events'] : await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */}))
+    var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
     if(created_token_events == null) created_token_events = []
 
     if(created_token_events.length == 0){
@@ -45300,7 +45614,10 @@ class App extends Component {
     var load_pos = this.state.sliced_object_load_count
     for(var i=0; i<created_tokens.length; i++){
       const token_id = parseInt(created_tokens[i])
-      var tokens_data = all_data[token_id] == null ? ((token_id == 3 || token_id == 5) ? null : await this.fetch_objects_data(token_id, web3, e5, contract_addresses)) : all_data[token_id]
+      var tokens_data = all_data[token_id] == null ? (
+        (token_id == 3 || token_id == 5) ? null : 
+        await this.fetch_objects_data(token_id, web3, e5, contract_addresses)
+      ) : all_data[token_id]
       var event = i>1 ? created_token_events[i-2]: null
 
       var depth_values = []
@@ -45536,6 +45853,8 @@ class App extends Component {
       }
     }
 
+    await this.wait(600)
+
     var created_tokens_clone = this.structuredClone(this.state.created_tokens)
     created_tokens_clone[e5] = created_token_object_data
 
@@ -45560,7 +45879,7 @@ class App extends Component {
     var end_tokens_clone = structuredClone(this.state.end_tokens)
     end_tokens_clone[e5] = end_tokens
 
-    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, /* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone, created_certificates: created_certificates_clone, created_crossexchanges: created_crossexchanges_clone})
+    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_thumbnail_directory: token_thumbnail_directory_clone, end_tokens: end_tokens_clone, created_certificates: created_certificates_clone, created_crossexchanges: created_crossexchanges_clone})
 
     await this.wait(350)
     this.resolve_token_name_details()
@@ -45907,7 +46226,10 @@ class App extends Component {
       
       if(depths_used.length > 0){
         await this.load_my_non_fungible_token_data(object, depths_used, account, depth_use_times)
-      } 
+      }
+      else if(this.is_certificate_ticket_issuer(object)){
+        await this.load_accounts_ticket_data(object, account)
+      }
       if(account == object['author']) await this.fetch_certificate_state_balances(object);
 
     }else{
@@ -45944,7 +46266,107 @@ class App extends Component {
 
   }
 
+  is_certificate_ticket_issuer(object){
+    const certificate_type = object['ipfs'].get_certificate_type_tags_option != null ? this.get_selected_item2(object['ipfs'].get_certificate_type_tags_option, 'e') : 1
+    return certificate_type == 2
+  }
+
+  async load_accounts_ticket_data(object, account){
+    console.log('load_accounts_ticket_data','beginning to load accounts ticket data.')
+    this.setState({is_loading_accounts_ticket_data: true})
+    const e5 = object['e5']
+    const id = object['id']
+    const e5_id = object['e5_id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const contract_addresses = this.state.addresses[e5]
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = contract_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const event_params = [
+      [web3, H52contractInstance, 'e1', e5, {p2/* sender */: account.toString(), p3/* receiver */:id.toString()}],
+      [web3, H52contractInstance, 'e5', e5, {p1/* awward_sender */:account.toString(), p3/* awward_context */: 44, p2/* awward_receiver */: id.toString()}]
+    ]
+    const { all_events } = await this.load_multiple_events_from_nitro(event_params)
+    console.log('load_accounts_ticket_data', 'loaded all transfer events for account', all_events)
+    const all_transfers = all_events[0].reverse()
+    const all_awards = all_events[1].reverse()
+
+
+    var loaded_target = 0
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(all_awards.slice(0, this.state.max_post_bulk_load_count), 0, 'p4'/* metadata */)
+      loaded_target = all_awards.slice(0, this.state.max_post_bulk_load_count).length - 1;
+    }
+    console.log('load_accounts_ticket_data', 'done fetching initial batch of cids from nitro')
+
+    const verify_all_transfers_exist = (total_amounts_to_be_paid, award_event) => {
+      const award_block = award_event.returnValues.p6/* block_number */
+      const focused_transfer_events = all_transfers.filter((ev) => {
+        return ev.returnValues.p6/* block_number */ == award_block
+      });
+      if(focused_transfer_events.length == 0) return false;
+      if(total_amounts_to_be_paid == null) return false;
+      var all_exist = true;
+      total_amounts_to_be_paid.forEach(pending_item => {
+        const pending_exchange = pending_item['id']
+        const pending_amount = pending_item['amount']
+        const valid_event = focused_transfer_events.find((event_item) => {
+          return (
+            event_item.returnValues.p1/* exchange */ == pending_exchange &&
+            event_item.returnValues.p4/* amount */ == pending_amount
+          )
+        });
+        if(valid_event == null) all_exist = false;
+      });
+
+      return all_exist
+    }
+
+    for(var i=0; i<all_awards.length; i++){
+      const event = all_awards[i]
+      const object_data = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
+      console.log('load_accounts_ticket_data','loaded object_data ', object_data)
+      if(object_data != null){
+        const total_amounts_to_be_paid = object_data['total_amounts_to_be_paid']
+        const owner_of_certificate = all_awards[i].returnValues.p1/* awward_sender */
+        const data_object = {
+          'ipfs':object_data,
+          'event':event,
+          'account':owner_of_certificate,
+          'all_transfers_exist':verify_all_transfers_exist(total_amounts_to_be_paid, event),
+          'time': parseInt(event.returnValues.p5/* timestamp */)
+        }
+        console.log('load_accounts_ticket_data','loaded ticket: ', data_object)
+        const clone = structuredClone(this.state.non_fungible_token_data)
+        if(clone[e5_id] == null){
+          clone[e5_id] = {}
+        }
+        if(clone[e5_id][e5+':'+account] == null){
+          clone[e5_id][e5+':'+account] = {}
+        }
+        if(event.returnValues.p4 != null && total_amounts_to_be_paid != null) clone[e5_id][e5+':'+account][event.returnValues.p4] = data_object
+        this.setState({non_fungible_token_data: clone})
+      }
+
+      if(i == loaded_target && i+1 >= all_awards.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(all_awards.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
+      }
+    }
+    this.setState({is_loading_accounts_ticket_data: false})
+  }
+
   async load_accounts_non_fungible_token_data(object, account){
+    if(this.is_certificate_ticket_issuer(object) == true){
+      return await this.load_accounts_ticket_data(object, account);
+    }
     const e5 = object['e5']
     const id = object['id']
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
@@ -46003,7 +46425,7 @@ class App extends Component {
   }
 
   load_accounts_exchange_interactions_data = async (account_id, e5, pre_launch_data) => {
-    if(account_id < 1000) return [];
+    if(account_id < 1000) return { exchanges_to_load_first:[], exchange_depth_data:{} };
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
     const H52_address = this.state.addresses[e5][6];
@@ -55145,7 +55567,7 @@ class App extends Component {
     var e5_id = split_cid_array[0]
     var nitro_cid = split_cid_array[1]
 
-    
+    if(nitro_cid == 'e1479')return;
     var nitro_url = this.get_nitro_link_from_e5_id(e5_id)
     if(nitro_url == null) return;
     await this.check_and_fetch_object_marco_if_non_existant(e5_id, nitro_url)
@@ -55183,7 +55605,7 @@ class App extends Component {
         return typeof value === 'string' || value instanceof String;
       }
       var return_data = isString(decrypted_data) ? JSON.parse(decrypted_data) : decrypted_data;
-      // console.log('datas', 'hash object return_data', return_data)
+      console.log('datas', 'hash object return_data', return_data)
       return return_data
     }
     catch(e){
@@ -63023,10 +63445,10 @@ class App extends Component {
     }
     catch(e){
       // console.log('apppage', 'request: ', request, e)
-      if(attempts < 3){
-        await this.wait(5000)
-        return await this.load_nitro_directory_details(link, attempts+1)
-      }
+      // if(attempts < 3){
+      //   await this.wait(5000)
+      //   return await this.load_nitro_directory_details(link, attempts+1)
+      // }
     }
   }
 
@@ -63043,12 +63465,12 @@ class App extends Component {
       return;
     }
 
-    const nitro_link_directory = await this.load_nitro_directory_details(link)
-    const endpoint = nitro_link_directory['marco']
-    var request = `${link}/${endpoint}`
-
     try{
+      const nitro_link_directory = await this.load_nitro_directory_details(link)
+      const endpoint = nitro_link_directory['marco']
+      var request = `${link}/${endpoint}`
       const response = await fetch(request);
+
       if (!response.ok) {
         console.log(response)
         throw new Error(`Failed to retrieve nitro data. Status: ${response}`);
@@ -64099,6 +64521,9 @@ class App extends Component {
           }
           else if(message.type == 'comment_message'){
             me.process_new_comment_message(message, object_hash)
+          }
+          else if(message.type == 'ticket_purchase'){
+            me.process_new_ticket_message(message, object_hash)
           }
         }
         if(message.type == 'call-message'){
@@ -65521,6 +65946,29 @@ class App extends Component {
     await this.wait(3000)
 
     this.process_new_received_assessment(assessment_message_object.message, assessment_message_object.object_hash)
+  }
+
+  async emit_ticket_purchase_event(object, my_state, total_amounts_to_be_paid){    
+    const roomId = object['e5_id']+my_state.selected_class['id']
+    const ticket_message_object = await this.prepare_ticket_purchase_record_message(object, my_state, total_amounts_to_be_paid)
+    
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(ticket_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const target = 'ticket_purchase'
+    const broadcasat_object = {
+      roomId: roomId, 
+      message: ticket_message_object.message, 
+      target: roomId, 
+      object_hash: ticket_message_object.object_hash
+    }
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
+    await this.wait(3000)
+
+    this.process_new_ticket_message(ticket_message_object.message, ticket_message_object.object_hash)
   }
   
 
@@ -68541,6 +68989,66 @@ class App extends Component {
     const context = 0
     const message = {
       type: 'certificate_assessment',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_ticket_purchase_record_message(object, my_state, total_amounts_to_be_paid){
+    const e5_to_use = object['e5']
+    const class_id = my_state.selected_class['id']
+    const message_obj = {
+      'certificate_object_id':object['e5_id'],
+      'sender_account': this.state.user_account_id[e5_to_use],
+      'sender_account_e5': e5_to_use,
+      'address':this.state.accounts[e5_to_use].address,
+      'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+      'time':Date.now(),
+      'identifier':this.make_number_id(12),
+      'class_id':class_id,
+      'purchase_count':my_state.purchase_count
+    }
+
+    const tags = [
+      object['e5_id']+class_id, 
+      this.state.user_account_id[e5_to_use]
+    ]
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(e5_to_use))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[e5_to_use]
+    const e5 = e5_to_use
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+
+    const data = JSON.stringify(message_obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+
+    const context = 0
+    const message = {
+      type: 'ticket_purchase',
       message_identifier: this.make_number_id(12),
       author: author,
       author_address: this.state.accounts[e5].address,
@@ -71701,6 +72209,37 @@ class App extends Component {
     this.setState({certificate_assessments: clone})
   }
 
+  async process_new_ticket_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.accounts[this.state.selected_e5].address == message['author']
+
+    /* 
+      const message_obj = {
+        'certificate_object_id':object['e5_id'],
+        'sender_account': this.state.user_account_id[e5_to_use],
+        'sender_account_e5': e5_to_use,
+        'address':this.state.accounts[e5_to_use].address,
+        'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+        'time':Date.now(),
+        'identifier':this.make_number_id(12),
+        'class_id':class_id,
+        'purchase_count':state.purchase_count
+      }
+    */
+
+    const ipfs_data = JSON.parse(message.data)
+    const internal_identifier = ipfs_data.certificate_object_id + ipfs_data.class_id
+
+    const clone = structuredClone(this.state.logged_purchases)
+    if(clone[internal_identifier] == null){
+      clone[internal_identifier] = []
+    }
+    const existing = clone[internal_identifier].find(e => e.identifier == ipfs_data.identifier)
+    if(existing == null) clone[internal_identifier].push(ipfs_data)
+
+    this.setState({logged_purchases:clone})
+  }
+
   
 
 
@@ -72360,6 +72899,9 @@ class App extends Component {
     }
     else if(object_data['type'] == 'certificate_assessment'){
       await this.process_new_received_assessment(object_data, object_hash)
+    }
+    else if(object_data['type'] == 'ticket_purchase'){
+      await this.process_new_ticket_message(object_data, object_hash)
     }
   }
 

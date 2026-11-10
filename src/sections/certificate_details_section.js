@@ -60,7 +60,23 @@ class CertificateDetailsSection extends Component {
     };
 
     reset_tags(){
-        this.setState({navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags()})
+        if(this.props.selected_certificate_item != null){
+            var object = this.get_item_in_array(this.get_certificate_items(), this.props.selected_certificate_item);
+            if(object != null){
+                if(this.is_certificate_ticket_issuer(object)){
+                    this.setState({
+                        navigate_view_post_list_detail_tags_object: this.get_navigate_view_ticket_list_detail_tags_object_tags(),
+                        get_my_account_or_another_accounts_certificate_data: this.get_my_account_or_another_accounts_ticket_data(),
+                    })
+                }else{
+                    this.setState({navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), get_my_account_or_another_accounts_certificate_data:this.get_my_account_or_another_accounts_certificate_data()})
+                }
+            }else{
+                this.setState({navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), get_my_account_or_another_accounts_certificate_data:this.get_my_account_or_another_accounts_certificate_data()})
+            }
+        }else{
+            this.setState({navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), get_my_account_or_another_accounts_certificate_data:this.get_my_account_or_another_accounts_certificate_data()})
+        }
     }
 
     componentDidMount() {
@@ -113,6 +129,41 @@ class CertificateDetailsSection extends Component {
             },
             'e':[
                 ['xor','',0], ['e',this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */, this.props.app_state.loc['3098bn']/* 'other-account 👤' */, this.props.app_state.loc['3098bs']/* 'all-certificates ∞' */], [1]
+            ],
+        };
+    }
+
+
+    get_navigate_view_ticket_list_detail_tags_object_tags(){
+        var obj = {
+          'i':{
+              active:'e', 
+          },
+          'e':[
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['3098t']/* 'classes ✧' */, 'e.'+this.props.app_state.loc['3098w']/* 'acquired' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
+          ],
+        }
+
+        obj[this.props.app_state.loc['2119']/* events */] = [
+            ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2338']/* 'exchange-transfers' */, this.props.app_state.loc['2339']/* 'updated-balances' */, this.props.app_state.loc['2340']/* 'updated-exchange-ratios' */, this.props.app_state.loc['2341']/* 'modify-exchange' */,this.props.app_state.loc['2342']/* 'freeze-unfreeze' */], [1], [1]
+        ]
+        obj[this.props.app_state.loc['2120']/* moderator-events */] = [
+            ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
+        ]
+        obj[this.props.app_state.loc['3098w']/* 'acquired' */] = [
+            ['xor', 'e', 1], [this.props.app_state.loc['3098w']/* 'acquired' */, this.props.app_state.loc['3098z']/* 'full 💎' */], [1], [1]
+        ]
+
+        return obj
+    }
+
+    get_my_account_or_another_accounts_ticket_data(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['3098bm']/* 'my-account 🙋‍♂️' */, this.props.app_state.loc['3098bn']/* 'other-account 👤' */], [1]
             ],
         };
     }
@@ -395,6 +446,8 @@ class CertificateDetailsSection extends Component {
                         {this.render_detail_item('3', {'title':''+this.get_senders_name(object['author'], object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
+                    {this.render_object_type(object)}
+                    <div style={{height: 10}}/>
                     
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
@@ -445,6 +498,19 @@ class CertificateDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
+            </div>
+        )
+    }
+
+    render_object_type(object){
+        const is_ticket_certificate = this.is_certificate_ticket_issuer(object);
+        const title = this.props.app_state.loc['3098bt']/* 'Certificate Type.' */
+        const details = is_ticket_certificate == true ? 
+        this.props.app_state.loc['3098bu']/* ''🎟️ Ticket Certificate' */ : this.props.app_state.loc['3098bv']/* '📜 Ordinary Certificate.' */
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':title, 'details':details})}
             </div>
         )
     }
@@ -1366,8 +1432,11 @@ class CertificateDetailsSection extends Component {
         )
     }
     
-    view_class_details(item, object){
+    async view_class_details(item, object){
         this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_certificate_class_details')
+        const roomId = object['e5_id']+item['id']
+        this.props.enter_chatroom_if_socket_enabled(roomId)
+        this.props.get_objects_from_socket_and_set_in_state([roomId], [], [], 1771762377000);
     }
 
     construct_depth_item(data){
@@ -1500,10 +1569,10 @@ class CertificateDetailsSection extends Component {
 
     is_certificate_publicly_searchable(object){
         if(object['ipfs'].get_object_private_or_public_certificate_tags_option == null) return true;
-        const selected_item = this.get_selected_item2(this.state.get_object_private_or_public_certificate_tags_option, 'e')
+        const selected_item = this.get_selected_item2(object['ipfs'].get_object_private_or_public_certificate_tags_option, 'e')
         const is_public = selected_item == 1;
         const my_account = this.props.app_state.user_account_id[object['e5']]
-        if(!is_public && (object['moderators'].includes(my_account) || object['author'] == my_account)){
+        if(is_public || (object['moderators'].includes(my_account) || object['author'] == my_account)){
             return true;
         }
         else return false;
@@ -1588,11 +1657,23 @@ class CertificateDetailsSection extends Component {
     }
 
     render_acquired_classes_top_title(object){
+        if(this.is_certificate_ticket_issuer(object)){
+            return(
+                <div style={{padding:'5px 5px 5px 5px'}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['3098bw']/* 'Acquired Tickets.' */, 'size':'l'})}
+                </div>
+            )
+        }
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['3098x']/* 'Acquired Full Certificates' */, 'size':'l'})}
             </div>
         )
+    }
+
+    is_certificate_ticket_issuer(object){
+        const certificate_type = object['ipfs'].get_certificate_type_tags_option != null ? this.get_selected_item2(object['ipfs'].get_certificate_type_tags_option, 'e') : 1
+        return certificate_type == 2
     }
 
     render_acquired_classes(object){
@@ -1603,10 +1684,24 @@ class CertificateDetailsSection extends Component {
         }
         const unfiltered_items = [].concat(this.get_acquired_tokens(object))
 
-        const items = unfiltered_items.filter((item) => {
+        const items = this.is_certificate_ticket_issuer(object) == false ? unfiltered_items.filter((item) => {
             const t = this.state.typed_search_acquired_tokens.trim().toLowerCase()
             const depth_data = item['depth_data']
             const model_config = this.get_model_config(depth_data, object, item['time'])
+            const class_name = model_config['class_name']
+            const ipfs = item['ipfs']
+            const markdown = ipfs['markdown']
+            const class_markdown = model_config['class_markdown']
+            return (
+                t == '' ||
+                class_name.toLowerCase().startsWith(t) ||
+                markdown.toLowerCase().includes(t) ||
+                class_markdown.toLowerCase().includes(t)
+            )
+        }) : 
+        unfiltered_items.filter((item) => {
+            const t = this.state.typed_search_acquired_tokens.trim().toLowerCase()
+            const model_config = this.get_model_ticket_config(object, item)
             const class_name = model_config['class_name']
             const ipfs = item['ipfs']
             const markdown = ipfs['markdown']
@@ -1640,7 +1735,17 @@ class CertificateDetailsSection extends Component {
                     </div>
                 )
             }
-            return this.render_empty_views(3)
+
+            if(this.props.app_state.is_loading_accounts_ticket_data == true){
+                return(
+                    <div>
+                        {this.render_small_skeleton_object()}
+                        <div style={{height:5}}/>
+                        {this.render_small_skeleton_object()}
+                    </div>
+                )
+            }
+            return this.render_empty_views(2)
         }
         else{
             return(
@@ -1662,13 +1767,39 @@ class CertificateDetailsSection extends Component {
     get_acquired_tokens(object){
         const non_fungible_token_data = this.props.app_state.non_fungible_token_data[object['e5_id']] || {}
         const selected_item = this.get_selected_item(this.state.get_my_account_or_another_accounts_certificate_data, 'e')
+
         const my_account = (selected_item == this.props.app_state.loc['3098bn']/* 'other-account 👤' */ || selected_item == this.props.app_state.loc['3098bs']/* 'all-certificates ∞' */) ? this.state.searched_account : this.props.app_state.user_account_id[object['e5']]
+
         const account_data = non_fungible_token_data[object['e5']+':'+my_account] || {}
-        // console.log('get_acquired_tokens', this.props.app_state.non_fungible_token_data)
         return this.sortByAttributeDescending(Object.values(account_data), 'time')
     }
 
+    render_aquired_ticket_item(item, object){
+        const ipfs = item['ipfs']
+        const event = item['event']
+        const time = item['time']
+        const model_config = this.get_model_ticket_config(object, item)
+        const class_name = model_config['class_name']
+        const maximum_supply = model_config['maximum_supply'];
+        const title = class_name
+        const details = this.props.app_state.loc['3098y']/* 'Minted on $' */.replace('$', (new Date(time * 1000).toLocaleString()))
+        const op = model_config['archived'] == true ? 0.6 : 1.0
+
+        return(
+            <div style={{opacity: op}} onClick={() => this.view_acquired_ticket_item_details(item, object)}>
+                {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
+            </div>
+        )
+    }
+
+    async view_acquired_ticket_item_details(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_acquired_ticket_item_details')
+    }
+
     render_acquired_class_item(item, object){
+        if(this.is_certificate_ticket_issuer(object) == true){
+            return this.render_aquired_ticket_item(item, object)
+        }
         const depth = item['depth']
         const depth_data = item['depth_data']
         const ipfs = item['ipfs']
@@ -1689,6 +1820,17 @@ class CertificateDetailsSection extends Component {
                 {this.render_detail_item('3', {'title':title, 'details':details, 'size':'l'})}
             </div>
         )
+    }
+
+    get_model_ticket_config(object, item){
+        const certificate_models = object['ipfs'].certificate_models
+        const valid_models = []
+        Object.keys(certificate_models).forEach(model => {
+          if(certificate_models[model]['id'] == item['ipfs']['class']['id']){
+            valid_models.push(certificate_models[model])
+          }
+        });
+        return this.filter_valid_models_by_acquired_time(valid_models, item['time'])
     }
 
     get_model_config(depth_data, object, time){
