@@ -105,7 +105,7 @@ function capitalizeFirstLetter(val) {
 class StorefrontDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], visible_hidden_messages:[], selected_rating_group_filter:{}, bag_id_search_text:'', selected_price_tag:{}, selected_token_tag:{}, startIndex: 100000
+        selected: 0, navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[], visible_hidden_messages:[], selected_rating_group_filter:{}, bag_id_search_text:'', selected_price_tag:{}, selected_token_tag:{}, startIndex: 100000, refund_search_text:''
     };
 
     reset_tags(){
@@ -140,7 +140,7 @@ class StorefrontDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['2642cn']/* 'variants 🎒' */, this.props.app_state.loc['2030']/* 'activity' */,this.props.app_state.loc['2695d']/* 'catalogue' */, this.props.app_state.loc['2695j']/* 'similar 𐙚' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */, this.props.app_state.loc['2642cw']/* 'purchase-requests 📝' */, 'e.'+this.props.app_state.loc['2642br']/* 'e.indexer-orders' */, this.props.app_state.loc['2642cy']/* 'bag-receipts' */, this.props.app_state.loc['2642cl']/* 'accessibles 📂' */, this.props.app_state.loc['2642dc']/* 'operation-certificates 📜' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */, this.props.app_state.loc['2642cn']/* 'variants 🎒' */, this.props.app_state.loc['2030']/* 'activity' */,this.props.app_state.loc['2695d']/* 'catalogue' *//* , this.props.app_state.loc['2695j'] *//* 'similar 𐙚' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */, this.props.app_state.loc['2642cw']/* 'purchase-requests 📝' */, 'e.'+this.props.app_state.loc['2642br']/* 'e.indexer-orders' */, 'e.'+this.props.app_state.loc['2642dd']/* 'refunds' */, this.props.app_state.loc['2642cy']/* 'bag-receipts' */, this.props.app_state.loc['2642cl']/* 'accessibles 📂' */, this.props.app_state.loc['2642dc']/* 'operation-certificates 📜' */],[1]
           ],
           'direct-purchases':[
               ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
@@ -153,6 +153,10 @@ class StorefrontDetailsSection extends Component {
 
         obj[this.props.app_state.loc['2642br']/* 'indexer-orders' */] = [
             ['xor','e',1], [this.props.app_state.loc['2642br']/* 'indexer-orders' */,this.props.app_state.loc['2695g']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
+        ]
+
+        obj[this.props.app_state.loc['2642dd']/* 'refunds' */] = [
+            ['xor','e',1], [this.props.app_state.loc['2642dd']/* 'refunds' */,this.props.app_state.loc['2695g']/* 'all' */, this.props.app_state.loc['2642di']/* 'pending ⏳' */, this.props.app_state.loc['2642dj']/* 'approved 🟢' */, this.props.app_state.loc['2642dl']/* 'finalized ✅' */], [1],[1]
         ]
 
         return obj
@@ -220,6 +224,9 @@ class StorefrontDetailsSection extends Component {
         }
         else if(selected_item == this.props.app_state.loc['2642dc']/* 'operation-certificates 📜' */){
             this.props.get_objects_showcased_certificates(object)
+        }
+        else if(active == this.props.app_state.loc['2642dd']/* 'refunds' */){
+            this.props.fetch_storefront_refund_requests(object)
         }
     }
 
@@ -374,6 +381,9 @@ class StorefrontDetailsSection extends Component {
         }
         else if(selected_item == this.props.app_state.loc['2642dc']/* 'operation-certificates 📜' */){
             return this.render_object_certificates_section(object)
+        }
+        else if(this.state.navigate_view_storefront_list_detail_tags_object['i'].active == this.props.app_state.loc['2642dd']/* 'refunds' */){
+            return this.render_object_refunds_section(object)
         }
     }
 
@@ -4327,6 +4337,147 @@ class StorefrontDetailsSection extends Component {
         this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_storefront_bag_receipt_item')
     }
 
+
+
+
+
+
+
+
+
+
+
+
+    render_object_refunds_section(object){
+        var he = this.props.height-50
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_storefront_refunds_top_title(object)}
+                    <div style={{margin:'5px 10px 0px 10px'}}>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['2642dm']/* 'Account Id...' */} when_text_input_field_changed={this.when_refund_account_search_text_input_field_changed.bind(this)} text={this.state.refund_search_text} theme={this.props.theme}/>
+                    </div>
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_storefront_refund_requests(object)}
+                </div>
+            </div>
+        )
+    }
+
+    when_refund_account_search_text_input_field_changed(text){
+        this.setState({refund_search_text: text})
+    }
+
+    render_storefront_refunds_top_title(object){
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':'✦ '+object['id'], 'details':this.props.app_state.loc['2642de']/* 'Order Refund Requests.' */, 'size':'l'})} 
+            </div>
+        )
+    }
+
+    render_storefront_refund_requests(object){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.get_storefront_refund_requests(object))
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    {this.props.app_state.is_loading_storefront_refund_requests[object['e5_id']] == null ? this.render_small_skeleton_object() : this.render_small_empty_object()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    {this.render_storefront_refund_request_item(item, object)}
+                                </div>
+                            </li> 
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_storefront_refund_requests(object){
+        const request_data = this.props.app_state.storefront_refund_requests[object['e5_id']] || {}
+        const selected_item = this.get_selected_item(this.state.navigate_view_storefront_list_detail_tags_object, this.props.app_state.loc['2642dd']/* 'refunds' */);
+
+        let all_requests = Object.values(request_data)
+        console.log('get_storefront_refund_requests', 'all refund requests', all_requests)
+        const account = this.props.app_state.user_account_id[object['e5']]
+        if(object['author'] != account){
+            //sender is not author, filter for authors entries.
+            all_requests = all_requests.filter((request_item) => {
+                return request_item['sender_account'] == this.props.app_state.user_account_id[request_item['sender_account_e5']]
+            })
+        }
+        const filter_by_searched_text = (item) => {
+            return (
+                this.state.refund_search_text == '' ||
+                this.state.refund_search_text == item['sender_account'] ||
+                this.state.refund_search_text == item['alias']
+            )
+        }
+        if(selected_item == this.props.app_state.loc['2695g']/* 'all' */){
+            return all_requests.filter(filter_by_searched_text)
+        }
+        else if(selected_item == this.props.app_state.loc['2642di']/* 'pending ⏳' */){
+            return all_requests.filter((item) => {
+                return this.props.app_state.storefront_refund_approvals[object['e5_id']]?.[item['purchase_identifier']] == null;
+            }).filter(filter_by_searched_text)
+        }
+        else if(selected_item == this.props.app_state.loc['2642dj']/* 'approved 🟢' */){
+            return all_requests.filter((item) => {
+                return this.props.app_state.storefront_refund_approvals[object['e5_id']]?.[item['purchase_identifier']] != null;
+            }).filter(filter_by_searched_text)
+        }
+        else if(selected_item == this.props.app_state.loc['2642dl']/* 'finalized ✅' */){
+            return all_requests.filter((item) => {
+                return this.props.app_state.storefront_refund_finalizations[object['e5_id']]?.[item['purchase_identifier']] != null;
+            }).filter(filter_by_searched_text)
+        }
+
+
+    }
+
+    render_storefront_refund_request_item(item, object){
+        const alias_or_account_id = item['alias'] == null ? number_with_commas(item['sender_account']) : item['alias'] + ' • ' +item['sender_account']
+        const title = this.props.app_state.loc['2642df']/* From $ */.replace('$', alias_or_account_id)
+        const is_refund_request_approved = this.props.app_state.storefront_refund_approvals[object['e5_id']]?.[item['purchase_identifier']] != null
+        let footer = is_refund_request_approved == true ? this.props.app_state.loc['2642dg']/* '🟢 Refund Request Approved.' */ : this.props.app_state.loc['2642dh']/* '⚠️ Refund Request Pending.' */
+
+        const is_refund_request_finalized = this.props.app_state.storefront_refund_finalizations[object['e5_id']]?.[item['purchase_identifier']] != null
+        if(is_refund_request_finalized == true){
+            footer = this.props.app_state.loc['2642dk']/* '✅ Refund Request Fulfilled.' */
+        }
+        return(
+            <div onClick={() => this.view_storefront_refund_request_item(item, object)}>
+                {this.render_detail_item('3', {'title':title, 'details':(new Date(item['time']).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (parseInt(item['time']/1000)))+this.props.app_state.loc['1698a']/* ' ago' */, 'size':'l', 'footer': footer})}
+            </div>
+        );
+    }
+
+    view_storefront_refund_request_item(item, object){
+        this.props.show_dialog_bottomsheet({'item':item, 'object':object}, 'view_storefront_refund_request_item')
+    }
 
 
 

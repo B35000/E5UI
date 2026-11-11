@@ -60,7 +60,7 @@ function start_and_end(str) {
 class DirectPurchasePage extends Component {
     
     state = {
-        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1093']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5, custom_specifications:'', purchase_option_tags_array:[], pins:[], get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(), get_mint_certificate_tags_object:this.get_mint_certificate_tags_object()
+        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1499']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5, custom_specifications:'', purchase_option_tags_array:[], pins:[], get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(), get_mint_certificate_tags_object:this.get_mint_certificate_tags_object()
     };
 
     get_direct_purchase_tags_object(){
@@ -1199,7 +1199,7 @@ class DirectPurchasePage extends Component {
     set_object(item){
         if(this.state.storefront_item['id'] != item['id']){
             this.setState({
-                selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1093']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null
+                selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1499']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null
             })
         }
         this.setState({storefront_item: item, e5: item['e5']})

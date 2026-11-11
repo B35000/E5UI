@@ -6349,6 +6349,7 @@ class home_page extends Component {
         await this.props.get_tag_price_data_for_object(object)
         await this.props.get_objects_showcased_certificates(object)
         await this.props.get_object_censored_keywords_and_accounts(object)
+        await this.props.fetch_storefront_refund_requests(object)
 
         this.load_storefront_direct_purchase_certificates_if_any(object)
         
@@ -7088,7 +7089,7 @@ class home_page extends Component {
                 get_ether_blockexplorer_link={this.props.get_ether_blockexplorer_link.bind(this)}
                 auto_stack_subscription={this.auto_stack_subscription.bind(this)} perform_translation_of_specific_object={this.props.perform_translation_of_specific_object.bind(this)} broadcast_my_location_under_specific_pretense={this.props.broadcast_my_location_under_specific_pretense.bind(this)}
 
-                load_contract_obligation_fulfilment_info={this.props.load_contract_obligation_fulfilment_info.bind(this)} enter_chatroom_if_socket_enabled={this.props.enter_chatroom_if_socket_enabled.bind(this)}
+                load_contract_obligation_fulfilment_info={this.props.load_contract_obligation_fulfilment_info.bind(this)} enter_chatroom_if_socket_enabled={this.props.enter_chatroom_if_socket_enabled.bind(this)} fetch_storefront_refund_requests={this.props.fetch_storefront_refund_requests.bind(this)}
 
                 />
             </div>

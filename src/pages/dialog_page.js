@@ -814,6 +814,9 @@ class DialogPage extends Component {
         else if(option == 'view_acquired_ticket_item_details'){
             return this.render_view_acquired_ticket_item_ui()
         }
+        else if(option == 'view_storefront_refund_request_item'){
+            return this.view_storefront_refund_request_item()
+        }
     }
 
 
@@ -2676,6 +2679,7 @@ return data['data']
 
                     {this.render_purchase_order_status_if_any(item, object)}
                     {this.render_purchase_order_status_options_if_storefront_owner(item, object, sender_type)}
+                    {sender_type == 'storefront_client' && this.render_refund_direct_purchase_order(item, object)}
                 </div>
                 {this.render_clear_purchase_button(item, object, sender_type)}
             </div>
@@ -3050,6 +3054,25 @@ return data['data']
                 </SkeletonTheme>
             </div>
         )
+    }
+
+    render_refund_direct_purchase_order(item, object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055xn']/* 'Request Refund.' */, 'details':this.props.app_state.loc['3055xo']/* 'Request a refund for your order or direct purchase.' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.request_refund_for_order(item, object) }>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055xp']/* 'Request' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    request_refund_for_order(item, object){
+        const purchase_identifier = item['purchase_identifier']
+        this.props.open_dialog_bottomsheet()
+        this.props.show_request_refund_bottomsheet(item, object, purchase_identifier, 'order', null, null, this.render_storefront_item(object))
     }
 
 
@@ -10990,6 +11013,7 @@ return data['data']
                 {this.render_purchase_options_if_any2(item)}
                 {this.render_variant_final_prices(variant_in_store, item, object)}
                 {this.render_variant_image_if_any(variant_in_store)}
+                {this.render_refund_bag_order(item, object, storefront, variant_in_store)}
             </div>
         )
     }
@@ -11125,6 +11149,30 @@ return data['data']
                 </div>
             </div>
         )
+    }
+
+    render_refund_bag_order(item, bag, storefront, variant_in_store){
+        if(this.has_sender_already_paid_previously(bag) == false) return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055xn']/* 'Request Refund.' */, 'details':this.props.app_state.loc['3055xq']/* 'Request a refund for your bag order.' */})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.request_refund_for_bag_order(item, bag, storefront, variant_in_store) }>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3055xp']/* 'Request' */, 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    has_sender_already_paid_previously(object){
+        return this.props.app_state.bag_payment_confirmation_data[object['e5_id']] == 'confirmed'
+    }
+
+    request_refund_for_bag_order(item, bag, storefront, variant_in_store){
+        const purchase_identifier = bag['id']+item['storefront_item_id']
+        this.props.open_dialog_bottomsheet()
+        this.props.show_request_refund_bottomsheet(item, storefront, purchase_identifier, 'bag', bag, variant_in_store, this.render_storefront_item(storefront))
     }
 
 
@@ -20922,6 +20970,282 @@ return data['data']
         });
         return this.filter_valid_models_by_acquired_time(valid_models, item['time'])
     }
+
+
+
+
+
+
+
+
+
+
+    view_storefront_refund_request_item(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_storefront_refund_request_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_storefront_refund_request_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_storefront_refund_request_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_storefront_refund_request_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_storefront_refund_request_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_storefront_refund_request_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_storefront_refund_request_data(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        const composition_type = object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(object['ipfs'].composition_type, 'e')
+
+        const price_array = item['price_array']
+        const variant_in_store = item['variant_in_store']
+        const sender_account = item['sender_account']
+        const sender_account_e5 = item['sender_account_e5']
+        const address = item['address']
+        const alias = item['alias']
+        const time = item['time']
+        const type = item['type']
+        const order = item['order']
+
+        const render_refund_details = () => {
+            const alias_or_account_id = alias == null ? number_with_commas(sender_account) : alias + ' • ' +sender_account
+            const title = this.props.app_state.loc['2642df']/* From $ */.replace('$', alias_or_account_id)
+
+            const is_refund_request_approved = this.props.app_state.storefront_refund_approvals[object['e5_id']]?.[item['purchase_identifier']] != null
+            let approved_message = is_refund_request_approved == true ? this.props.app_state.loc['2642dg']/* '🟢 Refund Request Approved.' */ : this.props.app_state.loc['2642dh']/* '⚠️ Refund Request Pending.' */
+
+            const is_refund_request_finalized = this.props.app_state.storefront_refund_finalizations[object['e5_id']]?.[item['purchase_identifier']] != null
+            const all_transfers_exist = this.props.app_state.storefront_refund_finalizations[object['e5_id']]?.[item['purchase_identifier']]?.['all_transfers_exist'] || false
+            if(is_refund_request_finalized == true){
+                approved_message = this.props.app_state.loc['2642dk']/* '✅ Refund Request Fulfilled.' */
+            }
+            return(
+                <div>
+                    <div onClick={() => this.when_copy_to_clipboard_selected(address)}>
+                        {this.render_detail_item('3', {'size':'l', 'title':title, 'details':start_and_end(address)})}
+                    </div>
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'size':'l', 'title':''+(new Date(time).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (time/1000)), 'details':this.props.app_state.loc['3055xu']/* 'Refund Request Time.' */})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055yc']/* 'Request Status.' */, 'details':approved_message})}
+                    <div style={{height:10}}/>
+
+                    {is_refund_request_finalized == true && (
+                        <div>
+                            {all_transfers_exist == true ? this.render_detail_item('3', {'title':this.props.app_state.loc['3055xe']/* '✓ Transfers Verified.' */, 'details':this.props.app_state.loc['3055ym']/* 'Transfer records for this refund exist on the blockchain.' */, 'size':'l'}) 
+                            :
+                            this.render_detail_item('3', {'title':this.props.app_state.loc['3055xg']/* '❌ Transfers NOT Verified.' */, 'details':this.props.app_state.loc['3055yn']/* 'No valid transfer records for this refund exist on the blockchain.' */, 'size':'l'})}
+                            <div style={{height:10}}/>
+                        </div>
+                    )}
+                    
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055xv']/* 'Order Type.' */, 'details': type == 'order' ? this.props.app_state.loc['3055xw']/* 'Direct Purchase or Indexer Order.' */ : this.props.app_state.loc['3055xx']/* ''Bag Order.'' */})}
+
+                    {type == 'bag' && (
+                        <div>
+                            <div style={{height:10}}/>
+                            {this.render_detail_item('3', {'size':'l', 'title':number_with_commas(item['bag']), 'details':this.props.app_state.loc['3055xy']/* 'Bag Id.' */})}
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        const render_approve_refund = () => {
+            const is_refund_request_approved = this.props.app_state.storefront_refund_approvals[object['e5_id']]?.[item['purchase_identifier']] != null
+
+            const is_refund_request_finalized = this.props.app_state.storefront_refund_finalizations[object['e5_id']]?.[item['purchase_identifier']] != null
+            return(
+                <div>
+                    {is_refund_request_finalized != true && is_refund_request_approved != true && (
+                        <div>
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055xz']/* 'Approve Refund.' */, 'details':this.props.app_state.loc['3055ya']/* 'Approve the request and mark it as scheduled for fulfilment.' */})}
+                            <div style={{height:10}}/>
+                            <div onClick={()=> this.props.emit_approve_refund_request(item, object) }>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055yb']/* 'Approve' */, 'action':''},)}
+                            </div>
+                        </div>
+                    )}
+
+                    {object['author'] == this.props.app_state.user_account_id[object['e5']] && is_refund_request_approved == true && is_refund_request_finalized != true && (
+                        <div>
+                            {this.render_detail_item('0')}
+                            {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055yd']/* 'Fulfil Refund' */, 'details':this.props.app_state.loc['3055ye']/* 'Make the final multi-transfers to the sender account and finish the refund.' */})}
+                            <div style={{height:10}}/>
+                            <div onClick={()=> this.add_fulfil_refund_request_to_stack(item, object) }>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['3055yf']/* 'Fulfil and Finalize' */, 'action':''},)}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        if(this.state.type == 'order'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055xr']/* 'Refund Request.' */, 'details':this.props.app_state.loc['3055xs']/* 'You have received an order refund request from one of your clients.' */})}
+                    <div style={{height:10}}/>
+
+                    {render_refund_details()}
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_storefront_item(object)}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'size':'l', 'title':''+(new Date(order['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - order['time']), 'details':this.props.app_state.loc['2642ca']/* Order Time. */})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1948']/* 'Shipping Details' */, 'details':order['shipping_detail']})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1958']/* 'Variant ID: ' */+order['variant_id'], 'details':variant_in_store['variant_description'] })}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1114c']/* 'custom_specifications ' */, 'details':order['custom_specifications']})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(order['purchase_unit_count']), 'details':this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+order['sender_account'] })}
+                    {this.render_detail_item('0')}
+
+                    {this.render_order_variant_final_prices(price_array, object)}
+
+                    {render_approve_refund()}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055xr']/* 'Refund Request.' */, 'details':this.props.app_state.loc['3055xs']/* 'You have received an order refund request from one of your clients.' */})}
+                    <div style={{height:10}}/>
+
+                    {render_refund_details()}
+                    
+                    {this.render_detail_item('0')}
+
+                    {this.render_storefront_item(object)}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title':order['purchase_unit_count'], 'details':composition_type+this.props.app_state.loc['2049']/* ' ordered.' */ , 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':variant_in_store['variant_description'], 'details':this.props.app_state.loc['2050']/* 'Variant Description' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2051']/* 'Pick-up Location' */, 'details':object['ipfs'].fulfilment_location, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':(order['custom_specifications'] == null ? '...':order['custom_specifications']), 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_variant_image_if_any(variant_in_store)}
+
+                    {this.render_detail_item('0')}
+                    {this.render_order_variant_final_prices(price_array, object)}
+
+                    {render_approve_refund()}
+                </div>
+            )
+        }
+        
+    }
+
+    render_storefront_refund_request_data2(){
+        const item = this.state.data['item']
+        const object = this.state.data['object']
+        return(
+            <div>
+                {this.render_item_data(item['entered_objects'])}
+                {this.render_item_images(item['entered_image_objects'])}
+                {this.render_pdf_files_if_any(item['entered_pdf_objects'])}
+                {this.render_zip_files_if_any(item['entered_zip_objects'])}
+                {this.render_markdown_if_any(item['markdown'])}
+            </div>
+        )
+    }
+
+    render_order_variant_final_prices(price_array, object){
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['2064o']/* 'Order Price.' */, 'details':this.props.app_state.loc['3055xt'] /* 'The price paid for the ordered items with the specified options.' */})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_array.map((item, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    add_fulfil_refund_request_to_stack(item, object){
+        if(this.does_transaction_already_exist_in_stack2(object, item)){
+            this.props.notify(this.props.app_state.loc['3055yg']/* 'This refund fulfilment is already in stack.' */, 7700)
+            return;
+        }
+
+        var obj = {
+            id:makeid(8), type:this.props.app_state.loc['3055yh']/* 'refund-payment' */,
+            entered_indexing_tags:[this.props.app_state.loc['3055yi']/* 'payment' */, this.props.app_state.loc['3119b']/* 'refund' */, this.props.app_state.loc['3119c']/* 'rebate' */, this.props.app_state.loc['3055yj']/* 'finalize' */],
+            e5:object['e5'], item: item, object: object
+        }
+        this.props.add_order_payment_to_stack(obj)
+        this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1700)
+    }
+
+    does_transaction_already_exist_in_stack2(object, item){
+        const stack_transactions = this.props.app_state.stack_items
+        for(var i=0; i<stack_transactions.length; i++){
+            if(
+                stack_transactions[i].type == this.props.app_state.loc['3055yh']/* 'refund-payment' */ && 
+                stack_transactions[i].object['e5_id'] == object['e5_id'] && 
+                stack_transactions[i].item['purchase_identifier'] == item['purchase_identifier']){
+                return true
+            }
+        }
+        return false
+    }
+
 
 
 

@@ -256,7 +256,8 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['3097e']/* 'purchase-request-messages' */&&
             item.type != this.props.app_state.loc['3097']/* 'accept-storefront-request' */&&
             item.type != this.props.app_state.loc['3055qi']/* 'verify-certificate' */ &&
-            item.type != this.props.app_state.loc['3055sg']/* 'record-certificate' */
+            item.type != this.props.app_state.loc['3055sg']/* 'record-certificate' */ &&
+            item.type != this.props.app_state.loc['3055yh']/* 'refund-payment' */
         ){
             return(
                 <div>
@@ -1054,6 +1055,9 @@ class ViewTransactionPage extends Component {
             }
             else if(tx.type == this.props.app_state.loc['3111']/* 'link-certificate' */){
                 return this.render_link_certificate()
+            }
+            else if(tx.type == this.props.app_state.loc['3055yh']/* 'refund-payment' */){
+                return this.render_refund_payment_data()
             }
         }
     }
@@ -10676,7 +10680,89 @@ return data['data']
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, 'number_when_tapped':`${new Date(time*1000).toLocaleDateString(undefined, { weekday: 'short' })} ${(new Date(time*1000).toLocaleString())}` },
         }
     }
+
+
+
+
+
+
+
+    render_refund_payment_data(){
+        const transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const item = transaction_item.item
+        const object = transaction_item.object
+
+        const price_array = item['price_array']
+        const variant_in_store = item['variant_in_store']
+        const sender_account = item['sender_account']
+        const sender_account_e5 = item['sender_account_e5']
+        const address = item['address']
+        const alias = item['alias']
+        const time = item['time']
+        const type = item['type']
+        const order = item['order']
+
+        const alias_or_account_id = alias == null ? number_with_commas(sender_account) : alias + ' • ' +sender_account
+        const title = this.props.app_state.loc['2642df']/* From $ */.replace('$', alias_or_account_id)
+
+        const is_refund_request_approved = this.props.app_state.storefront_refund_approvals[object['e5_id']][item['purchase_identifier']] != null
+        const approved_message = is_refund_request_approved == true ? this.props.app_state.loc['2642dg']/* '✅️ Refund Request Approved.' */ : this.props.app_state.loc['2642dh']/* '⚠️ Refund Request Pending.' */
+
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_storefront_item(object)}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'size':'l', 'title':''+(new Date(time).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - (time/1000)), 'details':this.props.app_state.loc['3055xu']/* 'Refund Request Time.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055yc']/* 'Request Status.' */, 'details':approved_message})}
+                <div style={{height:10}}/>
+
+                <div onClick={() => this.when_copy_to_clipboard_selected(address)}>
+                    {this.render_detail_item('3', {'size':'l', 'title':title, 'details':start_and_end(address)})}
+                </div>
+                <div style={{height:10}}/>
+                
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055xv']/* 'Order Type.' */, 'details': type == 'order' ? this.props.app_state.loc['3055xw']/* 'Direct Purchase or Indexer Order.' */ : this.props.app_state.loc['3055xx']/* ''Bag Order.'' */})}
+
+                {type == 'bag' && (
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('3', {'size':'l', 'title':number_with_commas(item['bag']), 'details':this.props.app_state.loc['3055xy']/* 'Bag Id.' */})}
+                    </div>
+                )}
+
+                {this.render_detail_item('3', {'title':variant_in_store['variant_description'], 'details':this.props.app_state.loc['2050']/* 'Variant Description' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1058j']/* 'Custom Specifications.' */, 'details':(order['custom_specifications'] == null ? '...':order['custom_specifications']), 'size':'l'})}
+
+                {this.render_detail_item('0')}
+                {this.render_order_variant_final_prices(price_array, object)}
+            </div>
+        )
+    }
     
+    render_order_variant_final_prices(price_array, object){
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055yk']/* 'Refund Amounts.' */, 'details':this.props.app_state.loc['3055yl'] /* 'The total amounts you will be sending as the refund payment.' */})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {price_array.map((item, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
 
 
 

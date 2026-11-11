@@ -5563,6 +5563,17 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(verify_obj.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3055yh']/* 'refund-payment' */){
+                    const refund_object = await this.format_refund_payment_object(txs[i], calculate_gas, ints, ipfs_index)
+                    if(refund_object.depth[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(refund_object.depth)
+                    }
+                    strs.push(refund_object.str)
+                    adds.push([])
+                    ints.push(refund_object.int)
+                }
                 
                 const delete_after_broadcast = txs[i].get_delete_after_broadcast_object != null && this.get_selected_item(txs[i].get_delete_after_broadcast_object, 'e') == this.props.app_state.loc['1058o']/* 'enabled' */
 
@@ -7286,6 +7297,15 @@ class StackPage extends Component {
                     }
                     ipfs_index_object[txs[i].id] = certificate_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':certificate_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3055yh']/* 'refund-payment' */){
+                    const data = txs[i]
+                    const refund_data = {
+                        'purchase_identifier': data.item['purchase_identifier'],
+                        'price_array':data.item['price_array']
+                    }
+                    ipfs_index_object[txs[i].id] = refund_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':refund_data})
                 }
             }
         }
@@ -15088,6 +15108,63 @@ class StackPage extends Component {
         ];
 
         return {int: obj, str: string_obj, buy_obj}
+    }
+
+    format_refund_payment_object = async (t, calculate_gas, ints, ipfs_index) => {
+        var ints_clone = ints.slice()
+        var author = t.item['sender_account']
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        var obj = [/* send awwards */
+            [30000, 7, 0],
+            [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
+            ['69'],/* awward contexts */
+            
+            [], [],/* exchange ids for first target receiver */
+            [],/* amounts for first target receiver */
+            [],/* depths for the first targeted receiver*/
+        ]
+        var string_obj = [[]]
+
+        const price_array = t.item['price_array']
+        for(var i=0; i<price_array.length; i++){
+            var exchange = price_array[i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+            var amount = price_array[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var f=0; f<transfer_actions.length; f++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[f]['amount'])
+                obj[7].push(transfer_actions[f]['depth'])
+            }
+        }
+        
+        
+        const transaction_id = t.id
+        const string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, transaction_id);
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj, depth: depth_swap_obj}
     }
 
     

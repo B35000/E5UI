@@ -768,6 +768,7 @@ import SelectCertificatePage from './pages/select_certificate_page'
 import CertificateChainPage from './pages/view_certificate_chain_page'
 import QuickPurchaseStoragePage from './pages/quick_purchase_storage_page'
 import TermsOfServicePage from './pages/terms_of_service_page'
+import RequestRefundPage from './pages/request_refund_page'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -2005,7 +2006,7 @@ class App extends Component {
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
     fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
     quick_send_bottomsheet:false, edit_crossexchange_bottomsheet: false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false,
-    quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false,
+    quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false, request_refund_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -2125,7 +2126,7 @@ class App extends Component {
 
     focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(), my_applications2:[], my_bag_applications2:[], account_message_history2:{}, account_post_history2:{},
 
-    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{}, logged_purchases:{}
+    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{}, logged_purchases:{}, is_loading_storefront_refund_requests:{}, storefront_refund_requests:{}, storefront_refund_approvals:{}, storefront_refund_finalizations:{},
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -5303,6 +5304,7 @@ class App extends Component {
     this.quick_purchase_storage_page = React.createRef();
     this.terms_of_service_page = React.createRef();
     this.assess_certificate_page = React.createRef();
+    this.request_refund_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -6606,7 +6608,7 @@ class App extends Component {
         should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
-        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false, quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false,
+        fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false, quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false, request_refund_bottomsheet:false,
 
       })
 
@@ -8805,7 +8807,7 @@ class App extends Component {
           {this.render_certificate_chain_bottomsheet()}
           {this.render_new_bag_bottomsheet()}
           {this.render_assess_certificate_bottomsheet()}
-
+          {this.render_request_refund_bottomsheet()}
 
           {this.render_set_map_location_bottomsheet()}
           {this.render_dialog_bottomsheet()}
@@ -8960,7 +8962,7 @@ class App extends Component {
 
           get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)} perform_translation_of_specific_object={this.perform_translation_of_specific_object.bind(this)}
           when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}
-          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)} show_loader_for_object_events={this.show_loader_for_object_events.bind(this)} load_contract_obligation_fulfilment_info={this.load_contract_obligation_fulfilment_info.bind(this)} enter_chatroom_if_socket_enabled={this.enter_chatroom_if_socket_enabled.bind(this)}
+          set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)} show_loader_for_object_events={this.show_loader_for_object_events.bind(this)} load_contract_obligation_fulfilment_info={this.load_contract_obligation_fulfilment_info.bind(this)} enter_chatroom_if_socket_enabled={this.enter_chatroom_if_socket_enabled.bind(this)} fetch_storefront_refund_requests={this.fetch_storefront_refund_requests.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -22679,7 +22681,7 @@ class App extends Component {
 
         delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} mute_unmute_address={this.mute_unmute_address.bind(this)} add_file_to_collection={this.add_file_to_collection.bind(this)} begin_sharing_location_with_target={this.begin_sharing_location_with_target.bind(this)} swap_ether_to_specified_target_via_near_intents={this.swap_ether_to_specified_target_via_near_intents.bind(this)} show_terms_of_service_bottomsheet={this.show_terms_of_service_bottomsheet.bind(this)} export_all_fulfilled_obligation_data={this.export_all_fulfilled_obligation_data.bind(this)}
 
-        show_assess_certificate_bottomsheet={this.show_assess_certificate_bottomsheet.bind(this)} start_ticket_purchase_action={this.start_ticket_purchase_action.bind(this)}
+        show_assess_certificate_bottomsheet={this.show_assess_certificate_bottomsheet.bind(this)} start_ticket_purchase_action={this.start_ticket_purchase_action.bind(this)} show_request_refund_bottomsheet={this.show_request_refund_bottomsheet.bind(this)} emit_approve_refund_request={this.emit_approve_refund_request.bind(this)}
         />
       </div>
     )
@@ -22817,6 +22819,7 @@ class App extends Component {
       'show_certificate_assessment_item_details':500,
       'confirm_purchase_of_tickets':500,
       'view_acquired_ticket_item_details':550,
+      'view_storefront_refund_request_item':550
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -26353,6 +26356,7 @@ class App extends Component {
       this.dialog_page.current?.when_files_picked(picked_files)
       this.send_purchase_request_page.current?.when_image_gif_files_picked(picked_files)
       this.mint_certificate_page.current?.when_image_gif_files_picked(picked_files)
+      this.request_refund_page.current?.when_image_gif_files_picked(picked_files)
     }
     else if(function_name == 'create_text_banner_image'){
       this.new_channel_page.current?.when_banner_selected(picked_files)
@@ -26382,6 +26386,7 @@ class App extends Component {
       this.edit_certificate_page.current?.when_banner_selected(picked_files)
 
       this.mint_certificate_page.current?.when_banner_selected(picked_files)
+      this.request_refund_page.current?.when_banner_selected(picked_files)
     }
     else if(function_name == 'create_storefront_variant_image'){
       this.new_storefront_item_page.current?.when_variant_image_gif_files_picked(picked_files)
@@ -26439,6 +26444,7 @@ class App extends Component {
       this.dialog_page.current?.when_files_picked(picked_files)
       this.send_purchase_request_page.current?.when_pdf_files_picked(picked_files)
       this.mint_certificate_page.current?.when_pdf_files_picked(picked_files)
+      this.request_refund_page.current?.when_pdf_files_picked(picked_files)
     }
     else if(function_name == 'create_zip'){
       this.new_channel_page.current?.when_zip_files_picked(picked_files)
@@ -26469,6 +26475,7 @@ class App extends Component {
       this.add_comment_page.current?.when_pdf_files_picked(picked_files)
       this.dialog_page.current?.when_files_picked(picked_files)
       this.mint_certificate_page.current?.when_zip_files_picked(picked_files)
+      this.request_refund_page.current?.when_zip_files_picked(picked_files)
     }
     else if(function_name == 'create_video_pick_video_file'){
       this.new_video_page.current?.when_video_file_picked(picked_files)
@@ -26516,6 +26523,7 @@ class App extends Component {
 
       this.add_comment_page.current?.when_markdown_image_selected(picked_files)
       this.mint_certificate_page.current?.when_markdown_image_selected(picked_files)
+      this.request_refund_page.current?.when_markdown_image_selected(picked_files)
     }
     else if(function_name == 'create_markdown_image2'){
       this.new_poll_page.current?.when_markdown_image_selected2(picked_files)
@@ -34963,6 +34971,78 @@ class App extends Component {
     await this.get_objects_from_socket_and_set_in_state(['certificate_assessment'], tags, [], 1771762377000);
     await this.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
     this.setState({is_loading_certificate_owner_obligations: null})
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_request_refund_bottomsheet(){
+    if(this.state.request_refund_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    var os = getOS()
+    
+    return this.renderBottomSheet(
+      <RequestRefundPage ref={this.request_refund_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}
+      calculate_actual_balance={this.calculate_actual_balance.bind(this)} hash_data_with_randomizer={this.hash_data_with_randomizer.bind(this)} show_images={this.show_images.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} load_objects={this.load_objects.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} emit_request_refund_message={this.emit_request_refund_message.bind(this)}
+      />,
+      this.state.request_refund_bottomsheet,
+      this.open_request_refund_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  open_request_refund_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_request_refund_bottomsheet')
+    if(this.state.request_refund_bottomsheet == true){
+      //closing
+      this.request_refund_bottomsheet = this.request_refund_page.current?.state;
+
+      this.setState({request_refund_bottomsheet: !this.state.request_refund_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({request_refund_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({request_refund_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({request_refund_bottomsheet: !me.state.request_refund_bottomsheet});
+
+          if(me.request_refund_bottomsheet != null){
+            me.request_refund_page.current?.setState(me.request_refund_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  async show_request_refund_bottomsheet(item, object, identifier, type, bag, variant_in_store, storefront_render){
+    this.open_request_refund_bottomsheet()
+    setTimeout(() => {
+      this.request_refund_page.current?.set_data(item, object, identifier, type, bag, variant_in_store, storefront_render)
+    }, (1 * 1100));
+
+    // this.setState({is_loading_certificate_owner_obligations: true})
+    // const object_obligation_fulfiller = item['account'];
+    // const tags = [object['e5_id'], item['depth']];
+
+    // await this.get_objects_from_socket_and_set_in_state(['certificate_assessment'], tags, [], 1771762377000);
+    // await this.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
+    // this.setState({is_loading_certificate_owner_obligations: null})
   }
 
 
@@ -45553,10 +45633,11 @@ class App extends Component {
       if(balance_obj[exchange] == null){
         balance_obj[exchange] = {
           'token_balance':token_balances[index], 
-          'token_balance_data':token_balances_data[index]
+          'token_balance_data':{}
         }
+        balance_obj[exchange]['token_balance_data'][depths[index]] = token_balances_data[index][depths[index]]
       }else{
-        balance_obj[exchange]['token_balance_data'][depths[index]] = token_balances_data[index]
+        balance_obj[exchange]['token_balance_data'][depths[index]] = token_balances_data[index][depths[index]]
       }
       if(!interacted_with_exchanges.includes(parseInt(exchange))) interacted_with_exchanges.push(parseInt(exchange));
     });
@@ -45953,7 +46034,10 @@ class App extends Component {
   async update_balances_for_each_loaded_token(H52contractInstance, e5, account){
     const loaded_token_ids = []
     const loaded_token_depths = []
-    const created_token_objects = this.state.created_tokens[e5] || []
+    const end_tokens = this.state.end_tokens[e5] || []
+    const created_token_objects = (this.state.created_tokens[e5] || []).filter((exchange_object) => {
+      return (!end_tokens.includes(exchange_object['id']))
+    })
     created_token_objects.forEach(object => {
       loaded_token_ids.push(object['id'])
       loaded_token_depths.push(object['data'][2][7])
@@ -58070,17 +58154,8 @@ class App extends Component {
       
       balance = bigInt(balance).add(balance_at_depth)
       bal[bal_pos] = balance.toString().toLocaleString('fullwide', {useGrouping:false})
-      balance_data[bal_pos][depths[i]] = token_balances[i].toString().toLocaleString('fullwide', {useGrouping:false})
+      balance_data[bal_pos][depths[i]] = bigInt(token_balances[i]).toString().toLocaleString('fullwide', {useGrouping:false})
     }
-
-    // for(var k=0; k<exchanges.length; k++){
-    //   const exchange_depth = exchanges_depth[j]
-    //   for(var l=exchange_depth; l>=0; l--){
-    //     if(interacted_exchange_depth_data[exchanges[k]] == null || !interacted_exchange_depth_data[exchanges[k]].includes(l)){
-    //       balance_data[k][l] = '0'
-    //     }
-    //   }
-    // }
 
 
 
@@ -61753,6 +61828,108 @@ class App extends Component {
     return obj[focused_page] || 'e'
   }
 
+  async fetch_storefront_refund_requests(storefront){
+    const set_refund_reqests_as_loading = (status) => {
+      const clone = this.state.is_loading_storefront_refund_requests == null ? {} : structuredClone(this.state.is_loading_storefront_refund_requests)
+      clone[storefront['e5_id']] = status
+      this.setState({is_loading_storefront_refund_requests: clone})
+    }
+    set_refund_reqests_as_loading(true)
+
+    const my_address = this.state.accounts[this.state.selected_e5].address
+    const target = 'storefront_refund_request|'+storefront['id']+my_address
+    const secondary_target = 'storefront_refund_approval|'+storefront['id']+my_address
+    await this.get_objects_from_socket_and_set_in_state([target, secondary_target], [], []);
+
+
+    const e5 = storefront['e5']
+    const id = storefront['id']
+    const e5_id = storefront['e5_id']
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const contract_addresses = this.state.addresses[e5]
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = contract_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    const event_params = [
+      [web3, H52contractInstance, 'e1', e5, {p2/* sender */: storefront['author'].toString()}],
+      [web3, H52contractInstance, 'e5', e5, {p1/* awward_sender */: storefront['author'].toString(), p3/* awward_context */: 69}]
+    ]
+    const { all_events } = await this.load_multiple_events_from_nitro(event_params)
+    const all_transfers = all_events[0].reverse()
+    const all_awards = all_events[1].reverse()
+
+
+    var loaded_target = 0
+    if((this.state.my_preferred_nitro != '' && this.get_nitro_link_from_e5_id(this.state.my_preferred_nitro) != null) || this.state.beacon_node_enabled == true){
+      await this.fetch_multiple_cids_from_nitro(all_awards.slice(0, this.state.max_post_bulk_load_count), 0, 'p4'/* metadata */)
+      loaded_target = all_awards.slice(0, this.state.max_post_bulk_load_count).length - 1;
+    }
+
+    const verify_all_transfers_exist = (total_amounts_to_be_paid, award_event) => {
+      const award_block = award_event.returnValues.p6/* block_number */
+      const focused_transfer_events = all_transfers.filter((ev) => {
+        return ev.returnValues.p6/* block_number */ == award_block
+      });
+      if(focused_transfer_events.length == 0) return false;
+      if(total_amounts_to_be_paid == null) return false;
+      var all_exist = true;
+      total_amounts_to_be_paid.forEach(pending_item => {
+        const pending_exchange = pending_item['id']
+        const pending_amount = pending_item['amount']
+        const valid_event = focused_transfer_events.find((event_item) => {
+          return (
+            event_item.returnValues.p1/* exchange */ == pending_exchange &&
+            event_item.returnValues.p4/* amount */ == pending_amount
+          )
+        });
+        if(valid_event == null) all_exist = false;
+      });
+
+      return all_exist
+    }
+
+    for(var i=0; i<all_awards.length; i++){
+      const event = all_awards[i]
+      const object_data = await this.fetch_objects_data_from_ipfs_using_option(event.returnValues.p4)
+      if(object_data != null){
+        const total_amounts_to_be_paid = object_data['price_array']
+        const purchase_identifier = object_data['purchase_identifier']  
+        const data_object = {
+          'ipfs':object_data,
+          'event':event,
+          'all_transfers_exist':verify_all_transfers_exist(total_amounts_to_be_paid, event),
+          'time': parseInt(event.returnValues.p5/* timestamp */)
+        }
+        console.log('load_accounts_ticket_data','loaded ticket: ', data_object)
+        const clone = structuredClone(this.state.storefront_refund_finalizations)
+        if(clone[e5_id] == null){
+          clone[e5_id] = {}
+        }
+        if(clone[e5_id][purchase_identifier] == null){
+          clone[e5_id][purchase_identifier] = {}
+        }
+        if(event.returnValues.p4 != null && total_amounts_to_be_paid != null){
+          clone[e5_id][purchase_identifier] = data_object
+        } 
+        this.setState({storefront_refund_finalizations: clone})
+      }
+
+      if(i == loaded_target && i+1 >= all_awards.length){
+        await this.wait(3000)
+        await this.fetch_multiple_cids_from_nitro(all_awards.slice(i+1, i+this.state.max_post_bulk_load_count), 0, 'p4')
+        loaded_target = i+this.state.max_post_bulk_load_count
+      }
+    }
+
+    set_refund_reqests_as_loading(false)
+  }
+
 
 
 
@@ -64637,6 +64814,13 @@ class App extends Component {
       else if(message['type'] == 'private_location'){
         me.process_received_private_location_from_sender(message, object_hash, from, true)
       }
+      else if(message['type'] == 'refund_request'){
+        me.process_new_storefront_refund_request_message(message, object_hash, from, true)
+      }
+      else if(message['type'] == 'refund_approval'){
+        me.process_new_storefront_refund_request_approval_message(message, object_hash, from, true)
+      }
+      
     });
     socket.on('user_joined_chatroom', ({userId, roomId}) => {
       if(roomId == 'jobs'){
@@ -64724,7 +64908,7 @@ class App extends Component {
     else if(state_object.type == this.getLocale()['1667']/* 'accept-job-request' */){
       await this.emit_new_contractor_accept_job_request(state_object, show_job_after_broadcast);
     }
-    else if(state_object.type == this.getLocale()['1093']/* 'direct-purchase' */){
+    else if(state_object.type == this.getLocale()['1499']/* 'direct-purchase' */){
       await this.emit_new_storefront_order_request(state_object, show_job_after_broadcast);
     }
     else if(state_object.type == this.getLocale()['3096']/* 'purchase-request' */){
@@ -65948,7 +66132,7 @@ class App extends Component {
     this.process_new_received_assessment(assessment_message_object.message, assessment_message_object.object_hash)
   }
 
-  async emit_ticket_purchase_event(object, my_state, total_amounts_to_be_paid){    
+  async emit_ticket_purchase_event(object, my_state, total_amounts_to_be_paid){
     const roomId = object['e5_id']+my_state.selected_class['id']
     const ticket_message_object = await this.prepare_ticket_purchase_record_message(object, my_state, total_amounts_to_be_paid)
     
@@ -65969,6 +66153,53 @@ class App extends Component {
     await this.wait(3000)
 
     this.process_new_ticket_message(ticket_message_object.message, ticket_message_object.object_hash)
+  }
+
+  async emit_request_refund_message(state_object){
+    this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
+    const request_message_object = await this.prepare_storefront_refund_request_message(state_object)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(request_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const storefront = state_object.object
+    const storefront_owner = storefront['author']
+    const storefront_e5 = storefront['e5']
+    const to = await this.get_recipient_address(storefront_owner, storefront_e5)
+    const target = 'storefront_refund_request|'+storefront['id']+to
+    const secondary_target = 'storefront_refund_request|'+storefront['id']+this.state.accounts[this.state.selected_e5].address
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {
+      to: to, 
+      message: request_message_object.message, 
+      target: target, 
+      object_hash: request_message_object.object_hash, 
+      secondary_target: secondary_target 
+    });
+  }
+
+  async emit_approve_refund_request(item, storefront){
+    this.prompt_top_notification(this.getLocale()['2738ay']/* 'Sending Message... */, 1900)
+    const request_message_object = await this.prepare_storefront_refund_approval_message(item, storefront)
+
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(request_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const to = item['address']
+    const target = 'storefront_refund_approval|'+storefront['id']+to
+    const secondary_target = 'storefront_refund_approval|'+storefront['id']+this.state.accounts[this.state.selected_e5].address
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("send_message", {
+      to: to, 
+      message: request_message_object.message, 
+      target: target, 
+      object_hash: request_message_object.object_hash, 
+      secondary_target: secondary_target 
+    });
   }
   
 
@@ -69049,6 +69280,199 @@ class App extends Component {
     const context = 0
     const message = {
       type: 'ticket_purchase',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_storefront_refund_request_message(state_object){
+    const item = state_object.item
+    const storefront = state_object.object
+    const variant_in_store = state_object.type == 'order' ? this.get_variant_from_id(item['variant_id'], storefront) : state_object.variant_in_store;
+    const price_array = this.get_order_value(variant_in_store, item)
+    const e5_to_use = storefront['e5']
+
+    const job_author = storefront['author']
+    const job_author_e5 = storefront['e5']
+    const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
+
+    const message_obj = {
+      'order':item,
+      'type':state_object.type,
+      'storefront':storefront['e5_id'],
+      'bag':state_object.type == 'order' ? 0 : state_object.bag['id'],
+      'price_array': price_array,
+      'purchase_identifier':state_object.identifier,
+      'variant_in_store':variant_in_store,
+
+      'entered_image_objects': state_object.entered_image_objects,
+      'entered_objects': state_object.entered_objects,
+      'content_channeling_setting':state_object.content_channeling_setting,
+      'device_language_setting':state_object.device_language_setting,
+      'device_country':state_object.device_country,
+      'device_region':state_object.device_region,
+      'my_country':state_object.my_country,
+      'my_city':state_object.my_city,
+      'entered_pdf_objects':state_object.entered_pdf_objects,
+      'markdown':state_object.markdown,
+      'entered_zip_objects':state_object.entered_zip_objects,
+      'ecid_encryption_passwords':state_object.ecid_encryption_passwords,
+
+      'sender_account': this.state.user_account_id[e5_to_use],
+      'sender_account_e5': e5_to_use,
+      'address':this.state.accounts[e5_to_use].address,
+      'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+      'time':Date.now(),
+      'identifier': this.make_number_id(12),
+    }
+
+
+    const encrypted_obj = await this.encrypt_data_string(JSON.stringify(message_obj), key_data.key.toString())
+    const encrypted_refund_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
+
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(e5_to_use))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[e5_to_use]
+    const e5 = e5_to_use
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(encrypted_refund_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const context = 67
+
+    const message = {
+      type: 'refund_request',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  get_order_value(variant_in_store, item){
+    var price_items = variant_in_store['price_data']
+    var price_obj = {}
+    price_items.forEach(price => {
+      if(price_obj[price['id']] == null) price_obj[price['id']] = bigInt(0)
+      price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+    });
+
+    if(item['storefront_options'] != null && item['storefront_options'].length > 0){
+      var options = item['storefront_options']
+
+      for(var i=0; i<item['options'].length; i++){
+        var tag_obj = item['options'][i]
+        var selected_items = []
+        for(var j=0; j<tag_obj['e'][2].length; j++){
+          var selected_item_pos = tag_obj['e'][2][j]
+          if(selected_item_pos != 0){
+            selected_items.push(selected_item_pos-1)
+          }
+        }
+        for(var k=0; k<selected_items.length; k++){
+          var selected_pos = selected_items[k]
+          var option_prices = options[i]['options'][selected_pos]['price']
+          option_prices.forEach(price => {
+            if(price_obj[price['id']] == null){
+              price_obj[price['id']] = bigInt(0)
+            }
+            price_obj[price['id']] = bigInt(price_obj[price['id']]).plus(price['amount'])
+          });
+        } 
+      }
+    }
+
+    var price_array = []
+    for (const id in price_obj) {
+      if (price_obj.hasOwnProperty(id)) {
+        price_array.push({'id':id, 'amount':price_obj[id]})
+      }
+    }
+
+    return price_array
+  }
+
+  async prepare_storefront_refund_approval_message(item, storefront){
+    const e5_to_use = storefront['e5']
+
+    const job_author = item['sender_account']
+    const job_author_e5 = item['sender_account_e5']
+    const key_data = await this.get_encrypted_response_to_job_key(job_author, job_author_e5)
+
+    const message_obj = {
+      'storefront':storefront['e5_id'],
+      'purchase_identifier':item['purchase_identifier'],
+      'sender_account': this.state.user_account_id[e5_to_use],
+      'sender_account_e5': e5_to_use,
+      'address':this.state.accounts[e5_to_use].address,
+      'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+      'time':Date.now(),
+      'identifier': this.make_number_id(12),
+    }
+
+    const encrypted_obj = await this.encrypt_data_string(JSON.stringify(message_obj), key_data.key.toString())
+    const encrypted_refund_object = {'encrypted_data':encrypted_obj, 'key_data':key_data.key_data}
+
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(e5_to_use))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[e5_to_use]
+    const e5 = e5_to_use
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+    const object_as_string = JSON.stringify(encrypted_refund_object, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {})
+    const context = 68
+
+    const message = {
+      type: 'refund_approval',
       message_identifier: this.make_number_id(12),
       author: author,
       author_address: this.state.accounts[e5].address,
@@ -72240,6 +72664,141 @@ class App extends Component {
     this.setState({logged_purchases:clone})
   }
 
+  async process_new_storefront_refund_request_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      this.load_contract_item(message.e5, message.data)
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    console.log('process_new_storefront_refund_request_message','ipfs', ipfs)
+    if(ipfs != message.data){
+      const e5 = message.e5;
+      const id = message.id;
+      const sender_acc = message.author
+      const convo_id = id;
+      const cid = object_hash;
+      const request_id = message.id
+
+      const event = {returnValues:{p1:65, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+      var ipfs_message = ipfs;
+      if(ipfs_message['encrypted_data'] != null){
+        const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+        ipfs_message = JSON.parse(originalText);
+      }
+
+      console.log('process_new_storefront_refund_request_message','ipfs_message', ipfs_message)
+
+      /* 
+        const message_obj = {
+          'order':item,
+          'type':state_object.type,
+          'storefront':storefront['e5_id'],
+          'price_array': price_array,
+          'purchase_identifier':state_object.purchase_identifier,
+          'variant_in_store':variant_in_store,
+          'sender_account': this.state.user_account_id[e5_to_use],
+          'sender_account_e5': e5_to_use,
+          'address':this.state.accounts[e5_to_use].address,
+          'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+          'time':Date.now(),
+          'identifier': this.make_number_id(12),
+        }
+      */
+      
+      const purchase_identifier = ipfs_message['purchase_identifier']
+      const storefront = ipfs_message['storefront']
+      if(purchase_identifier == null) return;
+
+      const clone = structuredClone(this.state.storefront_refund_requests)
+      if(clone[storefront] == null){
+        clone[storefront] = {}
+      }
+      if(clone[storefront][purchase_identifier] == null) clone[storefront][purchase_identifier] = ipfs_message
+      this.setState({storefront_refund_requests: clone})
+    }
+  }
+
+  async process_new_storefront_refund_request_approval_message(message, object_hash, from, add_to_notifications){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    const am_I_the_author = this.state.user_account_id[message['e5']] == message['author']
+    if(am_I_the_author && this.state.broadcast_stack.includes(message['message_identifier'])){
+      const clone = this.state.broadcast_stack.slice()
+      const index = clone.indexOf(message['message_identifier'])
+      if(index != -1){
+        clone.splice(index, 1)
+      }
+      this.setState({broadcast_stack: clone})
+      this.load_contract_item(message.e5, message.data)
+      var me = this;
+      setTimeout(function() {
+        me.prompt_top_notification(me.getLocale()['284bg']/* 'Transaction Broadcasted.' */, 1900)
+      }, (2 * 1000));
+    }
+
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+
+    if(ipfs != message.data){
+      const e5 = message.e5;
+      const id = message.id;
+      const sender_acc = message.author
+      const convo_id = id;
+      const cid = object_hash;
+      const request_id = message.id
+
+      const event = {returnValues:{p1:65, p2:sender_acc, p3:message.context, p4:object_hash, p5:convo_id, p6:message.time, p7:message.block }, 'nitro_e5_id':message.nitro_id}
+
+      var ipfs_message = ipfs;
+      if(ipfs_message['encrypted_data'] != null){
+        const my_unique_crosschain_identifier = await this.get_my_unique_crosschain_identifier_number()
+        var focused_encrypted_key = ipfs_message['key_data'][my_unique_crosschain_identifier]
+        var encryptor_pub_key = ipfs_message['key_data']['encryptor_pub_key']
+        var convo_key = await this.decrypt_encrypted_key_with_my_public_key(focused_encrypted_key, e5, encryptor_pub_key)
+        var originalText = await this.decrypt_data_string(ipfs_message['encrypted_data'], convo_key.toString())
+        ipfs_message = JSON.parse(originalText);
+      }
+
+      /* 
+        const message_obj = {
+          'storefront':storefront['e5_id'],
+          'purchase_identifier':item['purchase_identifier'],
+          'sender_account': this.state.user_account_id[e5_to_use],
+          'sender_account_e5': e5_to_use,
+          'address':this.state.accounts[e5_to_use].address,
+          'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+          'time':Date.now(),
+          'identifier': this.make_number_id(12),
+        }
+      */
+      
+      const purchase_identifier = ipfs_message['purchase_identifier']
+      const storefront = ipfs_message['storefront']
+      if(purchase_identifier == null) return;
+      const clone = structuredClone(this.state.storefront_refund_approvals)
+      if(clone[storefront] == null){
+        clone[storefront] = {}
+      }
+      if(clone[storefront][purchase_identifier] == null) clone[storefront][purchase_identifier] = ipfs_message
+      this.setState({storefront_refund_approvals: clone})
+    }
+  }
+
   
 
 
@@ -72902,6 +73461,12 @@ class App extends Component {
     }
     else if(object_data['type'] == 'ticket_purchase'){
       await this.process_new_ticket_message(object_data, object_hash)
+    }
+    else if(object_data['type'] == 'refund_request'){
+      await this.process_new_storefront_refund_request_message(object_data, object_hash, object_data['author_address'], true)
+    }
+    else if(object_data['type'] == 'refund_approval'){
+      await this.process_new_storefront_refund_request_approval_message(object_data, object_hash, object_data['author_address'], true)
     }
   }
 
