@@ -1162,7 +1162,6 @@ class PostListSection extends Component {
         if(index == 0){
             const orientation = this.props.app_state.homepage_tags_position
             if(this.props.size == 's' && orientation == this.props.app_state.loc['1593k']/* top */){
-                const selected_item = this.get_selected_item(this.props.wallet_page_tags_object, this.props.wallet_page_tags_object['i'].active)
                 let x = 50
                 if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
                     x += 6;
