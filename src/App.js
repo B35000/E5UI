@@ -12938,6 +12938,42 @@ class App extends Component {
     return false
   }
 
+  get_gas_price(e5){
+    var gas_price = this.state.gas_price[e5]
+    if(gas_price == null){
+      gas_price = this.get_gas_price_from_runs(e5)
+    }
+    return gas_price
+  }
+
+  get_gas_price_from_runs(e5){
+    var last_events = this.state.all_E5_runs[e5]
+    var sum = 0
+    if(last_events != null){
+      var last_check = last_events.length < 50 ? last_events.length : 50
+      for(var i=0; i<last_check; i++){
+          sum += last_events[i].returnValues.p7
+      }
+      sum = sum/last_check;
+    }
+    return sum
+  }
+
+  do_i_have_a_minimum_amount_of_ether_for_indexer_post(){
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      if(this.state.e5s[e5].active == true){
+        const ether_balance = this.state.account_balance[e5]
+        const gas_price = this.get_gas_price(e5)
+        const minimum_required_amount = bigInt(2_300_000).multiply(gas_price).multiply(5)
+        if(this.state.E5_runs[e5] != null && this.state.E5_runs[e5].length >= 1 && ether_balance > minimum_required_amount){
+          return true;
+        }
+      }
+    }
+    return false
+  }
+
   censor_keyword(word_phrase){
     var clone = this.state.censored_keyword_phrases.slice()
     clone.push(word_phrase)
@@ -14578,7 +14614,7 @@ class App extends Component {
       return(
         <div>
           <NewJobPage ref={this.new_job_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)} show_images={this.show_images.bind(this)}
+          get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_set_map_location={this.show_set_map_location.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} get_accounts_reserved_keywords={this.get_accounts_reserved_keywords.bind(this)} show_images={this.show_images.bind(this)} do_i_have_a_minimum_amount_of_ether_for_indexer_post={this.do_i_have_a_minimum_amount_of_ether_for_indexer_post.bind(this)}
           />
         </div>
       )
@@ -14608,7 +14644,7 @@ class App extends Component {
     else if(target == '6'/* posts */){
       return(
         <NewPostPage ref={this.new_post_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)}
-        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} show_images={this.show_images.bind(this)}
+        get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} emit_new_object_in_socket={this.emit_new_object_in_socket.bind(this)} do_i_have_an_account={this.do_i_have_an_account.bind(this)} show_images={this.show_images.bind(this)} do_i_have_a_minimum_amount_of_ether_for_indexer_post={this.do_i_have_a_minimum_amount_of_ether_for_indexer_post.bind(this)}
         />
       )
     }
@@ -45537,11 +45573,11 @@ class App extends Component {
     var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
     if(created_token_events == null) created_token_events = []
 
-    if(created_token_events.length == 0){
-      created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
-    }
+    // if(created_token_events.length == 0){
+    //   created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
+    // }
     
-    const { exchanges_to_load_first, exchange_depth_data } = await this.load_accounts_exchange_interactions_data(account, e5, pre_launch_data)
+    const { exchanges_to_load_first, exchange_depth_data, tickets_to_load } = await this.load_accounts_exchange_interactions_data(account, e5, pre_launch_data)
 
     // console.log('get_token_data','token events to load', created_token_events)
     // const test_load = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
@@ -45598,11 +45634,20 @@ class App extends Component {
     const created_tokens = [3, 5]
     const created_token_depths = [0,0]
     const exchange_accounts = [account, account]
-    for(var i=0; i<created_token_events.length; i++){
-      var id = created_token_events[i].returnValues.p1
+
+    tickets_to_load.forEach(id => {
       created_tokens.push(parseInt(id))
       created_token_depths.push(0)
       exchange_accounts.push(account)
+    });
+
+    for(var i=0; i<created_token_events.length; i++){
+      var id = created_token_events[i].returnValues.p1
+      if(!created_tokens.includes(parseInt(id))){
+        created_tokens.push(parseInt(id))
+        created_token_depths.push(0)
+        exchange_accounts.push(account)
+      }
     }
 
     const focused_exchanges = [3, 5];
@@ -46534,7 +46579,7 @@ class App extends Component {
   }
 
   load_accounts_exchange_interactions_data = async (account_id, e5, pre_launch_data) => {
-    if(account_id < 1000) return { exchanges_to_load_first:[], exchange_depth_data:{} };
+    if(account_id < 1000) return { exchanges_to_load_first:[], exchange_depth_data:{}, tickets_to_load:[] };
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
     const H52_address = this.state.addresses[e5][6];
@@ -46543,12 +46588,14 @@ class App extends Component {
     var received_tokens_event_data = null
     var update_balance_event_data = null
     var stack_depth_swap_event_data = null
+    var ticket_mint_event_data = null
 
     if(this.state.beacon_node_enabled == true){
       var event_params = [
         [web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id}],
         [web3, H52contractInstance, 'e2', e5, {p2/* receiver */: account_id}],
         [web3, H52contractInstance, 'power', e5, {p3/* receiver */: account_id, p2/* action */:2/* depth_auth_mint */}],
+        [web3, H52contractInstance, 'e5', e5, {p1/* awward_sender */:account_id.toString(), p3/* awward_context */: 44,}]
       ]
       // var all_events;
       // if(pre_launch_data[e5] != null){
@@ -46566,6 +46613,7 @@ class App extends Component {
       received_tokens_event_data = all_events[0]
       update_balance_event_data = all_events[1]
       stack_depth_swap_event_data = all_events[2]
+      ticket_mint_event_data = all_events[3]
     }else{
 
       received_tokens_event_data = await this.load_event_data(web3, H52contractInstance, 'e1', e5, {p3/* receiver */: account_id})
@@ -46620,7 +46668,17 @@ class App extends Component {
       }
     });
 
-    return { exchanges_to_load_first, exchange_depth_data }
+    const tickets_to_load = []
+    if(ticket_mint_event_data != null && ticket_mint_event_data.length > 0){
+      ticket_mint_event_data.forEach(event_item => {
+        const exchange = event_item.returnValues.p2/* awward_receiver */
+        if(!tickets_to_load.includes(exchange)){
+          tickets_to_load.push(parseInt(exchange))
+        }
+      });
+    }
+
+    return { exchanges_to_load_first, exchange_depth_data, tickets_to_load }
   }
 
   load_received_tokens_events = async (web3, H52contractInstance, e5, account) => {

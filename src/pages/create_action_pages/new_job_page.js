@@ -185,7 +185,8 @@ class NewJobPage extends Component {
     }
 
     get_chain_or_indexer_job_object(){
-        const pos = this.props.do_i_have_an_account() == true ? 1 : 2
+        const pos = this.props.do_i_have_an_account() == true && this.props.do_i_have_a_minimum_amount_of_ether_for_indexer_post() == true ? 1 : 2
+        
         return{
             'i':{
                 active:'e', 
