@@ -2749,6 +2749,9 @@ return data['data']
         else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_an_account(this.props.app_state.selected_e5)){
             this.props.notify(this.props.app_state.loc['284bb']/* 'You need an account to log indexer jobs.' */, 5000)
         }
+        else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && !this.props.do_i_have_a_minimum_amount_of_ether_for_indexer_post() == true){
+            this.props.notify(this.props.app_state.loc['284ca']/* 'Your ether balance is too low.' */, 5000)
+        }
         else if(post_indexing == this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */ && size > (1024*23)){
             this.props.notify(this.props.app_state.loc['284bc']/* 'Your post is too large.' */, 5000)
         }
