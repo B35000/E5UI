@@ -885,13 +885,17 @@ class home_page extends Component {
                 x += 6;
             }
             return(
-                <div>
-                    <div style={{height:top_bar, width:tag_width, 'padding':'7px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'border-radius': radius, 'margin':navbar_margin,}}>
+                <div style={{position: 'relative', minHeight: '100vh'}}>
+                    <div style={{height:top_bar, width:tag_width, 'padding':'7px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'border-radius': radius, 'margin':navbar_margin,position: 'absolute', zIndex: 5}}>
                         {this.render_top_tag_bar(size, w)}
                     </div>
                     
-                    <div style={{height:this.props.height-x, width:width, 'padding':'0px 5px 0px 5px'}}>
-                        {this.render_post_list_group(size, this.props.height-x, width)}
+                    <div style={{height:'auto', width:width, 'padding':'0px 5px 0px 5px', position: 'absolute', zIndex: 3}}>
+                        {this.render_post_list_group(size, this.props.height, width)}
+                    </div>
+
+                    <div style={{height:this.props.height, width:width, 'padding':'0px 5px 0px 5px', position: 'absolute', zIndex: 1}}>
+                        {this.render_post_list_group(size, this.props.height, width, true)}
                     </div>
                 </div>
             )
@@ -2010,7 +2014,7 @@ class home_page extends Component {
     render_filter_section_bottomsheet(){
         if(this.state.filter_section_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
-        var size = this.props.size
+        var size = this.props.screensize
         var os = getOS()
         var id = this.get_page_id()
         return this.renderBottomSheet(
@@ -2240,7 +2244,7 @@ class home_page extends Component {
     render_post_preview_bottomsheet(){
         if(this.state.post_preview_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
-        var size = this.props.size
+        var size = this.props.screensize
         var os = getOS()
         return this.renderBottomSheet(
             this.render_post_preview_element(),
@@ -2270,7 +2274,7 @@ class home_page extends Component {
 
     render_post_preview_element(){
         var background_color = this.props.theme['send_receive_ether_background_color'];
-        var size = this.props.size
+        var size = this.props.screensize
         return(
             <div /* style={{ height: this.props.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto', backgroundImage: `${this.props.linear_gradient_text(background_color)}, url(${this.props.get_default_background()})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover',}} */>
                 <PostPreview ref={this.post_preview_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_post_preview_subscription_tapped={this.when_post_preview_subscription_tapped.bind(this)} pin_post={this.pin_post.bind(this)} pin_channel={this.pin_channel.bind(this)}  pin_audio={this.pin_audio.bind(this)} pin_video={this.pin_video.bind(this)}/>
@@ -2326,7 +2330,7 @@ class home_page extends Component {
     render_nsfw_preview_bottomsheet(){
         if(this.state.post_nsfw_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
-        var size = this.props.size
+        var size = this.props.screensize
         var os = getOS()
         return this.renderBottomSheet(
             <NsfwPage ref={this.post_nsfw_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_warning_ignored={this.when_warning_ignored.bind(this)}/>,
@@ -5484,7 +5488,7 @@ class home_page extends Component {
         }, (1 * 400));
     };
 
-    render_post_list_group(size, height, width){
+    render_post_list_group(size, height, width, get_active_page=false){
         // if(size != 'l'){
         //     return this.render_post_list_group_if_touch_screen(size, height)
         // }
@@ -5558,6 +5562,25 @@ class home_page extends Component {
                         </div>
                     )}
                 </div>
+            )
+        }
+
+        if(get_active_page == true){
+            return(
+                <div>
+                    {render_active_page()}
+                </div>
+            )
+        }
+        const orientation = this.props.app_state.homepage_tags_position
+        if(this.props.screensize == 's' && orientation == this.props.app_state.loc['1593k']/* top */){
+            return(
+                <div>
+                    {this.render_space_if_first_item()}
+                    {this.render_line_if_enabled()}
+                    {this.render_search_tags_views()}
+                </div>
+                
             )
         }
         return(
@@ -5701,11 +5724,38 @@ class home_page extends Component {
         return obj[c]
     }
 
+    get_additional_height(){
+        let x = 0
+        if(this.state.search_visible && this.is_page_valid()){
+            x += 46
+            if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
+                x += 7
+            }
+        }
+        if(this.should_show_line()){
+            x += 15
+        }
+
+        return x
+    }
+
     render_search_tags_views(){
         if(this.state.search_visible && this.is_page_valid()){
             return(
-                <HomepageSearchbar ref={(el) => (this.top_search_bar = el)}  app_state={this.props.app_state} theme={this.props.theme} get_page_id={this.get_page_id.bind(this)} search_current_objects={this.search_current_objects.bind(this)} search_string={this.search_string.bind(this)} reset_current_objects={this.reset_current_objects.bind(this)} when_search_button_tapped={this.when_search_button_tapped.bind(this)}
-                />
+                <div>
+                    <HomepageSearchbar ref={(el) => (this.top_search_bar = el)}  app_state={this.props.app_state} theme={this.props.theme} get_page_id={this.get_page_id.bind(this)} search_current_objects={this.search_current_objects.bind(this)} search_string={this.search_string.bind(this)} reset_current_objects={this.reset_current_objects.bind(this)} when_search_button_tapped={this.when_search_button_tapped.bind(this)}
+                    />
+                </div>
+            )
+        }
+    }
+
+    render_space_if_first_item(){
+        const orientation = this.props.app_state.homepage_tags_position
+        if(this.props.screensize == 's' && orientation == this.props.app_state.loc['1593k']/* top */){
+            const x = this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */ ? 52 : 45
+            return(
+                <div style={{height: x}}/>
             )
         }
     }
@@ -5933,7 +5983,7 @@ class home_page extends Component {
         var id = this.get_page_id()
         var searched_data = this.state.page_search_data[id]
         return(
-            <PostListSection ref={list_section} size={size} height={h} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.render_top_notification.bind(this)}
+            <PostListSection ref={list_section} size={size} height={h} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.render_top_notification.bind(this)} additional_height={this.get_additional_height()}
             
             when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)} when_audio_item_clicked={this.when_audio_item_clicked.bind(this)} when_video_item_clicked={this.when_video_item_clicked.bind(this)} when_nitro_item_clicked={this.when_nitro_item_clicked.bind(this)} when_bill_item_clicked={this.when_bill_item_clicked.bind(this)} when_poll_item_clicked={this.when_poll_item_clicked.bind(this)} when_direct_message_object_item_clicked={this.when_direct_message_object_item_clicked.bind(this)} when_certificate_object_clicked={this.when_certificate_object_clicked.bind(this)} when_crossexchange_object_clicked={this.when_crossexchange_object_clicked.bind(this)}
 

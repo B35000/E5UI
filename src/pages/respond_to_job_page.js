@@ -727,7 +727,21 @@ class RespondToJobPage extends Component {
             }
         });
 
-        // console.log('get_minimum_amounts_in_end_and_spend','upper', upper)
+        if(authors_obligation_contracts.length == 0){
+            if(this.state.e5 == 'E25'){
+                upper = bigInt(230_000_000)
+                lower = bigInt(23_000);
+            }
+            else if(this.state.e5 == 'E35'){
+                upper = bigInt(23_000_000)
+                lower = bigInt(2_300);
+            }
+            else{
+                upper = bigInt(530_000_000)
+                lower = bigInt(53_000);
+            }
+        }
+
         const active_end_mint_limit = this.calculate_proportion(this.get_active_mint_limit(3), upper)
         const active_spend_mint_limit = this.calculate_proportion(this.get_active_mint_limit(5), upper)
         const active_end_mint_bottom = this.calculate_proportion(this.get_active_mint_limit(3), lower)

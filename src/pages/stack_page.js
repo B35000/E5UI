@@ -21896,6 +21896,30 @@ class StackPage extends Component {
                                 total_streaming_spaces_used[nitro] += (bigInt(files_years_stream_count).divide(space)).divide(node_details['target_storage_streaming_multiplier'])
                             }
                         }
+
+                        if(file_data['redundant_data'] != null && file_data['redundant_data'].length > 0){
+                            //backups exist, record those too
+                            file_data['redundant_data'].forEach(redundant_link => {
+                                const redundant_nitro = file_data['redundant_info'][redundant_link]['nitro']
+                                if(time < startOfYear && nitro != null && this.is_file_backup_available(file_data['hash'], redundant_nitro) && !this.has_nitro_already_been_renewed(nitro)){
+                                    if(files_to_renew[redundant_nitro] == null){
+                                        files_to_renew[redundant_nitro] = []
+                                        total_spaces_used[redundant_nitro] = 0
+                                        total_streaming_spaces_used[redundant_nitro] = 0
+                                    }
+                                    const files_years_stream_count = this.fetch_redundant_file_streaming_count(file_hash, startOfYear-1, redundant_nitro)
+                                    files_to_renew[redundant_nitro].push({'data':data, 'file_data':file_data, 'time':time})
+                                    if(space != null){
+                                        total_spaces_used[redundant_nitro] += space;
+                                    }
+
+                                    const node_details = this.props.app_state.nitro_node_details[redundant_nitro]
+                                    if(node_details['target_storage_streaming_multiplier'] != 0 && !bigInt(files_years_stream_count).isZero()){
+                                        total_streaming_spaces_used[redundant_nitro] += (bigInt(files_years_stream_count).divide(space)).divide(node_details['target_storage_streaming_multiplier'])
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -21917,9 +21941,30 @@ class StackPage extends Component {
         return focused_files_streaming_totals
     }
 
+    fetch_redundant_file_streaming_count(current_file, startOfCurrentYear, redundant_nitro){
+        const identifier = redundant_nitro+current_file
+        const files_stream_count_data = this.props.app_state.backup_file_streaming_data[identifier] == null ? {} : this.props.app_state.backup_file_streaming_data[identifier]['files_stream_count']
+        const stream_times = Object.keys(files_stream_count_data)
+        const start_time = startOfCurrentYear - 31_556_952_000/* year in milliseconds */
+        var focused_files_streaming_totals = bigInt(0)
+        stream_times.forEach(stream_time => {
+            if(stream_time >= start_time && stream_time < startOfCurrentYear){
+                focused_files_streaming_totals = bigInt(focused_files_streaming_totals).plus(files_stream_count_data[stream_time])
+            }
+        });
+        return focused_files_streaming_totals
+    }
+
     is_file_available(file){
         if(file == null) return true;
         var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted == false)
+        return is_file_available
+    }
+
+    is_file_backup_available(file, redundant_nitro){
+        if(file == null) return true;
+        const identifier = redundant_nitro+file
+        var is_file_available = this.props.app_state.backup_file_streaming_data == null ? true : (this.props.app_state.backup_file_streaming_data[identifier] == null ? true : this.props.app_state.backup_file_streaming_data[identifier].is_file_deleted == false)
         return is_file_available
     }
 
@@ -22075,6 +22120,9 @@ class StackPage extends Component {
             opacity = 0.4
         }
         if(data != null){
+            const redundancies = data['redundant_data'] || []
+            const footer = redundancies.length > 0 ? this.props.app_state.loc['1593nw']/* '$ replications.' */.replace('$', redundancies.length) : null
+
             if(data['type'] == 'image'){
                 var img = data['data']
                 if(data['nitro'] != null && !this.is_file_available(data['hash'])){
@@ -22084,9 +22132,10 @@ class StackPage extends Component {
                 var fs = formatted_size['size']+' '+formatted_size['unit']
                 var title = data['type']+' • '+fs+' • '+this.get_time_difference(data['id']/1000)+this.props.app_state.loc['1593bx']/* ' ago.' */
                 var details = data['name']
+                
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':img, 'border_radius':'10px', 'image_width':'auto'})}
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':img, 'border_radius':'10px', 'image_width':'auto', 'footer':footer})}
                     </div>
                 )
             }
@@ -22109,7 +22158,7 @@ class StackPage extends Component {
                 details = details + view_count_message
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'10px', 'image_width':50})}
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'10px', 'image_width':50, 'footer':footer})}
                     </div>
                 )
             }
@@ -22136,14 +22185,14 @@ class StackPage extends Component {
                     var thumbnail = this.props.app_state.video_thumbnails[ecid_obj['full']]
                     return(
                         <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                            {this.render_detail_item('8', {'title':title,'details':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto', 'footer':footer})}
                         </div>
                     )
                 }else{
                     var thumbnail = this.props.app_state.static_assets['video_label']
                     return(
                         <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                            {this.render_detail_item('8', {'title':title,'details':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto'})}
+                            {this.render_detail_item('8', {'title':title,'details':details, 'size':'l', 'image':thumbnail, 'border_radius':'9px', 'image_width':'auto', 'footer':footer})}
                         </div>
                     )
                 }
@@ -22156,7 +22205,7 @@ class StackPage extends Component {
                 var thumbnail = data['thumbnail']
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'footer':footer})}
                     </div>
                 )
             }
@@ -22168,7 +22217,7 @@ class StackPage extends Component {
                 var thumbnail = this.props.app_state.static_assets['zip_file']
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'footer':footer})}
                     </div>
                 )
             }
@@ -22180,7 +22229,7 @@ class StackPage extends Component {
                 var thumbnail = this.props.app_state.static_assets['lyric_icon']
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'footer':footer})}
                     </div>
                 )
             }
@@ -22192,7 +22241,7 @@ class StackPage extends Component {
                 var thumbnail = this.props.app_state.static_assets['subtitle_icon']
                 return(
                     <div style={{opacity:opacity}} onClick={() => this.when_file_clicked(ecid_obj)}>
-                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%'})}
+                        {this.render_detail_item('8', {'details':title,'title':details, 'size':'l', 'image':thumbnail, 'border_radius':'15%', 'footer':footer})}
                     </div>
                 )
             }

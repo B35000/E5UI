@@ -1088,6 +1088,7 @@ class PostListSection extends Component {
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'jobs')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -1105,9 +1106,6 @@ class PostListSection extends Component {
             return (
                 <div>
                     <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                            {this.render_line_loader_if_reloading()}
-                            {this.show_load_metrics(items, 'jobs')}
-                            {this.show_new_objects_message_if_any(all_items)}
                             <Virtuoso
                                 ref={this.jobs_list}
                                 style={{ height: middle }}
@@ -1117,36 +1115,14 @@ class PostListSection extends Component {
                                     const item = items[index];
                                     return (
                                         <div>
-                                            {/* <AnimatePresence initial={true}>
-                                                <motion.div key={item['e5_id']} 
-                                                initial={{ 
-                                                    opacity: 0, 
-                                                    scale:0.95, 
-                                                    filter: "blur(0px)", 
-                                                    backdropFilter: 'blur(5px)',
-                                                    WebkitBackdropFilter: 'blur(5px)',
-                                                }} 
-                                                animate={{ 
-                                                    opacity: 1, 
-                                                    scale:1, 
-                                                    filter: "blur(0px)" ,
-                                                    backdropFilter: 'blur(5px)',
-                                                    WebkitBackdropFilter: 'blur(5px)',
-                                                }} 
-                                                exit={{ 
-                                                    opacity: 0, 
-                                                    scale:0.95, 
-                                                    filter: "blur(0px)",
-                                                    backdropFilter: 'blur(5px)',
-                                                    WebkitBackdropFilter: 'blur(5px)',
-                                                }} 
-                                                transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                                style={{'padding': padding}}>
-                                                    {this.render_job_object(item, index)}
-                                                </motion.div>
-                                            </AnimatePresence>
-                                            {this.render_space_if_last_item(index, items.length)} */}
-
+                                            {index == 0 && (
+                                                <div>
+                                                    {this.render_space_if_first_item(0)}
+                                                    {this.render_line_loader_if_reloading()}
+                                                    {this.show_load_metrics(items, 'jobs')}
+                                                    {this.show_new_objects_message_if_any(all_items)}
+                                                </div>
+                                            )}
                                             {this.render_animated_view(this.render_job_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                         </div>
                                     );
@@ -1179,6 +1155,23 @@ class PostListSection extends Component {
             return(
                 <div style={{height: height}}/>
             )
+        }
+    }
+
+    render_space_if_first_item(index){
+        if(index == 0){
+            const orientation = this.props.app_state.homepage_tags_position
+            if(this.props.size == 's' && orientation == this.props.app_state.loc['1593k']/* top */){
+                const selected_item = this.get_selected_item(this.props.wallet_page_tags_object, this.props.wallet_page_tags_object['i'].active)
+                let x = 50
+                if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
+                    x += 6;
+                }
+                x+=this.props.additional_height
+                return(
+                    <div style={{height: x}}/>
+                )
+            }
         }
     }
 
@@ -1476,6 +1469,7 @@ class PostListSection extends Component {
         const job_location_pins = this.get_location_pins(this.get_job_items(), this.get_filter_end_time(this.state.selected_jobs_time_filter_chart_tags_object))
         return(
             <div>
+                {this.render_space_if_first_item(0)}
                 <div style={{'position': 'relative'}}>
                     <div style={{height: middle, width: width, 'z-index':'0', 'position': 'absolute'}}>
                         <LocationViewer ref={this.locationPickerRef} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={job_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_job_pin_clicked.bind(this)} />
@@ -1735,6 +1729,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'contracts')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -1751,9 +1746,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'contracts')}
-                    {this.show_new_objects_message_if_any(all_items)}
+                    
                     <Virtuoso
                         ref={this.contract_list}
                         style={{ height: middle }}
@@ -1762,12 +1755,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }} style={{'padding': padding}}>
-                                            {this.render_contract_item(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'contracts')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_contract_item(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -1944,6 +1939,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'proposals')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -1960,10 +1956,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'proposals')}
-                    {this.show_new_objects_message_if_any(all_items)}
-                    {this.render_vote_wait_in_all_proposals_button(all_items, selected_item)}
+                    
                     <Virtuoso
                         ref={this.proposal_list}
                         style={{ height: middle }}
@@ -1972,13 +1965,15 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_proposal_object(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'proposals')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                            {this.render_vote_wait_in_all_proposals_button(all_items, selected_item)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_proposal_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -2128,6 +2123,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'nitro')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -2145,9 +2141,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics([], 'nitro')}
-                    {this.show_new_objects_message_if_any(all_items)}
+                    
                     <Virtuoso
                         ref={this.nitro_list}
                         style={{ height: middle }}
@@ -2156,13 +2150,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_nitro_object_if_locked(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics([], 'nitro')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_nitro_object_if_locked(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -2288,6 +2283,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'subscriptions')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -2304,10 +2300,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'subscriptions')}
-                    {this.show_new_objects_message_if_any(all_items)}
-                    {this.render_pay_all_upcoming_subscriptions_button(items)}
+                    
                     <Virtuoso
                         ref={this.subscription_list}
                         style={{ height: middle }}
@@ -2316,13 +2309,15 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_subscription_object(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'subscriptions')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                            {this.render_pay_all_upcoming_subscriptions_button(items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_subscription_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -2473,6 +2468,7 @@ class PostListSection extends Component {
             return( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_mail_message_if_wallet_not_set()}
                         {this.show_load_metrics([], object_type)}
@@ -2490,9 +2486,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return (
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, object_type)}
-                    {this.show_new_objects_message_if_any(all_items)}
+                    
                     <Virtuoso
                         ref={this.mail_list}
                         style={{ height: middle }}
@@ -2501,13 +2495,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['convo_id']} className={this.state.animate_click == item['convo_id'] ? 'button-click' : ''} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_mail_object_or_null(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, object_type)}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_mail_object_or_null(item, index), item['convo_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -2682,6 +2677,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'contractor')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -2699,9 +2695,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'contractor')}
-                    {this.show_new_objects_message_if_any(all_items)}
+                    
                     <Virtuoso
                         ref={this.contractor_list}
                         style={{ height: middle }}
@@ -2710,13 +2704,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_contractor_object(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'contractor')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_contractor_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -2876,6 +2871,7 @@ class PostListSection extends Component {
         );
         return(
             <div>
+                {this.render_space_if_first_item(0)}
                 <div style={{'position': 'relative'}}>
                     <div style={{height: middle, width: width, 'z-index':'0', 'position': 'absolute'}}>
                         <LocationViewer ref={this.locationPickerRef2} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={contractor_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_contractor_pin_clicked.bind(this)} route_data={route_data} subcontractors={final_subcontractor_pins} on_account_location_data_pin_licked={this.on_account_location_data_pin_licked.bind(this)}
@@ -3012,6 +3008,7 @@ class PostListSection extends Component {
             items = ['0','1'];
             return ( 
                 <div>
+                    {this.render_space_if_first_item(0)}
                     <div style={{ 'margin': '5px 5px 5px 5px'}}>
                         <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509w']/* 'Filter Account or Alias...' */} when_text_input_field_changed={this.when_typed_search_dm_account_id_input_field_changed.bind(this)} adjust_height={false} text={this.state.typed_search_dm_account_id} theme={this.props.theme} />
                     </div>
@@ -3033,6 +3030,7 @@ class PostListSection extends Component {
             var padding = '2px';
             return ( 
                 <div>
+                    {this.render_space_if_first_item(0)}
                     <div style={{ 'margin': '5px 5px 5px 5px'}}>
                         <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509w']/* 'Filter Account or Alias...' */} when_text_input_field_changed={this.when_typed_search_dm_account_id_input_field_changed.bind(this)} adjust_height={false} text={this.state.typed_search_dm_account_id} theme={this.props.theme} />
                     </div>
@@ -3045,13 +3043,6 @@ class PostListSection extends Component {
                                 const item = items[index];
                                 return (
                                     <div>
-                                        {/* <AnimatePresence initial={true}>
-                                            <motion.div key={item['convo_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                            style={{'padding': padding}}>
-                                                {this.render_direct_message_object(item, index)}
-                                            </motion.div>
-                                        </AnimatePresence>
-                                        {this.render_space_if_last_item(index, items.length)} */}
                                         {this.render_animated_view(this.render_direct_message_object(item, index), item['convo_id'], {'padding': padding}, index, items.length)}
                                     </div>
                                 );
@@ -3271,6 +3262,7 @@ class PostListSection extends Component {
             items = [0,1,2]
             return(
                 <div style={{}}>
+                    {this.render_space_if_first_item(0)}
                     {items.map((item, index) => (
                         <div style={{'padding': '2px 5px 2px 5px'}}>
                             {this.props.app_state.pre_launch_fetch_loading == true ? this.render_small_skeleton_object() : this.render_small_empty_object()}
@@ -3289,14 +3281,11 @@ class PostListSection extends Component {
                                 const item = items[index];
                                 return (
                                     <div>
-                                        {/* <AnimatePresence initial={true}>
-                                            <motion.div key={item['call_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                            style={{}}>
-                                                {this.render_invite_item(item)}
-                                                <div style={{height:4}}/>
-                                            </motion.div>
-                                        </AnimatePresence>
-                                        {this.render_space_if_last_item(index, items.length)} */}
+                                        {index == 0 && (
+                                            <div>
+                                                {this.render_space_if_first_item(0)}
+                                            </div>
+                                        )}
                                         {this.render_animated_view(this.render_invite_item(item), item['call_id'], {}, index, items.length)}
                                     </div>
                                 );
@@ -3425,6 +3414,7 @@ class PostListSection extends Component {
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {items.map((item, index) => (
                             <li style={{'padding': '1px 5px 1px 5px'}}>
                                 {this.render_small_empty_object()}
@@ -3444,13 +3434,11 @@ class PostListSection extends Component {
                         const item = items[index];
                         return (
                             <div>
-                                {/* <AnimatePresence initial={true}>
-                                    <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                    style={{'padding': '1px 5px 1px 5px'}}>
-                                        {this.render_E5s_object(item['data'], index, item['id'])}
-                                    </motion.div>
-                                </AnimatePresence>
-                                {this.render_space_if_last_item(index, items.length)} */}
+                                {index == 0 && (
+                                    <div>
+                                        {this.render_space_if_first_item(0)}
+                                    </div>
+                                )}
                                 {this.render_animated_view(this.render_E5s_object(item['data'], index, item['id']), item['id'], {'padding': '1px 5px 1px 5px'}, index, items.length)}
                             </div>
                         );
@@ -3531,6 +3519,7 @@ class PostListSection extends Component {
     render_search_user_data(){
         return(
             <div>
+                {this.render_space_if_first_item(0)}
                 <div className="row" style={{ padding: '5px 10px 0px 10px', width:'103%' }}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['3068']/* Object or Account ID, Alias, "tag" or title..' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} adjust_height={false} theme={this.props.theme}/>
@@ -4106,6 +4095,7 @@ class PostListSection extends Component {
         if(items.length == 0){
             return(
                 <div style={{}}>
+                    {this.render_space_if_first_item(0)}
                     {this.render_empty_views(3)}
                 </div>
             )
@@ -4121,14 +4111,11 @@ class PostListSection extends Component {
                                 const item = items[index];
                                 return (
                                     <div>
-                                        {/* <AnimatePresence initial={true}>
-                                            <motion.div key={item.returnValues.p5.toString()}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                            style={{}}>
-                                                {this.render_notification_item2(item, index)}
-                                                <div style={{height:4}}/>
-                                            </motion.div>
-                                        </AnimatePresence>
-                                        {this.render_space_if_last_item(index, items.length)} */}
+                                        {index == 0 && (
+                                            <div>
+                                                {this.render_space_if_first_item(0)}
+                                            </div>
+                                        )}
                                         {this.render_animated_view(this.render_notification_item2(item, index), item.returnValues.p5.toString(), {}, index, items.length)}
                                     </div>
                                 );
@@ -4290,6 +4277,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'posts')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -4306,9 +4294,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'posts')}
-                    {this.show_new_objects_message_if_any(all_items)}
+                    
                     <Virtuoso
                         ref={this.post_list}
                         style={{ height: middle }}
@@ -4317,13 +4303,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_post_object_if_locked(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'posts')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_post_object_if_locked(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -4624,6 +4611,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'channels')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -4640,9 +4628,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'channels')}
-                    {this.show_new_objects_message_if_any(all_items)}
+                    
                     <Virtuoso
                         ref={this.channel_list}
                         style={{ height: middle }}
@@ -4651,13 +4637,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_channel_object(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'channels')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_channel_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -4841,6 +4828,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'polls')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -4857,9 +4845,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'polls')}
-                    {this.show_new_objects_message_if_any(all_items)}
+                    
                     <Virtuoso
                         ref={this.poll_list}
                         style={{ height: middle }}
@@ -4868,13 +4854,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_poll_object(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'polls')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_poll_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -5020,6 +5007,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'storefront')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -5037,10 +5025,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'storefront')}
-                    {this.show_new_objects_message_if_any(all_items)}
-                    {this.render_created_bags()}
+                    
                     <Virtuoso
                         ref={this.storefront_list}
                         style={{ height: list_height }}
@@ -5049,13 +5034,15 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_storefront_object(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'storefront')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                            {this.render_created_bags()}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_storefront_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -5300,6 +5287,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'bags')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -5317,10 +5305,7 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'bags')}
-                    {this.show_new_objects_message_if_any(all_items)}
-                    {/* {this.render_created_bags()} */}
+                    
                     <Virtuoso
                         ref={this.bag_list}
                         style={{ height: middle }}
@@ -5329,13 +5314,14 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding':padding}}>
-                                            {this.render_bag_object(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'bags')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_bag_object(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -5624,6 +5610,7 @@ class PostListSection extends Component {
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'audioport')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -5641,10 +5628,6 @@ class PostListSection extends Component {
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'audioport')}
-                    {this.show_new_objects_message_if_any(all_items)}
-                    {this.render_search_songs(items)}
                     <Virtuoso
                         ref={this.audio_list}
                         style={{ height: middle }}
@@ -5653,13 +5636,15 @@ class PostListSection extends Component {
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_audio_object_if_locked(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'audioport')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                            {this.render_search_songs(items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_audio_object_if_locked(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -5699,12 +5684,12 @@ class PostListSection extends Component {
             <div>
                 <AnimatePresence initial={true}>
                     {items.map((item, index) => (
-                        // <motion.div key={item['song_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                        // style={{'padding': '2px'}}>
-                        //     {this.render_song(item['song'], item['object'], index, 'album')} 
-                        //     {this.render_space_if_not_last(index, items.length)}
-                        // </motion.div>
                         <div>
+                            {index == 0 && (
+                                <div>
+                                    {this.render_space_if_first_item(0)}
+                                </div>
+                            )}
                             {this.render_animated_view(this.render_song(item['song'], item['object'], index, 'album'), item['song_id'], {'padding': '2px'}, index, items.length)}
                         </div>
                     ))}
@@ -5964,6 +5949,7 @@ class PostListSection extends Component {
             var items = ['1','1']
             return(
                 <div>
+                    {this.render_space_if_first_item(0)}
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={index}>
@@ -5976,6 +5962,7 @@ class PostListSection extends Component {
         }else{
             return(
                 <div>
+                    {this.render_space_if_first_item(0)}
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         <Virtuoso
                             style={{ height: middle }}
@@ -5984,17 +5971,6 @@ class PostListSection extends Component {
                                 const item = items[index];
                                 return (
                                     <div>
-                                        {/* <AnimatePresence initial={true}>
-                                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                            style={{}}>
-                                                <ImageListItem key={index}>
-                                                    <div>
-                                                        {this.render_bought_audio_item_plus_buttons(item, index, w, my_stacked_albums)}
-                                                    </div>
-                                                </ImageListItem>
-                                            </motion.div>
-                                        </AnimatePresence> */}
-
                                         {this.render_animated_view(<ImageListItem key={index}> <div> {this.render_bought_audio_item_plus_buttons(item, index, w, my_stacked_albums)} </div> </ImageListItem>, item['e5_id'], {}, index, 100000000000000000)}
                                     </div>
                                 );
@@ -6558,6 +6534,7 @@ return data['data']
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'videoport')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -6575,10 +6552,7 @@ return data['data']
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px' : '5px'
             return ( 
                 <div  onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.show_load_metrics(items, 'videoport')}
-                    {this.show_new_objects_message_if_any(all_items)}
-                    {this.render_search_videos(items)}
+                    
                     <Virtuoso
                         ref={this.video_list}
                         style={{ height: middle }}
@@ -6587,13 +6561,15 @@ return data['data']
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_video_object_if_locked(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.show_load_metrics(items, 'videoport')}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                            {this.render_search_videos(items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_video_object_if_locked(item, index), item['e5_id'], {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -6762,6 +6738,7 @@ return data['data']
             var items = ['1','1']
             return(
                 <div>
+                    {this.render_space_if_first_item(0)}
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={index}>
@@ -6774,6 +6751,7 @@ return data['data']
         }else{
             return(
                 <div>
+                    {this.render_space_if_first_item(0)}
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         <Virtuoso
                             style={{ height: middle }}
@@ -6782,16 +6760,6 @@ return data['data']
                                 const item = items[index];
                                 return (
                                     <div>
-                                        {/* <AnimatePresence initial={true}>
-                                            <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                            style={{}}>
-                                                    <ImageListItem key={index}>
-                                                        <div onClick={() => this.when_video_item_clicked(index, item)}>
-                                                            {this.render_my_bought_video_item(item, index, w, stacked_videoposts)}
-                                                        </div> 
-                                                    </ImageListItem>
-                                                </motion.div>
-                                        </AnimatePresence> */}
                                         {this.render_animated_view(<ImageListItem key={index}> <div onClick={() => this.when_video_item_clicked(index, item)}> {this.render_my_bought_video_item(item, index, w, stacked_videoposts)} </div> </ImageListItem>, item['e5_id'], {}, index, 10000000000000)}
                                     </div>
                                 );
@@ -7138,6 +7106,7 @@ return data['data']
             items = ['0','1'];
             return (
                 <div>
+                    {this.render_space_if_first_item(0)}
                     <div style={{ 'margin': '5px 5px 5px 5px'}}>
                         <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} adjust_height={false} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
                     </div>
@@ -7155,6 +7124,7 @@ return data['data']
         }
         return (
             <div>
+                {this.render_space_if_first_item(0)}
                 <div style={{ 'margin': '5px 5px 5px 5px'}}>
                     <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} adjust_height={false} when_text_input_field_changed={this.when_coin_search_coin_input_field_changed.bind(this)} text={this.state.typed_search_coin_id} theme={this.props.theme} />
                 </div>
@@ -7167,13 +7137,6 @@ return data['data']
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': '1px 5px 1px 5px'}}>
-                                            {this.render_coin_item(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
                                     {this.render_animated_view(this.render_coin_item(item, index), item['id'], {'padding': '1px 5px 1px 5px'}, index, items.length)}
                                 </div>
                             );
@@ -7306,6 +7269,7 @@ return data['data']
             items = ['0','1'];
             return (
                 <div>
+                    {this.render_space_if_first_item(0)}
                     <div style={{ 'margin': '5px 5px 5px 5px'}}>
                         <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} adjust_height={false} theme={this.props.theme}/>
                     </div>
@@ -7326,6 +7290,7 @@ return data['data']
 
         return ( 
             <div>
+                {this.render_space_if_first_item(0)}
                 <div style={{ 'margin': '5px 5px 5px 5px'}}>
                     <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} adjust_height={false} text={this.state.typed_search_ether_id} theme={this.props.theme} />
                 </div>
@@ -7339,13 +7304,6 @@ return data['data']
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)',}} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': '1px 5px 1px 5px'}}>
-                                            {this.render_ether_item(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
                                     {this.render_animated_view(this.render_ether_item(item, index), item['id'], {'padding': '1px 5px 1px 5px'}, index, items.length)}
                                 </div>
                             );
@@ -7551,6 +7509,7 @@ return data['data']
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics([], 'tokens')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -7567,9 +7526,7 @@ return data['data']
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return (
             <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                {this.render_line_loader_if_reloading()}
-                {this.show_load_metrics(items, 'tokens')}
-                {this.show_new_objects_message_if_any(all_items)}
+                
                 <Virtuoso
                     ref={this.end_list}
                     style={{ height: middle }}
@@ -7578,13 +7535,14 @@ return data['data']
                         const item = items[index];
                         return (
                             <div>
-                                {/* <AnimatePresence initial={true}>
-                                    <motion.div key={item['e5_id']}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                    style={{'padding': padding}}>
-                                        {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
-                                    </motion.div>
-                                </AnimatePresence>
-                                {this.render_space_if_last_item(index, items.length)} */}
+                                {index == 0 && (
+                                    <div>
+                                        {this.render_space_if_first_item(0)}
+                                        {this.render_line_loader_if_reloading()}
+                                        {this.show_load_metrics(items, 'tokens')}
+                                        {this.show_new_objects_message_if_any(all_items)}
+                                    </div>
+                                )}
                                 {this.render_animated_view(this.render_ends_object(item['data'], index, item['id'], item['img'], item), item['e5_id'], {'padding': padding}, index, items.length)}
                             </div>
                         );
@@ -7840,6 +7798,7 @@ return data['data']
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics(items, 'tokens')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -7856,9 +7815,7 @@ return data['data']
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
             <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                {this.render_line_loader_if_reloading()}
-                {this.show_load_metrics(items, 'tokens')}
-                {this.show_new_objects_message_if_any(all_items)}
+                
                 <Virtuoso
                     ref={this.spend_list}
                     style={{ height: middle }}
@@ -7867,14 +7824,14 @@ return data['data']
                         const item = items[index];
                         return (
                             <div>
-                                {/* <AnimatePresence initial={true}>
-                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] }}}
-                                    style={{'padding': padding}}>
-                                        {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
-                                    </motion.div>
-                                </AnimatePresence>
-                                {this.render_space_if_last_item(index, items.length)} */}
-
+                                {index == 0 && (
+                                    <div>
+                                        {this.render_space_if_first_item(0)}
+                                        {this.render_line_loader_if_reloading()}
+                                        {this.show_load_metrics(items, 'tokens')}
+                                        {this.show_new_objects_message_if_any(all_items)}
+                                    </div>
+                                )}
                                 {this.render_animated_view(this.render_spends_object(item['data'], index, item['id'], item['img'], item), item['e5_id']+`i${index}`, {'padding': padding}, index, items.length)}
                             </div>
                         );
@@ -7994,6 +7951,7 @@ return data['data']
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_bills_message_if_wallet_not_set()}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -8010,9 +7968,7 @@ return data['data']
             var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ || true ? '2px' : '5px'
             return ( 
                 <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_line_loader_if_reloading()}
-                    {this.render_pay_all_bills_button(items)}
-                    {this.show_new_objects_message_if_any(all_items)}
+                    
                     <Virtuoso
                         ref={this.bill_list}
                         style={{ height: middle }}
@@ -8021,14 +7977,14 @@ return data['data']
                             const item = items[index];
                             return (
                                 <div>
-                                    {/* <AnimatePresence initial={true}>
-                                        <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                        style={{'padding': padding}}>
-                                            {this.render_bill_object(item, index)}
-                                        </motion.div>
-                                    </AnimatePresence>
-                                    {this.render_space_if_last_item(index, items.length)} */}
-
+                                    {index == 0 && (
+                                        <div>
+                                            {this.render_space_if_first_item(0)}
+                                            {this.render_line_loader_if_reloading()}
+                                            {this.render_pay_all_bills_button(items)}
+                                            {this.show_new_objects_message_if_any(all_items)}
+                                        </div>
+                                    )}
                                     {this.render_animated_view(this.render_bill_object(item, index), item['e5_id']+`i${index}`, {'padding': padding}, index, items.length)}
                                 </div>
                             );
@@ -8192,6 +8148,7 @@ return data['data']
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics(items, 'certificates')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -8208,9 +8165,7 @@ return data['data']
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
             <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                {this.render_line_loader_if_reloading()}
-                {this.show_load_metrics(items, 'certificates')}
-                {this.show_new_objects_message_if_any(all_items)}
+                
                 <Virtuoso
                     ref={this.certificate_list}
                     style={{ height: middle }}
@@ -8219,14 +8174,14 @@ return data['data']
                         const item = items[index];
                         return (
                             <div>
-                                {/* <AnimatePresence initial={true}>
-                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] } }}
-                                    style={{'padding': padding}}>
-                                        {this.render_certificate_object(item, index)}
-                                    </motion.div>
-                                </AnimatePresence>
-                                {this.render_space_if_last_item(index, items.length)} */}
-
+                                {index == 0 && (
+                                    <div>
+                                        {this.render_space_if_first_item(0)}
+                                        {this.render_line_loader_if_reloading()}
+                                        {this.show_load_metrics(items, 'certificates')}
+                                        {this.show_new_objects_message_if_any(all_items)}
+                                    </div>
+                                )}
                                 {this.render_animated_view(this.render_certificate_object(item, index), item['e5_id']+`i${index}`, {'padding': padding}, index, items.length)}
                             </div>
                         );
@@ -8345,6 +8300,7 @@ return data['data']
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.render_space_if_first_item(0)}
                         {this.render_line_loader_if_reloading()}
                         {this.show_load_metrics(items, 'crossexchanges')}
                         {this.show_new_objects_message_if_any(all_items)}
@@ -8361,9 +8317,7 @@ return data['data']
         var padding = this.props.app_state.minified_content == this.props.app_state.loc['1593fj']/* 'enabled' */ ? '2px 1px 2px 1px' : '5px 3px 5px 3px'
         return ( 
             <div onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                {this.render_line_loader_if_reloading()}
-                {this.show_load_metrics(items, 'crossexchanges')}
-                {this.show_new_objects_message_if_any(all_items)}
+                
                 <Virtuoso
                     ref={this.crossexchange_list}
                     style={{ height: middle }}
@@ -8372,14 +8326,14 @@ return data['data']
                         const item = items[index];
                         return (
                             <div>
-                                {/* <AnimatePresence initial={true}>
-                                    <motion.div key={item['e5_id']+`i${index}`}  initial={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} animate={{ opacity: 1, scale:1, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)", backdropFilter: 'blur(5px)',WebkitBackdropFilter: 'blur(5px)', }} transition={{ duration: 0.3 }} onClick={() => console.log()} whileTap={{ scale: 0.9, filter: "blur(1px)", transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] }}}
-                                    style={{'padding': padding}}>
-                                        {this.render_crossexchange_object(item, index)}
-                                    </motion.div>
-                                </AnimatePresence>
-                                {this.render_space_if_last_item(index, items.length)} */}
-
+                                {index == 0 && (
+                                    <div>
+                                        {this.render_space_if_first_item(0)}
+                                        {this.render_line_loader_if_reloading()}
+                                        {this.show_load_metrics(items, 'crossexchanges')}
+                                        {this.show_new_objects_message_if_any(all_items)}
+                                    </div>
+                                )}
                                 {this.render_animated_view(this.render_crossexchange_object(item, index), item['e5_id']+`i${index}`, {'padding': padding}, index, items.length)}
                             </div>
                         );
@@ -8468,6 +8422,7 @@ return data['data']
     render_contextual_transfers_data(){
         return(
             <div>
+                {this.render_space_if_first_item(0)}
                 <div className="row" style={{width:'100%'}}>
                     <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['3068f']/* 'Unique Identifier...' */} when_text_input_field_changed={this.when_search_identifier_input_field_changed.bind(this)} text={this.state.search_identifier} theme={this.props.theme}/>

@@ -133,7 +133,9 @@ class DialogPage extends Component {
 
         selected_conditions:[], get_include_exit_contract_after_finish_transaction_object:this.get_include_exit_contract_after_finish_transaction_object(),
 
-        restore_time: (Date.now()/1000) - (60*60), deductible_data:{}, deductible_amount:0, viewer:'', location_sharing_duration:(60*60), memo_text:''
+        restore_time: (Date.now()/1000) - (60*60), deductible_data:{}, deductible_amount:0, viewer:'', location_sharing_duration:(60*60), memo_text:'',
+
+        selected_nitro_items:[],
     };
 
 
@@ -2411,6 +2413,8 @@ return data['data']
 
             var location = data['nitro'] == null ? this.props.app_state.loc['1593ew']/* arweave */ : this.props.app_state.loc['1593cw']/* 'nitro 🛰️' */
 
+            const redundancies = data['redundant_data'] || []
+
             return(
                 <div>
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3055x']/* File Details. */}</h4>
@@ -2425,6 +2429,8 @@ return data['data']
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', {'details':this.props.app_state.loc['3055eb']/* 'File Location.' */, 'title':location, 'size':'l'})}
+
+                    {redundancies.length > 0 && this.render_detail_item('3', {'details':this.props.app_state.loc['3055yt']/* 'File Replications.' */, 'title':number_with_commas(redundancies.length), 'size':'l'})}
 
                     {this.render_streamed_bytes_if_any(data)}
 
@@ -2479,26 +2485,50 @@ return data['data']
     calculate_total_streaming(data){
         var file = data['hash']
         var stream_data = this.props.app_state.file_streaming_data[file]
+        var bytes_treamed = bigInt(0)
         if(stream_data != null){
             var stream_data_object = stream_data.files_stream_count
             var time_keys = Object.keys(stream_data_object)
-            var bytes_treamed = bigInt(0)
             time_keys.forEach(key => {
                 bytes_treamed = bigInt(bytes_treamed).plus(stream_data_object[key])
             });
 
-            return bytes_treamed
         }
-        return 0
+        if(data['redundant_data'] != null && data['redundant_data'].length > 0){
+            data['redundant_data'].forEach(redundant_item => {
+                const redundant_nitro = data['redundant_info'][redundant_item]['nitro'];
+                const identifier = redundant_nitro+file
+                const backup_stream_data = this.props.app_state.backup_file_streaming_data[identifier]
+                if(backup_stream_data != null){
+                    var stream_data_object = backup_stream_data.files_stream_count
+                    var time_keys = Object.keys(stream_data_object)
+                    time_keys.forEach(key => {
+                        bytes_treamed = bigInt(bytes_treamed).plus(stream_data_object[key])
+                    });
+                }
+            });
+        }
+        return bytes_treamed
     }
 
     get_file_view_count(data){
         var file = data['hash']
         var stream_data = this.props.app_state.file_streaming_data[file]
+        var times_viewed = bigInt(0)
         if(stream_data != null){
-            return stream_data.files_view_count
+            times_viewed = bigInt(times_viewed).plus(stream_data.files_view_count)
         }
-        return 0
+        if(data['redundant_data'] != null && data['redundant_data'].length > 0){
+            data['redundant_data'].forEach(redundant_item => {
+                const redundant_nitro = data['redundant_info'][redundant_item]['nitro'];
+                const identifier = redundant_nitro+file
+                const backup_stream_data = this.props.app_state.backup_file_streaming_data[identifier]
+                if(backup_stream_data != null){
+                    times_viewed = bigInt(times_viewed).plus(backup_stream_data.files_view_count)
+                }
+            });
+        }
+        return times_viewed
     }
 
     render_not_on_e5_message(ecid_obj){
@@ -6865,10 +6895,16 @@ return data['data']
                 <div style={{height: 10}}/>
                 
                 {this.render_track_nitro(obj)}
-                <div style={{height: 10}}/>
-                
 
-                <div onClick={() => this.props.upload_file_to_nitro_confirmed(this.state.data)}>
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3055yq']/* 'Replicate File.' */, 'details':this.props.app_state.loc['3055yr']/* 'If you\'ve purchased storage on other indexers, you may replicate the uploaded files on them as well.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.load_my_nitro_objects_to_select(obj)}
+
+
+                <div style={{height: 10}}/>
+                <div onClick={() => this.upload_file_to_nitro_confirmed(this.state.data)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['3055i']/* 'Upload File.' */, 'action':''})}
                 </div>
             </div>
@@ -6885,6 +6921,132 @@ return data['data']
                 {this.render_detail_item('8', {'title':title, 'image':image, 'details':details, 'size':'l', 'border_radius':'9px'})}
             </div>
         )
+    }
+
+    load_my_nitro_objects_to_select(obj){
+        var items = this.load_active_nitros(obj)
+        var items2 = [0, 1, 2]
+        if(items.length == 0){
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_nitro_item_clicked(item)}>
+                            {this.render_nitro_item(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    load_active_nitros(current_nitro){
+        var my_bought_nitros = []
+        var all_nitros = this.get_all_sorted_objects(this.props.app_state.created_nitros)
+        for(var i=0; i<all_nitros.length; i++){
+            var obj = all_nitros[i]
+            var state = this.props.app_state.nitro_node_details[obj['e5_id']]
+            var available = false;
+            if(obj['bought'] == true && obj['e5_id'] != current_nitro['e5_id']){
+                available = true
+            }
+            if(available == true){
+                my_bought_nitros.push(obj)
+            }
+        }
+        return my_bought_nitros
+    }
+
+    render_nitro_item(item){
+        var object = item
+        var default_image = EndImg
+        var image = object['ipfs'] == null ? default_image : (object['ipfs'].album_art == null ? default_image : object['ipfs'].album_art)
+        var title = item['e5']+' • '+item['id']
+        var details = object['ipfs'] == null ? 'Nitropost ID' : start_and_end(object['ipfs'].entered_title_text)
+        const node_details = this.props.app_state.nitro_node_storage_payment_info[item['e5_id']]
+        let footer = ''
+        if(node_details == null){
+            footer = null
+        }
+        else if(node_details == 'unavailable'){
+            footer = this.props.app_state.loc['3055yo']/* 'Unavailable.' */
+        }
+        else{
+            const acquired_space = node_details['acquired_space']
+            const utilized_space = node_details['utilized_space']
+            const available_space = acquired_space - utilized_space
+            footer = this.props.app_state.loc['3055yp']/* '$Mbs' */.replace('$', parseFloat(available_space).toFixed(3))
+        }
+        if(this.state.selected_nitro_items.find(e => e['e5_id'] == item['e5_id']) != null){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':title, 'image':image,'details':details, 'size':'s', 'border_radius':'9px', 'footer':footer})}
+                    <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':title, 'image':image, 'details':details, 'size':'s', 'border_radius':'9px', 'footer':footer})}
+                </div>
+            )
+        }
+    }
+
+    when_nitro_item_clicked(item){
+        const clone = this.state.selected_nitro_items.slice()
+        if(clone.find(e => e['e5_id'] == item['e5_id']) != null){
+            const index = clone.findIndex(e => e['e5_id'] == item['e5_id'])
+            if(index != -1) clone.splice(index, 1)
+            this.setState({selected_nitro_items: clone})
+        }else{
+            clone.push(item)
+            this.setState({selected_nitro_items: clone})
+            
+            this.props.load_nitro_node_details(item, false)
+            this.props.load_my_account_storage_info(item)
+        }
+        
+    }
+
+    upload_file_to_nitro_confirmed(data){
+        const redundancy_nitros = this.state.selected_nitro_items;
+        const size_total = this.state.data['size_total']
+
+        let all_valid = true;
+        redundancy_nitros.forEach(nitro => {
+            const node_details = this.props.app_state.nitro_node_storage_payment_info[nitro['e5_id']]
+            if(node_details == null || node_details == 'unavailable'){
+                all_valid = false
+            }
+            else{
+                const acquired_space = node_details['acquired_space']
+                const utilized_space = node_details['utilized_space']
+                const available_space = acquired_space - utilized_space
+                const size_total_in_mbs = size_total / (1024 * 1024)
+                if(available_space < size_total_in_mbs){
+                    all_valid = false
+                }
+            }
+        });
+
+        if(all_valid == false){
+            this.props.notify(this.props.app_state.loc['3055ys']/* 'One of the selected indexers is invalid or insufficient in space.' */, 5000)
+        }else{
+            this.props.upload_file_to_nitro_confirmed(data, redundancy_nitros)
+        }
     }
 
 
@@ -7092,8 +7254,39 @@ return data['data']
                                     }
                                 }
                                 else{
-                                    has_all_nitro_metadata_loaded = false;
+                                    if(nitro_node_data == null) has_all_nitro_metadata_loaded = false;
                                 }
+                            }
+                            if(file_data['redundant_data'] != null && file_data['redundant_data'].length > 0){
+                                file_data['redundant_data'].forEach(redundant_link => {
+                                    const redundant_nitro = file_data['redundant_info'][redundant_link]['nitro']
+                                    const redundant_nitro_node_data = this.props.app_state.nitro_node_details[redundant_nitro]
+                                    if(redundant_nitro_node_data != null && redundant_nitro_node_data != 'unavailable'){
+                                        if(time < startOfYear && redundant_nitro != null && this.is_file_backup_available(file_hash, redundant_nitro) && !this.has_nitro_already_been_renewed(redundant_nitro) && this.does_redundant_streaming_data_exist(file_hash, redundant_nitro)){
+                                            if(files_to_renew[redundant_nitro] == null){
+                                                files_to_renew[redundant_nitro] = []
+                                            }
+                                            const files_years_stream_count = this.fetch_file_streaming_count(file_hash, startOfYear-1, redundant_nitro)
+
+                                            const file_data_item = {'data':data, 'file_data':file_data, 'time':time, 'binary_size':binary_size, 'time_multiplier':1}
+
+                                            if(time > startOfLastYear){
+                                                //it was uploaded last year
+                                                const difference = time - startOfLastYear
+                                                file_data_item['time_multiplier'] = 1 - (difference / 31556952000)
+                                            }
+
+                                            if(redundant_nitro_node_data['target_storage_streaming_multiplier'] != 0 && !bigInt(files_years_stream_count).isZero()){
+                                                file_data_item['streaming_multiplier'] = (bigInt(files_years_stream_count).divide(binary_size)).divide(redundant_nitro_node_data['target_storage_streaming_multiplier'])
+                                            }
+                                            files_to_renew[redundant_nitro].push(file_data_item)
+                                            total_files_to_renew++
+                                        }
+                                    }
+                                    else{
+                                        if(redundant_nitro_node_data == null) has_all_nitro_metadata_loaded = false;
+                                    }
+                                })
                             }
                         }
                         else{
@@ -7120,8 +7313,26 @@ return data['data']
         return this.props.app_state.file_streaming_data[current_file] != null
     }
 
+    does_redundant_streaming_data_exist(current_file, redundant_nitro){
+        return this.props.app_state.backup_file_streaming_data[redundant_nitro+current_file] != null
+    }
+
     fetch_file_streaming_count(current_file, startOfCurrentYear){
         const files_stream_count_data = this.props.app_state.file_streaming_data[current_file] == null ? {} : this.props.app_state.file_streaming_data[current_file]['files_stream_count']
+        const stream_times = Object.keys(files_stream_count_data)
+        const start_time = startOfCurrentYear - 31_556_952_000/* year in milliseconds */
+        var focused_files_streaming_totals = bigInt(0)
+        stream_times.forEach(stream_time => {
+            if(stream_time >= start_time && stream_time < startOfCurrentYear){
+                focused_files_streaming_totals = bigInt(focused_files_streaming_totals).plus(files_stream_count_data[stream_time])
+            }
+        });
+        return focused_files_streaming_totals
+    }
+
+    fetch_redundant_file_streaming_count(current_file, startOfCurrentYear, redundant_nitro){
+        const identifier = redundant_nitro+current_file
+        const files_stream_count_data = this.props.app_state.backup_file_streaming_data[identifier] == null ? {} : this.props.app_state.backup_file_streaming_data[identifier]['files_stream_count']
         const stream_times = Object.keys(files_stream_count_data)
         const start_time = startOfCurrentYear - 31_556_952_000/* year in milliseconds */
         var focused_files_streaming_totals = bigInt(0)
@@ -7136,6 +7347,13 @@ return data['data']
     is_file_available(file){
         if(file == null) return true;
         var is_file_available = this.props.app_state.file_streaming_data == null ? true : (this.props.app_state.file_streaming_data[file] == null ? true : this.props.app_state.file_streaming_data[file].is_file_deleted == false)
+        return is_file_available
+    }
+
+    is_file_backup_available(file, redundant_nitro){
+        if(file == null) return true;
+        const identifier = redundant_nitro+file
+        var is_file_available = this.props.app_state.backup_file_streaming_data == null ? true : (this.props.app_state.backup_file_streaming_data[identifier] == null ? true : this.props.app_state.backup_file_streaming_data[identifier].is_file_deleted == false)
         return is_file_available
     }
 

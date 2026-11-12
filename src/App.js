@@ -2126,7 +2126,7 @@ class App extends Component {
 
     focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(), my_applications2:[], my_bag_applications2:[], account_message_history2:{}, account_post_history2:{},
 
-    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{}, logged_purchases:{}, is_loading_storefront_refund_requests:{}, storefront_refund_requests:{}, storefront_refund_approvals:{}, storefront_refund_finalizations:{},
+    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{}, logged_purchases:{}, is_loading_storefront_refund_requests:{}, storefront_refund_requests:{}, storefront_refund_approvals:{}, storefront_refund_finalizations:{}, backup_file_streaming_data:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -22742,7 +22742,7 @@ class App extends Component {
 
         delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} mute_unmute_address={this.mute_unmute_address.bind(this)} add_file_to_collection={this.add_file_to_collection.bind(this)} begin_sharing_location_with_target={this.begin_sharing_location_with_target.bind(this)} swap_ether_to_specified_target_via_near_intents={this.swap_ether_to_specified_target_via_near_intents.bind(this)} show_terms_of_service_bottomsheet={this.show_terms_of_service_bottomsheet.bind(this)} export_all_fulfilled_obligation_data={this.export_all_fulfilled_obligation_data.bind(this)}
 
-        show_assess_certificate_bottomsheet={this.show_assess_certificate_bottomsheet.bind(this)} start_ticket_purchase_action={this.start_ticket_purchase_action.bind(this)} show_request_refund_bottomsheet={this.show_request_refund_bottomsheet.bind(this)} emit_approve_refund_request={this.emit_approve_refund_request.bind(this)}
+        show_assess_certificate_bottomsheet={this.show_assess_certificate_bottomsheet.bind(this)} start_ticket_purchase_action={this.start_ticket_purchase_action.bind(this)} show_request_refund_bottomsheet={this.show_request_refund_bottomsheet.bind(this)} emit_approve_refund_request={this.emit_approve_refund_request.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)}
         />
       </div>
     )
@@ -23559,7 +23559,7 @@ class App extends Component {
     this.set_cookies_after_stack_action(stack_clone)
   }
 
-  upload_file_to_nitro_confirmed(data){
+  upload_file_to_nitro_confirmed(data, redundancy_nitros){
     var selected_files_type = data['selected_files_type']
     var files = data['files']
     var size_total = data['size_total']
@@ -23569,7 +23569,7 @@ class App extends Component {
 
     this.open_dialog_bottomsheet()
     if(encrypted == true){
-      this.upload_multiple_encrypted_files_to_nitro_node(files, selected_files_type, obj, node_details)
+      this.upload_multiple_encrypted_files_to_nitro_node(files, selected_files_type, obj, node_details, redundancy_nitros)
     }else{
       this.upload_multiple_files_to_nitro_node(files, selected_files_type, obj, node_details)
     }
@@ -56276,6 +56276,7 @@ class App extends Component {
       console.log('apppage','get_nitro_data','obtained data', obj)
       var files_to_fetch_view_data = []
       var files_to_fetch_view_data_e5s = []
+      const backup_files_to_fetch_view_data_nitro_urls = {}
       for(var s=0; s<nitro_cids.length; s++){
         const nitro_cid = nitro_cids[s]
         const filetype = search_data_file_types[nitro_cid]
@@ -56303,6 +56304,38 @@ class App extends Component {
                 files_to_fetch_view_data_e5s.push(e5_id2)
               } 
             }
+          }
+          if(cid_data['redundant_data'] != null && cid_data['redundant_data'].length > 0){
+            cid_data['redundant_data'].forEach(file_pointer_link2 => {
+              const split_cid_array2 = file_pointer_link2.split('-');
+              const e5_id2 = split_cid_array2[0]
+              const nitro_cid2 = split_cid_array2[1]
+
+              const nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
+              const content_type = this.get_file_extension(cid_data['name']);
+              if(nitro_url != null){
+                if(cid_data['redundant_info'] == null){
+                  cid_data['redundant_info'] = {}
+                }
+                if(cid_data['redundant_info'][file_pointer_link2] == null){
+                  cid_data['redundant_info'][file_pointer_link2] = {}
+                }
+                cid_data['redundant_info'][file_pointer_link2]['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`
+                cid_data['redundant_info'][file_pointer_link2]['data_deconstructed'] = [nitro_url, content_type, nitro_cid2, content_type]
+                cid_data['redundant_info'][file_pointer_link2]['hash'] = nitro_cid2
+                if(cid_data['redundant_info'][file_pointer_link2]['nitro'] == null){
+                  cid_data['redundant_info'][file_pointer_link2]['nitro'] = e5_id2
+                }
+
+                if(backup_files_to_fetch_view_data_nitro_urls[nitro_url] = null){
+                  backup_files_to_fetch_view_data_nitro_urls[nitro_url] = {
+                    backup_files_to_fetch_view_data:[], backup_files_to_fetch_view_data_e5s:[]
+                  }
+                  backup_files_to_fetch_view_data_nitro_urls[nitro_url].backup_files_to_fetch_view_data.push(nitro_cid2);
+                  backup_files_to_fetch_view_data_nitro_urls[nitro_url].backup_files_to_fetch_view_data_e5s.push(e5_id2)
+                }
+              }
+            });
           }
           if(filetype == 'lyric'){
             if(cid_data['encrypted'] == true){
@@ -56382,6 +56415,12 @@ class App extends Component {
       if(files_to_fetch_view_data.length > 0){
         await this.fetch_multiple_file_viewcounts_from_one_nitro_storage(nitro_url, files_to_fetch_view_data, files_to_fetch_view_data_e5s)
       }
+      if(Object.keys(backup_files_to_fetch_view_data_nitro_urls).length > 0){
+        for(var b=0; b<Object.keys(backup_files_to_fetch_view_data_nitro_urls).length; b++){
+          const backup_nitro_url = Object.keys(backup_files_to_fetch_view_data_nitro_urls)[b]
+          await this.fetch_multiple_file_viewcounts_from_one_nitro_storage(backup_nitro_url, backup_files_to_fetch_view_data_nitro_urls.backup_files_to_fetch_view_data, backup_files_to_fetch_view_data_nitro_urls.backup_files_to_fetch_view_data_e5s, true)
+        }
+      }
     }
     catch(e){
       console.log('apppage','fetch_multiple_file_datas_from_one_nitro_storage', e)
@@ -56417,7 +56456,15 @@ class App extends Component {
     }
   }
 
-  fetch_multiple_file_viewcounts_from_one_nitro_storage = async (nitro_url, files_to_fetch_view_data, files_to_fetch_view_data_e5s) => {
+  fetch_multiple_file_viewcounts_from_one_nitro_storage = async (nitro_url, files_to_fetch_view_data, files_to_fetch_view_data_e5s, backups=false) => {
+    if(backups == true){
+      await this.update_nitro_privacy_signature(false)
+      await this.wait(300)
+      await this.check_and_fetch_object_marco_if_non_existant(files_to_fetch_view_data_e5s[0], nitro_url)
+      await this.wait(700)
+      await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
+      await this.wait(700)
+    }
     const arg_obj = {
       files: files_to_fetch_view_data,
     }
@@ -56441,16 +56488,24 @@ class App extends Component {
       var obj = await this.process_nitro_api_call_result(data, nitro_url);
       console.log('apppage','fetch_view_data', obj)
       if(obj.success != false){
-        var file_streaming_data_clone = structuredClone(this.state.file_streaming_data)
+        var file_streaming_data_clone = backups == true ? structuredClone(this.state.backup_file_streaming_data) : structuredClone(this.state.file_streaming_data)
         for(var f=0; f<files_to_fetch_view_data.length; f++){
           const file = files_to_fetch_view_data[f]
           const files_view_count = obj.views[file]
           const files_stream_count = obj.streams[file]
           const files_renewal_years = obj.renewal_years == null ? [] : obj.renewal_years[file]
           const is_file_deleted = obj.file_status == null ? false : (obj.file_status[file] == true)
-          file_streaming_data_clone[file] = {files_view_count, files_stream_count, files_renewal_years, is_file_deleted}
+          if(backups == true){
+            file_streaming_data_clone[files_to_fetch_view_data_e5s[0]+file] = {files_view_count, files_stream_count, files_renewal_years, is_file_deleted}
+          }else{
+            file_streaming_data_clone[file] = {files_view_count, files_stream_count, files_renewal_years, is_file_deleted}
+          }
         }
-        this.setState({file_streaming_data: file_streaming_data_clone})
+        if(backups == true){
+          this.setState({backup_file_streaming_data: file_streaming_data_clone})
+        }else{
+          this.setState({file_streaming_data: file_streaming_data_clone})
+        }
         this.set_cookies()
       }
     }
@@ -56536,26 +56591,68 @@ class App extends Component {
 
   construct_encrypted_link_from_ecid_object = async (data, id) => {
     await this.update_nitro_privacy_signature(false)
+    if(this.dead_nitro_links == null){
+      this.dead_nitro_links = []
+    }
     var raw_link = data[id]
     // console.log('construct_encrypted_link_from_ecid_object', 'data deconstructed', data['data_deconstructed'])
-    const nitro_url = data['data_deconstructed'][0]
-    const content_type = data['data_deconstructed'][1] == null ? data['extension'] : data['data_deconstructed'][1]
-    const nitro_cid2 = data['data_deconstructed'][2]
-    const file = nitro_cid2/* +'.'+content_type */
+    let nitro_url = data['data_deconstructed'][0]
+    let content_type = data['data_deconstructed'][1] == null ? data['extension'] : data['data_deconstructed'][1]
+    let nitro_cid2 = data['data_deconstructed'][2]
+    let file = nitro_cid2/* +'.'+content_type */
 
-    // console.log('construct_encrypted_link_from_ecid_object', 'check_and_start_rerecording_of_key_in_nitro')
+    if(this.dead_nitro_links != null && this.dead_nitro_links.includes(nitro_url)){
+      if(data['redundant_data'] != null && data['redundant_data'].length > 0){
+        for(var r=0; r<data['redundant_data'].length; r++){
+          const redundant_link = data['redundant_data'][r]
 
-    await this.start_update_url_endpoint_if_exists(nitro_url)
+          nitro_url = data['redundant_info'][redundant_link]['data_deconstructed'][0]
+          content_type = data['redundant_info'][redundant_link]['data_deconstructed'][1] == null ? data['extension'] : data['redundant_info'][redundant_link]['data_deconstructed'][1]
+          nitro_cid2 = data['redundant_info'][redundant_link]['data_deconstructed'][2]
+          file = nitro_cid2/* +'.'+content_type */
 
-    await this.reset_node_endpoint_directory(nitro_url)
-    await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
-    // console.log('construct_encrypted_link_from_ecid_object', 'done proceeding...')
+          if(!this.dead_nitro_links.includes(nitro_url)){
+            await this.start_update_url_endpoint_if_exists(nitro_url)
+            await this.reset_node_endpoint_directory(nitro_url)
+            await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
 
-    return `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
-    
-    // raw_link.replace(`/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`, `/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`)
+            const nitro_link_directory = this.state.nitro_link_directory_data[nitro_url]
+            if(nitro_link_directory == null){
+              this.dead_nitro_links.push(nitro_url) 
+            }
+            else{
+              return `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
+            }
+          }
+        }
+        await this.start_update_url_endpoint_if_exists(nitro_url)
+        await this.reset_node_endpoint_directory(nitro_url)
+        await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
 
-    // return raw_link
+        return `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
+      }
+      else{
+        await this.start_update_url_endpoint_if_exists(nitro_url)
+        await this.reset_node_endpoint_directory(nitro_url)
+        await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
+
+        return `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
+      }
+    }
+    else{
+      await this.start_update_url_endpoint_if_exists(nitro_url)
+      await this.reset_node_endpoint_directory(nitro_url)
+      await this.check_and_start_rerecording_of_key_in_nitro(nitro_url)
+
+      const nitro_link_directory = this.state.nitro_link_directory_data[nitro_url]
+      if(nitro_link_directory == null){
+        this.dead_nitro_links.push(nitro_url) 
+        return await this.construct_encrypted_link_from_ecid_object(data, id);
+      }
+
+      return `${nitro_url}/${this.load_registered_endpoint_from_link(nitro_url, 'stream_file')}/${await this.fetch_nitro_privacy_signature(nitro_url, content_type)}/${await this.fetch_nitro_privacy_signature(nitro_url, file)}/${await this.fetch_nitro_privacy_signature(nitro_url)}`
+    }
+
   }
 
   async start_update_url_endpoint_if_exists(nitro_url){
@@ -56758,7 +56855,7 @@ class App extends Component {
 
   }
 
-  upload_multiple_encrypted_files_to_nitro_node = async (datas, type, nitro_object, node_details) => {
+  upload_multiple_encrypted_files_to_nitro_node = async (datas, type, nitro_object, node_details, redundancy_nitros=[]) => {
     this.prompt_top_notification(this.getLocale()['1593bq']/* Uploading.. */, 8000)
     this.set_file_upload_status('uploading')
     var file_datas = []
@@ -56774,6 +56871,11 @@ class App extends Component {
     }
 
     var file_names = await this.upload_multiple_encrypted_datas_to_nitro_node(file_datas, file_types, nitro_object, node_details, total_size, file_sizes)
+
+    for(var n=0; n<redundancy_nitros.length; n++){
+      const redundant_nitro_node_details = this.props.app_state.nitro_node_details[redundancy_nitros[n]['e5_id']]
+      await this.upload_multiple_encrypted_datas_to_nitro_node(file_datas, file_types, redundancy_nitros[n], redundant_nitro_node_details, total_size, file_sizes)
+    }
     if(file_names == null){
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       this.set_file_upload_status('')
@@ -56789,6 +56891,14 @@ class App extends Component {
       var file_cid = file_names[i]
       var link = nitro_object_e5_id+'-'+file_cid
       data2['data'] = link
+      for(var l=0; l<redundancy_nitros.length; l++){
+        const redundant_nitro_object_e5_id = redundancy_nitros[l]['e5_id']
+        const redundant_link = redundant_nitro_object_e5_id+'-'+file_cid
+        if(data2['redundant_data'] == null){
+          data2['redundant_data'] = []
+        }
+        data2['redundant_data'].push(redundant_link)
+      }
       const encrypted_object = await this.encrypt_storage_object(JSON.stringify(data2), {})
       final_objects.push(encrypted_object)
       final_objects_2.push(data2)
@@ -57374,6 +57484,31 @@ class App extends Component {
             _data['nitro'] = e5_id2
           }
         }
+      }
+
+      if(_data['redundant_data'] != null && _data['redundant_data'].length > 0){
+        _data['redundant_data'].forEach(file_pointer_link2 => {
+          const split_cid_array2 = file_pointer_link2.split('-');
+          const e5_id2 = split_cid_array2[0]
+          const nitro_cid2 = split_cid_array2[1]
+
+          const nitro_url = this.get_nitro_link_from_e5_id(e5_id2)
+          const content_type = this.get_file_extension(file_name) || _data['extension'];
+          if(nitro_url != null){
+            if(_data['redundant_info'] == null){
+              _data['redundant_info'] = {}
+            }
+            if(_data['redundant_info'][file_pointer_link2] == null){
+              _data['redundant_info'][file_pointer_link2] = {}
+            }
+            _data['redundant_info'][file_pointer_link2]['data'] = `${nitro_url}/stream_file/${content_type}/${nitro_cid2}.${content_type}/eee`
+            _data['redundant_info'][file_pointer_link2]['data_deconstructed'] = [nitro_url, content_type, nitro_cid2, content_type]
+            _data['redundant_info'][file_pointer_link2]['hash'] = nitro_cid2
+            if(_data['redundant_info'][file_pointer_link2]['nitro'] == null){
+              _data['redundant_info'][file_pointer_link2]['nitro'] = e5_id2
+            }
+          }
+        });
       }
       
       _data['name'] = file_name
