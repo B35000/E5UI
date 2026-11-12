@@ -1170,7 +1170,7 @@ class NewSubscriptionPage extends Component {
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['551']/* 'Create a basic E5 subscription' */})}
                 <div style={{height:20}}/>
-                <div style={{height:this.props.height-280, 'overflow':'auto'}}>
+                <div style={{height:this.props.height-(this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 280 : 300 ), 'overflow':'auto'}}>
                     {this.render_subscription_section_parts_viewpager(page)}
                 </div>
 

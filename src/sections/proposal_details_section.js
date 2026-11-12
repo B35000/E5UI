@@ -1252,6 +1252,15 @@ class ProposalDetailsSection extends Component {
                     </div> 
                 )
             }
+            else if(selected_item == 5/* 'webapp-update' */){
+                return(
+                    <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 0px 0px 0px', }}>
+                        <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
+                            {this.render_webapp_update_actions(object)}
+                        </div>
+                    </div> 
+                )
+            }
             return(
                 <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 0px 0px 0px', }}>
                     <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
@@ -1593,6 +1602,20 @@ class ProposalDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+
+    render_webapp_update_actions(object){
+        const reference_link = object['ipfs'].reference_link;
+        const version_text = object['ipfs'].version_text
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['438cg']/* 'Reference Link.' */, 'details':reference_link, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['438ch']/* 'Version' */, 'details':version_text, 'size':'l'})}
+            </div>
+        )
     }
 
 

@@ -118,6 +118,8 @@ class NewProposalPage extends Component {
         markdown:'',get_markdown_preview_or_editor_object: this.get_markdown_preview_or_editor_object(), entered_zip_objects:[],
 
         selected_certificate_target:null, proportion_amount:0, typed_search_fractionalized_tokens:'', fractionalization_data:{},
+
+        reference_link:'', version_text:'', reference_link_text:''
     };
 
     
@@ -164,7 +166,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['316']/* 'spend' */,this.props.app_state.loc['317']/* 'reconfig' */, this.props.app_state.loc['318']/* 'exchange-transfer' */, this.props.app_state.loc['438bt']/* certificate-transfer */], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['316']/* 'spend' */,this.props.app_state.loc['317']/* 'reconfig' */, this.props.app_state.loc['318']/* 'exchange-transfer' */, this.props.app_state.loc['438bt']/* certificate-transfer */, this.props.app_state.loc['438ca']/* 'webapp-update' */], [1]
             ],
         };
     }
@@ -2496,7 +2498,7 @@ return data['data']
         const message = (this.state.page +1) + ' / '+ 4
         return(
             <div>
-                <div style={{height:this.props.height-210, 'overflow':'auto'}}>
+                <div style={{height:this.props.height- (this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 210 : 230 ) , 'overflow':'auto'}}>
                     {this.render_configuration_section_parts_viewpager(page)}  
                 </div>
                 {bottom_part(message)}
@@ -2685,6 +2687,8 @@ return data['data']
 
 
     when_new_proposal_type_tags_object_updated(tag_obj){
+        const selected_item = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        if(selected_item == this.props.app_state.loc['438ca']/* 'webapp-update' */ && this.state.contract_item['id'] != 1193) return;
         this.setState({new_proposal_type_tags_object: tag_obj})
     }
 
@@ -2917,10 +2921,123 @@ return data['data']
         else if(selected_item == this.props.app_state.loc['438bt']/* certificate-transfer */){
             return this.render_certificate_transfer()
         }
+        else if(selected_item == this.props.app_state.loc['438ca']/* 'webapp-update' */){
+            return this.render_webapp_update_ui()
+        }
     }
 
 
 
+
+
+
+
+
+
+
+
+    render_webapp_update_ui(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_webapp_update_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_webapp_update_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_webapp_update_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_webapp_update_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['438cb']/* 'Webapp Specs.' */, 'details':this.props.app_state.loc['438cc']/* 'Set the reference link and new version you wish to update the indexers with.' */, 'size':'l'})}
+                {this.render_detail_item('10', {'font':this.props.app_state.font, 'textsize':'12px', 'text':this.props.app_state.loc['438cd']/* 'If you wish to update the version alone, just leave the reference link blank.' */})}
+
+
+                <div style={{margin:'10px 10px 0px 10px'}}>
+                    <div className="row">
+                        <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['438ce']/* 'Reference Link...' */} when_text_input_field_changed={this.when_reference_link_text_input_field_changed.bind(this)} text={this.state.reference_link_text} when_enter_tapped={() => this.test_node_url_link()} theme={this.props.theme}/>
+                        </div>
+                        <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                            <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                <div className="text-end" onClick={()=>this.test_node_url_link()}>
+                                    {this.render_detail_item('17', {'src':this.props.theme['add_text'], 'style': { height:37, width:'auto' }})}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.state.reference_link})}
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['438ck']/* 'E5 Version.' */, 'details':this.props.app_state.loc['438cl']/* 'Set the version you are using for the update.' */, 'size':'l'})}
+
+                <div style={{margin:'10px 10px 0px 10px'}}>
+                    <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['438cf']/* 'Version...' */} when_text_input_field_changed={this.when_version_text_input_field_changed.bind(this)} text={this.state.version_text} theme={this.props.theme}/>
+                </div>
+            </div>
+        )
+    }
+
+    when_reference_link_text_input_field_changed(text){
+        this.setState({reference_link_text: text})
+    }
+
+    when_version_text_input_field_changed(text){
+        this.setState({version_text: text})
+    }
+
+    test_node_url_link(){
+        var link = this.state.reference_link_text
+
+        if(link == ''){
+            this.props.notify(this.props.app_state.loc['a273e']/* 'Please add a url link.' */, 4000)
+        }
+        else if(!this.isValidHttpUrl(link)){
+            this.props.notify(this.props.app_state.loc['a273f']/* 'That link is not valid.' */, 4000)
+        }
+        else if(link.endsWith('/')){
+            this.props.notify(this.props.app_state.loc['a273k']/* 'The link should not end with the \'/\' character.' */, 4000)
+        }
+        else{
+            this.props.test_indexer_node_url_link(link)
+        }
+    }
 
 
 
@@ -4887,6 +5004,9 @@ return data['data']
         else if(/!\[.*?\]\(.*?\)/.test(this.state.markdown) == true && this.props.can_sender_include_image_in_markdown() == false){
             this.props.notify(this.props.app_state.loc['2738au']/* 'You cant use media links in markdown right now.' */, 4000)
         }
+        else if(this.state.reference_link != '' && !this.isValidHttpUrl(this.state.reference_link)){
+            this.props.notify(this.props.app_state.loc['438ci']/* 'That reference link is not valid.' */, 4000)
+        }
         else{
             var me = this
             this.setState({content_channeling_setting: me.props.app_state.content_channeling,
@@ -4943,6 +5063,15 @@ return data['data']
         return false
     }
 
+    isValidHttpUrl(string) {
+        let url;
+        try {
+            url = new URL(string);
+        } catch (_) {
+            return false;  
+        }
+        return url.protocol === "http:" || url.protocol === "https:"/*  || url.protocol === "wss:" */;
+    }
 
     reset_state(){
         this.setState({

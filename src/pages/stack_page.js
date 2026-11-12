@@ -4178,6 +4178,15 @@ class StackPage extends Component {
                         adds.push([])
                         ints.push(yes_vote_object)
                     }
+
+                    const consensus_type_tag = this.get_selected_item(txs[i].new_proposal_type_tags_object, txs[i].new_proposal_type_tags_object['i'].active)
+                    if(consensus_type_tag == this.props.app_state.loc['438ca']/* 'webapp-update' */){
+                        var webapp_update_obj = await this.format_webapp_update_object(txs[i], calculate_gas, ipfs_index)
+                    
+                        strs.push(webapp_update_obj.str)
+                        adds.push([])
+                        ints.push(webapp_update_obj.int)
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['796']/* 'vote' */){
                     var vote_obj = this.format_vote_object(txs[i])
@@ -7002,6 +7011,20 @@ class StackPage extends Component {
                                 ipfs_index_object[creator_group_post_identifier] = creator_group_record
                                 ipfs_index_array.push({'id':creator_group_post_identifier, 'data':creator_group_record})
                             }
+                        }
+                    }
+                    if(txs[i].type == this.props.app_state.loc['784']/* 'proposal' */){
+                        const consensus_type_tag = this.get_selected_item(txs[i].new_proposal_type_tags_object, txs[i].new_proposal_type_tags_object['i'].active)
+                        if(consensus_type_tag == this.props.app_state.loc['438ca']/* 'webapp-update' */){
+                            const reference_link = txs[i].reference_link;
+                            const version_text = txs[i].version_text
+                            const webapp_update_obj = {
+                                'reference_link':reference_link,
+                                'version_text':version_text,
+                            }
+                            obj['tags']['webapp_update_object'] = webapp_update_obj
+                            ipfs_index_object['webapp_update_object'] = webapp_update_obj
+                            ipfs_index_array.push({'id':'webapp_update_object', 'data':webapp_update_obj})
                         }
                     }
                 }
@@ -10951,6 +10974,7 @@ class StackPage extends Component {
         consensus_obj[this.props.app_state.loc['317']/* reconfig */] = 1
         consensus_obj[this.props.app_state.loc['318']/* exchange-transfer */] = 6
         consensus_obj[this.props.app_state.loc['438bt']/* certificate-transfer */] = 0
+        consensus_obj[this.props.app_state.loc['438ca']/* 'webapp-update' */] = 0
 
         var consensus_type_tag = this.get_selected_item(t.new_proposal_type_tags_object, t.new_proposal_type_tags_object['i'].active)
         var consensus_type = consensus_obj[consensus_type_tag]
@@ -11101,6 +11125,31 @@ class StackPage extends Component {
                 obj[19].push(0)/* depths */
                 obj[20].push(23)
             }
+        }
+        else if(consensus_type_tag == this.props.app_state.loc['438ca']/* 'webapp-update' */){
+            obj[9].push('3')
+            obj[10].push(23)
+
+            obj[11].push('100')
+            obj[12].push(23)
+
+            var receiver = 0
+            var receiver_type = 23
+            if(receiver == 53){
+                receiver_type = 53
+            }
+
+            obj[13].push(receiver.toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[14].push(receiver_type)
+
+            obj[15].push(0)/* depths */
+            obj[16].push(23)
+
+            obj[17].push(0)/* depths */
+            obj[18].push(23)
+
+            obj[19].push(0)/* depths */
+            obj[20].push(23)
         }
 
         return obj
@@ -15167,6 +15216,28 @@ class StackPage extends Component {
         return {int: obj, str: string_obj, depth: depth_swap_obj}
     }
 
+    format_webapp_update_object = async (t, calculate_gas, ipfs_index) =>{
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [38], [23],/* 38(webapp_update_registry) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = 0
+        var int_data = 0
+
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, 'webapp_update_object');
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
     
 
 

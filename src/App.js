@@ -17403,7 +17403,7 @@ class App extends Component {
     
     return this.renderBottomSheet(
       <NewProposalPage ref={this.new_proposal_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)} load_modify_item_data={this.load_modify_item_data.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} 
-      update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} fetch_id_type={this.fetch_id_type.bind(this)} show_images={this.show_images.bind(this)}
+      update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} can_sender_include_image_in_markdown={this.can_sender_include_image_in_markdown.bind(this)} fetch_id_type={this.fetch_id_type.bind(this)} show_images={this.show_images.bind(this)} test_indexer_node_url_link={this.test_indexer_node_url_link.bind(this)}
       />,
       this.state.new_proposal_bottomsheet,
       this.open_new_proposal_bottomsheet,
@@ -17503,6 +17503,31 @@ class App extends Component {
     const E52_address = contract_addresses[1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
     return await E52contractInstance.methods.f135(id).call((error, result) => {});
+  }
+
+  async test_indexer_node_url_link(link){
+    this.prompt_top_notification(this.getLocale()['438cj']/* 'Testing that link...' */, 1400)
+    try {
+      const res = await fetch(link, {
+        cache: 'no-store',
+      });
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const latestVersion = doc.querySelector('meta[name="version"]')?.getAttribute('content');
+
+      if(latestVersion != null){
+        if(this.new_proposal_page.current != null){
+          this.new_proposal_page.current?.setState({reference_link: link})
+          this.prompt_top_notification(this.getLocale()['a273j']/* 'Provided link added.' */, 5000)
+        } 
+      }else{
+        this.prompt_top_notification(this.getLocale()['a273h']/* 'That provided link is not available for use.' */, 6000)
+      }
+    } 
+    catch (err) {
+      console.error('Update check failed', err);
+      this.prompt_top_notification(this.getLocale()['a273h']/* 'That provided link is not available for use.' */, 6000)
+    }
   }
 
 

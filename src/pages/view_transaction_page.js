@@ -3646,6 +3646,7 @@ return data['data']
         consensus_obj[this.props.app_state.loc['317']/* reconfig */] = 1
         consensus_obj[this.props.app_state.loc['318']/* exchange-transfer */] = 6
         consensus_obj[this.props.app_state.loc['438bt']/* certificate-transfer */] = 60
+        consensus_obj[this.props.app_state.loc['438ca']/* 'webapp-update' */] = 61
         var consensus_type_tag = this.get_selected_item(t.new_proposal_type_tags_object, t.new_proposal_type_tags_object['i'].active)
         var consensus_type = consensus_obj[consensus_type_tag]
         var proposal_expiry_time = t.proposal_expiry_time.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -3808,7 +3809,7 @@ return data['data']
                 </div> 
             )
         }
-        if(proposal_action == 60){
+        else if(proposal_action == 60){
            return(
                 <div style={{'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 0px 0px 0px'}}>
@@ -3816,6 +3817,18 @@ return data['data']
                         <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 20px 20px 20px'}}/>
                     </div>
                 </div> 
+            )
+        }
+        else if(proposal_action == 61){
+            const reference_link = object['ipfs'].reference_link;
+            const version_text = object['ipfs'].version_text
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['438cg']/* 'Reference Link.' */, 'details':reference_link, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['438ch']/* 'Version' */, 'details':version_text, 'size':'l'})}
+                </div>
             )
         }
 

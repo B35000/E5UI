@@ -2663,7 +2663,7 @@ class NewCrossexchangePage extends Component {
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['e311p']/* 'Customize some of the default settings.' */})}
                 <div style={{height:20}}/>
-                <div style={{height:this.props.height-280, 'overflow':'auto'}}>
+                <div style={{height:this.props.height-(this.props.app_state.rounded_edges == this.props.app_state.loc['1593li']/* sharp */ ? 280 : 300 ), 'overflow':'auto'}}>
                     {this.render_custom_token_section_parts_viewpager(page)}
                 </div>
                 {bottom_part(message)}
