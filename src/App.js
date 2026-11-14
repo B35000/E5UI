@@ -769,6 +769,7 @@ import CertificateChainPage from './pages/view_certificate_chain_page'
 import QuickPurchaseStoragePage from './pages/quick_purchase_storage_page'
 import TermsOfServicePage from './pages/terms_of_service_page'
 import RequestRefundPage from './pages/request_refund_page'
+import ConfigureSpendStructuresPage from './pages/configure_spend_structures_page'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -2006,7 +2007,7 @@ class App extends Component {
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
     fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
     quick_send_bottomsheet:false, edit_crossexchange_bottomsheet: false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false,
-    quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false, request_refund_bottomsheet:false,
+    quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false, request_refund_bottomsheet:false, view_configure_spend_structures_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -2126,7 +2127,7 @@ class App extends Component {
 
     focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(), my_applications2:[], my_bag_applications2:[], account_message_history2:{}, account_post_history2:{},
 
-    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{}, logged_purchases:{}, is_loading_storefront_refund_requests:{}, storefront_refund_requests:{}, storefront_refund_approvals:{}, storefront_refund_finalizations:{}, backup_file_streaming_data:{}
+    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{}, logged_purchases:{}, is_loading_storefront_refund_requests:{}, storefront_refund_requests:{}, storefront_refund_approvals:{}, storefront_refund_finalizations:{}, backup_file_streaming_data:{}, contract_spend_structure_actions:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -5305,6 +5306,7 @@ class App extends Component {
     this.terms_of_service_page = React.createRef();
     this.assess_certificate_page = React.createRef();
     this.request_refund_page = React.createRef();
+    this.view_configure_spend_structures_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -6609,7 +6611,7 @@ class App extends Component {
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
         fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false, quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false, request_refund_bottomsheet:false,
-
+        view_configure_spend_structures_bottomsheet:false,
       })
 
       return cached_state_obj
@@ -6700,7 +6702,7 @@ class App extends Component {
         // non_fungible_token_data:this.state.non_fungible_token_data, 
         // fractionalized_assets:this.state.fractionalized_assets,
         created_object_full: this.state.created_object_full,
-
+        contract_spend_structure_actions: this.state.contract_spend_structure_actions,
 
         cached_pinns_and_viewed_objects: {
           created_subscriptions: this.filter_e5_object_list(this.state.created_subscriptions),
@@ -6743,7 +6745,6 @@ class App extends Component {
   filter_e5_object_list(state_object){
     const pinned_list = this.homepage.current?.state.all_pinns || []
     const viewed_list = this.homepage.current?.state.viewed_objects || []
-    // console.log('filter_e5_object_list', 'pinned_list', pinned_list, viewed_list)
     const new_state_object = {}
     Object.keys(state_object).forEach(e5 => {
       const e5s_objects = state_object[e5]
@@ -6752,9 +6753,6 @@ class App extends Component {
       })
       if(new_state_object[e5].length == 0) delete new_state_object[e5];
     });
-
-    // console.log('filter_e5_object_list', 'new_state_object', new_state_object)
-
     return new_state_object
   }
 
@@ -8808,6 +8806,7 @@ class App extends Component {
           {this.render_new_bag_bottomsheet()}
           {this.render_assess_certificate_bottomsheet()}
           {this.render_request_refund_bottomsheet()}
+          {this.render_view_configure_spend_structures_bottomsheet()}
 
           {this.render_set_map_location_bottomsheet()}
           {this.render_dialog_bottomsheet()}
@@ -8963,6 +8962,8 @@ class App extends Component {
           get_ether_blockexplorer_link={this.get_ether_blockexplorer_link.bind(this)} show_new_bag_bottomsheet={this.show_new_bag_bottomsheet.bind(this)} perform_translation_of_specific_object={this.perform_translation_of_specific_object.bind(this)}
           when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}
           set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)} show_loader_for_object_events={this.show_loader_for_object_events.bind(this)} load_contract_obligation_fulfilment_info={this.load_contract_obligation_fulfilment_info.bind(this)} enter_chatroom_if_socket_enabled={this.enter_chatroom_if_socket_enabled.bind(this)} fetch_storefront_refund_requests={this.fetch_storefront_refund_requests.bind(this)}
+
+          show_view_configure_spend_structures={this.show_view_configure_spend_structures.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -13631,6 +13632,7 @@ class App extends Component {
     const finish_payment_transactions = []
     const poll_record_e5_ids = []
     const accept_job_e5_ids = []
+    const submit_proposals_with_spend_structure_actions = []
 
     const all_tagged_addresses_data_clone = structuredClone(this.state.all_tagged_addresses_data)
     for(var i=0; i<stack.length; i++){
@@ -13772,6 +13774,14 @@ class App extends Component {
           const e5 = this.state.selected_e5
           accept_job_e5_ids.push(job_id+e5)
         }
+        else if(stack[i].type = this.getLocale()['783']/* 'submit' */){
+          const t = stack[i]
+          const proposal_object = t.proposal_item
+          const spend_actions = proposal_object['ipfs'].spend_actions
+          if(spend_actions.length > 0 && spend_actions[0]['spend_channel'] != null){
+            submit_proposals_with_spend_structure_actions.push(proposal_object)
+          }
+        }
       }
     }
 
@@ -13869,6 +13879,12 @@ class App extends Component {
 
     if(accept_job_e5_ids.length > 0){
       this.emit_comment_record_object_event(accept_job_e5_ids, 'job_accepances')
+      await this.wait(1000)
+    }
+
+    for(var y=0; y<submit_proposals_with_spend_structure_actions.length; y++){
+      const object = submit_proposals_with_spend_structure_actions[y]
+      await this.emit_record_spend_structure_action_event(object)
       await this.wait(1000)
     }
     
@@ -20016,6 +20032,15 @@ class App extends Component {
         }
       }, (1 * 1100));
     }
+    else if(tx.type == this.getLocale()['3120']/* 'configure-spend-structures' */){
+      this.open_view_configure_spend_structures_bottomsheet()
+      var me = this;
+      setTimeout(function() {
+        if(me.view_configure_spend_structures_page.current != null){
+          me.view_configure_spend_structures_page.current.setState(tx)
+        }
+      }, (1 * 1100));
+    }
     
   }
 
@@ -22880,7 +22905,8 @@ class App extends Component {
       'show_certificate_assessment_item_details':500,
       'confirm_purchase_of_tickets':500,
       'view_acquired_ticket_item_details':550,
-      'view_storefront_refund_request_item':550
+      'view_storefront_refund_request_item':550,
+      'view_contract_current_year_expenditure_info':550
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -35119,6 +35145,100 @@ class App extends Component {
 
 
 
+  render_view_configure_spend_structures_bottomsheet(){
+    if(this.state.view_configure_spend_structures_bottomsheet2 != true) return;
+    var os = getOS()
+    return this.renderBottomSheet(
+      this.render_view_configure_spend_structures_element(),
+      this.state.view_configure_spend_structures_bottomsheet,
+      this.open_view_configure_spend_structures_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  render_view_configure_spend_structures_element(){
+    var size = this.getScreenSize();
+    return(
+      <div>
+        <ConfigureSpendStructuresPage ref={this.view_configure_spend_structures_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)}
+        add_configure_spend_structures_transaction_to_stack={this.add_configure_spend_structures_transaction_to_stack.bind(this)} load_obligation_contract={this.load_obligation_contract.bind(this)}
+        />
+      </div>
+    )
+  }
+
+  open_view_configure_spend_structures_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_configure_spend_structures_bottomsheet')
+    if(this.state.view_configure_spend_structures_bottomsheet == true){
+      //closing
+      this.view_configure_spend_structures_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({view_configure_spend_structures_bottomsheet: !this.state.view_configure_spend_structures_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_configure_spend_structures_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_configure_spend_structures_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_configure_spend_structures_bottomsheet: !me.state.view_configure_spend_structures_bottomsheet});
+
+          if(me.view_configure_spend_structures_bottomsheet != null){
+            // me.view_transaction_page.current?.setState(me.view_configure_spend_structures_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_configure_spend_structures(object){
+    this.open_view_configure_spend_structures_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_configure_spend_structures_page.current != null){
+        if(object['spend_structures_configurations'] != null && object['spend_structures_configurations'].length > 0){
+          const latest_configuration = me.sortByAttributeDescending(object['spend_structures_configurations'], 'time')[0]
+          me.view_configure_spend_structures_page.current.setState(latest_configuration)
+        }
+        me.view_configure_spend_structures_page.current.set_data(object)
+
+      }
+    }, (1 * 1100));
+  }
+
+  add_configure_spend_structures_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -44761,6 +44881,7 @@ class App extends Component {
           contract_obj['prepurchase_awards_events'] = previous_obj['prepurchase_awards_events']
           contract_obj['interactible_hidden'] = previous_obj['interactible_hidden']
           contract_obj['balance_obj'] = previous_obj['balance_obj']
+          contract_obj['spend_structures_configurations'] = previous_obj['spend_structures_configurations']
         }
       }
 
@@ -44885,6 +45006,7 @@ class App extends Component {
       [web3, H52contractInstance, 'e5', e5, {p2/* awward_receiver */:id, p4/* metadata */:my_address}],
 
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:id, p3/* context */:65/* 65(public_contract_obligation_configuration) */}],
+      [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:id, p3/* context */:72/* 72(public_contract_spend_structures_configuration) */}],
     ]
     var all_events_data = await this.load_multiple_events_from_nitro(event_params)
     var all_events = all_events_data.all_events
@@ -44952,6 +45074,24 @@ class App extends Component {
     }
 
 
+
+    const spend_structures_configuration_events = all_events[6]
+    const spend_structures_configurations = []
+    if(spend_structures_configuration_events.length > 0) await this.fetch_multiple_cids_from_nitro(spend_structures_configuration_events, 0, 'p4');
+    for(var f=0; f<spend_structures_configuration_events.length; f++){
+      const event = spend_structures_configuration_events[f]
+      const cid = event.returnValues.p4
+      const ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
+      const configuration_object = {'event':event, 'ipfs':ipfs, 'time':event.returnValues.p6/* timestamp */}
+      spend_structures_configurations.push(configuration_object)
+    }
+    
+    if(spend_structures_configurations.length > 0){
+      const spend_structures_actions_target = object['e5_id']
+      await this.get_objects_from_socket_and_set_in_state([spend_structures_actions_target], [], [], 1771762377000)
+    }
+
+
     const { exchanges_to_load_first, exchange_depth_data } = await this.load_accounts_exchange_interactions_data(id, e5, {})
     const focused_exchanges = [];
     const depths = []
@@ -44985,6 +45125,7 @@ class App extends Component {
     object['my_interactable_time_value'] = my_interactable_time_value[i][0] 
     object['my_blocked_time_value'] = my_blocked_time_value[i][0]
     object['obligation_configurations'] = configurations
+    object['spend_structures_configurations'] = spend_structures_configurations
     object['entry_expiry'] = entered_timestamp_data[i][0]
     object['balance_obj'] = balance_obj;
     object['hidden'] = false
@@ -45635,11 +45776,11 @@ class App extends Component {
     const created_token_depths = [0,0]
     const exchange_accounts = [account, account]
 
-    tickets_to_load.forEach(id => {
-      created_tokens.push(parseInt(id))
-      created_token_depths.push(0)
-      exchange_accounts.push(account)
-    });
+    // tickets_to_load.forEach(id => {
+    //   created_tokens.push(parseInt(id))
+    //   created_token_depths.push(0)
+    //   exchange_accounts.push(account)
+    // });
 
     for(var i=0; i<created_token_events.length; i++){
       var id = created_token_events[i].returnValues.p1
@@ -66420,6 +66561,28 @@ class App extends Component {
     });
   }
   
+  async emit_record_spend_structure_action_event(object){
+    const roomId = 'contracts'
+    const spend_structure_action_message_object = await this.prepare_spend_structure_action_record_message(object)
+    
+    const clone = this.state.broadcast_stack.slice()
+    clone.push(spend_structure_action_message_object.message.message_identifier)
+    this.setState({broadcast_stack: clone})
+
+    const target = object['data'][1][5/* <5>target_contract_authority */]+object['e5']
+    const broadcasat_object = {
+      roomId: roomId, 
+      message: spend_structure_action_message_object.message, 
+      target: target, 
+      object_hash: spend_structure_action_message_object.object_hash
+    }
+
+    await this.reconnect_socket_if_unconnected()
+    this.state.socket.emit("chatroom_message", broadcasat_object);
+    await this.wait(3000)
+
+    this.process_new_spend_structure_action_message(spend_structure_action_message_object.message, spend_structure_action_message_object.object_hash)
+  }
 
 
 
@@ -69712,6 +69875,73 @@ class App extends Component {
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }
   }
+
+
+
+
+
+
+
+
+
+  async prepare_spend_structure_action_record_message(object){
+    const e5_to_use = object['e5']
+    const message_obj = {
+      'proposal_id':object['e5_id'],
+      'contract_id':object['data'][1][5/* <5>target_contract_authority */],
+      'sender_account': this.state.user_account_id[e5_to_use],
+      'sender_account_e5': e5_to_use,
+      'address':this.state.accounts[e5_to_use].address,
+      'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+      'time':Date.now(),
+      'identifier':this.make_number_id(12),
+      'spend_actions':object['ipfs'].spend_actions
+    }
+
+    const tags = []
+    const id = this.make_number_id(12)
+    const web3 = new Web3(this.get_web3_url_from_e5(e5_to_use))
+    const block_number = await web3.eth.getBlockNumber()
+
+    const author = this.state.user_account_id[e5_to_use]
+    const e5 = e5_to_use
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+
+    const object_as_string = JSON.stringify(message_obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+    const data = await this.encrypt_storage_object(object_as_string, {});
+    
+    const context = 0
+    const message = {
+      type: 'spend_structure_action',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id: id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: data,
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      context,
+      verify_signature: await this.generate_signature(data),
+      app_signature: await this.generate_app_signature(data),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+
 
   
 
@@ -73017,6 +73247,35 @@ class App extends Component {
     }
   }
 
+  async process_new_spend_structure_action_message(message, object_hash){
+    if(this.hash_message_for_id(message) != object_hash) return;
+    /* 
+      const message_obj = {
+        'proposal_id':object['e5_id'],
+        'contract_id':object['data'][1][5 <5>target_contract_authority ],
+        'sender_account': this.state.user_account_id[e5_to_use],
+        'sender_account_e5': e5_to_use,
+        'address':this.state.accounts[e5_to_use].address,
+        'alias':this.state.alias_bucket[e5_to_use]?.[this.state.user_account_id[e5_to_use]],
+        'time':Date.now(),
+        'identifier':this.make_number_id(12),
+        'spend_actions':object['ipfs'].spend_actions
+      }
+    */
+
+    const ipfs = JSON.parse(await this.decrypt_storage_object(message.data))
+    if(ipfs != message.data){
+      const contract_e5_id = ipfs['contract_id']+ipfs['sender_account_e5']
+      const proposal_e5_id = ipfs['proposal_id']
+      const clone = structuredClone(this.state.contract_spend_structure_actions);
+      if(clone[contract_e5_id] == null){
+        clone[contract_e5_id] = {}
+      }
+      clone[contract_e5_id][proposal_e5_id] = ipfs
+      this.setState({contract_spend_structure_actions: clone})
+    }
+  }
+
   
 
 
@@ -73685,6 +73944,9 @@ class App extends Component {
     }
     else if(object_data['type'] == 'refund_approval'){
       await this.process_new_storefront_refund_request_approval_message(object_data, object_hash, object_data['author_address'], true)
+    }
+    else if(object_data['type'] == 'spend_structure_action'){
+      await this.process_new_spend_structure_action_message(object_data, object_hash)
     }
   }
 

@@ -5727,7 +5727,7 @@ class home_page extends Component {
     get_additional_height(){
         let x = 0
         if(this.state.search_visible && this.is_page_valid()){
-            x += 46
+            x += 52
             if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
                 x += 7
             }
@@ -5743,7 +5743,7 @@ class home_page extends Component {
         if(this.state.search_visible && this.is_page_valid()){
             return(
                 <div>
-                    <HomepageSearchbar ref={(el) => (this.top_search_bar = el)}  app_state={this.props.app_state} theme={this.props.theme} get_page_id={this.get_page_id.bind(this)} search_current_objects={this.search_current_objects.bind(this)} search_string={this.search_string.bind(this)} reset_current_objects={this.reset_current_objects.bind(this)} when_search_button_tapped={this.when_search_button_tapped.bind(this)}
+                    <HomepageSearchbar ref={(el) => (this.top_search_bar = el)}  app_state={this.props.app_state} theme={this.props.theme} get_page_id={this.get_page_id.bind(this)} search_current_objects={this.search_current_objects.bind(this)} search_string={this.search_string.bind(this)} reset_current_objects={this.reset_current_objects.bind(this)} when_search_button_tapped={this.when_search_button_tapped.bind(this)} size={this.props.screensize}
                     />
                 </div>
             )
@@ -7139,7 +7139,7 @@ class home_page extends Component {
                 get_ether_blockexplorer_link={this.props.get_ether_blockexplorer_link.bind(this)}
                 auto_stack_subscription={this.auto_stack_subscription.bind(this)} perform_translation_of_specific_object={this.props.perform_translation_of_specific_object.bind(this)} broadcast_my_location_under_specific_pretense={this.props.broadcast_my_location_under_specific_pretense.bind(this)}
 
-                load_contract_obligation_fulfilment_info={this.props.load_contract_obligation_fulfilment_info.bind(this)} enter_chatroom_if_socket_enabled={this.props.enter_chatroom_if_socket_enabled.bind(this)} fetch_storefront_refund_requests={this.props.fetch_storefront_refund_requests.bind(this)}
+                load_contract_obligation_fulfilment_info={this.props.load_contract_obligation_fulfilment_info.bind(this)} enter_chatroom_if_socket_enabled={this.props.enter_chatroom_if_socket_enabled.bind(this)} fetch_storefront_refund_requests={this.props.fetch_storefront_refund_requests.bind(this)} show_view_configure_spend_structures={this.props.show_view_configure_spend_structures.bind(this)}
 
                 />
             </div>

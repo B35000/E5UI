@@ -1140,7 +1140,7 @@ class ViewGroups extends Component {
             )
         }
         else if(item_id=='12'){/* image_label */
-            /* {this.render_detail_item('3', {'title':'', details:'', image: img, 'size':'l'})} */
+            /* {this.render_detail_item('12', {'title':'', details:'', image: img, 'size':'s'})} */
             var title = 'Author';
             var details = 'e25885';
             var size = 'l';

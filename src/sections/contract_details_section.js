@@ -599,6 +599,8 @@ class ContractDetailsSection extends Component {
 
                                     {index == 38 && this.render_search_and_view_accounts_obligation_history_button(object)}
 
+                                    {index == 38 && this.render_current_year_expenditure_button(object)}
+
                                     {index == 39 && this.render_subscribe_to_contracts_obligations_button(object)}
 
                                     {index == 39 && this.render_obligation_promise_info(object)}
@@ -1029,19 +1031,25 @@ class ContractDetailsSection extends Component {
     show_enter_contract_button_if_possible(object){
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
-        if(time_to_expiry <= 0){
-            return(
-                <div>
-                    <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2142']/* 'Enter a contract to participate in its consensus' */, 'title': this.props.app_state.loc['2143']/* '↪ Enter Contract' */ })}
-                    <div style={{ height: 10 }} />
+        const can_enter = time_to_expiry <= 0 && object['interactible_hidden'] == false;
+        const alpha = can_enter == true ? 1.0 : 0.5
 
-                    <div onClick={() => this.open_enter_contract_ui(object)}>
-                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2144']/* 'Enter' */, 'action': '' },)}
-                    </div>
-                </div>
-            )
+        const enter_contract_click = () =>{
+            if(can_enter == true){
+                this.open_enter_contract_ui(object)
+            }
         }
+        return(
+            <div style={{opacity: alpha}}>
+                <div style={{ height: 10 }} />
+                {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2142']/* 'Enter a contract to participate in its consensus' */, 'title': this.props.app_state.loc['2143']/* '↪ Enter Contract' */ })}
+                <div style={{ height: 10 }} />
+
+                <div onClick={() => enter_contract_click()}>
+                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['2144']/* 'Enter' */, 'action': '' },)}
+                </div>
+            </div>
+        )
     }
 
     show_extend_stay_in_contract_button(object) {
@@ -1074,6 +1082,8 @@ class ContractDetailsSection extends Component {
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
+        const contract_type = object['ipfs'].contract_type || 'custom'
+        if(contract_type == 'public' && object['spend_structures_configurations'] == null) return;
 
         if ((expiry_time_in_seconds != 0 && time_to_expiry > 0) && object['id'] != 2 && object['hidden'] == false) {
             return (
@@ -1239,16 +1249,25 @@ class ContractDetailsSection extends Component {
         if(object['ipfs'] == null) return;
         const my_account = this.props.app_state.user_account_id[object['e5']]
         const moderator_item_logs = this.get_moderator_item_logs(object, 'revoke_privelages') || []
-        const can_author_configure_obligation_as_moderator = moderator_item_logs.length == 0
+        const can_author_configure_obligation_as_author_moderator = moderator_item_logs.length == 0
         const contract_type = object['ipfs'].contract_type || 'custom'
 
-        if(object['id'] != 2 && object['hidden'] == false && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
+        if(contract_type == 'public' && (object['spend_structures_configurations'] == null || object['obligation_configurations'] == null)) return;
+
+        if(object['id'] != 2 && object['hidden'] == false && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_author_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
             return(
                 <div>
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214bl']/* '⚖️ Configure Obligations' */, 'details': this.props.app_state.loc['2214bk']/* 'Set the obligation configuration for the contract.' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.configure_obligations(object)}>
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214bm']/* 'Configure.' */, 'action': '' })}
+                    </div>
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214cv']/* '💳 Configure Spend Structures.' */, 'details': this.props.app_state.loc['2214cw']/* 'Set the spend structure for the contract.' */, 'size': 'l' })}
+                    <div style={{ height: 10 }} />
+                    <div onClick={() => this.configure_spend_structures(object)}>
                         {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214bm']/* 'Configure.' */, 'action': '' })}
                     </div>
                 </div>
@@ -1260,16 +1279,21 @@ class ContractDetailsSection extends Component {
         this.props.show_view_configure_obligations(object)
     }
 
+    configure_spend_structures(object){
+        this.props.show_view_configure_spend_structures(object)
+    }
+
 
     render_search_and_view_accounts_obligation_history_button(object){
         if(object['ipfs'] == null) return;
         const my_account = this.props.app_state.user_account_id[object['e5']]
         const moderator_item_logs = this.get_moderator_item_logs(object, 'revoke_privelages') || []
-        const can_author_configure_obligation_as_moderator = moderator_item_logs.length == 0
+        const can_author_configure_obligation_as_author_moderator = moderator_item_logs.length == 0
         const contract_type = object['ipfs'].contract_type || 'custom'
 
-        if(object['id'] != 2 && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
-            
+        if(contract_type == 'public' && (object['spend_structures_configurations'] == null || object['obligation_configurations'] == null)) return;
+
+        if(object['id'] != 2 && ( ( object['event'].returnValues.p3 == my_account && can_author_configure_obligation_as_author_moderator == true ) || object['moderators'].includes(my_account) ) && contract_type == 'public' ){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1290,6 +1314,26 @@ class ContractDetailsSection extends Component {
         }
     }
 
+    render_current_year_expenditure_button(object){
+        if(object['ipfs'] == null) return;
+        const contract_type = object['ipfs'].contract_type || 'custom'
+
+        if(contract_type == 'public' && (object['spend_structures_configurations'] == null || object['obligation_configurations'] == null)) return;
+
+        if(object['id'] != 2 && contract_type == 'public' ){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214cx']/* '📊 Current Year Expenditure.' */, 'details': this.props.app_state.loc['2214cy']/* 'View the spending budget for this public contract and the amounts allocated in each spend channel.' */, 'size': 'l' })}
+                    <div style={{ height: 10 }} />
+                    <div onClick={() => this.view_current_year_expenditure(object)}>
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2214cu']/* 'view.' */, 'action': '' })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
     search_account_obligations(object){
         this.props.show_dialog_bottomsheet({'object':object}, 'view_accounts_obligation_promise_history')
     }
@@ -1300,6 +1344,10 @@ class ContractDetailsSection extends Component {
         const tags = [object_obligation_fulfiller]
         this.get_objects_from_socket_and_set_in_state(['certificate_assessment'], tags, [], 1771762377000);
         this.props.show_dialog_bottomsheet({'object':object}, 'view_contract_obligation_fulfilment_info')
+    }
+
+    view_current_year_expenditure(object){
+        this.props.show_dialog_bottomsheet({'object':object}, 'view_contract_current_year_expenditure_info')
     }
 
 

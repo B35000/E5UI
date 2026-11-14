@@ -213,7 +213,7 @@ class WithdrawEtherPage extends Component {
                         <div style={{height:10}}/>
                         {this.show_gas_price_or_eip_options()}
                         <div style={{height:10}}/>
-                        {this.render_empty_views()}
+                        {this.render_empty_views(2)}
                     </div>
                 </div>
                 
@@ -230,7 +230,7 @@ class WithdrawEtherPage extends Component {
                         <div style={{height:10}}/>
                         {this.show_gas_price_or_eip_options()}
                         <div style={{height:10}}/>
-                        {this.render_empty_views()}
+                        {this.render_empty_views(2)}
                     </div>
                 </div>
                 

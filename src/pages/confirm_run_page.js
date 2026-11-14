@@ -345,7 +345,8 @@ class ConfirmRunPage extends Component {
                         txs[i].type == this.props.app_state.loc['3103']/* 'add-stake' */ ||
                         txs[i].type == this.props.app_state.loc['3105']/* 'coupon-payments' */ ||
                         txs[i].type == this.props.app_state.loc['e311a']/* 'cross-exchange' */ ||
-                        txs[i].type == this.props.app_state.loc['3108']/* 'crossexchange-swap' */
+                        txs[i].type == this.props.app_state.loc['3108']/* 'crossexchange-swap' */ ||
+                        txs[i].type == this.props.app_state.loc['3120']/* 'configure-spend-structures' */
                     ){
                         should_include = true
                     }

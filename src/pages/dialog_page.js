@@ -819,6 +819,9 @@ class DialogPage extends Component {
         else if(option == 'view_storefront_refund_request_item'){
             return this.view_storefront_refund_request_item()
         }
+        else if(option == 'view_contract_current_year_expenditure_info'){
+            return this.view_contract_current_year_expenditure_ui()
+        }
     }
 
 
@@ -21464,6 +21467,267 @@ return data['data']
         return false
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    view_contract_current_year_expenditure_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.view_contract_current_year_expenditure_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_budget_for_selected_spend_channel_tag()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.view_contract_current_year_expenditure_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_budget_for_selected_spend_channel_tag()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.view_contract_current_year_expenditure_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_budget_for_selected_spend_channel_tag()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    view_contract_current_year_expenditure_data(){
+        const contract = this.state.data['object']
+        const spend_structures_configurations = contract['spend_structures_configurations'] == null ? [] : this.sortByAttributeDescending(contract['spend_structures_configurations'], 'time')
+        
+        if(spend_structures_configurations.length == 0){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                    <div style={{height:6}}/>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055yu']/* 'Current Year Expenditure.' */, 'details': this.props.app_state.loc['3055yv']/* 'The Spending budget and recorded spent amount for each spending channel and their tag allocations.' */, 'size': 'l' })}
+                <div style={{height:10}}/>
+
+                {this.render_contract_item(contract, 0)}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(contract['end_balance']), 'barwidth':this.calculate_bar_width(contract['end_balance']), 'number':this.format_account_balance_figure(contract['end_balance']), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(contract['spend_balance']), 'barwidth':this.calculate_bar_width(contract['spend_balance']), 'number':this.format_account_balance_figure(contract['spend_balance']), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
+                </div>
+                {this.render_public_contract_channel_selectors()}
+            </div>
+        )
+    }
+
+    render_public_contract_channel_selectors(){
+        const contract = this.state.data['object']
+        const contract_type = contract['ipfs']?.contract_type || 'custom'
+
+        if(contract_type == 'public'){
+            const spend_structures_configurations = contract['spend_structures_configurations'] == null ? [] : this.sortByAttributeDescending(contract['spend_structures_configurations'], 'time')
+            
+            if(spend_structures_configurations.length > 0){
+                const current_spend_structure = spend_structures_configurations[0]
+                console.log('render_public_contract_channel_selectors', 'current_spend_structure', current_spend_structure)
+                const channels = current_spend_structure['ipfs']['channels']
+                const channel_items = [].concat(Object.keys(channels))
+                return(
+                    <div>
+                        <div style={{height:10}}/>
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['438cm']/* 'Select Targeted Spend Channel.' */, 'details': this.props.app_state.loc['438cn']/* 'The public contract has spend structures with specified channels. Select a channel and the targeted tag.' */, 'size': 'l' })}
+                        <div style={{height:10}}/>
+                        <div style={{overflow:'auto', maxHeight:400}}>
+                            {channel_items.map((item, index) => (
+                                <div style={{'padding': '2px 0px 2px 0px'}}>
+                                    <div key={index}>
+                                        <div style={{width:'100%'}}>
+                                            {this.render_spend_channel_item(item, channels)}
+                                        </div>
+                                    </div>
+                                </div> 
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
+        }
+    }
+
+    render_spend_channel_item(item, channels){
+        const title = item
+        const channel_data = channels[item]
+        const details = this.props.app_state.loc['3120bo']/* '$ Exchanges Used.' */.replace('$', channel_data.budget.length)
+        // const footer = this.props.app_state.loc['3120bp']/* '$ Tags Specified.' */.replace('$', Object.keys(channel_data.allocations).length)
+        let footer = null
+
+        return(
+        <div>
+            {this.render_detail_item('3', {'size':'s', 'details':details, 'title':title, 'footer':footer})}
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                {Object.keys(channel_data.allocations).map((tag_item, index) => (
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_tag_item(tag_item, channel_data, item)}
+                    </li>
+                ))}
+                </ul>
+            </div>
+        </div>
+        )
+    }
+
+    render_tag_item(item, channel_data, channel_id){
+        const proportion = channel_data.allocations[item]
+        const title = item
+        const details = this.format_proportion(proportion)
+        let footer = null
+        if(channel_data.budget.length > 0){
+          const first_amount = channel_data.budget[0]
+          const proportion_of_budget = bigInt(first_amount['amount']).times(proportion).divide('1e18')
+          const token_symbol = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[first_amount['id']]
+          const amount = this.format_account_balance_figure(proportion_of_budget)
+        //   footer = amount+' '+token_symbol
+        }
+    
+        return(
+          <div onClick={() => this.when_channel_tag_selected(item, channel_data, channel_id)}>
+            {this.render_detail_item('3', {'size':'s', 'details':details, 'title':title, 'footer':footer})}
+            {this.state.selected_spend_structure_channel == channel_id && this.state.selected_spend_structure_tag == item && (
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+            )}
+          </div>
+        )
+    }
+
+    when_channel_tag_selected(item, channel_data, channel_id){
+        this.setState({selected_spend_structure_channel: channel_id, selected_spend_structure_tag: item})
+    }
+
+
+
+    render_budget_for_selected_spend_channel_tag(){
+        const { available_allocation, budgeted_amount } = this.get_budget_for_selected_spend_channel_tag()
+        const exchanges = Object.keys(available_allocation)
+        const budgeted_exchanges = Object.keys(budgeted_amount)
+        if(exchanges.length > 0){
+            const e5 = this.state.data['object']['e5']
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3055yw']/* 'Allocated Amounts.' */, 'details':this.props.app_state.loc['3055yx']/* 'Initially spendable funds for your selected channel tag $' */.replace('$', this.state.selected_spend_structure_tag), 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {budgeted_exchanges.map((item, index) => (
+                            <div style={{}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':budgeted_amount[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle': this.format_power_figure(budgeted_amount[item]), 'barwidth': this.calculate_bar_width(budgeted_amount[item]), 'number': this.format_account_balance_figure(budgeted_amount[item]), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['438cp']/* 'Available Funds.' */, 'details':this.props.app_state.loc['438co']/* 'Available spendable funds for your selected channel tag $' */.replace('$', this.state.selected_spend_structure_tag), 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {exchanges.map((item, index) => (
+                            <div style={{}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':available_allocation[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle': this.format_power_figure(available_allocation[item]), 'barwidth': this.calculate_bar_width(available_allocation[item]), 'number': this.format_account_balance_figure(available_allocation[item]), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+        return this.render_empty_views(3)
+    }
+
+    get_budget_for_selected_spend_channel_tag(){
+        const contract = this.state.data['object']
+        const contract_type = contract['ipfs']?.contract_type || 'custom'
+        if(contract_type == 'public'){
+            const spend_structures_configurations = contract['spend_structures_configurations'] == null ? [] : this.sortByAttributeDescending(contract['spend_structures_configurations'], 'time');
+
+            if(spend_structures_configurations.length > 0){
+                const current_spend_structure = spend_structures_configurations[0]
+                const channels = current_spend_structure['ipfs']['channels']
+                if(this.state.selected_spend_structure_channel != null && this.state.selected_spend_structure_tag != null){
+                    const channel_id = this.state.selected_spend_structure_channel
+                    const channel_data = channels[channel_id]
+                    const tag_id = this.state.selected_spend_structure_tag
+                    const channel_budget = channel_data.budget
+                    const tag_allocated_proportion = channel_data.allocations[tag_id]
+
+                    const available_allocation = {}
+                    channel_budget.forEach(amount_data => {
+                        const exchange = amount_data['id'].toString()
+                        const proportion_of_budget_available = bigInt(amount_data['amount']).times(tag_allocated_proportion).divide('1e18')
+                        available_allocation[exchange] = proportion_of_budget_available
+                    });
+                    const budgeted_amount = JSON.parse(JSON.stringify(available_allocation, (key, value) => typeof value === 'bigint' ? value.toString() : value))
+                    const contract_spend_structure_actions = this.props.app_state.contract_spend_structure_actions[contract['e5_id']]
+                    if(contract_spend_structure_actions != null){
+                        const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
+                        const completed_spend_actions = Object.values(contract_spend_structure_actions).filter((spend_action_object) => {
+                            return (spend_action_object['time'] > startOfYear)
+                        })
+                        if(completed_spend_actions.length > 0){
+                            completed_spend_actions.forEach(spend_action_object => {
+                                const spend_actions = spend_action_object['spend_actions']
+                                spend_actions.forEach(spend_action => {
+                                    const exchange = spend_action['spend_token']
+                                    const amount = spend_action['amount']
+                                    if(spend_action['spend_channel'] == channel_id && spend_action['spend_tag'] == tag_id){
+                                        if(available_allocation[exchange.toString()] != null){
+                                            available_allocation[exchange.toString()] = bigInt(available_allocation[exchange.toString()]).minus(amount)
+                                            if(bigInt(available_allocation[exchange.toString()]).isNegative()){
+                                                available_allocation[exchange.toString()] = bigInt(0)
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        }
+                    }
+                    return { available_allocation, budgeted_amount }
+                }
+            }
+        }
+        return { available_allocation:{}, budgeted_amount:{} }
+    }
 
 
 

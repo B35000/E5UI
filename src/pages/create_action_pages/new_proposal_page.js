@@ -3439,8 +3439,11 @@ return data['data']
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(this.state.contract_item['end_balance']), 'barwidth':this.calculate_bar_width(this.state.contract_item['end_balance']), 'number':this.format_account_balance_figure(this.state.contract_item['end_balance']), 'barcolor':'', 'relativepower':this.props.app_state.loc['3078']/* END */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(this.state.contract_item['spend_balance']), 'barwidth':this.calculate_bar_width(this.state.contract_item['spend_balance']), 'number':this.format_account_balance_figure(this.state.contract_item['spend_balance']), 'barcolor':'', 'relativepower':this.props.app_state.loc['3079']/* SPEND */, })}
-
                 </div>
+
+                {this.render_public_contract_channel_selectors()}
+
+                {this.render_budget_for_selected_spend_channel_tag()}
 
                 {this.render_detail_item('0')}
 
@@ -3486,16 +3489,182 @@ return data['data']
         )
     }
 
+    render_budget_for_selected_spend_channel_tag(){
+        const available_allocation = this.get_budget_for_selected_spend_channel_tag()
+        const exchanges = Object.keys(available_allocation)
+        if(exchanges.length > 0){
+            const e5 = this.state.contract_item['e5']
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['438cp']/* 'Available Funds.' */, 'details':this.props.app_state.loc['438co']/* 'Available spendable funds for your selected channel tag $' */.replace('$', this.state.selected_spend_structure_tag), 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {exchanges.map((item, index) => (
+                            <div style={{}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':available_allocation[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle': this.format_power_figure(available_allocation[item]), 'barwidth': this.calculate_bar_width(available_allocation[item]), 'number': this.format_account_balance_figure(available_allocation[item]), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    get_budget_for_selected_spend_channel_tag(){
+        const contract = this.state.contract_item
+        const contract_type = contract['ipfs']?.contract_type || 'custom'
+        if(contract_type == 'public'){
+            const spend_structures_configurations = contract['spend_structures_configurations'] == null ? [] : this.sortByAttributeDescending(contract['spend_structures_configurations'], 'time');
+
+            if(spend_structures_configurations.length > 0){
+                const current_spend_structure = spend_structures_configurations[0]
+                const channels = current_spend_structure['ipfs']['channels']
+                if(this.state.selected_spend_structure_channel != null && this.state.selected_spend_structure_tag != null){
+                    const channel_id = this.state.selected_spend_structure_channel
+                    const channel_data = channels[channel_id]
+                    const tag_id = this.state.selected_spend_structure_tag
+                    const channel_budget = channel_data.budget
+                    const tag_allocated_proportion = channel_data.allocations[tag_id]
+
+                    const available_allocation = {}
+                    channel_budget.forEach(amount_data => {
+                        const exchange = amount_data['id'].toString()
+                        const proportion_of_budget_available = bigInt(amount_data['amount']).times(tag_allocated_proportion).divide('1e18')
+                        available_allocation[exchange] = proportion_of_budget_available
+                    });
+                    const contract_spend_structure_actions = this.props.app_state.contract_spend_structure_actions[contract['e5_id']]
+                    if(contract_spend_structure_actions != null){
+                        const startOfYear = new Date(new Date().getFullYear(), 0, 1).getTime()
+                        const completed_spend_actions = Object.values(contract_spend_structure_actions).filter((spend_action_object) => {
+                            return (spend_action_object['time'] > startOfYear)
+                        })
+                        if(completed_spend_actions.length > 0){
+                            completed_spend_actions.forEach(spend_action_object => {
+                                const spend_actions = spend_action_object['spend_actions']
+                                spend_actions.forEach(spend_action => {
+                                    const exchange = spend_action['spend_token']
+                                    const amount = spend_action['amount']
+                                    if(spend_action['spend_channel'] == channel_id && spend_action['spend_tag'] == tag_id){
+                                        if(available_allocation[exchange.toString()] != null){
+                                            available_allocation[exchange.toString()] = bigInt(available_allocation[exchange.toString()]).minus(amount)
+                                            if(bigInt(available_allocation[exchange.toString()]).isNegative()){
+                                                available_allocation[exchange.toString()] = bigInt(0)
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        }
+                    }
+                    this.state.spend_actions.forEach(spend_action => {
+                        const exchange = spend_action['spend_token']
+                        const amount = spend_action['amount']
+                        if(available_allocation[exchange.toString()] != null){
+                            available_allocation[exchange.toString()] = bigInt(available_allocation[exchange.toString()]).minus(amount)
+                            if(bigInt(available_allocation[exchange.toString()]).isNegative()){
+                                available_allocation[exchange.toString()] = bigInt(0)
+                            }
+                        }
+                    });
+                    return available_allocation
+                }
+            }
+        }
+        return {}
+    }
+
+    render_public_contract_channel_selectors(){
+        const contract = this.state.contract_item
+        const contract_type = contract['ipfs']?.contract_type || 'custom'
+
+        if(contract_type == 'public'){
+            const spend_structures_configurations = contract['spend_structures_configurations'] == null ? [] : this.sortByAttributeDescending(contract['spend_structures_configurations'], 'time')
+            
+            if(spend_structures_configurations.length > 0){
+                const current_spend_structure = spend_structures_configurations[0]
+                console.log('render_public_contract_channel_selectors', 'current_spend_structure', current_spend_structure)
+                const channels = current_spend_structure['ipfs']['channels']
+                const channel_items = [].concat(Object.keys(channels))
+                return(
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['438cm']/* 'Select Targeted Spend Channel.' */, 'details': this.props.app_state.loc['438cn']/* 'The public contract has spend structures with specified channels. Select a channel and the targeted tag.' */, 'size': 'l' })}
+                        <div style={{height:10}}/>
+                        <div style={{overflow:'auto', maxHeight:400}}>
+                            {channel_items.map((item, index) => (
+                                <div style={{'padding': '2px 0px 2px 0px'}}>
+                                    <div key={index}>
+                                        <div style={{width:'100%'}}>
+                                            {this.render_spend_channel_item(item, channels)}
+                                        </div>
+                                    </div>
+                                </div> 
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
+        }
+    }
+
+    render_spend_channel_item(item, channels){
+        const title = item
+        const channel_data = channels[item]
+        const details = this.props.app_state.loc['3120bo']/* '$ Exchanges Used.' */.replace('$', channel_data.budget.length)
+        let footer = null
+        // this.props.app_state.loc['3120bp']/* '$ Tags Specified.' */.replace('$', Object.keys(channel_data.allocations).length)
+
+        return(
+        <div>
+            {this.render_detail_item('3', {'size':'s', 'details':details, 'title':title, 'footer':footer})}
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                {Object.keys(channel_data.allocations).map((tag_item, index) => (
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_tag_item(tag_item, channel_data, item)}
+                    </li>
+                ))}
+                </ul>
+            </div>
+        </div>
+        )
+    }
+
+    render_tag_item(item, channel_data, channel_id){
+        const proportion = channel_data.allocations[item]
+        const title = item
+        const details = this.format_proportion(proportion)
+        let footer = null
+        if(channel_data.budget.length > 0){
+          const first_amount = channel_data.budget[0]
+          const proportion_of_budget = bigInt(first_amount['amount']).times(proportion).divide('1e18')
+          const token_symbol = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[first_amount['id']]
+          const amount = this.format_account_balance_figure(proportion_of_budget)
+        //   footer = amount+' '+token_symbol
+        }
+    
+        return(
+          <div onClick={() => this.when_channel_tag_selected(item, channel_data, channel_id)}>
+            {this.render_detail_item('3', {'size':'s', 'details':details, 'title':title, 'footer':footer})}
+            {this.state.selected_spend_structure_channel == channel_id && this.state.selected_spend_structure_tag == item && (
+                <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '3px 5px 0px 5px'}}/>
+            )}
+          </div>
+        )
+    }
+
+    when_channel_tag_selected(item, channel_data, channel_id){
+        this.setState({selected_spend_structure_channel: channel_id, selected_spend_structure_tag: item})
+    }
 
     when_spend_target_text_input_field_changed(new_text){
         this.setState({spend_target_input_text: new_text})
     }
 
-
     when_spend_token_text_input_field_changed(new_text){
         this.setState({spend_token_input_text: new_text})
     }
-
 
     when_spend_amount_set(amount){
         this.setState({spend_amount: amount})
@@ -3503,6 +3672,7 @@ return data['data']
 
 
     async add_spend_action_to_list(){
+        const available_allocation = this.get_budget_for_selected_spend_channel_tag()
         const spend_target = await this.get_typed_alias_id(this.state.spend_target_input_text.toString().trim())
         var spend_token = this.get_token_id_from_symbol(this.state.spend_token_input_text.trim())
         var amount = this.state.spend_amount;
@@ -3516,8 +3686,23 @@ return data['data']
         else if(amount == 0){
             this.props.notify(this.props.app_state.loc['389']/* 'please put a valid amount' */, 4600)
         }
+        else if(this.does_sender_need_to_select_spend_channel() == true && this.state.selected_spend_structure_channel == null){
+            this.props.notify(this.props.app_state.loc['438cr']/* 'You need to select a spend channel and tag.' */, 8600)
+        }
+        else if(Object.keys(available_allocation).length > 0 && bigInt(available_allocation[spend_token.toString()]).lesser(amount)){
+            this.props.notify(this.props.app_state.loc['438cq']/* 'You\'re spending beyond the channels allocated amount.' */, 8600)
+        }
         else{
-            var tx = {'amount': amount, 'spend_token':spend_token, 'spend_target':spend_target}
+            var tx = {
+                'amount': amount, 
+                'spend_token':spend_token, 
+                'spend_target':spend_target
+            }
+            if(this.state.selected_spend_structure_channel != null){
+                tx['spend_channel'] = this.state.selected_spend_structure_channel
+                tx['spend_tag'] = this.state.selected_spend_structure_tag
+                tx['spend_channel_time_id'] = this.get_spend_structure_identifier()
+            }
             var spend_actions_clone = this.state.spend_actions.slice()
             spend_actions_clone.push(tx)
             this.setState({spend_actions: spend_actions_clone, spend_token_input_text:'', spend_amount:0})
@@ -3525,6 +3710,30 @@ return data['data']
         }
     }
 
+    does_sender_need_to_select_spend_channel(){
+        const contract = this.state.contract_item
+        const contract_type = contract['ipfs']?.contract_type || 'custom'
+        if(contract_type == 'public'){
+            const spend_structures_configurations = contract['spend_structures_configurations'] == null ? [] : this.sortByAttributeDescending(contract['spend_structures_configurations'], 'time');
+
+            if(spend_structures_configurations.length > 0){
+                return true
+            }
+        }
+        return false
+    }
+
+    get_spend_structure_identifier(){
+        const contract = this.state.contract_item
+        const contract_type = contract['ipfs']?.contract_type || 'custom'
+        if(contract_type == 'public'){
+            const spend_structures_configurations = contract['spend_structures_configurations'] == null ? [] : this.sortByAttributeDescending(contract['spend_structures_configurations'], 'time');
+
+            if(spend_structures_configurations.length > 0){
+                return spend_structures_configurations[0]['time']
+            }
+        }
+    }
 
     does_exchange_exist(exchange_id){
         if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){

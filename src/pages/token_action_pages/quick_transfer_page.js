@@ -390,21 +390,21 @@ class QuickTransferPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                        {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106k']/* 'The actions youve set for your quick transfer run.' */, 'title':this.props.app_state.loc['3106j']/* 'Set Transfers.' */})}
-                        <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3106k']/* 'The actions youve set for your quick transfer run.' */, 'title':this.props.app_state.loc['3106j']/* 'Set Transfers.' */})}
+                    <div style={{height:10}}/>
 
-                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
-                            {items.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
-                                        </div>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img alt="" src={this.props.app_state.theme['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             )
         }else{
             return(

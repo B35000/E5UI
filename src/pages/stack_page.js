@@ -5583,6 +5583,13 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(refund_object.int)
                 }
+                else if(txs[i].type == this.props.app_state.loc['3120']/* 'configure-spend-structures' */){
+                    var obj = await this.format_configure_spend_structures_object(txs[i], calculate_gas, ipfs_index)
+                    
+                    strs.push(obj.str)
+                    adds.push([])
+                    ints.push(obj.int)
+                }
                 
                 const delete_after_broadcast = txs[i].get_delete_after_broadcast_object != null && this.get_selected_item(txs[i].get_delete_after_broadcast_object, 'e') == this.props.app_state.loc['1058o']/* 'enabled' */
 
@@ -7329,6 +7336,12 @@ class StackPage extends Component {
                     }
                     ipfs_index_object[txs[i].id] = refund_data
                     ipfs_index_array.push({'id':txs[i].id, 'data':refund_data})
+                }
+                else if(txs[i].type == this.props.app_state.loc['3120']/* 'configure-spend-structures' */){
+                    const spend_structures_configuration_data = JSON.parse(JSON.stringify(txs[i], (key, value) => typeof value === 'bigint' ? value.toString() : value))
+                    delete spend_structures_configuration_data.contract
+                    ipfs_index_object[txs[i].id] = spend_structures_configuration_data
+                    ipfs_index_array.push({'id':txs[i].id, 'data':spend_structures_configuration_data})
                 }
             }
         }
@@ -15239,6 +15252,29 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
     
+    format_configure_spend_structures_object = async (t, calculate_gas, ipfs_index) =>{
+        const contract_id = t.contract['id']
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [contract_id], [23],/* target */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = 72
+        var int_data = 0
+
+        var string_data = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
 
 
 

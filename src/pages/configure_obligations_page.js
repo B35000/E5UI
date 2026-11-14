@@ -130,10 +130,8 @@ class ConfigureObligationsPage extends Component {
                 setTimeout(() => {
                     this.when_obligation_configuration_item_clicked(default_setting, true)
                 }, (1000));
-                
             }
         }
-        
     }
 
 

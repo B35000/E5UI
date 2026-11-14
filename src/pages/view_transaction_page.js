@@ -1059,6 +1059,9 @@ class ViewTransactionPage extends Component {
             else if(tx.type == this.props.app_state.loc['3055yh']/* 'refund-payment' */){
                 return this.render_refund_payment_data()
             }
+            else if(tx.type == this.props.app_state.loc['3120']/* 'configure-spend-structures' */){
+                return this.render_configure_spend_structures_data()
+            }
         }
     }
 
@@ -10773,6 +10776,88 @@ return data['data']
                         </div>
                     ))}
                 </div>
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+
+    render_configure_spend_structures_data(){
+        const transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3120bq']/* 'Configured Spend Channels.' */, 'details': this.props.app_state.loc['3120br']/* 'The configured spend channel information for this contract.' */, 'size': 'l' })}
+                <div style={{ height:10 }}/>
+
+                {this.render_contract(transaction_item.contract)}                
+                <div style={{ height:10 }}/>
+
+                {this.render_all_set_channels()}
+            </div>
+        )
+    }
+
+    render_all_set_channels(){
+        const transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const items = [].concat(Object.keys(transaction_item.channels))
+        return(
+            <div>
+            {this.render_detail_item('3', { 'title': this.props.app_state.loc['3120bq']/* 'Configured Spend Channels.' */, 'details': this.props.app_state.loc['3120bt']/* 'All your configured spend channels.' */, 'size': 'l' })}
+            <div style={{ height:10 }}/>
+            <div style={{ 'padding': '0px 5px 0px 5px'}}>
+                {items.map((item, index) => (
+                    <div style={{'padding': '2px 5px 2px 5px'}}>
+                        <div style={{width:'100%'}}>
+                            {this.render_spend_channel_item(item)}
+                        </div>
+                    </div> 
+                ))}
+            </div>
+            </div>
+        )
+    }
+    
+    render_spend_channel_item(item){
+        const transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const title = item
+        const channel_data = transaction_item.channels[item]
+        const details = this.props.app_state.loc['3120bo']/* '$ Exchanges Used.' */.replace('$', channel_data.budget.length)
+        const footer = this.props.app_state.loc['3120bp']/* '$ Tags Specified.' */.replace('$', Object.keys(channel_data.allocations).length)
+
+        return(
+            <div>
+            {this.render_detail_item('3', {'size':'l', 'details':details, 'title':title, 'footer':footer})}
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {channel_data.budget.map((budget_item, index) => (
+                    <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                        {this.render_spend_channel_budget_amount_item2(budget_item, index)}
+                    </li>
+                    ))}
+                </ul>
+                </div>
+            </div>
+        )
+    }
+    
+    render_spend_channel_budget_amount_item2(item, index){
+        const transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        const e5 = transaction_item.contract['e5']
+        const title = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']]
+        const details = this.format_account_balance_figure(item['amount']) + ' ' + this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]
+        const thumbnail = this.props.app_state.token_name_thumbnail_directory[title]
+        return(
+            <div>
+            {this.render_detail_item('12', {'title':title, 'details':details, 'image': thumbnail, 'size':'s'})}
             </div>
         )
     }
