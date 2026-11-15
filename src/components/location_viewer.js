@@ -228,7 +228,7 @@ const LocationPicker = forwardRef((props, ref) => {
 
     if(pins.length == 0){
         return (
-            <div style={{ height: height, width: '100%' }}>
+            <div onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} style={{ height: height, width: '100%' }}>
                 <MapContainer 
                     zoomControl={input_enabled} 
                     scrollWheelZoom={false} 
@@ -282,7 +282,7 @@ const LocationPicker = forwardRef((props, ref) => {
     }
 
     return (
-        <div style={{ height: height, width: '100%'}}>
+        <div onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} style={{ height: height, width: '100%'}}>
             <MapContainer zoomControl={input_enabled} scrollWheelZoom={false} dragging={input_enabled} touchZoom={input_enabled} doubleClickZoom={input_enabled} boxZoom={input_enabled} keyboard={input_enabled} ref={mapRef} bounds={bounds} style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
                 <TileLayer attribution={attribution} url={url} />
                 {route_positions != null && route_positions.length > 0 && (

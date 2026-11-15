@@ -770,6 +770,7 @@ import QuickPurchaseStoragePage from './pages/quick_purchase_storage_page'
 import TermsOfServicePage from './pages/terms_of_service_page'
 import RequestRefundPage from './pages/request_refund_page'
 import ConfigureSpendStructuresPage from './pages/configure_spend_structures_page'
+import BulkUpdateOrderStatusPage from './pages/bulk_update_order_statuses'
 
 import english from "./texts/english";
 // import cities from "./resources/cities";
@@ -2007,7 +2008,7 @@ class App extends Component {
     dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
     fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false,
     quick_send_bottomsheet:false, edit_crossexchange_bottomsheet: false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false,
-    quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false, request_refund_bottomsheet:false, view_configure_spend_structures_bottomsheet:false,
+    quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false, request_refund_bottomsheet:false, view_configure_spend_structures_bottomsheet:false, view_bulk_update_order_statuses_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, beacon_node_enabled:false, country_data:this.get_country_data(),
@@ -2040,7 +2041,7 @@ class App extends Component {
     contract_events:{}, proposal_events:{}, subscription_events:{}, exchange_events:{}, moderator_events:{},
     subscription_search_result:{}, all_data:{}, gateway_traffic_cache:{}, channel_events:{}, all_E5_runs:{}, 
 
-    e5s:this.get_e5s(), kaomojis:this.get_kaomojis(), markdown_shortcut_list:this.get_markdown_shortcut_list(),
+    e5s:this.get_e5s(), kaomojis:this.get_kaomojis(), markdown_shortcut_list:this.get_markdown_shortcut_list(), status_options:this.get_status_options(),
     selected_e5:'E35', default_e5:'E35',
     accounts:{}, has_wallet_been_set:false, is_running: {},
 
@@ -2127,7 +2128,9 @@ class App extends Component {
 
     focused_page:this.getLocale()['1196']/* 'jobs' */, call_muted_addresses:{}, broadcast_config:{'broadcast':{}, 'private_sharing':{}}, contractor_public_locations:{}, shared_private_locations:{}, is_sharing_location:true, near_intents_data: this.get_near_intents_token_ids(), my_applications2:[], my_bag_applications2:[], account_message_history2:{}, account_post_history2:{},
 
-    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{}, logged_purchases:{}, is_loading_storefront_refund_requests:{}, storefront_refund_requests:{}, storefront_refund_approvals:{}, storefront_refund_finalizations:{}, backup_file_streaming_data:{}, contract_spend_structure_actions:{}
+    object_event_loader:{}, contract_obligation_payment_info:{}, certificate_assessments:{}, logged_purchases:{}, is_loading_storefront_refund_requests:{}, storefront_refund_requests:{}, storefront_refund_approvals:{}, storefront_refund_finalizations:{}, backup_file_streaming_data:{}, contract_spend_structure_actions:{},
+
+    bulk_update_progress_data:{}
   };
 
   //export NODE_OPTIONS="--max-old-space-size=8192" 
@@ -5162,6 +5165,18 @@ class App extends Component {
     return near_intent_data
   }
 
+  get_status_options(){
+    return[
+      {'title':this.getLocale()['3055gy']/* 'acknowledged' */, 'details':this.getLocale()['3055gz']/* 'The order has been recognised by the storefront owner.' */, 'id':'acknowledged'},
+      {'title':this.getLocale()['3055ha']/* 'rejected' */, 'details':this.getLocale()['3055hb']/* 'The order has been rejected by the storefront owner.' */, 'id':'rejected'},
+      {'title':this.getLocale()['3055hc']/* 'processing' */, 'details':this.getLocale()['3055hd']/* 'The order is being processed by the storefront owner.' */, 'id':'processing'},
+      {'title':this.getLocale()['3055he']/* 'delayed' */, 'details':this.getLocale()['3055hf']/* 'The order has been delayed due to unspecified reasons.' */, 'id':'delayed'},
+      {'title':this.getLocale()['3055hg']/* 'shipping' */, 'details':this.getLocale()['3055hh']/* 'The order is being shipped to your specified address.' */, 'id':'shipping'},
+      {'title':this.getLocale()['3055hi']/* 'finalized' */, 'details':this.getLocale()['3055hj']/* 'The order is being finalized after being fulfilled by the storefront owner.' */, 'id':'finalized'},
+      {'title':this.getLocale()['3055hk']/* 'complete' */, 'details':this.getLocale()['3055hl']/* 'The order has been fulfilled and completed.' */, 'id':'complete'},
+    ]
+  }
+
 
 
 
@@ -5307,6 +5322,7 @@ class App extends Component {
     this.assess_certificate_page = React.createRef();
     this.request_refund_page = React.createRef();
     this.view_configure_spend_structures_page = React.createRef();
+    this.view_bulk_update_order_statuses_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -6611,7 +6627,7 @@ class App extends Component {
         send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
         dialog_bottomsheet:false, pay_upcoming_subscriptions_bottomsheet:false, send_receive_coin_bottomsheet:false, pick_file_bottomsheet:false, buy_album_bottomsheet:false, edit_audiopost_bottomsheet:false, is_audio_pip_showing:false, full_audio_bottomsheet:false, add_to_playlist_bottomsheet:false, view_pdf_bottomsheet:false, buy_video_bottomsheet:false, edit_videopost_bottomsheet:false, full_video_bottomsheet:false, edit_nitropost_bottomsheet:false, buy_nitro_storage_bottomsheet:false, configure_nitro_node_bottomsheet:false, dialer_bottomsheet:false, view_notification_log_bottomsheet:false, view_contextual_transfer_bottomsheet:false, edit_poll_bottomsheet:false, view_vote_poll_bottomsheet:false, view_calculate_poll_result_bottomsheet:false, view_stage_creator_payout_result_bottomsheet:false,
         fulfil_auction_bid_bottomsheet:false, view_iframe_link_bottomsheet:false, set_map_location_bottomsheet:false, view_map_location_pins_bottomsheet:false, view_call_interface_bottomsheet:false, view_purchase_credits_bottomsheet:false, view_configure_obligations_bottomsheet:false, exchange_deposit_bottomsheet:false, bridge_ether_bottomsheet:false, send_purchase_request_bottomsheet:false, view_storefront_request_bottomsheet:false, edit_certificate_bottomsheet:false, mint_certificate_bottomsheet:false, transfer_certificate_bottomsheet:false, fractionalize_certificate_bottomsheet:false, transfer_stake_bottomsheet:false, add_stake_bottomsheet:false, coupon_payment_bottomsheet:false, staged_coupon_bottomsheet:false, quick_send_bottomsheet:false, edit_crossexchange_bottomsheet:false, crossexchange_swap_bottomsheet:false, bridge_coin_bottomsheet:false, swap_ether_bottomsheet:false, select_certificate_bottomsheet:false, certificate_chain_bottomsheet:false, new_bag_bottomsheet:false, quick_purchase_storage_bottomsheet:false, terms_of_service_bottomsheet:false, assess_certificate_bottomsheet:false, request_refund_bottomsheet:false,
-        view_configure_spend_structures_bottomsheet:false,
+        view_configure_spend_structures_bottomsheet:false, view_bulk_update_order_statuses_bottomsheet:false,
       })
 
       return cached_state_obj
@@ -8807,6 +8823,8 @@ class App extends Component {
           {this.render_assess_certificate_bottomsheet()}
           {this.render_request_refund_bottomsheet()}
           {this.render_view_configure_spend_structures_bottomsheet()}
+          {this.render_view_bulk_update_order_statuses_bottomsheet()}
+
 
           {this.render_set_map_location_bottomsheet()}
           {this.render_dialog_bottomsheet()}
@@ -8963,7 +8981,7 @@ class App extends Component {
           when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}
           set_focused_page_in_homepage={this.set_focused_page_in_homepage.bind(this)} broadcast_my_location_under_specific_pretense={this.broadcast_my_location_under_specific_pretense.bind(this)} render_stack_bottomsheet_snapped={this.render_stack_bottomsheet_snapped.bind(this)} is_minimalist_mode_enabled={this.is_minimalist_mode_enabled.bind(this)} close_snap_point_if_opened={this.close_snap_point_if_opened.bind(this)} show_loader_for_object_events={this.show_loader_for_object_events.bind(this)} load_contract_obligation_fulfilment_info={this.load_contract_obligation_fulfilment_info.bind(this)} enter_chatroom_if_socket_enabled={this.enter_chatroom_if_socket_enabled.bind(this)} fetch_storefront_refund_requests={this.fetch_storefront_refund_requests.bind(this)}
 
-          show_view_configure_spend_structures={this.show_view_configure_spend_structures.bind(this)}
+          show_view_configure_spend_structures={this.show_view_configure_spend_structures.bind(this)} show_view_bulk_update_order_statuses={this.show_view_bulk_update_order_statuses.bind(this)}
         />
 
         {/* {this.render_toast_container()}
@@ -35230,6 +35248,71 @@ class App extends Component {
 
 
 
+
+
+
+
+
+
+
+  render_view_bulk_update_order_statuses_bottomsheet(){
+    if(this.state.view_bulk_update_order_statuses_bottomsheet2 != true) return;
+    var os = getOS()
+    return this.renderBottomSheet(
+      this.render_view_bulk_update_order_statuses_element(),
+      this.state.view_bulk_update_order_statuses_bottomsheet,
+      this.open_view_bulk_update_order_statuses_bottomsheet,
+      this.state.height-70
+    )
+  }
+
+  render_view_bulk_update_order_statuses_element(){
+    var size = this.getScreenSize();
+    return(
+      <div>
+        <BulkUpdateOrderStatusPage ref={this.view_bulk_update_order_statuses_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)} when_file_link_tapped={this.when_file_link_tapped.bind(this)} when_e5_link_tapped={this.when_e5_link_tapped.bind(this)} calculate_actual_balance={this.calculate_actual_balance.bind(this)} emit_bulk_updates_in_indexers={this.emit_bulk_updates_in_indexers.bind(this)}
+        />
+      </div>
+    )
+  }
+
+  open_view_bulk_update_order_statuses_bottomsheet(){
+    this.when_bottomsheet_opened_or_closed('open_view_bulk_update_order_statuses_bottomsheet')
+    if(this.state.view_bulk_update_order_statuses_bottomsheet == true){
+      //closing
+      this.view_bulk_update_order_statuses_bottomsheet = this.view_transaction_page.current?.state;
+
+      this.setState({view_bulk_update_order_statuses_bottomsheet: !this.state.view_bulk_update_order_statuses_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_bulk_update_order_statuses_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_bulk_update_order_statuses_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_bulk_update_order_statuses_bottomsheet: !me.state.view_bulk_update_order_statuses_bottomsheet});
+
+          if(me.view_bulk_update_order_statuses_bottomsheet != null){
+            // me.view_transaction_page.current?.setState(me.view_bulk_update_order_statuses_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_bulk_update_order_statuses(object){
+    this.open_view_bulk_update_order_statuses_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_bulk_update_order_statuses_page.current != null){
+        me.view_bulk_update_order_statuses_page.current.set_data(object)
+
+      }
+    }, (1 * 1100));
+  }
 
 
 
@@ -66584,6 +66667,39 @@ class App extends Component {
     this.process_new_spend_structure_action_message(spend_structure_action_message_object.message, spend_structure_action_message_object.object_hash)
   }
 
+  async emit_bulk_updates_in_indexers(storefront, added_identifiers, status_option){
+    const update_status_of_bulk_update_process = (value) => {
+      const clone = structuredClone(this.state.bulk_update_progress_data)
+      if(value == null) delete clone[storefront['e5_id']];
+      else clone[storefront['e5_id']] = value;
+      this.setState({bulk_update_progress_data: clone})
+    }
+
+    update_status_of_bulk_update_process(0);
+    this.prompt_top_notification(this.getLocale()['3121h']/* 'Beginning Updates...' */, 1900)
+    await this.wait(1000)
+
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.selected_e5))
+    const block_number = await web3.eth.getBlockNumber()
+
+    for(var i=0; i<added_identifiers.length; i++){
+      const purchase_identifier = added_identifiers[i]
+      const availability_object = await this.prepare_storefront_order_status_message2(purchase_identifier, storefront, status_option, block_number)
+
+      const target = 'storefront_order_status|'+storefront['e5_id']+'|'+purchase_identifier
+      const broadcasat_object = {roomId: 'posts', message: availability_object.message, target: target, object_hash: availability_object.object_hash}
+
+      await this.reconnect_socket_if_unconnected()
+      this.state.socket.emit("chatroom_message", broadcasat_object);
+      const progress = (i+1)/added_identifiers.length
+      update_status_of_bulk_update_process(progress);
+      await this.wait(1000)
+    }
+
+    update_status_of_bulk_update_process(null);
+    this.prompt_top_notification(this.getLocale()['3121i']/* 'Updates Complete.' */, 1900)
+  }
+
 
 
 
@@ -67400,8 +67516,8 @@ class App extends Component {
       'pins': t.pins,
       'price_data':t.selected_variant['price_data'],
       'shipping_price_data':t.storefront_item['ipfs'].shipping_price_data, 
-      'indexer_order':true, 
-      'purchase_identifier': this.hash_data(this.make_number_id(12)),
+      'indexer_order':true,
+      'purchase_identifier': this.make_number_id(12),
     }
 
     const object = t.storefront_item['ipfs']
@@ -68838,7 +68954,7 @@ class App extends Component {
       'sender_address':this.format_address(this.state.accounts[this.state.selected_e5].address, this.state.selected_e5), 
       'options':t.purchase_option_tags_array, 
       'storefront_options':(t.storefront_item['ipfs'].option_groups == null ? [] : t.storefront_item['ipfs'].option_groups), 
-      'purchase_identifier': this.hash_data(makeid(12))
+      'purchase_identifier': makeid(12)
     }
 
     const encrypted_obj = await this.encrypt_data_string(JSON.stringify(application_obj), key_data.key.toString())
@@ -69936,6 +70052,45 @@ class App extends Component {
       context,
       verify_signature: await this.generate_signature(data),
       app_signature: await this.generate_app_signature(data),
+    }
+    const object_hash = this.hash_message_for_id(message);
+    return { message, object_hash }
+  }
+
+  async prepare_storefront_order_status_message2(purchase_identifier, storefront, status_option, block_number){
+    const tags = []
+    const id = this.make_number_id(12)
+
+    const author = this.state.accounts[this.state.selected_e5].address
+    const e5 = this.state.selected_e5
+    const recipient = ''
+    const channeling = ''
+    const lan = ''
+    const state = ''
+
+
+    const object_as_string = status_option
+    
+    const message = {
+      type: 'storefront_order_status',
+      message_identifier: this.make_number_id(12),
+      author: author,
+      author_address: this.state.accounts[e5].address,
+      id:id,
+      recipient: recipient,
+      tags: tags,
+      channeling: channeling,
+      e5: e5,
+      lan: lan,
+      state: state,
+      data: object_as_string,
+      storefront_object_id: storefront['e5_id'],
+      nitro_id: this.get_my_nitro_id(),
+      time: Math.round(Date.now()/1000),
+      block: parseInt(block_number),
+      purchase_identifier: purchase_identifier,
+      verify_signature: await this.generate_signature(object_as_string),
+      app_signature: await this.generate_app_signature(object_as_string),
     }
     const object_hash = this.hash_message_for_id(message);
     return { message, object_hash }

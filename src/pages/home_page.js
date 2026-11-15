@@ -5572,32 +5572,32 @@ class home_page extends Component {
                     </div>
                 )
             }
-            if(this.props.screensize == 's'){
-                return(
-                    <div>
-                        <Swiper
-                            initialSlide={pos}
-                            onSwiper={(swiper) => { this.swiper = swiper; }}
-                            onSlideChange={this.handleChange3}
-                            style={{ width: '100%' }}>
-                                {/* {this.props.app_state.has_wallet_been_set == true && (
-                                    <SwiperSlide key={'m'}>
-                                        {this.render_post_list_group2(size, 'm', this.work_list_section, h)}
-                                    </SwiperSlide>
-                                )} */}
-                                <SwiperSlide key={'?'}>
-                                    {this.render_post_list_group2(size, '?', this.work_list_section, h)}
-                                </SwiperSlide>
-                                <SwiperSlide key={'e'}>
-                                    {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
-                                </SwiperSlide>
-                                <SwiperSlide key={'w'}>
-                                    {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
-                                </SwiperSlide>
-                        </Swiper>
-                    </div>
-                )
-            }
+            // if(this.props.screensize == 's'){
+            //     return(
+            //         <div>
+            //             <Swiper
+            //                 initialSlide={pos}
+            //                 onSwiper={(swiper) => { this.swiper = swiper; }}
+            //                 onSlideChange={this.handleChange3}
+            //                 style={{ width: '100%' }}>
+            //                     {this.props.app_state.has_wallet_been_set == true && (
+            //                         <SwiperSlide key={'m'}>
+            //                             {this.render_post_list_group2(size, 'm', this.work_list_section, h)}
+            //                         </SwiperSlide>
+            //                     )}
+            //                     <SwiperSlide key={'?'}>
+            //                         {this.render_post_list_group2(size, '?', this.work_list_section, h)}
+            //                     </SwiperSlide>
+            //                     <SwiperSlide key={'e'}>
+            //                         {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
+            //                     </SwiperSlide>
+            //                     <SwiperSlide key={'w'}>
+            //                         {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
+            //                     </SwiperSlide>
+            //             </Swiper>
+            //         </div>
+            //     )
+            // }
             return(
                 <div>
                     {pos == 0 && (
@@ -7197,6 +7197,8 @@ class home_page extends Component {
                 auto_stack_subscription={this.auto_stack_subscription.bind(this)} perform_translation_of_specific_object={this.props.perform_translation_of_specific_object.bind(this)} broadcast_my_location_under_specific_pretense={this.props.broadcast_my_location_under_specific_pretense.bind(this)}
 
                 load_contract_obligation_fulfilment_info={this.props.load_contract_obligation_fulfilment_info.bind(this)} enter_chatroom_if_socket_enabled={this.props.enter_chatroom_if_socket_enabled.bind(this)} fetch_storefront_refund_requests={this.props.fetch_storefront_refund_requests.bind(this)} show_view_configure_spend_structures={this.props.show_view_configure_spend_structures.bind(this)}
+
+                show_view_bulk_update_order_statuses={this.props.show_view_bulk_update_order_statuses.bind(this)}
 
                 />
             </div>

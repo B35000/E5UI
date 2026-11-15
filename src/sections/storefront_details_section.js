@@ -614,6 +614,8 @@ class StorefrontDetailsSection extends Component {
 
                     {this.render_edit_object_button(object)}
 
+                    {this.render_update_order_statuses_in_bulk_button(object)}
+
                     {this.render_export_direct_purchases_button(object)}
                     
                     {this.render_message_if_blocked_by_sender(object)}
@@ -1624,7 +1626,14 @@ class StorefrontDetailsSection extends Component {
 
         const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
         if(out_of_stock_items == null){
-            return;
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2625']/* 'Add the item to your shopping bag.' */, 'title':this.props.app_state.loc['2626']/* '✚ Add to Bag' */})}
+                    <div style={{height:10}}/>
+                    {this.render_small_skeleton_object()}
+                </div>
+            )
         }
         else if(out_of_stock_items.length == object['ipfs'].variants.length){
             return;
@@ -1660,7 +1669,15 @@ class StorefrontDetailsSection extends Component {
 
         const out_of_stock_items = this.props.app_state.contractor_availability_info[object['e5_id']]
         if(out_of_stock_items == null){
-            return;
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2627']/* 'Purchase the item directly from the seller.' */, 'title':this.props.app_state.loc['2628']/* '🛒 Direct Purchase' */})}
+                    <div style={{height:10}}/>
+                    {this.render_small_skeleton_object()}
+                </div>
+            )
+            return 
         }
         else if(out_of_stock_items.length == object['ipfs'].variants.length){
             return;
@@ -1762,8 +1779,34 @@ class StorefrontDetailsSection extends Component {
         }
     }
 
+    render_update_order_statuses_in_bulk_button(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']] == null ? 1 : this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p5 == my_account.toString()){
+            const current_progress = this.props.app_state.bulk_update_progress_data[object['e5_id']]
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2642dn']/* '📝 Bulk Update Order Statuses.' */, 'details':this.props.app_state.loc['2642do']/* 'Update the order statuses of multiple orders in your logs if they share a similar update status.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_bulk_update_direct_purchases_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2642dp']/* 'Begin. */, 'action':''})}
+                    </div>
+                    {current_progress != null && (
+                        <div>
+                            {this.render_detail_item('10', {'text':this.props.app_state.loc['3121j']/* 'Progress $' */.replace('$', (current_progress * 100).toFixed(2)), 'textsize':'11px', 'font':this.props.app_state.font})}
+                        </div>
+                    )}
+                </div>
+            )
+        }
+    }
+
     open_export_direct_purchase_ui(object){
         this.props.show_dialog_bottomsheet({'object':object}, 'export_direct_purchases')
+    }
+
+    open_bulk_update_direct_purchases_ui(object){
+        this.props.show_view_bulk_update_order_statuses(object)
     }
 
 
@@ -2845,7 +2888,7 @@ class StorefrontDetailsSection extends Component {
         }
         return(
             <div onClick={()=> this.when_item_clicked_2(item, sender_type, object)}>
-                {this.render_detail_item('3', {'size':'l', 'title':emoji+this.get_senders_name(item['sender_account'], object)+' • '+(new Date(item['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - item['time']), 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description']+' • '+number_with_commas(item['purchase_unit_count'])+' '+this.get_composition_type(object)+' • '+item['custom_specifications'] })}
+                {this.render_detail_item('3', {'size':'l', 'title':emoji+this.get_senders_name(item['sender_account'], object)+' • '+(new Date(item['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - item['time']), 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description']+' • '+number_with_commas(item['purchase_unit_count'])+' '+this.get_composition_type(object)+' • '+item['custom_specifications'], 'footer':number_with_commas(item['purchase_identifier']) })}
             </div>
         )
     }

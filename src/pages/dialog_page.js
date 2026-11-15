@@ -2696,6 +2696,11 @@ return data['data']
             <div>
                 <div>
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1979a']/* Order Details. */}</h4>
+                    <div onClick={() => this.when_copy_to_clipboard_selected(item['purchase_identifier'])}>
+                        {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055yy']/* 'Order Identifier.' */, 'details':number_with_commas(item['purchase_identifier'])})}
+                    </div>
+                    <div style={{height:10}}/>
+                    
                     {this.render_detail_item('3', {'size':'l', 'title':''+(new Date(item['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - item['time']), 'details':this.props.app_state.loc['2642ca']/* Order Time. */})}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1948']/* 'Shipping Details' */, 'details':item['shipping_detail']})}
@@ -2978,15 +2983,16 @@ return data['data']
     }
 
     get_status_options(){
-        return[
-            {'title':this.props.app_state.loc['3055gy']/* 'acknowledged' */, 'details':this.props.app_state.loc['3055gz']/* 'The order has been recognised by the storefront owner.' */, 'id':'acknowledged'},
-            {'title':this.props.app_state.loc['3055ha']/* 'rejected' */, 'details':this.props.app_state.loc['3055hb']/* 'The order has been rejected by the storefront owner.' */, 'id':'rejected'},
-            {'title':this.props.app_state.loc['3055hc']/* 'processing' */, 'details':this.props.app_state.loc['3055hd']/* 'The order is being processed by the storefront owner.' */, 'id':'processing'},
-            {'title':this.props.app_state.loc['3055he']/* 'delayed' */, 'details':this.props.app_state.loc['3055hf']/* 'The order has been delayed due to unspecified reasons.' */, 'id':'delayed'},
-            {'title':this.props.app_state.loc['3055hg']/* 'shipping' */, 'details':this.props.app_state.loc['3055hh']/* 'The order is being shipped to your specified address.' */, 'id':'shipping'},
-            {'title':this.props.app_state.loc['3055hi']/* 'finalized' */, 'details':this.props.app_state.loc['3055hj']/* 'The order is being finalized after being fulfilled by the storefront owner.' */, 'id':'finalized'},
-            {'title':this.props.app_state.loc['3055hk']/* 'complete' */, 'details':this.props.app_state.loc['3055hl']/* 'The order has been fulfilled and completed.' */, 'id':'complete'},
-        ]
+        return this.props.app_state.status_options
+        // return[
+        //     {'title':this.props.app_state.loc['3055gy']/* 'acknowledged' */, 'details':this.props.app_state.loc['3055gz']/* 'The order has been recognised by the storefront owner.' */, 'id':'acknowledged'},
+        //     {'title':this.props.app_state.loc['3055ha']/* 'rejected' */, 'details':this.props.app_state.loc['3055hb']/* 'The order has been rejected by the storefront owner.' */, 'id':'rejected'},
+        //     {'title':this.props.app_state.loc['3055hc']/* 'processing' */, 'details':this.props.app_state.loc['3055hd']/* 'The order is being processed by the storefront owner.' */, 'id':'processing'},
+        //     {'title':this.props.app_state.loc['3055he']/* 'delayed' */, 'details':this.props.app_state.loc['3055hf']/* 'The order has been delayed due to unspecified reasons.' */, 'id':'delayed'},
+        //     {'title':this.props.app_state.loc['3055hg']/* 'shipping' */, 'details':this.props.app_state.loc['3055hh']/* 'The order is being shipped to your specified address.' */, 'id':'shipping'},
+        //     {'title':this.props.app_state.loc['3055hi']/* 'finalized' */, 'details':this.props.app_state.loc['3055hj']/* 'The order is being finalized after being fulfilled by the storefront owner.' */, 'id':'finalized'},
+        //     {'title':this.props.app_state.loc['3055hk']/* 'complete' */, 'details':this.props.app_state.loc['3055hl']/* 'The order has been fulfilled and completed.' */, 'id':'complete'},
+        // ]
     }
 
     render_status_option_item(item){
@@ -21358,6 +21364,11 @@ return data['data']
                     {this.render_detail_item('0')}
 
                     {this.render_storefront_item(object)}
+                    <div style={{height:10}}/>
+
+                    <div onClick={() => this.when_copy_to_clipboard_selected(order['purchase_identifier'])}>
+                        {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055yy']/* 'Order Identifier.' */, 'details':number_with_commas(order['purchase_identifier'])})}
+                    </div>
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'size':'l', 'title':''+(new Date(order['time']*1000).toLocaleString())+' • '+this.get_time_diff((Date.now()/1000) - order['time']), 'details':this.props.app_state.loc['2642ca']/* Order Time. */})}
