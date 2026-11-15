@@ -23184,6 +23184,9 @@ class StackPage extends Component {
                             active_amount = bigInt(active_amount).minus(obligation)
                         });
                         totals_obj[year][exchange] = bigInt(totals_obj[year][exchange]).plus(obligation_amount)
+                        if(bigInt(totals_obj[year][exchange]).isZero()){
+                            delete totals_obj[year][exchange]
+                        }
                     });
                 });
             }
@@ -23568,7 +23571,11 @@ class StackPage extends Component {
                                     obligation_amount = bigInt(obligation_amount).plus(obligation).multiply(ownership_stake).divide('100e16')
                                 });
                                 totals_obj[contract][exchange] = bigInt(totals_obj[contract][exchange]).plus(obligation_amount)
-                                transfer_exists = true;
+                                if(bigInt(totals_obj[contract][exchange]).isZero()){
+                                    delete totals_obj[contract][exchange]
+                                }else{
+                                    transfer_exists = true;
+                                }
                             });
                         });
                     }

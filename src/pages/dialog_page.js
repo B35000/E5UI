@@ -12650,6 +12650,9 @@ return data['data']
                     active_amount = bigInt(active_amount).minus(obligation)
                 });
                 totals_obj[year][exchange] = bigInt(totals_obj[year][exchange]).plus(obligation_amount)
+                if(bigInt(totals_obj[year][exchange]).isZero()){
+                    delete totals_obj[year][exchange]
+                }
             });
         });
 
@@ -18101,6 +18104,9 @@ return data['data']
                             active_amount = bigInt(active_amount).minus(obligation)
                         });
                         totals_obj[year][exchange] = bigInt(totals_obj[year][exchange]).plus(obligation_amount)
+                        if(bigInt(totals_obj[year][exchange]).isZero()){
+                            delete totals_obj[year][exchange]
+                        }
                     });
                 });
             }
@@ -18364,7 +18370,11 @@ return data['data']
                                 active_amount = bigInt(active_amount).minus(obligation)
                             });
                             totals_obj[contract][exchange] = bigInt(totals_obj[contract][exchange]).plus(obligation_amount)
-                            transfer_exists = true;
+                            if(bigInt(totals_obj[contract][exchange]).isZero()){
+                                delete totals_obj[contract][exchange]
+                            }else{
+                                transfer_exists = true;
+                            }
                         });
                     } 
                 });
