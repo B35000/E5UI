@@ -108,6 +108,7 @@ class home_page extends Component {
         work_page_tags_object:this.get_main_page_tag_object('?'), 
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
+        map_page_tags_object:this.get_main_page_tag_object('m'),
         // get_selected_chart_item_tags_object:this.get_selected_chart_item_tags_object(),
         // get_selected_contract_chart_item_tags_object:this.get_selected_contract_chart_item_tags_object(),
         
@@ -395,7 +396,7 @@ class home_page extends Component {
         };
 
         obj[this.props.app_state.loc['1196']/* 'jobs' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264bq']/* job-map 🗺️ */, this.props.app_state.loc['1205']/* 'applied' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264c'] *//* 'job-notifications' */], [1],[1]
+            ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264at']/* 'participated ✍' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' *//* , this.props.app_state.loc['1264bq'] *//* job-map 🗺️ */, this.props.app_state.loc['1205']/* 'applied' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264c'] *//* 'job-notifications' */], [1],[1]
         ];
 
         obj[this.props.app_state.loc['1197']/* 'contracts' */] = [
@@ -403,7 +404,7 @@ class home_page extends Component {
         ]
 
         obj[this.props.app_state.loc['1198']/* 'contractors' */] = [
-            ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' */, this.props.app_state.loc['1264br']/* contractor-map 🗺️ */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264e'] *//* 'contractor-notifications' */], [1],[1]
+            ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1264ag']/* 'following' */, this.props.app_state.loc['1264ah']/* 'tag-targeted' *//* , this.props.app_state.loc['1264br'] *//* contractor-map 🗺️ */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, /* this.props.app_state.loc['1264e'] *//* 'contractor-notifications' */], [1],[1]
         ]
 
         obj[this.props.app_state.loc['1199']/* 'proposals' */] = [
@@ -467,6 +468,16 @@ class home_page extends Component {
         ]
 
         return obj
+      }
+      else if(page == 'm'){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['1264cd']/* 'map-data 🗺️' */], [1]
+            ],
+        };
       }
       else{/* wallet_section */
         var obj = {
@@ -1902,15 +1913,18 @@ class home_page extends Component {
 
     /* gets the option of tags to use depending on the bottom navbar button clicked */
     get_tag_group_option(){
-      if(this.state.page == '?'){
-        return this.state.work_page_tags_object
-      }
-      else if(this.state.page == 'e'){
-        return this.state.explore_page_tags_object
-      }
-      else{
-        return this.state.wallet_page_tags_object
-      }
+        if(this.state.page == 'm'){
+            return this.state.map_page_tags_object
+        }
+        if(this.state.page == '?'){
+            return this.state.work_page_tags_object
+        }
+        else if(this.state.page == 'e'){
+            return this.state.explore_page_tags_object
+        }
+        else{
+            return this.state.wallet_page_tags_object
+        }
     }
 
     get_selected_item(object, option){
@@ -1974,12 +1988,16 @@ class home_page extends Component {
 
     get_selected_tag_name(){
         var selected_item = ''
-        if(this.state.page == '?'){
+        if(this.state.page == 'm'){
+            selected_item = this.get_selected_item(this.state.map_page_tags_object, this.state.map_page_tags_object['i'].active)
+        }
+        else if(this.state.page == '?'){
             selected_item = this.get_selected_item(this.state.work_page_tags_object,this.state.work_page_tags_object['i'].active)
         }
         else if(this.state.page == 'e'){
             selected_item = this.get_selected_item(this.state.explore_page_tags_object,this.state.explore_page_tags_object['i'].active)
-        }else{
+        }
+        else{
             selected_item = this.get_selected_item(this.state.wallet_page_tags_object,this.state.wallet_page_tags_object['i'].active)
         }
         return selected_item 
@@ -2099,7 +2117,11 @@ class home_page extends Component {
 
     get_page_id(){
         var id = ''
-        if(this.state.page == '?'){
+        if(this.state.page == 'm'){
+            var selected_item = this.get_selected_item(this.state.map_page_tags_object, this.state.map_page_tags_object['i'].active)
+            id = '?'+this.state.map_page_tags_object['i'].active + selected_item
+        }
+        else if(this.state.page == '?'){
             var selected_item = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
             id = '?'+this.state.work_page_tags_object['i'].active + selected_item
         }
@@ -2194,7 +2216,10 @@ class home_page extends Component {
 
     get_selected_page(){
         var selected_page = ''
-        if(this.state.page == '?'){
+        if(this.state.page == 'm'){
+            selected_page = this.state.map_page_tags_object['i'].active
+        }
+        else if(this.state.page == '?'){
             selected_page = this.state.work_page_tags_object['i'].active
             if(selected_page == 'e') selected_page = this.props.app_state.loc['1196']/* 'jobs' */
         }
@@ -2433,6 +2458,11 @@ class home_page extends Component {
         }
         this.navbar_change_time = Date.now()
         var selected_page = ''
+        if(this.state.page == 'm'){
+            this.work_list_section.current?.reset_initial_load_done_value()
+            this.setState({map_page_tags_object: tag_group})
+            selected_page = tag_group['i'].active
+        }else
         if(this.state.page == '?'){
             this.work_list_section.current?.reset_initial_load_done_value()
             this.setState({work_page_tags_object: tag_group})
@@ -2748,6 +2778,9 @@ class home_page extends Component {
         if(Date.now() - this.navbar_change_time < 500) return;
         if(this.page_scroll_data == null) this.page_scroll_data = {}
 
+        if(this.state.page == 'm'){
+
+        }else
         if(this.state.page == '?'){
             var selected_item = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
             var id = this.state.work_page_tags_object['i'].active + selected_item
@@ -2808,6 +2841,9 @@ class home_page extends Component {
     update_scroll_position(){
         if(this.page_scroll_data == null) this.page_scroll_data = {}
 
+        if(this.state.page == 'm'){
+
+        }else
         if(this.state.page == '?'){
             var selected_item = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
             var id = this.state.work_page_tags_object['i'].active + selected_item
@@ -2958,6 +2994,9 @@ class home_page extends Component {
     update_scroll_position2(ignore_notification_if_at_top){
         if(this.page_scroll_data == null) this.page_scroll_data = {}
 
+        if(this.state.page == 'm'){
+
+        }else
         if(this.state.page == '?'){
             var selected_item = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
             var id = this.state.work_page_tags_object['i'].active + selected_item
@@ -5477,6 +5516,9 @@ class home_page extends Component {
 
     handleChange3 = (swiper) => {
         var obj = {0:'?', 1:'e', 2:'w'}
+        // if(this.props.app_state.has_wallet_been_set == true && this.props.screensize == 's'){
+        //     obj = {0:'m', 1:'?', 2:'e', 3:'w'}
+        // }
         this.setState({ page: obj[swiper.activeIndex] });
     };
 
@@ -5493,6 +5535,9 @@ class home_page extends Component {
         //     return this.render_post_list_group_if_touch_screen(size, height)
         // }
         var obj = {'?':0, 'e':1, 'w':2}
+        // if(this.props.app_state.has_wallet_been_set == true && this.props.screensize == 's'){
+        //     obj = {'m':0, '?':1, 'e':2, 'w':3}
+        // }
         var pos = obj[this.state.page];
         var subtract = 65
         var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height
@@ -5504,33 +5549,42 @@ class home_page extends Component {
             if(this.props.is_minimalist_mode_enabled()){
                 return(
                     <div>
-                        {/* <MySwipeableViews width={width-10} index={pos} onChangeIndex={this.handleChange}>
-                            <div key={'?'}>
-                                {this.render_post_list_group2(size, '?', this.work_list_section, h)}
-                            </div>
-                            <div key={'e'}>
-                                {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
-                            </div>
-                            <div key={'w'}>
-                                {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
-                            </div>
-                        </MySwipeableViews> */}
-                        {/* <SwipeableViews disabled={false} index={pos} onChangeIndex={this.handleChange}>
-                            <div key={'?'}>
-                                {this.render_post_list_group2(size, '?', this.work_list_section, h)}
-                            </div>
-                            <div key={'e'}>
-                                {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
-                            </div>
-                            <div key={'w'}>
-                                {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
-                            </div>
-                        </SwipeableViews> */}
                         <Swiper
                             initialSlide={pos}
                             onSwiper={(swiper) => { this.swiper = swiper; }}
                             onSlideChange={this.handleChange3}
                             style={{ width: '100%' }}>
+                                {/* {this.props.app_state.has_wallet_been_set == true && this.props.screensize == 's' && (
+                                    <SwiperSlide key={'m'}>
+                                        {this.render_post_list_group2(size, 'm', this.work_list_section, h)}
+                                    </SwiperSlide>
+                                )} */}
+                                <SwiperSlide key={'?'}>
+                                    {this.render_post_list_group2(size, '?', this.work_list_section, h)}
+                                </SwiperSlide>
+                                <SwiperSlide key={'e'}>
+                                    {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
+                                </SwiperSlide>
+                                <SwiperSlide key={'w'}>
+                                    {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
+                                </SwiperSlide>
+                        </Swiper>
+                    </div>
+                )
+            }
+            if(this.props.screensize == 's'){
+                return(
+                    <div>
+                        <Swiper
+                            initialSlide={pos}
+                            onSwiper={(swiper) => { this.swiper = swiper; }}
+                            onSlideChange={this.handleChange3}
+                            style={{ width: '100%' }}>
+                                {/* {this.props.app_state.has_wallet_been_set == true && (
+                                    <SwiperSlide key={'m'}>
+                                        {this.render_post_list_group2(size, 'm', this.work_list_section, h)}
+                                    </SwiperSlide>
+                                )} */}
                                 <SwiperSlide key={'?'}>
                                     {this.render_post_list_group2(size, '?', this.work_list_section, h)}
                                 </SwiperSlide>
@@ -5762,6 +5816,9 @@ class home_page extends Component {
 
     is_page_valid(){
         // if(this.props.app_state.my_preferred_nitro == '') return false;
+        if(this.state.page == 'm'){
+            return false
+        }else
         if(this.state.page == '?'){
             var selected_item = this.state.work_page_tags_object['i'].active
             var selected_tag = this.get_selected_item(this.state.work_page_tags_object, selected_item)
@@ -7400,6 +7457,9 @@ class home_page extends Component {
     
 
     is_in_pinned_section(){
+        if(this.state.page == 'm'){
+            return false
+        }else
         if(this.state.page == '?'){
             var selected_item = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 

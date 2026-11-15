@@ -34,6 +34,8 @@ import my_location_icon_dark from '../assets/my_location_icon_dark.png'
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
+import "./location_viewer.css"
+
 // Add this before your component
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -112,6 +114,20 @@ const LocationPicker = forwardRef((props, ref) => {
         get_center
     }));
 
+    const make_pulse_icon = (icon_url, icon_size, pulse_color) => {
+        return L.divIcon({
+            className: 'pulse-wrapper',
+            html: `
+                <div class="pulse-pin" style="--pin-size:${icon_size}px; --pulse-color:${pulse_color};">
+                    <img src="${icon_url}" />
+                </div>
+            `,
+            iconSize: [icon_size, icon_size],
+            iconAnchor: [icon_size / 2, icon_size],
+            popupAnchor: [0, -icon_size],
+        });
+    };
+
     const pin_object = {
         'light': pin_icon,
         'black': pin_icon_dark,
@@ -135,14 +151,25 @@ const LocationPicker = forwardRef((props, ref) => {
         'dark': sub_pin_icon,
     }
 
+    const pulse_colors = {
+        'light': 'rgba(0, 0, 0, 0.45)',
+        'black': 'rgba(255, 255, 255, 0.45)',
+        'dark': 'rgba(255, 255, 255, 0.45)',
+    };
+
     const icon_size_obj3 = { 's':48, 'm':56, 'l':72 };
     const icon_size3 = icon_size_obj3[size];
-    const customIcon3 = L.icon({
-        iconUrl: sub_pin_object[theme], // Path to your custom image
-        iconSize: [icon_size3, icon_size3], // Size of the icon [width, height]
-        iconAnchor: [icon_size3/2, icon_size3/2], // Point of the icon which will correspond to marker's location [x, y]
-        popupAnchor: [0, -icon_size3] // Point from which the popup should open relative to the iconAnchor
-    });
+    // const customIcon3 = L.icon({
+    //     iconUrl: sub_pin_object[theme], // Path to your custom image
+    //     iconSize: [icon_size3, icon_size3], // Size of the icon [width, height]
+    //     iconAnchor: [icon_size3/2, icon_size3/2], // Point of the icon which will correspond to marker's location [x, y]
+    //     popupAnchor: [0, -icon_size3] // Point from which the popup should open relative to the iconAnchor
+    // });
+    const customIcon3 = make_pulse_icon(
+        sub_pin_object[theme],
+        icon_size3,
+        pulse_colors[theme]
+    );
 
 
     const my_location_icons = {
@@ -153,11 +180,21 @@ const LocationPicker = forwardRef((props, ref) => {
 
     const icon_size_obj2 = { 's':10, 'm':16, 'l':24 };
     const icon_size2 = icon_size_obj2[size];
-    const my_location_marker_icon = L.icon({
-        iconUrl: my_location_icons[theme], // Path to your custom image
-        iconSize: [icon_size2, icon_size2], // Size of the icon [width, height]
-        iconAnchor: [icon_size2/2, icon_size2 / 2], // Point of the icon which will correspond to marker's location [x, y]
-        popupAnchor: [0, -icon_size2] // Point from which the popup should open relative to the iconAnchor
+    // const my_location_marker_icon = L.icon({
+    //     iconUrl: my_location_icons[theme], // Path to your custom image
+    //     iconSize: [icon_size2, icon_size2], // Size of the icon [width, height]
+    //     iconAnchor: [icon_size2/2, icon_size2 / 2], // Point of the icon which will correspond to marker's location [x, y]
+    //     popupAnchor: [0, -icon_size2] // Point from which the popup should open relative to the iconAnchor
+    // });
+    const my_location_marker_icon = L.divIcon({
+        className: 'pulse-wrapper',
+        html: `
+            <div class="pulse-dot" style="--pulse-color:${pulse_colors[theme]};">
+                <img src="${my_location_icons[theme]}" style="width:${icon_size2}px;height:${icon_size2}px;" />
+            </div>
+        `,
+        iconSize: [icon_size2, icon_size2],
+        iconAnchor: [icon_size2 / 2, icon_size2 / 2],
     });
 
     const attribution_object = {

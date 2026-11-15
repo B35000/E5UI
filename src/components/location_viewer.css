@@ -1,0 +1,63 @@
+.pulse-pin {
+  position: relative;
+  width: var(--pin-size);
+  height: var(--pin-size);
+}
+
+/* The pin image itself */
+.pulse-pin img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+/* The pulse ring, anchored at the pin's tip (bottom center) */
+.pulse-pin::before,
+.pulse-pin::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: calc(var(--pin-size) * 0.6);
+  height: calc(var(--pin-size) * 0.6);
+  margin-left: calc(var(--pin-size) * -0.3);
+  margin-bottom: calc(var(--pin-size) * -0.3);
+  border-radius: 50%;
+  background: var(--pulse-color);
+  opacity: 0;
+  z-index: 1;
+  animation: pin-pulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+/* Second ring, delayed, for a layered ripple */
+.pulse-pin::after {
+  animation-delay: 1s;
+}
+
+@keyframes pin-pulse {
+  0%   { transform: scale(0.3); opacity: 0.7; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Make sure Leaflet's default divIcon styling doesn't interfere */
+.leaflet-div-icon.pulse-wrapper {
+  background: transparent;
+  border: none;
+}
+
+
+
+.pulse-dot { position: relative; display: flex; align-items: center; justify-content: center; }
+.pulse-dot::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--pulse-color);
+  animation: pin-pulse 2s ease-out infinite;
+}
+.pulse-dot img { position: relative; z-index: 2; }

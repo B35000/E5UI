@@ -84,7 +84,9 @@ class PostListSection extends Component {
 
         render_selected_map_job_bottomsheet:false, render_selected_map_contractor_bottomsheet:false,
         selected_jobs_time_filter_chart_tags_object: this.selected_time_filter_chart_tags_object(),
-        selected_contractors_time_filter_chart_tags_object: this.selected_time_filter_chart_tags_object()
+        selected_contractors_time_filter_chart_tags_object: this.selected_time_filter_chart_tags_object(),
+
+        render_selected_map_object_bottomsheet:false,
     };
 
 
@@ -152,7 +154,10 @@ class PostListSection extends Component {
     
     render_post_list_group(){
         var selected_page = this.props.page;
-        if(selected_page == '?'){
+        if(selected_page == 'm'){
+            return this.render_homepage_map_view()
+        }
+        else if(selected_page == '?'){
             var selected_tag = this.props.work_page_tags_object['i'].active
             var selected_item = this.get_selected_item(this.props.work_page_tags_object, selected_tag)
             
@@ -466,6 +471,7 @@ class PostListSection extends Component {
 
         this.locationPickerRef = React.createRef();
         this.locationPickerRef2 = React.createRef();
+        this.locationPickerRef3 = React.createRef();
 
         this.current_load_time = {}
 
@@ -1054,6 +1060,133 @@ class PostListSection extends Component {
 
 
 
+
+
+
+
+    render_homepage_map_view(){
+        var middle = this.props.height
+        const width = this.state.screen_width
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
+        else if(size == 's'){
+            middle = this.props.height+80
+            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
+                middle += 50
+            }
+        }
+        const job_location_pins = this.get_location_pins(this.get_job_items(), this.get_filter_end_time(this.state.selected_jobs_time_filter_chart_tags_object))
+        const contractor_location_pins = this.get_location_pins(this.get_contractor_items(), this.get_filter_end_time(this.state.selected_contractors_time_filter_chart_tags_object))
+
+        const all_object_location_pins = job_location_pins.concat(contractor_location_pins)
+
+        let route_data;
+        const selected_map_contractor = this.state.selected_map_contractor
+        if(selected_map_contractor != null){
+            if(selected_map_contractor['ipfs']?.get_draw_route_between_pins_option != null){
+                const draw_route = this.get_selected_item2(selected_map_contractor['ipfs']?.get_draw_route_between_pins_option, 'e') == 1
+
+                if(draw_route == true && selected_map_contractor['ipfs']?.route_data != null){
+                    route_data = selected_map_contractor['ipfs']?.route_data
+                }
+            }
+        }
+
+        const contractor_public_locations = this.props.app_state.contractor_public_locations;
+        const subcontractor_pins = []
+        const default_center = this.get_default_center();
+        const my_location = this.state.my_location;
+        const radius_point = my_location == null ? default_center : my_location;
+        if(Object.keys(contractor_public_locations).length > 0){
+            const contractor_e5_ids = Object.keys(contractor_public_locations);
+            contractor_e5_ids.forEach(e5_id => {
+                const addresses = Object.keys(contractor_public_locations[e5_id]);
+                addresses.forEach(address => {
+                    if(contractor_public_locations[e5_id][address]['time'] > Date.now() - (1000*60)){
+                        subcontractor_pins.push(contractor_public_locations[e5_id][address])
+                    }
+                });
+            });
+        }
+        const radius_km = 35;
+        const final_subcontractor_pins = subcontractor_pins.filter(account_location_object =>
+            this.distance_km(radius_point.lat, radius_point.lng, account_location_object.location.lat, account_location_object.location.lng) <= radius_km
+        );
+
+        const shared_private_locations = this.props.app_state.shared_private_locations;
+        if(Object.keys(shared_private_locations).length > 0){
+            const addresses = Object.keys(shared_private_locations);
+            addresses.forEach(address => {
+                final_subcontractor_pins.push(shared_private_locations[address])
+            });
+        }
+
+        return(
+            <div>
+                {this.render_space_if_first_item(0)}
+                <div style={{'position': 'relative'}}>
+                    <div style={{height: middle, width: width, 'z-index':'0', 'position': 'absolute'}}>
+                        <LocationViewer ref={this.locationPickerRef3} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={all_object_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_object_pin_clicked.bind(this)} route_data={route_data} subcontractors={final_subcontractor_pins} on_account_location_data_pin_licked={this.on_account_or_shared_location_data_pin_licked.bind(this)}
+                        />
+                    </div>
+                    <div style={{height: 32, width: width-90, 'z-index':'1', 'position': 'absolute', 'margin':'10px 0px 0px 100px'}}>
+                        <div style={{'display': 'flex','flex-direction': 'row', 'padding':'10px 20px 0px 20px'}}>
+                            <div style={{width: width - 30}}/>
+                            <img alt="" onClick={()=>this.show_my_location_on_map(this.locationPickerRef3)} src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:35, width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+                {this.state.selected_map_object != null && this.render_object_bottomsheet(this.render_job_or_contract_object(this.state.selected_map_object), this.state.render_selected_map_object_bottomsheet, this.when_pin_object_closed, 200)}
+            </div>
+        )
+    }
+
+    async on_account_or_shared_location_data_pin_licked(account_location_data){
+        const object_e5_id = account_location_data['contractor_obj']
+        if(object_e5_id == null) return;
+        this.props.notify(this.props.app_state.loc['2509es']/* 'Loading Object...' */, 1200)
+        this.setState({selected_map_object: null, render_selected_map_object_bottomsheet: true})
+        
+        const id = object_e5_id.split('E')[0]
+        const e5 = 'E'+ object_e5_id.split('E')[1]
+        await this.props.load_objects(26/* 26(contractor_object) */, [parseInt(id)], e5)
+        await this.wait_for_contractor_to_finish_loading()
+        const object = this.get_contractor_object(id, e5)
+
+        const broadcaster = account_location_data['sender_account_e5'] + ':' +account_location_data['sender_account']
+        const viewers = object['ipfs'].viewers || []
+        if(!viewers.includes(broadcaster)){
+            this.props.notify(this.props.app_state.loc['2509et']/* 'That account is not associated with the reported contractor' */, 11200)
+            this.setState({render_selected_map_object_bottomsheet: false})
+        }else{
+            this.setState({selected_map_object: object, render_selected_map_object_bottomsheet: true})
+        }
+    }
+
+    on_object_pin_clicked(pin){
+        this.setState({selected_map_object: pin['object'], render_selected_map_object_bottomsheet: true})
+    }
+
+    when_pin_object_closed(){
+        this.setState({selected_map_object: null, render_selected_map_object_bottomsheet: false})
+    }
+
+    render_job_or_contract_object(){
+        if(this.state.selected_map_object == null){
+            return this.render_contractor_object(this.state.selected_map_object, 0, true)
+        }
+        else if(this.state.selected_map_object['object_type'] == 'job'){
+            return this.render_job_object(this.state.selected_map_object)
+        }
+        else if(this.state.selected_map_object['object_type'] == 'contractor'){
+            return this.render_contractor_object(this.state.selected_map_object, 0, true)
+        }
+    }
 
 
 
