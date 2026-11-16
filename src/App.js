@@ -3244,7 +3244,7 @@ class App extends Component {
       this.get_token('ZERETH', 'ZERϴ Network', 'E1275', true),
       this.get_token('SOPH', 'Sophon', 'E1285', true),
       this.get_token('MAETH', 'Manta Pacific', 'E1295'),
-      this.get_token('FILE', 'Filecoin EVM', 'E1305'),
+      this.get_token('FILE', 'Filecoin EVM', 'E1305', true),
       this.get_token('MON', 'Monad', 'E1315'),
       this.get_token('ZOETH', 'Zora', 'E1325'),
       this.get_token('ANETH', 'Arbitrum Nova', 'E1335', true),

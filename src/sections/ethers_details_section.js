@@ -333,7 +333,7 @@ class EthersDetailsSection extends Component {
                     )}
                     
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3113w']/* Ledger Consensus Mechanisms */[item['symbol']], 'details':this.props.app_state.loc['2927a']/* Ledger Consensus Mechanism.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['3113w']/* Ledger Consensus Mechanisms */[item['symbol']], 'details':this.props.app_state.loc['2927a']/* Ledger Security Mechanism.' */, 'size':'l'})}
 
                     {this.render_nakamoto_coefficient(item)}
                     

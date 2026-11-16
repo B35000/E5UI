@@ -3418,7 +3418,9 @@ class PostListSection extends Component {
                                                 {this.render_space_if_first_item(0)}
                                             </div>
                                         )}
-                                        {this.render_animated_view(this.render_invite_item(item), item['call_id'], {}, index, items.length)}
+                                        <div style={{'padding': '2px 5px 2px 5px'}}>
+                                            {this.render_animated_view(this.render_invite_item(item), item['call_id'], {}, index, items.length)}
+                                        </div>
                                     </div>
                                 );
                             }}

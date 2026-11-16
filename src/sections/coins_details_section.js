@@ -261,7 +261,7 @@ class CoinsDetailsSection extends Component {
 
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':item['consensus_mechanism'], 'details':this.props.app_state.loc['2927a']/* Ledger Consensus Mechanism.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':item['consensus_mechanism'], 'details':this.props.app_state.loc['2927a']/* Ledger Security Mechanism.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', {'title':item['block_time'], 'details':this.props.app_state.loc['2927b']/* Block Time */, 'size':'l'})}
