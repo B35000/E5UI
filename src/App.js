@@ -23819,6 +23819,7 @@ class App extends Component {
       obj[this.getLocale()['1114c']/* 'custom_specifications ' */] = item['custom_specifications']
       obj[this.getLocale()['2642bi']/* 'quantity' */] = item['purchase_unit_count']
       obj[this.getLocale()['2642bj']/* 'author' */] = item['sender_account']
+      obj[this.getLocale()['2738dg']/* 'identifier' */] = item['purchase_identifier']
 
       const options = item['options']
       if(options != null){
