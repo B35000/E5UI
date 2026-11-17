@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const BUILD_DIR = path.join(__dirname, '..', 'build');
 
@@ -21,8 +22,15 @@ const files = walk(BUILD_DIR)
     );
   });
 
+const hashes = {};
+for (const f of files) {
+  hashes[f] = crypto.createHash('sha256')
+    .update(fs.readFileSync(path.join(BUILD_DIR, f)))
+    .digest('hex');
+}
+
 fs.writeFileSync(
   path.join(BUILD_DIR, 'file-manifest.json'),
-  JSON.stringify({ files }, null, 2)
+  JSON.stringify({ files, hashes }, null, 2)
 );
 console.log(`file-manifest.json: ${files.length} files`);

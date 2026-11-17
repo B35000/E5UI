@@ -1938,7 +1938,7 @@ class ContractDetailsSection extends Component {
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214a']/* 'Balance Changes.' */, 'details':this.props.app_state.loc['2214b']/* `The changes in balance for the selected token.` */, 'size':'l'})}
                 
-                {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time})}
+                {this.render_detail_item('6', {'dataPoints':datapoints.dps, 'start_time':datapoints.starting_time, 'scale':datapoints.scale})}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2214c']/* 'Y-Axis: Total in ' */+selected_exchange, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                
@@ -2156,8 +2156,10 @@ class ContractDetailsSection extends Component {
                 xVal++;
             }
         }
+
+        const scale = bigInt(largest_number).divide(100) == 0 ? 1 : bigInt(largest_number).divide(100)
         
-        return { dps, starting_time: chart_starting_time }
+        return { dps, starting_time: chart_starting_time, scale }
     }
 
 

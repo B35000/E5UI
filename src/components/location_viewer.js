@@ -159,17 +159,17 @@ const LocationPicker = forwardRef((props, ref) => {
 
     const icon_size_obj3 = { 's':48, 'm':56, 'l':72 };
     const icon_size3 = icon_size_obj3[size];
-    // const customIcon3 = L.icon({
-    //     iconUrl: sub_pin_object[theme], // Path to your custom image
-    //     iconSize: [icon_size3, icon_size3], // Size of the icon [width, height]
-    //     iconAnchor: [icon_size3/2, icon_size3/2], // Point of the icon which will correspond to marker's location [x, y]
-    //     popupAnchor: [0, -icon_size3] // Point from which the popup should open relative to the iconAnchor
-    // });
-    const customIcon3 = make_pulse_icon(
-        sub_pin_object[theme],
-        icon_size3,
-        pulse_colors[theme]
-    );
+    const customIcon3 = L.icon({
+        iconUrl: sub_pin_object[theme], // Path to your custom image
+        iconSize: [icon_size3, icon_size3], // Size of the icon [width, height]
+        iconAnchor: [icon_size3/2, icon_size3/2], // Point of the icon which will correspond to marker's location [x, y]
+        popupAnchor: [0, -icon_size3] // Point from which the popup should open relative to the iconAnchor
+    });
+    // const customIcon3 = make_pulse_icon(
+    //     sub_pin_object[theme],
+    //     icon_size3,
+    //     pulse_colors[theme]
+    // );
 
 
     const my_location_icons = {
@@ -180,22 +180,22 @@ const LocationPicker = forwardRef((props, ref) => {
 
     const icon_size_obj2 = { 's':10, 'm':16, 'l':24 };
     const icon_size2 = icon_size_obj2[size];
-    // const my_location_marker_icon = L.icon({
-    //     iconUrl: my_location_icons[theme], // Path to your custom image
-    //     iconSize: [icon_size2, icon_size2], // Size of the icon [width, height]
-    //     iconAnchor: [icon_size2/2, icon_size2 / 2], // Point of the icon which will correspond to marker's location [x, y]
-    //     popupAnchor: [0, -icon_size2] // Point from which the popup should open relative to the iconAnchor
-    // });
-    const my_location_marker_icon = L.divIcon({
-        className: 'pulse-wrapper',
-        html: `
-            <div class="pulse-dot" style="--pulse-color:${pulse_colors[theme]};">
-                <img src="${my_location_icons[theme]}" style="width:${icon_size2}px;height:${icon_size2}px;" />
-            </div>
-        `,
-        iconSize: [icon_size2, icon_size2],
-        iconAnchor: [icon_size2 / 2, icon_size2 / 2],
+    const my_location_marker_icon = L.icon({
+        iconUrl: my_location_icons[theme], // Path to your custom image
+        iconSize: [icon_size2, icon_size2], // Size of the icon [width, height]
+        iconAnchor: [icon_size2/2, icon_size2 / 2], // Point of the icon which will correspond to marker's location [x, y]
+        popupAnchor: [0, -icon_size2] // Point from which the popup should open relative to the iconAnchor
     });
+    // const my_location_marker_icon = L.divIcon({
+    //     className: 'pulse-wrapper',
+    //     html: `
+    //         <div class="pulse-dot" style="--pulse-color:${pulse_colors[theme]};">
+    //             <img src="${my_location_icons[theme]}" style="width:${icon_size2}px;height:${icon_size2}px;" />
+    //         </div>
+    //     `,
+    //     iconSize: [icon_size2, icon_size2],
+    //     iconAnchor: [icon_size2 / 2, icon_size2 / 2],
+    // });
 
     const attribution_object = {
         'light': '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -206,9 +206,11 @@ const LocationPicker = forwardRef((props, ref) => {
 
     const url_object = {
         'light': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        'black': `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`,
+        // 'black': `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`,
         // 'dark': 'https://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-        'dark':`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`
+        // 'dark':`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`
+        'black':'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        'dark':'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
     }
     const url = url_object[theme]
 
@@ -228,7 +230,7 @@ const LocationPicker = forwardRef((props, ref) => {
 
     if(pins.length == 0){
         return (
-            <div onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} style={{ height: height, width: '100%' }}>
+            <div /* onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} */ style={{ height: height, width: '100%' }}>
                 <MapContainer 
                     zoomControl={input_enabled} 
                     scrollWheelZoom={false} 
@@ -282,8 +284,18 @@ const LocationPicker = forwardRef((props, ref) => {
     }
 
     return (
-        <div onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} style={{ height: height, width: '100%'}}>
-            <MapContainer zoomControl={input_enabled} scrollWheelZoom={false} dragging={input_enabled} touchZoom={input_enabled} doubleClickZoom={input_enabled} boxZoom={input_enabled} keyboard={input_enabled} ref={mapRef} bounds={bounds} style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
+        <div /* onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} */ style={{ height: height, width: '100%'}}>
+            <MapContainer 
+            zoomControl={input_enabled} 
+            scrollWheelZoom={false} 
+            dragging={input_enabled} 
+            touchZoom={input_enabled} 
+            doubleClickZoom={input_enabled} 
+            boxZoom={input_enabled} 
+            keyboard={input_enabled} 
+            ref={mapRef} 
+            bounds={bounds} 
+            style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
                 <TileLayer attribution={attribution} url={url} />
                 {route_positions != null && route_positions.length > 0 && (
                     <Polyline

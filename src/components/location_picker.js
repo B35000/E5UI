@@ -152,7 +152,7 @@ const LocationPicker = forwardRef((props, ref) => {
     const circle_size = circle_size_obj[size];
 
     return (
-        <div onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} style={{ height: height, width: '100%'  }}>
+        <div /* onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} */ style={{ height: height, width: '100%'  }}>
             <MapContainer 
                 ref={mapRef} 
                 center={[center.lat, center.lon]} 

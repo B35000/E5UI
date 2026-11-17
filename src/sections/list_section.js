@@ -103,7 +103,7 @@ class PostListSection extends Component {
     }
 
     componentDidUpdate(prevProps){
-        if(prevProps.width != this.props.width){
+        if(prevProps.app_state.width != this.props.app_state.width){
             this.setState({screen_width: this.screen.current.offsetWidth})
         }
     }
@@ -1066,19 +1066,16 @@ class PostListSection extends Component {
 
     render_homepage_map_view(){
         var middle = this.props.height
-        const width = this.state.screen_width
+        const width = this.state.screen_width != 0 ? this.state.screen_width : this.props.app_state.width
         var size = this.props.size;
         if(size == 'l'){
-            middle = this.props.height-80;
+            middle = this.props.height-90;
         }
         else if(size == 'm'){
-            middle = this.props.height+65
+            middle = this.props.height-130
         }
         else if(size == 's'){
-            middle = this.props.height+80
-            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
-                middle += 50
-            }
+            middle = this.props.height-140
         }
         const job_location_pins = this.get_location_pins(this.get_job_items(), this.get_filter_end_time(this.state.selected_jobs_time_filter_chart_tags_object))
         const contractor_location_pins = this.get_location_pins(this.get_contractor_items(), this.get_filter_end_time(this.state.selected_contractors_time_filter_chart_tags_object))
@@ -1128,22 +1125,37 @@ class PostListSection extends Component {
 
         return(
             <div>
-                {this.render_space_if_first_item(0)}
-                <div style={{'position': 'relative'}}>
-                    <div style={{height: middle, width: width, 'z-index':'0', 'position': 'absolute'}}>
-                        <LocationViewer ref={this.locationPickerRef3} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={all_object_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_object_pin_clicked.bind(this)} route_data={route_data} subcontractors={final_subcontractor_pins} on_account_location_data_pin_licked={this.on_account_or_shared_location_data_pin_licked.bind(this)}
-                        />
-                    </div>
-                    <div style={{height: 32, width: width-90, 'z-index':'1', 'position': 'absolute', 'margin':'10px 0px 0px 100px'}}>
-                        <div style={{'display': 'flex','flex-direction': 'row', 'padding':'10px 20px 0px 20px'}}>
-                            <div style={{width: width - 30}}/>
-                            <img alt="" onClick={()=>this.show_my_location_on_map(this.locationPickerRef3)} src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:35, width:'auto'}} />
-                        </div>
-                    </div>
+                {this.render_space_if_first_item2(0)}
+                <div className="swiper-no-swiping" style={{height: middle, width: width}}>
+                    <LocationViewer ref={this.locationPickerRef3} height={middle} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={all_object_location_pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} on_pin_clicked={this.on_object_pin_clicked.bind(this)} route_data={route_data} subcontractors={final_subcontractor_pins} on_account_location_data_pin_licked={this.on_account_or_shared_location_data_pin_licked.bind(this)}
+                    />
+                </div>
+                <div style={{height:10}}/>
+                <div onClick={()=> this.show_my_location_on_map(this.locationPickerRef3)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1264bs'] /* My Location ⚲ */ , 'action':''})}
                 </div>
                 {this.state.selected_map_object != null && this.render_object_bottomsheet(this.render_job_or_contract_object(this.state.selected_map_object), this.state.render_selected_map_object_bottomsheet, this.when_pin_object_closed, 200)}
             </div>
         )
+    }
+
+    render_space_if_first_item2(index){
+        if(index == 0){
+            const orientation = this.props.app_state.homepage_tags_position
+            if(this.props.size == 's' && orientation == this.props.app_state.loc['1593k']/* top */){
+                let x = 60
+                // if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
+                //     x += 6;
+                // }
+                x+=this.props.additional_height
+                return(
+                    <div style={{height: x}}/>
+                )
+            }
+            return(
+                <div style={{height: 10}}/>
+            )
+        }
     }
 
     async on_account_or_shared_location_data_pin_licked(account_location_data){
@@ -1293,17 +1305,18 @@ class PostListSection extends Component {
 
     render_space_if_first_item(index){
         if(index == 0){
+            let x = 0
             const orientation = this.props.app_state.homepage_tags_position
             if(this.props.size == 's' && orientation == this.props.app_state.loc['1593k']/* top */){
-                let x = 50
+                x += 50
                 if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
                     x += 6;
                 }
-                x+=this.props.additional_height
-                return(
-                    <div style={{height: x}}/>
-                )
             }
+            x+=this.props.additional_height
+            return(
+                <div style={{height: x}}/>
+            )
         }
     }
 

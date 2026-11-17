@@ -148,64 +148,6 @@ class tags extends Component {
         else return 0
     }
 
-    // /* renders the tag button item */
-    // render_tag_button(index, selected, text, tag_size){
-    //     var background = this.props.theme['tag_background_color'];
-    //     var txt = text+'';
-    //     if(txt.startsWith('a.') || txt.startsWith('e.')|| txt.startsWith('v.')){
-    //         background = this.props.theme['indexed_tag_background'];
-    //     }
-
-    //     if(index == 0){
-    //         background = 'black';
-    //     }
-    //     if(selected != null){
-    //         if(selected == index){
-    //             background = 'black';
-    //         }
-    //     }
-
-    //     var font = this.props.font
-    //     const final_text = this.final_text(txt,index)
-    //     if(tag_size == 's'){
-    //         return (
-    //             <div>
-    //                 <style>{`
-    //                     .button-click {
-    //                         animation: clickAnim 0.3s ease;
-    //                     }
-    //                     @keyframes clickAnim {
-    //                         0%   { transform: scale(1); }
-    //                         50%  { transform: scale(0.85); }
-    //                         100% { transform: scale(1); }
-    //                     }
-    //                 `}</style>
-    //                 <div /* onClick={() => this.when_tag_button_clicked(index, final_text)} */ /* className={this.state.animate == index ? 'button-click' : ''} */ style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
-    //                     <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '12px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{final_text}</p>
-    //                 </div>
-    //             </div>
-    //         );
-    //     }else{
-    //         return (
-    //             <div>
-    //                 <style>{`
-    //                     .button-click {
-    //                         animation: clickAnim 0.2s ease;
-    //                     }
-    //                     @keyframes clickAnim {
-    //                         0%   { transform: scale(1); }
-    //                         50%  { transform: scale(0.85); }
-    //                         100% { transform: scale(1); }
-    //                     }
-    //                 `}</style>
-    //                 <div /* onClick={() => this.when_tag_button_clicked(index, final_text)} */ /* className={this.state.animate == index ? 'button-click' : ''} */ style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow'], cursor: 'pointer'}} onClick={() => this.when_any_button_tapped(index, final_text)}>
-    //                     <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{final_text}</p>
-    //                 </div>
-    //             </div>
-    //         );
-    //     }
-    // }
-
     render_tag(index, selected, item, tag_size, active){
         return(
             <AnimatePresence initial={true}>

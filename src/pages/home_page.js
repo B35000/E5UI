@@ -127,7 +127,7 @@ class home_page extends Component {
 
         current_load_time:{}, viewed_items_data:{'':{}}, auto_stack:[],
 
-        dragProgress: 0, isDragging: false
+        dragProgress: 0, isDragging: false, view_map:false
     };
 
     constructor(props) {
@@ -151,6 +151,7 @@ class home_page extends Component {
 
         this.navbar_change_time = Date.now()
         this.page_keys = ['?', 'e', 'w'];
+        this.page_keys2 = ['m', '?', 'e', 'w']
         this.swiper = null;
     }
 
@@ -376,7 +377,8 @@ class home_page extends Component {
     componentDidUpdate(prevProps, prevState) {
         // keep Swiper in sync if state.page was changed by something other than a swipe
         if (prevState.page !== this.state.page && this.swiper) {
-            var pos = this.page_keys.indexOf(this.state.page);
+            const page_keys = /* (this.props.screensize == 's') ? this.page_keys2 : */ this.page_keys
+            var pos = page_keys.indexOf(this.state.page);
             if (this.swiper.activeIndex !== pos) {
                 this.swiper.slideTo(pos);
             }
@@ -878,10 +880,11 @@ class home_page extends Component {
     render_small_screen_size_ui(size, top_bar, width){
         var orientation = this.props.app_state.homepage_tags_position
         const selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
-        let x = 129
-        if(this.state.page == 'w' && (selected_item == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */)){
-            x = 134
-        }
+        let x = 134
+        // if(this.state.page == 'w' && (selected_item == this.props.app_state.loc['1264j']/* 'coins 🪙' */ || selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */)){
+        //     x = 134
+        // }
+
 
         if(orientation == this.props.app_state.loc['1593k']/* top */){
             var navbar_margin = '0px 0px 0px 0px'
@@ -897,9 +900,12 @@ class home_page extends Component {
             }
             return(
                 <div style={{position: 'relative', minHeight: '100vh'}}>
-                    <div style={{height:top_bar, width:tag_width, 'padding':'7px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'border-radius': radius, 'margin':navbar_margin,position: 'absolute', zIndex: 5}}>
-                        {this.render_top_tag_bar(size, w)}
-                    </div>
+                    {this.state.page != 'm' && (
+                        <div style={{height:top_bar, width:tag_width, 'padding':'7px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'border-radius': radius, 'margin':navbar_margin,position: 'absolute', zIndex: 5}}>
+                            {this.render_top_tag_bar(size, w)}
+                        </div>
+                    )}
+                    
                     
                     <div style={{height:'auto', width:width, 'padding':'0px 5px 0px 5px', position: 'absolute', zIndex: 3}}>
                         {this.render_post_list_group(size, this.props.height, width)}
@@ -911,27 +917,45 @@ class home_page extends Component {
                 </div>
             )
         }else{
-            var navbar_margin = '0px 0px 0px 0px'
+            var navbar_margin = `${this.props.height-x}px 0px 0px 0px`
             var radius = '0px'
             var w = this.props.width
             var tag_width = width
             if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
-                navbar_margin = '0px 10px 8px 10px'
                 var radius = '20px'
                 w = this.props.width-20
                 tag_width = this.props.width-20
                 x += 6;
+                navbar_margin = `${this.props.height-x}px 10px 8px 10px`
             }
             return(
-                <div>
-                    <div style={{height:this.props.height-x, width:width, 'padding':'5px 5px 0px 5px'}}>
+                <div style={{position: 'relative', minHeight: '100vh'}}>
+                    <div style={{height:'auto', width:width, 'padding':'5px 5px 0px 5px', position: 'absolute', zIndex: 3}}>
                         {this.render_post_list_group(size, this.props.height-x, width)}
                     </div>
-                    <div style={{height:top_bar, width:tag_width, 'padding':'7px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'border-radius': radius, 'margin':navbar_margin,}}>
-                        {this.render_top_tag_bar(size, w)}
+
+                    <div style={{height:this.props.height, width:width, 'padding':'0px 5px 0px 5px', position: 'absolute', zIndex: 1}}>
+                        {this.render_post_list_group(size, this.props.height, width, true)}
                     </div>
+
+                    {this.state.page != 'm' && (
+                        <div style={{height:top_bar, width:tag_width, 'padding':'7px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'border-radius': radius, 'margin':navbar_margin, position: 'absolute', zIndex: 5}}>
+                            {this.render_top_tag_bar(size, w)}
+                        </div>
+                    )}
+                    
                 </div>
             )
+            // return(
+            //     <div>
+            //         <div style={{height:this.props.height-x, width:width, 'padding':'5px 5px 0px 5px'}}>
+            //             {this.render_post_list_group(size, this.props.height-x, width)}
+            //         </div>
+            //         <div style={{height:top_bar, width:tag_width, 'padding':'7px 0px 0px 0px', backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)", 'border-radius': radius, 'margin':navbar_margin,}}>
+            //             {this.render_top_tag_bar(size, w)}
+            //         </div>
+            //     </div>
+            // )
         }
     }
 
@@ -1530,6 +1554,9 @@ class home_page extends Component {
 
     normal_bottom_navbar_item_click(item){
         this.navbar_change_time = Date.now()
+        if(this.state.view_map == true){
+            this.setState({view_map: false})
+        }
         this.setState({page: item});
         var me = this;
         setTimeout(function() {
@@ -1968,6 +1995,9 @@ class home_page extends Component {
         if(this.props.app_state.active_full_stack_snap_point == '705px'){
             this.props.close_snap_point_if_opened()
             return;
+        }
+        if(this.state.view_map == true){
+            this.setState({view_map: false})
         }
         this.when_e_plus_letter_clicked()
         // let me = this;
@@ -2455,6 +2485,12 @@ class home_page extends Component {
         if(this.props.app_state.active_full_stack_snap_point == '705px'){
             this.props.close_snap_point_if_opened()
             return;
+        }
+        if(clicked_tag_name == 'e' && this.props.app_state.has_wallet_been_set == true){
+            const new_val = !this.state.view_map
+            this.setState({view_map: new_val})
+        }else{
+            this.setState({view_map: false})
         }
         this.navbar_change_time = Date.now()
         var selected_page = ''
@@ -5515,11 +5551,14 @@ class home_page extends Component {
     };
 
     handleChange3 = (swiper) => {
-        var obj = {0:'?', 1:'e', 2:'w'}
-        // if(this.props.app_state.has_wallet_been_set == true && this.props.screensize == 's'){
-        //     obj = {0:'m', 1:'?', 2:'e', 3:'w'}
-        // }
-        this.setState({ page: obj[swiper.activeIndex] });
+        const obj = /* (this.props.screensize == 's') ? 
+        {0:'m', 1:'?', 2:'e', 3:'w'} :  */
+        {0:'?', 1:'e', 2:'w'}
+        console.log('render_post_list_group', 'setting page to index', swiper.activeIndex, obj[swiper.activeIndex])
+        // this.setState({ page: obj[swiper.activeIndex] });
+        setTimeout(() => {
+            this.setState({ page: obj[swiper.activeIndex] });
+        }, (1 * 400));
     };
 
     handleChange2 = (value) => {
@@ -5534,11 +5573,12 @@ class home_page extends Component {
         // if(size != 'l'){
         //     return this.render_post_list_group_if_touch_screen(size, height)
         // }
-        var obj = {'?':0, 'e':1, 'w':2}
-        // if(this.props.app_state.has_wallet_been_set == true && this.props.screensize == 's'){
-        //     obj = {'m':0, '?':1, 'e':2, 'w':3}
-        // }
-        var pos = obj[this.state.page];
+        const obj = /* (this.props.screensize == 's') ? 
+        {'m':0, '?':1, 'e':2, 'w':3} : */ 
+        {'?':0, 'e':1, 'w':2}
+
+        const pos = obj[this.state.page];
+        console.log('render_post_list_group', 'pos', pos, this.state.page)
         var subtract = 65
         var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height
         var subtract2 = this.should_show_line() == true ? 10 : 0
@@ -5546,33 +5586,10 @@ class home_page extends Component {
         if(size == 'm') h-=4;
 
         const render_active_page = () => {
-            if(this.props.is_minimalist_mode_enabled()){
-                return(
-                    <div>
-                        <Swiper
-                            initialSlide={pos}
-                            onSwiper={(swiper) => { this.swiper = swiper; }}
-                            onSlideChange={this.handleChange3}
-                            style={{ width: '100%' }}>
-                                {/* {this.props.app_state.has_wallet_been_set == true && this.props.screensize == 's' && (
-                                    <SwiperSlide key={'m'}>
-                                        {this.render_post_list_group2(size, 'm', this.work_list_section, h)}
-                                    </SwiperSlide>
-                                )} */}
-                                <SwiperSlide key={'?'}>
-                                    {this.render_post_list_group2(size, '?', this.work_list_section, h)}
-                                </SwiperSlide>
-                                <SwiperSlide key={'e'}>
-                                    {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
-                                </SwiperSlide>
-                                <SwiperSlide key={'w'}>
-                                    {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
-                                </SwiperSlide>
-                        </Swiper>
-                    </div>
-                )
-            }
-            // if(this.props.screensize == 's'){
+            // if(this.state.view_map == true){
+            //     return this.render_post_list_group2(size, 'm', this.work_list_section, h)
+            // }
+            // if(this.props.is_minimalist_mode_enabled()){
             //     return(
             //         <div>
             //             <Swiper
@@ -5580,11 +5597,11 @@ class home_page extends Component {
             //                 onSwiper={(swiper) => { this.swiper = swiper; }}
             //                 onSlideChange={this.handleChange3}
             //                 style={{ width: '100%' }}>
-            //                     {this.props.app_state.has_wallet_been_set == true && (
+            //                     {/* {this.props.app_state.has_wallet_been_set == true && this.props.screensize == 's' && (
             //                         <SwiperSlide key={'m'}>
             //                             {this.render_post_list_group2(size, 'm', this.work_list_section, h)}
             //                         </SwiperSlide>
-            //                     )}
+            //                     )} */}
             //                     <SwiperSlide key={'?'}>
             //                         {this.render_post_list_group2(size, '?', this.work_list_section, h)}
             //                     </SwiperSlide>
@@ -5598,6 +5615,30 @@ class home_page extends Component {
             //         </div>
             //     )
             // }
+            if(this.props.screensize == 's'){
+                return(
+                    <div>
+                        <Swiper
+                            initialSlide={pos}
+                            onSwiper={(swiper) => { this.swiper = swiper; }}
+                            onSlideChange={this.handleChange3}
+                            style={{ width: '100%' }}>
+                                {/* <SwiperSlide key={'m'}>
+                                    {this.render_post_list_group2(size, 'm', this.work_list_section, h)}
+                                </SwiperSlide> */}
+                                <SwiperSlide key={'?'}>
+                                    {this.render_post_list_group2(size, '?', this.work_list_section, h)}
+                                </SwiperSlide>
+                                <SwiperSlide key={'e'}>
+                                    {this.render_post_list_group2(size, 'e', this.explore_list_section, h)}
+                                </SwiperSlide>
+                                <SwiperSlide key={'w'}>
+                                    {this.render_post_list_group2(size, 'w', this.wallet_list_section, h)}
+                                </SwiperSlide>
+                        </Swiper>
+                    </div>
+                )
+            }
             return(
                 <div>
                     {pos == 0 && (
@@ -5626,8 +5667,7 @@ class home_page extends Component {
                 </div>
             )
         }
-        const orientation = this.props.app_state.homepage_tags_position
-        if(this.props.screensize == 's' && orientation == this.props.app_state.loc['1593k']/* top */){
+        if(this.props.screensize == 's'){
             return(
                 <div>
                     {this.render_space_if_first_item()}

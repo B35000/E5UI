@@ -159,7 +159,7 @@ class ViewObjectLocations extends Component {
         }
 
         return(
-            <div>
+            <div data-vaul-no-drag style={{}}>
                 <LocationViewer ref={this.locationPickerRef} height={location_height} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={pins} size={this.props.size} input_enabled={true} my_location={this.state.my_location} subcontractors={subcontractor_pins} on_account_location_data_pin_licked={this.on_account_location_data_pin_licked.bind(this)}
                 />
             </div>

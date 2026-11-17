@@ -357,7 +357,7 @@ class LocationMapInput extends Component {
         const location_height = this.props.size == 's' ? this.props.height * 0.37 : this.props.height - minus
         return(
             <div>
-                <div style={{}}>
+                <div data-vaul-no-drag style={{}}>
                     <LocationPicker ref={this.locationPickerRef} height={location_height} theme={this.props.theme['map_theme']} center={this.get_default_center()} pins={this.state.pins} size={this.props.size} my_location={this.state.my_location}
                     />
                 </div>
