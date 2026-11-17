@@ -1313,7 +1313,7 @@ class PostListSection extends Component {
                     x += 6;
                 }
             }
-            x+=this.props.additional_height
+            if(this.props.size == 's') x+=this.props.additional_height
             return(
                 <div style={{height: x}}/>
             )
