@@ -73,6 +73,34 @@ function SetViewOnClick({ animateRef }) {
   return null
 }
 
+function LocateButton({ my_location }) {
+    const map = useMap();
+
+    if (!my_location) return null;
+
+    const handle_click = (e) => {
+        e.stopPropagation(); // don't trigger your SetViewOnClick handler
+        map.flyTo([my_location.lat, my_location.lon], 16, { animate: true });
+    };
+
+    return (
+        <div className="leaflet-top leaflet-right" style={{ marginTop: 15 }}>
+            <div className="leaflet-control leaflet-bar">
+                <a
+                    href="#"
+                    role="button"
+                    title="Go to my location"
+                    aria-label="Go to my location"
+                    onClick={(e) => { e.preventDefault(); handle_click(e); }}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}
+                >
+                    ◎
+                </a>
+            </div>
+        </div>
+    );
+}
+
 const LocationPicker = forwardRef((props, ref) => {
     const { height, theme, center, pins, size, my_location } = props;
     const mapRef = React.useRef();
@@ -134,9 +162,11 @@ const LocationPicker = forwardRef((props, ref) => {
 
     const url_object = {
         'light': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        'black': `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`,
+        // 'black': `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`,
         // 'dark': 'https://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-        'dark':`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`
+        // 'dark':`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${process.env.REACT_APP_CARTO_API_KEY}`
+        'black':'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        'dark':'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
     }
     const url = url_object[theme]
 
@@ -152,7 +182,7 @@ const LocationPicker = forwardRef((props, ref) => {
     const circle_size = circle_size_obj[size];
 
     return (
-        <div /* onTouchStart={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} */ style={{ height: height, width: '100%'  }}>
+        <div style={{ height: height, width: '100%'  }}>
             <MapContainer 
                 ref={mapRef} 
                 center={[center.lat, center.lon]} 
@@ -162,6 +192,7 @@ const LocationPicker = forwardRef((props, ref) => {
                 style={{ height: '100%', width: '100%', 'margin': '0px', 'border-radius': '11px' }}>
                 <TileLayer attribution={attribution} url={url} />
                 <AttributionControl position="topright" />
+                <LocateButton my_location={my_location} />
                 {pins.map((pin, index) => (
                     <Marker position={[pin['lat'], pin['lng']]} icon={customIcon}>
                         <Popup>

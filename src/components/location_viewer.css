@@ -28,18 +28,18 @@
   background: var(--pulse-color);
   opacity: 0;
   z-index: 1;
-  animation: pin-pulse 9s ease-out infinite;
+  animation: pin-pulse 6s ease-out infinite;
   pointer-events: none;
 }
 
 /* Second ring, delayed, for a layered ripple */
 .pulse-pin::after {
-  animation-delay: 10s;
+  animation-delay: 8s;
 }
 
 @keyframes pin-pulse {
   0%   { transform: scale(0.3); opacity: 0.6; }
-  100% { transform: scale(6); opacity: 0; }
+  100% { transform: scale(2); opacity: 0; }
 }
 
 /* Make sure Leaflet's default divIcon styling doesn't interfere */
@@ -54,10 +54,10 @@
 .pulse-dot::before {
   content: '';
   position: absolute;
-  width: 200px;
-  height: 200px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   background: var(--pulse-color);
-  animation: pin-pulse 9s ease-out infinite;
+  animation: pin-pulse 6s ease-out infinite;
 }
 .pulse-dot img { position: relative; z-index: 2; }
