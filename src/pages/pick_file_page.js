@@ -217,18 +217,14 @@ class PickFilePage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':this.render_title_text().replace(/\p{Extended_Pictographic}/gu, '')})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.render_title_text().replace(/\p{Extended_Pictographic}/gu, '')})}
                 <div style={{height:10}}/>
 
-                <div className="row">
-                    <div className="col-8" onClick={() => this.reload_my_account_storage_balance()} style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1593bc']/* 'File Upload Limit.' */, 'details':`~ ${fs}`, 'size':'l'})}
-                    </div>
-                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
-                        <div style={{'padding': '12px 0px 0px 0px'}}>
-                            {this.render_open_options_picker_upload_button()}
-                        </div>
-                    </div>
+                <div onClick={() => this.reload_my_account_storage_balance()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593bc']/* 'File Upload Limit.' */, 'details':`~ ${fs}`, 'size':'l'})}
+                </div>
+                <div style={{'padding': '5px'}}>
+                    {this.render_open_options_picker_upload_button()}
                 </div>
                 <div style={{'padding': '5px'}} onClick={() => this.open_purchase_storage_space()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2961c']/* 'Purchase Storage 💾' */, 'action':''})}

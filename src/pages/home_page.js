@@ -5554,7 +5554,7 @@ class home_page extends Component {
         const obj = /* (this.props.screensize == 's') ? 
         {0:'m', 1:'?', 2:'e', 3:'w'} :  */
         {0:'?', 1:'e', 2:'w'}
-        console.log('render_post_list_group', 'setting page to index', swiper.activeIndex, obj[swiper.activeIndex])
+        // console.log('render_post_list_group', 'setting page to index', swiper.activeIndex, obj[swiper.activeIndex])
         // this.setState({ page: obj[swiper.activeIndex] });
         setTimeout(() => {
             this.setState({ page: obj[swiper.activeIndex] });
@@ -5578,7 +5578,7 @@ class home_page extends Component {
         {'?':0, 'e':1, 'w':2}
 
         const pos = obj[this.state.page];
-        console.log('render_post_list_group', 'pos', pos, this.state.page)
+        // console.log('render_post_list_group', 'pos', pos, this.state.page)
         var subtract = 65
         var h = (this.state.search_visible && this.is_page_valid()) ? height-subtract : height
         var subtract2 = this.should_show_line() == true ? 10 : 0

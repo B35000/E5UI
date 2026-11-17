@@ -39500,7 +39500,7 @@ class App extends Component {
 
       {'identifier':'entered_contract_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'G52', 'requested_event_id':'e2', 'filter':{p2/* sender_acc */:'%%account%%', p3/* action */:3}, 'from_filter':{}}},/* entered_contract_events  */
 
-      {'identifier':'all_contracts_proposals','fetch_last_data':'none', 'fetch_params':{'requested_contract':'G5', 'requested_event_id':'e1', 'filter':{}, 'from_filter':{}}},/* all_contracts_proposals  */
+      /* {'identifier':'all_contracts_proposals','fetch_last_data':'none', 'fetch_params':{'requested_contract':'G5', 'requested_event_id':'e1', 'filter':{}, 'from_filter':{}}}, *//* all_contracts_proposals  */
 
       {'identifier':'contracts_ive_entered_events','fetch_last_data':'none', 'fetch_params':{'requested_contract':'G52', 'requested_event_id':'e2', 'filter':{p2/* sender_acc */:'%%account%%', p3/* action */:3 /* <3>enter_contract */}, 'from_filter':{}}},/* contracts_ive_entered_events  */
 
@@ -45455,14 +45455,26 @@ class App extends Component {
 
     var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
 
+    const selected_page = this.get_selected_item(this.homepage.current?.state.work_page_tags_object, this.getLocale()['1199']/* 'proposals' */)
+
     var contracts_ive_entered = ['2']
-    entered_timestamp_data.forEach((array, index)=> {
-      var time = array[0]
-      var contract_id = created_contracts[index]
-      if(time != 0){
-        contracts_ive_entered.push(contract_id)
-      }
-    });
+    if(selected_page == this.getLocale()['1264aa']/* 'main-contract' */){
+      contracts_ive_entered = ['2']
+    }
+    else if(selected_page == this.getLocale()['1211']/* 'my-proposals' */){
+      contracts_ive_entered = []
+    }
+
+    if(selected_page != this.getLocale()['1264aa']/* 'main-contract' */){
+      entered_timestamp_data.forEach((array, index)=> {
+        var time = array[0]
+        var contract_id = created_contracts[index]
+        if(time != 0){
+          contracts_ive_entered.push(contract_id)
+        }
+      });
+    }
+    
 
     // var contracts_ive_exited_events = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */:account, p3/* action */:11 /* <11>exit_contract */})
     // for(var i=0; i<contracts_ive_exited_events.length; i++){
@@ -45488,7 +45500,8 @@ class App extends Component {
     var my_proposals_events = []
     var my_proposal_ids = []
 
-    var all_contracts_proposals = this.state.saved_pre_launch_events[e5] != null && this.state.my_proposals[e5] == null ? this.state.saved_pre_launch_events[e5]['all_contracts_proposals'] : await this.load_event_data(web3, G5contractInstance, 'e1', e5, {/* p1: contracts_ive_entered */})
+    var all_contracts_proposals = /* this.state.saved_pre_launch_events[e5] != null && this.state.my_proposals[e5] == null ? this.state.saved_pre_launch_events[e5]['all_contracts_proposals'] :  */
+    await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1: this.process_array_for_indexer_query(contracts_ive_entered)})
     // console.log('get_proposal_data', 'all_contracts_proposals', contracts_ive_entered, all_contracts_proposals)
 
     for(var j=0; j<all_contracts_proposals.length; j++){
@@ -45629,7 +45642,11 @@ class App extends Component {
         }
       }
 
-      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':0/* end_balance */, 'spend_balance':0/* spend_balance */, 'consensus_data':[0,0,0]/* consensus_data[i] */, 'modify_target_type':0/* proposal_modify_target_type */, 'account_vote':0/* senders_vote_in_proposal[0] */, 'archive_accounts':[]/* archive_participants */, 'e5':e5, 'timestamp':parseInt(event.returnValues.p5), 'author':event.returnValues.p3, 'e5_id':my_proposal_ids[i]+e5, 'pos':created_proposal_object_data.length, 'loaded_extra':false, 'is_part_of_contract':false, 'object_type':'proposal'}
+      const my_vote_events_for_focused_proposal = all_contracts_proposals.filter(function (event_item) {
+        return (event_item.returnValues.p2/* consensus_id */ == my_proposal_ids[i])
+      })
+
+      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':0/* end_balance */, 'spend_balance':0/* spend_balance */, 'consensus_data':[0,0,0]/* consensus_data[i] */, 'modify_target_type':0/* proposal_modify_target_type */, 'account_vote':0/* senders_vote_in_proposal[0] */, 'archive_accounts':[]/* archive_participants */, 'e5':e5, 'timestamp':parseInt(event.returnValues.p5), 'author':event.returnValues.p3, 'e5_id':my_proposal_ids[i]+e5, 'pos':created_proposal_object_data.length, 'loaded_extra':false, 'is_part_of_contract':false, 'object_type':'proposal', 'my_vote_events_for_focused_proposal':my_vote_events_for_focused_proposal}
 
       if(this.homepage.current?.state.selected_proposal_item == my_proposal_ids[i]+e5){
         const previous_obj = this.state.my_proposals[e5].find(e => e['e5_id'] == my_proposal_ids[i]+e5)
@@ -57095,13 +57112,14 @@ class App extends Component {
       file_sizes.push(data['size'])
     }
 
-    var file_names = await this.upload_multiple_encrypted_datas_to_nitro_node(file_datas, file_types, nitro_object, node_details, total_size, file_sizes)
+    const file_names = await this.upload_multiple_encrypted_datas_to_nitro_node(file_datas, file_types, nitro_object, node_details, total_size, file_sizes)
 
     for(var n=0; n<redundancy_nitros.length; n++){
       const redundant_nitro_node_details = this.props.app_state.nitro_node_details[redundancy_nitros[n]['e5_id']]
       await this.upload_multiple_encrypted_datas_to_nitro_node(file_datas, file_types, redundancy_nitros[n], redundant_nitro_node_details, total_size, file_sizes)
     }
     if(file_names == null){
+      console.log('apppage', 'upload_multiple_datas_to_nitro_node', 'file names is null, aborting upload')
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       this.set_file_upload_status('')
       return;
@@ -57131,6 +57149,7 @@ class App extends Component {
 
     var file_object_cids = await this.upload_file_objects_to_nitro(final_objects, nitro_object, node_details)
     if(file_object_cids == null){
+      console.log('apppage', 'upload_multiple_datas_to_nitro_node', 'file_object_cids is null, aborting upload')
       this.prompt_top_notification(this.getLocale()['1593dc']/* something went wrong. */, 8000)
       this.set_file_upload_status('')
       return;
@@ -57446,11 +57465,11 @@ class App extends Component {
   }
 
   upload_multiple_encrypted_datas_to_nitro_node = async (file_datas, file_types, nitro_object, node_details, total_size, file_sizes) => {
-    var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipient_accounts'])
-    if(block_hash_and_signature == null){
-      console.log('apppage', 'upload_multiple_datas_to_nitro_node', 'failed to load block hash and signature')
-      return null;
-    }
+    // var block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipient_accounts'])
+    // if(block_hash_and_signature == null){
+    //   console.log('apppage', 'upload_multiple_datas_to_nitro_node', 'failed to load block hash and signature')
+    //   return null;
+    // }
 
     console.log('apppage', 'filetypes', file_types, this.get_file_mimetype(this.get_file_extension(file_types[0])))
 
@@ -57459,6 +57478,7 @@ class App extends Component {
       await this.update_nitro_privacy_signature(false)
       const block_hash_and_signature = await this.get_block_hash_and_signature(node_details['target_storage_recipient_accounts'])
       if(block_hash_and_signature == null){
+        console.log('apppage', 'upload_multiple_datas_to_nitro_node', 'failed to load block hash and signature')
         return null;
       }
 
@@ -57493,7 +57513,7 @@ class App extends Component {
         var data = await response.text();
         var obj = await this.process_nitro_api_call_result(data, node_url);
         if(obj.success == false){
-          console.log('uploader','error', obj.message)
+          console.log('uploader','failed to register upload request', obj.message)
           return null
         }else{
           // extension = obj.extension
@@ -57501,6 +57521,7 @@ class App extends Component {
       }
       catch(e){
         console.log('uploader','error', e)
+        console.log('apppage', 'upload_multiple_datas_to_nitro_node', 'failed to register upload request', e)
         return null
       }
 

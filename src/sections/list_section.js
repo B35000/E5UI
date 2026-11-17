@@ -2133,7 +2133,7 @@ class PostListSection extends Component {
     }
 
     render_vote_wait_in_all_proposals_button(all_items, selected_item){
-        if(selected_item == this.props.app_state.loc['1264aa']/* 'main-contract' */){
+        if(selected_item == this.props.app_state.loc['1264aa']/* 'main-contract' */ && all_items != null){
             const selected_proposals = this.filter_proposals_by_not_participated_in(all_items)
             if(selected_proposals.length > 0){
                 return(
@@ -2150,15 +2150,17 @@ class PostListSection extends Component {
     }
 
     filter_proposals_by_not_participated_in(all_items){
+        // console.log('render_vote_wait_in_all_proposals_button','all_items', all_items)
         const saved_pre_launch_data_object = this.props.app_state.saved_pre_launch_events
         const selected_proposals = all_items.filter(function (object) {
             const e5 = object['e5']
             const proposal_id = object['id']
             const time = object['timestamp']
-            const my_vote_events_in_that_e5_contract = saved_pre_launch_data_object[e5]['all_contracts_proposals']
-            const my_vote_events_for_focused_proposal = my_vote_events_in_that_e5_contract.filter(function (event_item) {
-                return (event_item.returnValues.p2/* consensus_id */ == proposal_id)
-            })
+            // const my_vote_events_in_that_e5_contract = saved_pre_launch_data_object[e5]['all_contracts_proposals']
+            // const my_vote_events_for_focused_proposal = my_vote_events_in_that_e5_contract.filter(function (event_item) {
+            //     return (event_item.returnValues.p2/* consensus_id */ == proposal_id)
+            // })
+            const my_vote_events_for_focused_proposal = object['my_vote_events_for_focused_proposal']
             return (my_vote_events_for_focused_proposal.length == 0 && time > (Date.now()/1000) - (60*60*24*3))
         })
         return selected_proposals
