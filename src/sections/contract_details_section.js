@@ -1452,7 +1452,8 @@ class ContractDetailsSection extends Component {
                         {this.render_detail_item('0')}
 
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2214j']/* '💳 Purchase Pre-purchase Credits.' */, 'details': this.props.app_state.loc['2214k']/* 'Purchase spend credits for use in pre-purchase transactions in indexers.' */, 'size': 'l' })}
-                        
+                        <div style={{ height: 10 }} />
+                        {this.render_pre_purchase_credits_value(object)}
                         <div style={{ height: 10 }} />
                         <div onClick={() => this.open_purchase_credits(object)}>
                             {this.render_detail_item('5', { 'text': this.props.app_state.loc['2231k']/* 'Purchase Credits' */, 'action': '' })}
@@ -1461,6 +1462,23 @@ class ContractDetailsSection extends Component {
                 )
             }
         }
+    }
+
+    render_pre_purchase_credits_value(object){
+        const pre_purchase_credit_value = object['ipfs'].pre_purchase_credit_value || [{'id':'5', 'amount':'1'}];
+        return(
+            <div>
+                <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin': '0px' }}>
+                        {pre_purchase_credit_value.map((item, index) => (
+                            <div style={{ 'padding': '1px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['id']], 'subtitle': this.format_power_figure(item['amount']), 'barwidth': this.calculate_bar_width(item['amount']), 'number': this.format_account_balance_figure(item['amount']), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']] })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     render_small_skeleton_object(){

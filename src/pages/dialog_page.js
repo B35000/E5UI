@@ -135,7 +135,7 @@ class DialogPage extends Component {
 
         restore_time: (Date.now()/1000) - (60*60), deductible_data:{}, deductible_amount:0, viewer:'', location_sharing_duration:(60*60), memo_text:'',
 
-        selected_nitro_items:[],
+        selected_nitro_items:[], exchange_id:'', amount:0, price_data:[],
     };
 
 
@@ -821,6 +821,9 @@ class DialogPage extends Component {
         }
         else if(option == 'view_contract_current_year_expenditure_info'){
             return this.view_contract_current_year_expenditure_ui()
+        }
+        else if(option == 'set_prepurchase_credit_value'){
+            return this.view_set_prepurchase_credit_value_ui()
         }
     }
 
@@ -21660,8 +21663,6 @@ return data['data']
         this.setState({selected_spend_structure_channel: channel_id, selected_spend_structure_tag: item})
     }
 
-
-
     render_budget_for_selected_spend_channel_tag(){
         const { available_allocation, budgeted_amount } = this.get_budget_for_selected_spend_channel_tag()
         const exchanges = Object.keys(available_allocation)
@@ -21754,6 +21755,315 @@ return data['data']
 
 
 
+
+
+
+
+
+
+
+
+    view_set_prepurchase_credit_value_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.view_set_prepurchase_credit_value_data()}
+                    {this.render_detail_item('0')}
+                    {this.view_set_prepurchase_credit_value_data2()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.view_set_prepurchase_credit_value_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.view_set_prepurchase_credit_value_data2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.view_set_prepurchase_credit_value_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.view_set_prepurchase_credit_value_data2()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    view_set_prepurchase_credit_value_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', { 'title': this.props.app_state.loc['3055yz']/* 'Pre-purchase Credits Value.' */, 'details': this.props.app_state.loc['3055za']/* 'Set the value of the credits your new contract will issue in any token you wish.' */, 'size': 'l' })}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['252l']/* 'This data is immutable after contract creation.' */, 'textsize':'12px', 'font':this.props.app_state.font})}
+                <div style={{ height:10 }}/>
+        
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1180']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+        
+                {this.load_token_suggestions('exchange')}
+                <div style={{height:10}}/>
+        
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3120j']/* 'Budget Amount.' */, 'details':this.props.app_state.loc['3120k']/* 'Specify the total amount of the token allocated for the channel.' */})}
+                <div style={{height:10}}/>
+        
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1182']/* 'Amount' */, 'number':this.state.amount, 'relativepower':this.props.app_state.loc['1183']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1182']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1183']/* 'tokens' */, })}
+                </div>
+        
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={(el) => (this.amount_picker = el)} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)} pick_with_text_area={true} text_area_hint={'1000'} />
+        
+                <div style={{'padding': '5px'}} onClick={() => this.set_credit_value()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['3120l']/* 'Add Allocation.' */, 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    view_set_prepurchase_credit_value_data2(){
+        var items = [].concat(this.state.price_data)
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055zb']/* 'Set Credit Value.' */, 'details':this.props.app_state.loc['3055zc']/* 'Once you specify an exchange and amount, it will show here.' */})}
+                    <div style={{height:10}}/>
+                    <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map(() => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_empty_horizontal_list_item()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055zb']/* 'Set Credit Value.' */, 'details':this.props.app_state.loc['3055zd']/* The value for each Credit purchased in your new Contract.' */})}
+                <div style={{height:10}}/>
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        <SwipeableList>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    <SwipeableListItem
+                                    swipeLeft={{
+                                        content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['3120bu']/* 'Delete' */}</p>,
+                                        action: () =>this.when_credit_value_item_clicked(item, index)
+                                    }}>
+                                    <div style={{width:'100%'}}>
+                                        {this.render_credit_value_amount_item(item, index)}
+                                    </div>
+                                    </SwipeableListItem>
+                                </div>
+                                </li> 
+                            ))}
+                        </SwipeableList>
+                    </ul>
+                </div>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['3055ze']/* 'Set In New Contract.' */, 'details':this.props.app_state.loc['3055zf']/* 'Set the prices specified above in your new contract.' */})}
+                <div style={{ height: 10 }} />
+                <div onClick={() => this.set_credits_value()}>
+                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['3055zg']/* 'Set Value' */, 'action': '' })}
+                </div>
+            </div>
+        )
+    }
+
+    when_exchange_id_input_field_changed(text){
+        this.setState({exchange_id: text})
+    }
+
+    reset_the_number_picker(){
+        var me = this;
+        setTimeout(function() {
+        if(me.amount_picker != null){
+            me.amount_picker.reset_number_picker()
+        }
+        }, (1 * 1000));  
+    }
+
+    when_amount(amount){
+        this.setState({amount: amount})
+    }
+
+    get_power_limit_for_exchange(exchange){
+        var exchange_id = this.get_token_id_from_symbol(exchange.trim())
+
+        if(!isNaN(exchange_id) && parseInt(exchange_id) > 0 && exchange_id != '' && this.does_exchange_exist(exchange_id)){
+            var target_exchange_data = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][exchange_id]
+            var default_depth = 0;
+            if(target_exchange_data != null){
+                target_exchange_data = target_exchange_data['ipfs']
+                if(target_exchange_data != null){
+                    default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+                }
+            }
+
+            return (default_depth*72)+63
+        }
+        else{
+            return 63
+        }
+    }
+
+    get_token_id_from_symbol(typed_search){
+        const e5 = this.state.data['e5']
+        if(!isNaN(typed_search)){
+        return typed_search
+        }
+        var id = this.props.app_state.token_directory[e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[e5][typed_search.toUpperCase()]
+
+        return id
+    }
+
+    does_exchange_exist(exchange_id){
+        const e5 = this.state.data['e5']
+        if(this.props.app_state.created_token_object_mapping[e5][parseInt(exchange_id)] == null){
+        return false
+        }
+        return true
+    }
+
+    async set_credit_value(){
+        const exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
+        const amount = this.state.amount
+        const interacted = this.state.price_data.find(e => e['id'] == exchange_id)
+
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify(this.props.app_state.loc['1185']/* 'Please put a valid exchange ID.' */, 3600)
+        }
+        else if(amount == 0){
+            this.props.notify(this.props.app_state.loc['1186']/* 'Please put a valid amount.' */, 3600)
+        }
+        else if(interacted != null){
+            this.props.notify(this.props.app_state.loc['3120m']/* 'You cant set the same exchange twice.' */, 7600)
+        }
+        else{
+            const price_data_clone = this.state.price_data.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount})
+            this.setState({price_data: price_data_clone, exchange_id:'', amount:0});
+            this.props.notify(this.props.app_state.loc['3055zh']/* 'Price added.' */, 1400)
+            this.reset_the_number_picker()
+        }
+    }
+
+    render_credit_value_amount_item(item){
+        const e5 = this.state.data['e5']
+        const title = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']]
+        const details = this.format_account_balance_figure(item['amount']) + ' '+ this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]
+        const thumbnail = this.props.app_state.token_name_thumbnail_directory[title]
+        return(
+            <div>
+                {this.render_detail_item('8', {'size':'s', 'details':details, 'title':title, 'image':thumbnail})}
+            </div>
+        )
+    }
+
+    when_credit_value_item_clicked(item, index){
+        const clone = this.state.price_data.slice()
+        clone.splice(index, 1)
+        this.setState({price_data: clone})
+    }
+
+    set_credits_value(){
+        const price_data = this.state.price_data
+        this.props.set_credits_value_in_new_contract_page(price_data)
+        this.props.open_dialog_bottomsheet()
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    load_token_suggestions(target_type){
+        var items = [].concat(this.get_suggested_tokens())
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+        <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+            <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                {items.map((item, index) => (
+                    <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                        {this.render_detail_item('14', item['label'])}
+                    </li>
+                ))}
+            </ul>
+        </div>
+        )
+    }
+
+    get_suggested_tokens(){
+        const e5 = this.state.data['e5']
+        var items = [
+            {'id':'3', 'label':{'title':this.props.app_state.loc['3078']/* END */, 'details':e5, 'size':'s', 'image':this.props.app_state.e5s[e5].end_image, 'img_size':30}},
+            {'id':'5', 'label':{'title':this.props.app_state.loc['3079']/* SPEND */, 'details':e5.replace('E', '3'), 'size':'s', 'image':this.props.app_state.e5s[e5].spend_image, 'img_size':30}},
+        ];
+        var exchanges_from_sync = this.props.app_state.created_tokens[e5]
+        var sorted_token_exchange_data = []
+        // var myid = this.props.app_state.user_account_id
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
+
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['ipfs'].entered_symbol_text, 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s', 'image':(sorted_token_exchange_data[i]['ipfs'].token_image == null ? (sorted_token_exchange_data[i]['data'][0][3/* <3>token_type */] == 3 ? this.props.app_state.static_assets['end_img']:this.props.app_state.static_assets['spend_img']) : sorted_token_exchange_data[i]['ipfs'].token_image), 'img_size':30}})
+        }
+
+        return items;
+    }
+
+    when_price_suggestion_clicked(item, pos){
+        this.setState({exchange_id: item['id'].toString()})
+        this.reset_the_number_picker()
+    }
 
 
 

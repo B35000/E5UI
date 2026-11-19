@@ -13607,7 +13607,7 @@ class App extends Component {
       if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
         broadcast()
       }
-    }, (1 * 1900));
+    }, (60 * 1000));
   }
 
   reset_gas_calculation_figure(me){
@@ -13708,7 +13708,7 @@ class App extends Component {
           auction_bid_e5_ids.push(t.storefront_item['e5_id'])
         }
         else if(
-          stack[i].type == this.getLocale()['1130']/* 'contract' */ || 
+          stack[i].type == this.getLocale()['66']/* 'contract' */ || 
           stack[i].type == this.getLocale()['601']/* 'token' */ || 
           stack[i].type == this.getLocale()['823']/* 'subscription' */ || 
           stack[i].type == this.getLocale()['297']/* 'post' */ || 
@@ -14671,7 +14671,7 @@ class App extends Component {
     }
     else if(target == '1'/* contracts */){
       return(
-        <NewContractPage ref={this.new_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)}
+        <NewContractPage ref={this.new_contract_page} app_state={this.state} get_account_id_from_alias={this.get_account_id_from_alias.bind(this)} show_view_iframe_link_bottomsheet={this.show_view_iframe_link_bottomsheet.bind(this)}view_number={this.view_number.bind(this)} size={size} height={this.state.height} width={this.state.width} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}show_pick_file_bottomsheet={this.show_pick_file_bottomsheet.bind(this)} get_ecid_file_password_if_any={this.get_ecid_file_password_if_any.bind(this)} update_object_change_in_db={this.update_object_change_in_db.bind(this)} fetch_objects_from_db={this.fetch_objects_from_db.bind(this)} show_dialog_bottomsheet={this.show_dialog_bottomsheet.bind(this)}
         />
       )
     }
@@ -19361,7 +19361,7 @@ class App extends Component {
 
   //here-----------------------------------------------------------------------------
   open_edit_object_uis(tx){
-    if(tx.type == this.getLocale()['1130']/* 'contract' */){
+    if(tx.type == this.getLocale()['66']/* 'contract' */){
         this.open_new_object('1')
         var me = this;
         setTimeout(function() {
@@ -21329,7 +21329,7 @@ class App extends Component {
       if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
         broadcast()
       }
-    }, (1 * 1900));
+    }, (60 * 1000));
 
   }
 
@@ -22785,7 +22785,7 @@ class App extends Component {
 
         delete_bag_item={this.delete_bag_item.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} mute_unmute_address={this.mute_unmute_address.bind(this)} add_file_to_collection={this.add_file_to_collection.bind(this)} begin_sharing_location_with_target={this.begin_sharing_location_with_target.bind(this)} swap_ether_to_specified_target_via_near_intents={this.swap_ether_to_specified_target_via_near_intents.bind(this)} show_terms_of_service_bottomsheet={this.show_terms_of_service_bottomsheet.bind(this)} export_all_fulfilled_obligation_data={this.export_all_fulfilled_obligation_data.bind(this)}
 
-        show_assess_certificate_bottomsheet={this.show_assess_certificate_bottomsheet.bind(this)} start_ticket_purchase_action={this.start_ticket_purchase_action.bind(this)} show_request_refund_bottomsheet={this.show_request_refund_bottomsheet.bind(this)} emit_approve_refund_request={this.emit_approve_refund_request.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)}
+        show_assess_certificate_bottomsheet={this.show_assess_certificate_bottomsheet.bind(this)} start_ticket_purchase_action={this.start_ticket_purchase_action.bind(this)} show_request_refund_bottomsheet={this.show_request_refund_bottomsheet.bind(this)} emit_approve_refund_request={this.emit_approve_refund_request.bind(this)} load_nitro_node_details={this.load_nitro_node_details.bind(this)} load_my_account_storage_info={this.load_my_account_storage_info.bind(this)} set_credits_value_in_new_contract_page={this.set_credits_value_in_new_contract_page.bind(this)}
         />
       </div>
     )
@@ -22924,7 +22924,8 @@ class App extends Component {
       'confirm_purchase_of_tickets':500,
       'view_acquired_ticket_item_details':550,
       'view_storefront_refund_request_item':550,
-      'view_contract_current_year_expenditure_info':550
+      'view_contract_current_year_expenditure_info':550,
+      'set_prepurchase_credit_value':650,
     };
     var size = obj[id] || 650
     if(id == 'song_options'){
@@ -24644,7 +24645,7 @@ class App extends Component {
       if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
         broadcast()
       }
-    }, (1 * 1900));
+    }, (60 * 1000));
   }
 
   async update_my_paid_subscriptions(object){
@@ -24934,7 +24935,7 @@ class App extends Component {
       if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
         broadcast()
       }
-    }, (1 * 1900));
+    }, (60 * 1000));
   }
 
   get_throttled_data(){
@@ -25190,7 +25191,7 @@ class App extends Component {
       if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
         broadcast()
       }
-    }, (1 * 1900));
+    }, (60 * 1000));
   }
 
   async get_ipfs_index_object(tx, type, e5, calculate_gas){
@@ -26221,7 +26222,11 @@ class App extends Component {
       if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
         broadcast()
       }
-    }, (1 * 1900));
+    }, (60 * 1000));
+  }
+
+  set_credits_value_in_new_contract_page(price_data){
+    this.new_contract_page.current?.setState({pre_purchase_credit_value: price_data})
   }
 
 
@@ -33058,7 +33063,7 @@ class App extends Component {
       if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
         broadcast()
       }
-    }, (1 * 1900));
+    }, (60 * 1000));
   }
 
   lock_run_in_stack(value){
@@ -34902,7 +34907,7 @@ class App extends Component {
       if(status != 'in_mempool' && status != 'mined_success' && status != 'mined_reverted'){
         broadcast()
       }
-    }, (1 * 1900));
+    }, (60 * 1000));
 
   }
 
@@ -45080,13 +45085,16 @@ class App extends Component {
     var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
     console.log('finished fetch of contracts end and spend balance, continuing...')
 
+    const pre_purchase_credit_value = object['ipfs'].pre_purchase_credit_value || [{'id':'5', 'amount':'1'}];
+    const exchanges_for_pre_purchase_events = pre_purchase_credit_value.map(pe => pe['id'])
+
     const my_address = this.state.accounts[this.state.selected_e5].address;
     var event_params = [
       [web3, G52contractInstance, 'e2', e5, {p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i]}],
       [web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_contracts[i], p2/* action_type */:4/* <4>modify_moderator_accounts */}],
 
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:30/* 30(contract_prepurchase_credits_sale) */, p3/* context */:id, p4/* string_data */:my_address}],
-      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */:5, p3/* receiver */:id}],
+      [web3, H52contractInstance, 'e1', e5, {p1/* exchange */:this.process_array_for_indexer_query(exchanges_for_pre_purchase_events), p3/* receiver */:id}],/* 3 */
       [web3, H52contractInstance, 'e5', e5, {p2/* awward_receiver */:id, p4/* metadata */:my_address}],
 
       [web3, E52contractInstance, 'e4', e5, {p1/* target_id */:id, p3/* context */:65/* 65(public_contract_obligation_configuration) */}],
@@ -45351,6 +45359,51 @@ class App extends Component {
 
     // console.log('apppage', 'calculate_credit_balance', 'my_emitted_transactions', my_emitted_transactions)
 
+    const pre_purchase_credit_value = contract_object['ipfs'].pre_purchase_credit_value || [{'id':'5', 'amount':'1'}];
+    const transfer_purchase_object = {}
+    const price_object = {}
+    pre_purchase_credit_value.forEach(price_item => {
+      price_object[price_item['id']] = price_item['amount']
+    });
+    pre_purchase_transfer_events.forEach(event_item => {
+      const exchange = event_item.returnValues.p1/* exchange */
+      const block_number = parseInt(event_item.returnValues.p6/* block_number */)
+      const amount = event_item.returnValues.p4/* amount */
+      const sender = event_item.returnValues.p2/* sender */
+      if(transfer_purchase_object[block_number] == null){
+        transfer_purchase_object[block_number] = {}
+      }
+      transfer_purchase_object[block_number][exchange] = {
+        amount, sender
+      }
+    });
+
+    const final_pre_purchase_transfer_events = []
+    Object.keys(transfer_purchase_object).forEach(block_number => {
+      let credits = -1
+      let sender = null
+      Object.keys(transfer_purchase_object[block_number]).forEach(exchange => {
+        const purchase_amount = transfer_purchase_object[block_number][exchange].amount;
+        const fee_for_that_exchange = price_object[exchange.toString()];
+        const credits_count = bigInt(purchase_amount).divide(fee_for_that_exchange)
+        if(credits == -1 || bigInt(credits).greater(credits_count)){
+          credits = credits_count
+          sender = transfer_purchase_object[block_number][exchange].sender;
+        }
+      });
+      if(credits != -1 && sender != null){
+        final_pre_purchase_transfer_events.push({
+          block: block_number,
+          returnValues: { p6/* block_number */: block_number, p4/* amount */: credits, p2/* sender */: sender}
+        })
+      }
+    });
+
+    const sorted_final_pre_purchase_transfer_events = this.sortByAttributeDescending(final_pre_purchase_transfer_events, 'block').reverse()
+
+
+
+
     const all_transfers = [];
     const used_blocks = []
     pre_purchase_record_events.forEach(event_item => {
@@ -45363,7 +45416,7 @@ class App extends Component {
       if(award_events.length != 0){
         const award_sender = award_events[0].returnValues.p1/* awward_sender */
 
-        const transfer_events = pre_purchase_transfer_events.filter(item => item.returnValues.p6/* block_number */ == block && item.returnValues.p4/* amount */ == transfer_amount && item.returnValues.p2/* sender */ == award_sender && !used_blocks.includes(block));
+        const transfer_events = sorted_final_pre_purchase_transfer_events.filter(item => item.returnValues.p6/* block_number */ == block && item.returnValues.p4/* amount */ == transfer_amount && item.returnValues.p2/* sender */ == award_sender && !used_blocks.includes(block));
 
         if(transfer_events.length > 0){
           all_transfers.push({'action':'in', 'time':time, 'amount':parseInt(transfer_amount)})
@@ -65363,7 +65416,7 @@ class App extends Component {
     else if(state_object.type == this.getLocale()['1512']/* 'job-response' */){
       await this.emit_new_job_application(state_object, show_job_after_broadcast);
     }
-    else if(state_object.type == this.getLocale()['1126']/* 'bag-response' */){
+    else if(state_object.type == this.getLocale()['1497']/* 'bag-response' */){
       await this.emit_new_bag_application(state_object, show_job_after_broadcast);
     }
     else if(state_object.type == this.getLocale()['1363']/* 'job-request' */){

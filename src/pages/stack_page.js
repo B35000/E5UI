@@ -3664,7 +3664,7 @@ class StackPage extends Component {
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == e5){
                 var new_tx_index = -1
-                if(txs[i].type == this.props.app_state.loc['1311']/* 'contract' */){
+                if(txs[i].type == this.props.app_state.loc['66']/* 'contract' */){
                     var contract_obj = this.format_contract_object(txs[i])
                     strs.push([])
                     adds.push([])
@@ -5610,7 +5610,7 @@ class StackPage extends Component {
 
         for(var i=0; i<pushed_txs.length; i++){
             if(
-                pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['66']/* 'contract' */ || 
                 pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || 
                 pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || 
                 pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || 
@@ -5706,7 +5706,7 @@ class StackPage extends Component {
 
         for(var i=0; i<pushed_txs.length; i++){
             if(
-                pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || 
+                pushed_txs[i].type == this.props.app_state.loc['66']/* 'contract' */ || 
                 pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || 
                 pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || 
                 pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || 
@@ -6914,7 +6914,7 @@ class StackPage extends Component {
                     }   
                 }
                 else if(
-                    txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || 
+                    txs[i].type == this.props.app_state.loc['66']/* 'contract' */ || 
                     txs[i].type == this.props.app_state.loc['601']/* 'token' */ || 
                     txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || 
                     txs[i].type == this.props.app_state.loc['297']/* 'post' */ || 
@@ -7033,6 +7033,15 @@ class StackPage extends Component {
                             ipfs_index_object['webapp_update_object'] = webapp_update_obj
                             ipfs_index_array.push({'id':'webapp_update_object', 'data':webapp_update_obj})
                         }
+                    }
+                    if(txs[i].type == this.props.app_state.loc['66']/* 'contract' */ && txs[i].contract_type == 'workgroup'){
+                        const selected_pre_purchase_option = this.get_selected_item(txs[i].get_contract_credits_purchase_enabled_tags_object, 'e')
+
+                        if(selected_pre_purchase_option == this.props.app_state.loc['85']){
+                            const credits_price_data = txs[i].pre_purchase_credit_value
+                            obj['tags']['credits_price_data'] = credits_price_data
+                        }
+
                     }
                 }
                 else if(txs[i].type == 'preliminaries'){
@@ -7844,7 +7853,7 @@ class StackPage extends Component {
                         obligation_object['data'].push(obligation_promise_data)
                     }
                 }
-                else if(tx.type == this.props.app_state.loc['1130']/* 'contract' */){
+                else if(tx.type == this.props.app_state.loc['66']/* 'contract' */){
                     const include_enter_value = this.get_selected_item(txs[i].include_enter_contract_action_tags_object, txs[i].include_enter_contract_action_tags_object['i'].active)
 
                     if(include_enter_value == this.props.app_state.loc['1']/* 'enter-contract' */){
@@ -9338,7 +9347,16 @@ class StackPage extends Component {
                 else if(tx.type == this.props.app_state.loc['3092']/* 'purchase-credits' */){
                     
                     const object = tx.contract_object
-                    const final_object_value_transfer_data = [{'exchange':'5', 'amount':tx.amount}]
+                    const final_object_value_transfer_data = []
+                    const pre_purchase_credit_value = object['ipfs'].pre_purchase_credit_value || [{'id':'5', 'amount':'1'}];
+                    const amount = tx.amount
+                    pre_purchase_credit_value.forEach(price_item => {
+                        final_object_value_transfer_data.push({
+                            'exchange':price_item['id'],
+                            'amount': bigInt(amount).times(price_item['amount']).toString()
+                        })
+                    });
+
                     const object_obligation_fulfiller = object['id'];
                     await this.props.load_targets_obligation_data([object_obligation_fulfiller], object['e5'])
                     const address_key = this.props.app_state.author_address_mapping[object['e5']][object_obligation_fulfiller]
@@ -14123,9 +14141,9 @@ class StackPage extends Component {
             [purchase_recipient.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
             [t.amount.toString()],/* awward contexts */
             
-            [5], [23],/* exchange ids for first target receiver */
-            [t.amount.toString()],/* amounts for first target receiver */
-            [0],/* depths for the first targeted receiver*/
+            [], [],/* exchange ids for first target receiver */
+            [],/* amounts for first target receiver */
+            [],/* depths for the first targeted receiver*/
         ]
 
         var obj = [ /* add data */
@@ -14134,6 +14152,16 @@ class StackPage extends Component {
             [object['id']], /* contexts */
             [t.amount.toString()] /* int_data */
         ]
+
+        const contract_object = t.contract_object
+        const pre_purchase_credit_value = contract_object['ipfs'].pre_purchase_credit_value || [{'id':'5', 'amount':'1'}];
+        const amount = t.amount
+        pre_purchase_credit_value.forEach(price_item => {
+            awards_obj[4].push(price_item['id'])
+            awards_obj[5].push(23)
+            awards_obj[6].push(bigInt(amount).times(price_item['amount']).toString())
+            awards_obj[7].push(0)
+        });
 
         var string_obj = [[]]
         var awards_string_obj = [[]]

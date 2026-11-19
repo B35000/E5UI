@@ -228,7 +228,7 @@ class ViewTransactionPage extends Component {
             item.type != this.props.app_state.loc['829']/* 'collect-subscription' */ && 
             item.type != this.props.app_state.loc['1513']/* 'accept-job-application' */ && 
             item.type != this.props.app_state.loc['1516']/* 'storefront-bag' */ && 
-            item.type != this.props.app_state.loc['1126']/* 'bag-response' */ && 
+            item.type != this.props.app_state.loc['1497']/* 'bag-response' */ && 
             item.type != this.props.app_state.loc['1498']/* 'accept-bag-application' */ && 
             item.type != this.props.app_state.loc['1500']/* 'clear-purchase' */ && 
             item.type != this.props.app_state.loc['1505']/* 'job-request-messages' */ && 
@@ -324,7 +324,7 @@ class ViewTransactionPage extends Component {
     render_everything(){
         var tx = this.props.app_state.stack_items[this.state.transaction_index]
         if(tx != null){
-            if(tx.type == this.props.app_state.loc['3']/* 'contract' */){
+            if(tx.type == this.props.app_state.loc['66']/* 'contract' */){
                 return(
                     <div>
                         {this.render_contract_data()}
@@ -591,7 +591,7 @@ class ViewTransactionPage extends Component {
                     </div>
                 )    
             }
-            else if(tx.type == this.props.app_state.loc['1126']/* 'bag-response' */){
+            else if(tx.type == this.props.app_state.loc['1497']/* 'bag-response' */){
                 return(
                     <div>
                         {this.render_bag_response_data()}
@@ -8957,9 +8957,18 @@ return data['data']
 
 
     render_purchase_credits_data(){
-        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        const buy_amount = transaction_item.amount
+        const transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         const e5 = transaction_item.e5
+        const contract_object = transaction_item.contract_object
+        const pre_purchase_credit_value = contract_object['ipfs'].pre_purchase_credit_value || [{'id':'5', 'amount':'1'}];
+        const buy_amounts = [];
+        const amount = transaction_item.amount
+        pre_purchase_credit_value.forEach(price_item => {
+            buy_amounts.push({
+                'id':price_item['id'],
+                'amount': bigInt(amount).times(price_item['amount'])
+            })
+        });
         return(
             <div>
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
@@ -8979,8 +8988,14 @@ return data['data']
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['3092h']/* 'Total Payment Amount.' */, 'details':this.props.app_state.loc['3092i']/* 'Below is the amount of Spend youll be paying to obtain the credits you want.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'number':buy_amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}>
-                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(buy_amount), 'barwidth':this.calculate_bar_width(buy_amount), 'number':this.format_account_balance_figure(buy_amount), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
+                <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin': '0px' }}>
+                        {buy_amounts.map((item, index) => (
+                            <div style={{ 'padding': '1px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle': this.format_power_figure(item['amount']), 'barwidth': this.calculate_bar_width(item['amount']), 'number': this.format_account_balance_figure(item['amount']), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']] })}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         )

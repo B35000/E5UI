@@ -57,7 +57,7 @@ function makeid(length) {
 class ViewApplicationContractPage extends Component {
     
     state = {
-        selected: 0, application_item:{}, type:this.props.app_state.loc['1599']/* 'accept-job-application' */, id:makeid(8),
+        selected: 0, application_item:{}, type:this.props.app_state.loc['1513']/* 'accept-job-application' */, id:makeid(8),
         entered_indexing_tags:[this.props.app_state.loc['1600']/* 'accept' */, this.props.app_state.loc['273']/* 'job' */, this.props.app_state.loc['1601']/* 'application' */], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object(), get_contracts_or_proposals_tags_object:this.get_contracts_or_proposals_tags_object(),
     };
 
@@ -990,7 +990,7 @@ class ViewApplicationContractPage extends Component {
     set_object(item){
         if(this.state.application_item['contract'] != item['contract']){
             this.setState({
-                selected: 0, application_item:{}, type:this.props.app_state.loc['1599']/* 'accept-job-application' */, id:makeid(8),
+                selected: 0, application_item:{}, type:this.props.app_state.loc['1513']/* 'accept-job-application' */, id:makeid(8),
                 entered_indexing_tags:[this.props.app_state.loc['1600']/* 'accept' */, this.props.app_state.loc['273']/* 'job' */, this.props.app_state.loc['1601']/* 'application' */], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
             })
         }

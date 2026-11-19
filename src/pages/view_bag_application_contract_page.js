@@ -56,7 +56,7 @@ function makeid(length) {
 class ViewBagApplicationContractPage extends Component {
     
     state = {
-        selected: 0, application_item:{}, type:this.props.app_state.loc['1633']/* 'accept-bag-application' */, id:makeid(8),
+        selected: 0, application_item:{}, type:this.props.app_state.loc['1498']/* 'accept-bag-application' */, id:makeid(8),
         entered_indexing_tags:[this.props.app_state.loc['1634']/* 'accept' */, this.props.app_state.loc['1045']/* 'bag' */, this.props.app_state.loc['1635']/* 'fulfilment' */, this.props.app_state.loc['1636']/* 'application' */], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object(), get_contracts_or_proposals_tags_object:this.get_contracts_or_proposals_tags_object(),
     };
 
@@ -982,7 +982,7 @@ class ViewBagApplicationContractPage extends Component {
     set_object(item){
         if(this.state.application_item['contract'] != item['contract']){
             this.setState({
-                selected: 0, application_item:{}, type:this.props.app_state.loc['1633']/* 'accept-bag-application' */, id:makeid(8),
+                selected: 0, application_item:{}, type:this.props.app_state.loc['1498']/* 'accept-bag-application' */, id:makeid(8),
                 entered_indexing_tags:[this.props.app_state.loc['1634']/* 'accept' */, this.props.app_state.loc['1045']/* 'bag' */, this.props.app_state.loc['1635']/* 'fulfilment' */, this.props.app_state.loc['1636']/* 'application' */], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
             })
         }

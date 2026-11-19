@@ -63,7 +63,7 @@ function makeid(length) {
 class FulfilBagPage extends Component {
     
     state = {
-        selected: 0, bag_item:{'id':0} ,  type:this.props.app_state.loc['1126']/* 'bag-response' */, id:makeid(8),
+        selected: 0, bag_item:{'id':0} ,  type:this.props.app_state.loc['1497']/* 'bag-response' */, id:makeid(8),
         entered_indexing_tags:[this.props.app_state.loc['1127']/* 'respond' */, this.props.app_state.loc['1128']/* 'fulfil' */, this.props.app_state.loc['1129']/* 'bag' */], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(), estimated_delivery_time:0,
         e5: this.props.app_state.selected_e5, get_chain_or_indexer_job_object: this.get_chain_or_indexer_job_object(),
     };
@@ -134,7 +134,7 @@ class FulfilBagPage extends Component {
 
     set_bag(item){
         if(this.state.bag_item['id'] != item['id']){
-            this.setState({selected: 0 ,  type:this.props.app_state.loc['1126']/* 'bag-response' */, id:makeid(8),
+            this.setState({selected: 0 ,  type:this.props.app_state.loc['1497']/* 'bag-response' */, id:makeid(8),
             entered_indexing_tags:[this.props.app_state.loc['1127']/* 'respond' */, this.props.app_state.loc['1128']/* 'fulfil' */, this.props.app_state.loc['1129']/* 'bag' */], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()})
         }
         this.setState({bag_item: item, e5: item['e5']})
@@ -907,7 +907,7 @@ class FulfilBagPage extends Component {
 
     reset_state(){
         this.setState({
-            selected: 0,  type:this.props.app_state.loc['1126']/* 'bag-response' */, id:makeid(8),
+            selected: 0,  type:this.props.app_state.loc['1497']/* 'bag-response' */, id:makeid(8),
             entered_indexing_tags:[this.props.app_state.loc['1127']/* 'respond' */, this.props.app_state.loc['1128']/* 'fulfil' */, this.props.app_state.loc['1129']/* 'bag' */], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
         })
     }

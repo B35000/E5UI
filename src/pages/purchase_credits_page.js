@@ -178,26 +178,49 @@ class PurchaseCreditsPage extends Component {
 
 
     render_payment_amounts(){
-        const buy_amount = this.state.amount
         const e5 = this.state.e5
-        const spend_balance = this.props.calculate_actual_balance(e5, 5)
+        const contract_object = this.state.contract_object
+        const pre_purchase_credit_value = contract_object['ipfs'].pre_purchase_credit_value || [{'id':'5', 'amount':'1'}];
+        const buy_amounts = [];
+        const spend_balances = {};
+        const amount = this.state.amount
+        pre_purchase_credit_value.forEach(price_item => {
+            buy_amounts.push({
+                'id':price_item['id'],
+                'amount': bigInt(amount).times(price_item['amount'])
+            })
+            spend_balances[price_item['id']] = this.props.calculate_actual_balance(e5, price_item['id'])
+        });
+        // const spend_balance = this.props.calculate_actual_balance(e5, 5)
         const credits_balance = this.props.calculate_credit_balance(this.state.contract_object)
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['3092h']/* 'Total Payment Amount.' */, 'details':this.props.app_state.loc['3092i']/* 'Below is the amount of Spend youll be paying to obtain the credits you want.' */, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['3092h']/* 'Total Payment Amount.' */, 'details':this.props.app_state.loc['3092i']/* 'Below is the amounts youll be paying to obtain the credits you want.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'number':buy_amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}>
-                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(buy_amount), 'barwidth':this.calculate_bar_width(buy_amount), 'number':this.format_account_balance_figure(buy_amount), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
+                <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin': '0px' }}>
+                        {buy_amounts.map((item, index) => (
+                            <div style={{ 'padding': '1px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']], 'subtitle': this.format_power_figure(item['amount']), 'barwidth': this.calculate_bar_width(item['amount']), 'number': this.format_account_balance_figure(item['amount']), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']] })}
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3092k']/* 'Below is the amount of spend you have available for buying credits.' */, 'title':this.props.app_state.loc['3092j']/* 'Your Spend Balance' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['3092k']/* 'Below is the amounts you have available for buying credits.' */, 'title':this.props.app_state.loc['3092j']/* 'Your Balance' */})}
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'number':spend_balance, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}>
-                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+5], 'subtitle':this.format_power_figure(spend_balance), 'barwidth':this.calculate_bar_width(spend_balance), 'number':this.format_account_balance_figure(spend_balance), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[5]})}
+                <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
+                    <div style={{ 'padding': '0px 0px 0px 0px', 'margin': '0px' }}>
+                        {Object.keys(spend_balances).map((item, index) => (
+                            <div style={{ 'padding': '1px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':spend_balances[item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle': this.format_power_figure(spend_balances[item]), 'barwidth': this.calculate_bar_width(spend_balances[item]), 'number': this.format_account_balance_figure(spend_balances[item]), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 <div style={{height:10}}/>
 
@@ -278,10 +301,27 @@ class PurchaseCreditsPage extends Component {
     }
 
     check_if_sender_can_afford_payments(){
-        const buy_amount = this.state.amount
         const e5 = this.state.e5
-        const spend_balance = this.props.calculate_actual_balance(e5, 5)
-        return spend_balance >= buy_amount
+        const contract_object = this.state.contract_object
+        const pre_purchase_credit_value = contract_object['ipfs'].pre_purchase_credit_value || [{'id':'5', 'amount':'1'}];
+        const buy_amounts = [];
+        const spend_balances = {};
+        const amount = this.state.amount
+        pre_purchase_credit_value.forEach(price_item => {
+            buy_amounts.push({
+                'id':price_item['id'],
+                'amount': bigInt(amount).times(price_item['amount'])
+            })
+            spend_balances[price_item['id']] = this.props.calculate_actual_balance(e5, price_item['id'])
+        });
+        let can_afford = true; 
+        buy_amounts.forEach(required_exchange_data => {
+            const focused_balance = spend_balances[required_exchange_data['id']]
+            if(bigInt(required_exchange_data['amount']).greater(focused_balance)){
+                can_afford = false
+            }
+        });
+        return can_afford
     }
 
     check_if_buy_for_specific_storage_already_exists(){

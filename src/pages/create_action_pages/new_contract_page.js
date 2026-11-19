@@ -79,6 +79,8 @@ class NewContractPage extends Component {
         content_channeling_setting: this.props.app_state.content_channeling, device_language_setting: this.props.app_state.device_language, device_country: this.props.app_state.device_country,
 
         default_consensus_majority_limit:0, voter_weight_exchange_id:'', get_contract_credits_purchase_enabled_tags_object: this.get_contract_credits_purchase_enabled_tags_object(),
+
+        pre_purchase_credit_value:[{'id':'5', 'amount':'1'}]
     };
 
     constructor(props) {
@@ -537,6 +539,8 @@ class NewContractPage extends Component {
 
 
     render_presets_menu(){
+        const selected_pre_purchase_option = this.get_selected_item(this.state.get_contract_credits_purchase_enabled_tags_object, 'e')
+
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['172']})}
@@ -579,11 +583,46 @@ class NewContractPage extends Component {
                         {this.render_detail_item('3', {'title':this.props.app_state.loc['252b']/* Pre-purchases Enabled? */, 'details':this.props.app_state.loc['252c']/* If se to enabled, users will be able to make pre-purchases and acquire spend credits. */, 'size':'l'})}
                         <div style={{height:10}}/>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_contract_credits_purchase_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_get_contract_credits_purchase_enabled_tags_object.bind(this)} theme={this.props.theme}/>
+
+                        {selected_pre_purchase_option == this.props.app_state.loc['85'] && (
+                            <div>
+                                {this.render_prepurchase_credit_amounts()}
+                                <div style={{ height: 10 }} />
+                                <div onClick={() => this.props.show_dialog_bottomsheet({'e5':this.state.e5}, 'set_prepurchase_credit_value')}>
+                                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['252j']/* 'Configure Credits.' */, 'action': '' })}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
 
                 {this.render_detail_item('0')}
                 {this.render_contract_type()}
+            </div>
+        )
+    }
+
+    render_prepurchase_credit_amounts(){
+        const render_prepurchase_credit_amount_item = (item) => {
+            const e5 = this.state.e5
+            const title = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item['id']]
+            const details = this.format_account_balance_figure(item['amount']) + ' ' + this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]
+            const thumbnail = this.props.app_state.token_name_thumbnail_directory[title]
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':title, 'details':details, 'image': thumbnail, 'size':'s'})}
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {this.state.pre_purchase_credit_value.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {render_prepurchase_credit_amount_item(item)}
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
     }
@@ -2795,6 +2834,9 @@ class NewContractPage extends Component {
         else if(title.length > this.props.app_state.title_size){
             this.props.notify(this.props.app_state.loc['252'], 3700)
         }
+        else if(this.check_if_create_workgroup_transaction_exists()){
+            this.props.notify(this.props.app_state.loc['252k']/* 'You can\'t create two or more workgroups in one run.' */, 6000)
+        }
         else{
             var me = this
             this.setState({content_channeling_setting: me.props.app_state.content_channeling,
@@ -2813,6 +2855,22 @@ class NewContractPage extends Component {
                 me.props.notify(me.props.app_state.loc['18'], 1700);
             }, (1 * 1000));
         }
+    }
+
+    check_if_create_workgroup_transaction_exists(){
+        const stack_transactions = this.props.app_state.stack_items
+        for(var i=0; i<stack_transactions.length; i++){
+            if(
+                stack_transactions[i].type == this.props.app_state.loc['66']/* 'contract' */ && 
+                stack_transactions[i].e5 == this.state.e5 && 
+                stack_transactions[i].contract_type == 'workgroup' && 
+                this.get_contract_type() == 'workgroup' && 
+                stack_transactions[i].id != this.state.id
+            ){
+                return true
+            }
+        }
+        return false
     }
 
 

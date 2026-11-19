@@ -1005,7 +1005,7 @@ class PostListSection extends Component {
         return(
             <AnimatePresence initial={true}>
                 <motion.div key={'line_loader'} initial={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} animate={{ opacity: 1, scale:1, filter: "blur(0px)" }} exit={{ opacity: 0, scale:0.95, filter: "blur(0px)" }} transition={{ duration: 0.3 }}
-                style={{height:'6px', 'margin':'0px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
+                style={{height:'6px', 'margin':'7px 15px 3px 15px', overflow: 'hidden', borderRadius: '3px',}}>
                     <SkeletonTheme borderRadius={'3px'} baseColor={this.props.theme['loading_base_color']} highlightColor={this.props.theme['loading_highlight_color']}>
                         <Skeleton style={styles.skeletonBox}/>
                     </SkeletonTheme>
@@ -1313,7 +1313,7 @@ class PostListSection extends Component {
                     x += 6;
                 }
             }
-            if(this.props.size == 's') x+=this.props.additional_height
+            if(this.props.size == 's') x+=(this.props.additional_height)
             return(
                 <div style={{height: x}}/>
             )

@@ -5821,7 +5821,7 @@ class home_page extends Component {
     get_additional_height(){
         let x = 0
         if(this.state.search_visible && this.is_page_valid()){
-            x += 52
+            x += 58
             if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
                 x += 7
             }

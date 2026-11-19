@@ -283,7 +283,7 @@ class ConfirmRunPage extends Component {
             for(var i=0; i<txs.length; i++){
                 if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == e5){
                     if(
-                        txs[i].type == this.props.app_state.loc['1311']/* 'contract' */ ||
+                        txs[i].type == this.props.app_state.loc['66']/* 'contract' */ ||
                         txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */ ||
                         txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */ ||
                         txs[i].type == this.props.app_state.loc['1']/* 'enter-contract' */||
