@@ -2208,7 +2208,7 @@ class App extends Component {
         end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true, id: null, changenow_object:null, external_swappers:[]
       },
       'E25':{
-        web3:['https://0xrpc.io/etc', 'https://rpc.etcmc.xyz', 'https://geth-at.etc-network.info', 'https://rpc.swiftnodes.io/rpc/etc'], 
+        web3:['https://0xrpc.io/etc', 'https://rpc.etcmc.xyz', 'https://geth-at.etc-network.info'], 
         token:'ETC',
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
         first_block:19151130, end_image:end25_image/* 'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4' */, spend_image:spend25_image/* 'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, 
@@ -2216,7 +2216,7 @@ class App extends Component {
         end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, masked_image:true, id: null, external_swappers:['changenow'], changenow_object: get_changenow_object("Ethereum Classic")
       },
       'E35':{
-        web3:['https://0xrpc.io/etc','https://rpc.etcmc.xyz', 'https://geth-at.etc-network.info', 'https://rpc.swiftnodes.io/rpc/etc'],
+        web3:['https://0xrpc.io/etc','https://rpc.etcmc.xyz', 'https://geth-at.etc-network.info'],
         token:'ETC',
         e5_address:'0xEBDDD02c5106143B0DfB10513DeEc546F90c2152',
         first_block:24411397, end_image:end35_image, spend_image:spend35_image, ether_image:ethereum_classic_logo, iteration:400_000, url:0, active:true, e5_img:E5_E35_image,

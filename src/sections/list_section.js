@@ -7236,9 +7236,9 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        // else if(size == 'm'){
-        //     middle = this.props.height+65
-        // }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
         else if(size == 's'){
             middle = this.props.height
             if(this.props.app_state.homepage_tags_position == this.props.app_state.loc['1593k']/* top */){
@@ -7401,9 +7401,9 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        // else if(size == 'm'){
-        //     middle = this.props.height+65
-        // }
+        else if(size == 'm'){
+            middle = this.props.height+65
+        }
         else if(size == 's'){
             middle = this.props.height
             if(this.props.app_state.homepage_tags_position == this.props.app_state.loc['1593k']/* top */){
