@@ -1030,28 +1030,29 @@ class PostListSection extends Component {
         // console.log('render_animated_view', 'id', id, 'should animate', should_animate)
         this.animated_ids.add(id);
 
-        return (
-            <motion.div
-                onClick={() => console.log()}
-                initial={should_animate ? { height: 0, opacity: 0 } : false}
-                animate={{ height: 'auto', opacity: 1 }}
-                transition={{
-                    height: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] },
-                    opacity: { duration: 0.2, delay: 0.1 },
-                }} style={{ overflow: 'hidden' }}>
-
+        return(
+            <div>
                 <motion.div
-                    initial={{ scale: 0.95 }}
-                    animate={{ scale: 1 }}
-                    whileTap={{ scale: 0.9, transition: { duration: 0.3 } }}
-                    transition={{ duration: 0.3 }}
-                    style={style}>
-                    {view}
+                    onClick={() => console.log()}
+                    initial={should_animate ? { height: 0, opacity: 0 } : false}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    transition={{
+                        height: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] },
+                        opacity: { duration: 0.2, delay: 0.1 },
+                    }} style={{ overflow: 'hidden' }}>
+
+                    <motion.div
+                        initial={{ scale: 0.95 }}
+                        animate={{ scale: 1 }}
+                        whileTap={{ scale: 0.9, transition: { duration: 0.3 } }}
+                        transition={{ duration: 0.3 }}
+                        style={style}>
+                        {view}
+                    </motion.div>
                 </motion.div>
-                
                 {this.render_space_if_last_item(index, length)}
-            </motion.div>
-        );
+            </div>
+        )
     }
 
 
@@ -7235,18 +7236,18 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        else if(size == 'm'){
-            middle = this.props.height+65
-        }
+        // else if(size == 'm'){
+        //     middle = this.props.height+65
+        // }
         else if(size == 's'){
-            middle = this.props.height+80
-            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
-                middle += 50
+            middle = this.props.height
+            if(this.props.app_state.homepage_tags_position == this.props.app_state.loc['1593k']/* top */){
+                middle -= 50
             }
-            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
-            if(minimalist_mode_enabled == true){
-                middle = this.props.height
-            }
+        //     const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+        //     if(minimalist_mode_enabled == true){
+        //         middle = this.props.height
+        //     }
         }
         var items = this.get_coins_data()
         var x = this.props.app_state.os == 'iOS' ? 58 : 51
@@ -7400,18 +7401,18 @@ return data['data']
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        else if(size == 'm'){
-            middle = this.props.height+65
-        }
+        // else if(size == 'm'){
+        //     middle = this.props.height+65
+        // }
         else if(size == 's'){
-            middle = this.props.height+80
-            if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */){
-                middle += 50
+            middle = this.props.height
+            if(this.props.app_state.homepage_tags_position == this.props.app_state.loc['1593k']/* top */){
+                middle -= 50
             }
-            const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
-            if(minimalist_mode_enabled == true){
-                middle = this.props.height
-            }
+        //     const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
+        //     if(minimalist_mode_enabled == true){
+        //         middle = this.props.height
+        //     }
         }
         var items = this.get_ethers_data()
         if(items.length == 0){

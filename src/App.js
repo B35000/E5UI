@@ -2208,7 +2208,7 @@ class App extends Component {
         end_token_power_limit: 990, type:'1559', spend_access:this.get_allowed_countries(), public_enabled:true, id: null, changenow_object:null, external_swappers:[]
       },
       'E25':{
-        web3:['https://0xrpc.io/etc', 'https://etc.etcdesktop.com', 'https://rpc.etcmc.xyz', 'https://geth-at.etc-network.info', 'https://rpc.swiftnodes.io/rpc/etc'], 
+        web3:['https://0xrpc.io/etc', 'https://rpc.etcmc.xyz', 'https://geth-at.etc-network.info', 'https://rpc.swiftnodes.io/rpc/etc'], 
         token:'ETC',
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
         first_block:19151130, end_image:end25_image/* 'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4' */, spend_image:spend25_image/* 'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34' */, ether_image:ethereum_classic_logo/* 'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm' */, 
@@ -2216,7 +2216,7 @@ class App extends Component {
         end_token_power_limit: 72, spend_access:this.get_allowed_countries(), public_enabled:true, notification_blocks:20_000, masked_image:true, id: null, external_swappers:['changenow'], changenow_object: get_changenow_object("Ethereum Classic")
       },
       'E35':{
-        web3:['https://0xrpc.io/etc', 'https://etc.etcdesktop.com','https://rpc.etcmc.xyz', 'https://geth-at.etc-network.info', 'https://rpc.swiftnodes.io/rpc/etc'],
+        web3:['https://0xrpc.io/etc','https://rpc.etcmc.xyz', 'https://geth-at.etc-network.info', 'https://rpc.swiftnodes.io/rpc/etc'],
         token:'ETC',
         e5_address:'0xEBDDD02c5106143B0DfB10513DeEc546F90c2152',
         first_block:24411397, end_image:end35_image, spend_image:spend35_image, ether_image:ethereum_classic_logo, iteration:400_000, url:0, active:true, e5_img:E5_E35_image,
@@ -7806,8 +7806,9 @@ class App extends Component {
 
 
   get_selected_web3_url(){
-    var random = this.random(0,this.state.e5s[this.state.selected_e5].web3.length-1)
-    return this.state.e5s[this.state.selected_e5].web3[random]
+    return this.get_web3_url_from_e5(this.state.selected_e5)
+    // var random = this.random(0,this.state.e5s[this.state.selected_e5].web3.length-1)
+    // return this.state.e5s[this.state.selected_e5].web3[random]
   }
 
   get_selected_E5_contract(){
@@ -47556,12 +47557,8 @@ class App extends Component {
       var id = created_post_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_post_events[i].returnValues.p1.toString() == hash.toString() || this.is_post_index_valid(created_post_events[i].returnValues.p1.toString(), web3)){
-        // if(all_data[id] == null){
-        //   console.log('get_post_data', 'data for ', id, 'NOT found...')
-        // }else{
-        //   console.log('get_post_data', 'data for ', id, 'FOUND...')
-        // }
-        var post_data = all_data[id] == null ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
+        var post_data = all_data[id] == null || !is_first_time ? await this.fetch_objects_data(id, web3, e5, contract_addresses): all_data[id]
+        // var post_data = await this.fetch_objects_data(id, web3, e5, contract_addresses)
         
         const obj = {'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':parseInt(created_post_events[i].returnValues.p6), 'author':created_post_events[i].returnValues.p5, 'e5_id':id+e5, 'object_type':'post'}
 
@@ -55722,6 +55719,8 @@ class App extends Component {
     var cid = events[events.length - n].returnValues.p4
     if(cid == 'e3' || cid == 'e2' || cid == 'e1' || cid == 'e') return;
 
+    console.log('fetch_objects_data', 'loading object ', target_id)
+    console.log('fetch_objects_data', 'object events', events)
     var data = null
     while(data == null && events.length >= n){
       var cid = events[events.length - n].returnValues.p4
@@ -55731,7 +55730,10 @@ class App extends Component {
         console.log('fetch_objects_data', e)
       }
       if(data == null){
+        console.log('fetch_objects_data', 'object data', n, 'failed')
         n++
+      }else{
+        console.log('fetch_objects_data', 'object data', n, data)
       }
     }
     return data
