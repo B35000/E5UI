@@ -6134,7 +6134,7 @@ class home_page extends Component {
 
     async when_ether_object_clicked(index, id, e5){
         this.setState({selected_ether_item: id})
-        this.add_to_tab(this.props.app_state.e5s[e5].token, id, 'w', this.props.app_state.loc['1217']/* 'ethers ⚗️' */)
+        this.add_to_tab(this.props.app_state.e5s[e5].token, id, 'w', this.props.app_state.loc['1217']/* 'ethers ⚗️' */, this.props.app_state.e5s[e5].ether_image)
         this.set_detail_data()
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
@@ -6151,7 +6151,7 @@ class home_page extends Component {
     async when_coin_object_clicked(item, item_object){
         this.setState({selected_coin_item: item})
         this.set_detail_data()
-        this.add_to_tab(item_object['symbol'], item, 'w', this.props.app_state.loc['1264j']/* 'coins 🪙' */)
+        this.add_to_tab(item_object['symbol'], item, 'w', this.props.app_state.loc['1264j']/* 'coins 🪙' */, item_object['image'])
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
@@ -6198,7 +6198,7 @@ class home_page extends Component {
         }
         
         this.reset_post_detail_object()
-        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1218']/* 'ends' */)
+        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1218']/* 'ends' */, object['ipfs'].token_image)
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
@@ -6231,7 +6231,7 @@ class home_page extends Component {
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
-        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1219']/* 'spends' */)
+        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1219']/* 'spends' */, object['ipfs'].token_image)
         this.reset_post_detail_object()
 
         // this.props.show_loader_for_object_events(id, e5, true)
@@ -6476,7 +6476,7 @@ class home_page extends Component {
         this.setState({selected_storefront_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
-        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1215']/* 'storefront' */)
+        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1215']/* 'storefront' */, object['ipfs'].token_image)
         this.reset_post_detail_object()
         var viewed_storefront_clone = this.state.viewed_stores.slice()
         var pos = viewed_storefront_clone.indexOf(id)
@@ -6590,7 +6590,7 @@ class home_page extends Component {
         this.setState({selected_audio_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
-        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264k']/* 'audioport' */)
+        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264k']/* 'audioport' */, object['ipfs'].token_image)
         this.reset_post_detail_object()
         var viewed_audios_clone = this.state.viewed_audios.slice()
         var pos = viewed_audios_clone.indexOf(id)
@@ -6731,7 +6731,7 @@ class home_page extends Component {
         this.setState({selected_video_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
-        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264p']/* 'videoport' */)
+        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264p']/* 'videoport' */, object['ipfs'].token_image)
         this.reset_post_detail_object()
         var viewed_videos_clone = this.state.viewed_videos.slice()
         var pos = viewed_videos_clone.indexOf(id)
@@ -6825,7 +6825,7 @@ class home_page extends Component {
         this.setState({selected_nitro_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
-        this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1264s']/* 'nitro' */)
+        this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1264s']/* 'nitro' */, object['ipfs'].token_image)
         this.reset_post_detail_object()
         var viewed_nitros_clone = this.state.viewed_nitros.slice()
         var pos = viewed_nitros_clone.indexOf(id)
@@ -7013,7 +7013,7 @@ class home_page extends Component {
         this.setState({detail_page: selected_page, detail_selected_tag: selected_tag})
     }
 
-    add_to_tab(object_e5_id, object_id, selected_page, selected_tag){
+    add_to_tab(object_e5_id, object_id, selected_page, selected_tag, image){
         var clone = this.state.tabs.slice()
         if(this.props.app_state.visible_tabs == 'e') return;
 
@@ -7029,7 +7029,8 @@ class home_page extends Component {
             'selected_tag':selected_tag, 
             'selected_page':selected_page, 
             'e5_id':object_e5_id, 
-            'id':object_id
+            'id':object_id,
+            'image':image
         }
         clone.push(obj)
 
@@ -8338,13 +8339,13 @@ class home_page extends Component {
             return(
                 <div>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 5px 3px 5px'}}/>
-                    {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                    {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px', 'title_image':item['image'], 'text_image_size':12})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                    {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px', 'title_image':item['image'], 'text_image_size':12})}
                 </div>
             )
         }
@@ -8355,7 +8356,7 @@ class home_page extends Component {
         obj[this.props.app_state.loc['1197']/* contracts */] = '📑'
         obj[this.props.app_state.loc['1196']/* jobs */] = '💼'
         obj[this.props.app_state.loc['1198']/* contractors */] = '👷🏻‍♀️'
-        obj[this.props.app_state.loc['1215']/* storefront */] = '🏪'
+        obj[this.props.app_state.loc['1215']/* storefront */] = ''/* '🏪' */
         obj[this.props.app_state.loc['1200']/* subscriptions */] = '🎫'
         obj[this.props.app_state.loc['1213']/* posts */] = '📰'
         obj[this.props.app_state.loc['1214']/* channels */] = '📡'
@@ -8364,18 +8365,18 @@ class home_page extends Component {
         obj[this.props.app_state.loc['1199']/* proposals */] = '🧎'
         obj[this.props.app_state.loc['1201']/* mail */] = '📬'
         obj[this.props.app_state.loc['1216']/* bags */] = '🛍'
-        obj[this.props.app_state.loc['1218']/* ends */] = '☝️'
-        obj[this.props.app_state.loc['1219']/* spends */] = '🫰'
-        obj[this.props.app_state.loc['1264k']/* audioport */] = '🎧'
-        obj[this.props.app_state.loc['1264p']/* 'videoport' */] = '📺'
+        obj[this.props.app_state.loc['1218']/* ends */] = ''/* '☝️' */
+        obj[this.props.app_state.loc['1219']/* spends */] = ''/* '🫰' */
+        obj[this.props.app_state.loc['1264k']/* audioport */] = ''/* '🎧' */
+        obj[this.props.app_state.loc['1264p']/* 'videoport' */] = ''/* '📺' */
         obj[this.props.app_state.loc['1264s']/* 'nitro' */] = '🛰️'
         obj[this.props.app_state.loc['1264ai']/* bills */] = '🧾'
         obj[this.props.app_state.loc['1264ao']/* 'polls' */] = '📊'
         obj[this.props.app_state.loc['1264bw']/* 'certificates' */] = '📜'
         obj[this.props.app_state.loc['1264bx']/* 'cross-exchanges' */] = '✚'
         obj[this.props.app_state.loc['1264bo']/* 'direct-message 💬' */] = '💬'
-        obj[this.props.app_state.loc['1217']/* 'ethers ⚗️' */] = '⚗️'
-        obj[this.props.app_state.loc['1264j']/* 'coins 🪙' */] = '🪙'
+        obj[this.props.app_state.loc['1217']/* 'ethers ⚗️' */] = ''/* '⚗️' */
+        obj[this.props.app_state.loc['1264j']/* 'coins 🪙' */] = ''/* '🪙' */
 
         return `${obj[item['selected_tag']]} ${item['selected_tag'].replace(/[\p{Extended_Pictographic}\p{Emoji_Component}\uFE0F\u200D]/gu, '')}`
     }

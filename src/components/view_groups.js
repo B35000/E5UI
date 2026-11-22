@@ -386,6 +386,7 @@ class ViewGroups extends Component {
             var word_wrap_value2 = 'normal'
             var text_image_border_radius = '0px'
             var blur_image = false
+            var text_image_size = null
             if(object_data != null){
                 title = object_data['title']
                 details = object_data['details']
@@ -396,10 +397,14 @@ class ViewGroups extends Component {
                 word_wrap_value = this.longest_word_length(object_data['details']) > 53 ? 'break-word' : 'normal'
                 word_wrap_value2 = this.longest_word_length(object_data['title']) > 53 ? 'break-word' : 'normal'
                 text_image_border_radius = object_data['text_image_border_radius'] != null ? object_data['text_image_border_radius'] : '0px'
+                text_image_size = object_data['text_image_size']
             }
             var font_size = ['11px', '9px', 16, 33, '1px 0px 0px 0px', 17];
             if(size == 'l'){
                 font_size = ['15px', '12px', 19, 50, '5px 0px 0px 0px', 21];
+            }
+            if(text_image_size != null){
+                font_size[5] = text_image_size
             }
             var image_width = font_size[3]
             if(title == '' || title == null){
@@ -1773,9 +1778,10 @@ class ViewGroups extends Component {
                     </div>
                 )
             }
+            const translate = font_size[5] == 12 ? '0px 2px' : '0px 0px';
             return(
                 <div style={{'display': 'flex','flex-direction': 'row', 'padding':'1px 0px 0px 0px'}}>
-                    <img src={this.get_image_from_file(title_image)} alt={title_image} style={{height:font_size[5],width:font_size[5], 'border-radius':text_image_border_radius}}/>
+                    <img src={this.get_image_from_file(title_image)} alt={title_image} style={{height:font_size[5],width:font_size[5], 'border-radius':text_image_border_radius, translate:translate}}/>
                     <div style={{width:2}}/>
                 </div>
             )

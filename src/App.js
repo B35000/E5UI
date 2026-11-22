@@ -13311,6 +13311,7 @@ class App extends Component {
   }
 
   when_language_selected(item){
+    return;
     if(!this.do_i_have_an_account() || !this.do_i_have_a_minimum_number_of_txs_in_account()){
       this.prompt_top_notification(this.getLocale()['1593mz']/* 'First run a transaction to enable this setting.' */, 6300)
       return;
@@ -35803,10 +35804,12 @@ class App extends Component {
     const request = `${beacon_node}/coin_and_externals_data`
     try{
       const response = await fetch(request);
+      // console.log('load_coin_and_externals_data', 'response', response)
       if (!response.ok) {
         throw new Error(`Failed to retrieve data. Status: ${response}`);
       }
       const data = await response.text();
+      // console.log('load_coin_and_externals_data', 'data', data)
       const parsed_data = JSON.parse(data)
       const fees_object = parsed_data['fees_object']
       const exchange_rates = parsed_data['exchange_rates']

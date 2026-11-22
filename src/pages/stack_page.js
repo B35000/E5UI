@@ -17459,7 +17459,7 @@ class StackPage extends Component {
 
     render_content_language_setting(){
         const content_language = this.props.app_state.content_language
-        const alpha = this.props.do_i_have_an_account() && this.props.do_i_have_a_minimum_number_of_txs_in_account() ? 1.0 : 0.5
+        const alpha = this.props.do_i_have_an_account() && this.props.do_i_have_a_minimum_number_of_txs_in_account() && true == false ? 1.0 : 0.5
         return(
             <div style={{opacity: alpha}}>
                 {this.does_title_details_contain_searched_text('1593mv', '1593mw') && (
