@@ -29,8 +29,8 @@
     "/static/js/902.72843c6b.chunk.js",
     "/static/js/95.69b344fa.chunk.js",
     "/static/js/994.60ee153c.chunk.js",
-    "/static/js/main.486ca61a.js",
-    "/static/js/main.486ca61a.js.LICENSE.txt",
+    "/static/js/main.f9ac9c5b.js",
+    "/static/js/main.f9ac9c5b.js.LICENSE.txt",
     "/static/media/1eed6645bef2cd8b6cc0.1eed6645bef2cd8b6cc0.svg",
     "/static/media/1feff74faaf0efc6a044.1feff74faaf0efc6a044",
     "/static/media/215f8ced19c13e0059ee.215f8ced19c13e0059ee.svg",
@@ -463,10 +463,10 @@
     "/05ee3df54a195ec8138b.module.wasm": "47b1aca5f47231fdf3f2e11284d1f2bf1a80769a3e13f7225fb670b14dc993d3",
     "/CNAME": "cac3dda141c3ad18945cc5c4cfa2d9291f1546509a0e5e6b7090b87fe97e0960",
     "/app_icon.png": "f0bfa1625c6c56f652142640c10ae97ceb4cee6648810da60cd87ecdbbb030c3",
-    "/asset-manifest.json": "36c7b44c5f375048f8933e9e4760c3000027a3dce8aa91e660feaeb61f64e467",
+    "/asset-manifest.json": "5b66f585f1497ed15c6a119a68a6ca44df306f1d9d29725b066a37d8222f3fcb",
     "/b47a2e93833aff5a509f.module.wasm": "07a9449c5ba2c730c008df0ef9f5946cf7b52bfa83459b140fa662f8ec995ddc",
     "/e68f463c0d512b41fb0a.module.wasm": "2e609d31acd204a5dafa8e5873fb2c6d2206a4094003ca6d2a6b3e494ee3cb10",
-    "/index.html": "82f882cd7b51ff835ce0d77a8e6b222dbd559b15aee18b9915db375e66310900",
+    "/index.html": "7bd33f9f7255bbf259bb8eee3ed12df07bd901281a3a62da1a7a30705f0d46f7",
     "/ios_app_icon.png": "c238c571d11d390bd7deeaf6f135a91188d2d29c81c9e53f7aaab0c5da2ddc94",
     "/manifest.json": "b739970dde476dd5b90f0d958e3cb0c74ad89b11529b2561ea3fee8bfc782b17",
     "/monero.worker.js": "979a1975d03f50c09cc1992111bce554ac6a465b2057a4092ef29c701ea6dd8c",
@@ -489,8 +489,8 @@
     "/static/js/902.72843c6b.chunk.js": "687c99a5d2514c7c7660d2a985009954c1da7e341a52970dbacf2b94cfd9e999",
     "/static/js/95.69b344fa.chunk.js": "c13b1c938e3ca4e6ca6af44a3fccec5c40bc00ac4659eef460381d1a1bd92423",
     "/static/js/994.60ee153c.chunk.js": "c9842a4822ad57e40053789a161d75719fe2825a9c0a30bb74d542259d8608bc",
-    "/static/js/main.486ca61a.js": "7809153e1f28fb48360a961d9812b2e2797eaa5da4639992cb78b8d3345a9b83",
-    "/static/js/main.486ca61a.js.LICENSE.txt": "67cd488aa9ede13a402d8e72dfeb8355c0d2d548d64ad89cc31a8f82b7c829d7",
+    "/static/js/main.f9ac9c5b.js": "6aa5e205cbb5facda104ba945b2aff1c67467b13bbd12cbb6a380df9583dff1b",
+    "/static/js/main.f9ac9c5b.js.LICENSE.txt": "67cd488aa9ede13a402d8e72dfeb8355c0d2d548d64ad89cc31a8f82b7c829d7",
     "/static/media/1eed6645bef2cd8b6cc0.1eed6645bef2cd8b6cc0.svg": "fecf7f86be3b36cad3e6d5a82c7735c9e5736776bee603c8d3418935b25731c7",
     "/static/media/1feff74faaf0efc6a044.1feff74faaf0efc6a044": "1aea40e0e1ea3dc3fbaaa8003fc01e31b2d4f09a25236fea556100dc3dd42670",
     "/static/media/215f8ced19c13e0059ee.215f8ced19c13e0059ee.svg": "0134375b1ced2e2b36e9a34753f87b48b49dab1ce589ec8a2932764d31ada657",
@@ -917,6 +917,6 @@
     "/static/media/zoom_in_icon.7fc39003e4aa63d6d378.png": "101ad579643f9b4ecf860bebe4fe338e2e0fb07d5f88dd3355f66d4c053394b7",
     "/static/media/zoom_out_icon.ad0e18aa8406d6f7c3aa.png": "6ce283fcac0082e847956b7cea44b29b8ee15b6fb69f47acfb694acf6ca1bb80",
     "/static/media/zora.64098c26ffed24f52098.png": "2317b9938aeda11e6e530a2a23aec847568f64453523c33c5cd221be07f83ac9",
-    "/sw.js": "f478f30c3d4cdede1c83b3fee1ec783230c256e4adfbb13e86c871110820641d"
+    "/sw.js": "18858264e5a4ffc6b76ed5338764cc7a36a3bd4088c47423a6c13ce60271393c"
   }
 }
