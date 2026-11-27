@@ -1287,12 +1287,16 @@ class PostListSection extends Component {
         if(index == count-1){
             var size = this.props.size;
             if(size == 'l') return;
-            var height = size == 's' ? 78 : 68;
+            var height = size == 's' ? 100 : 80;
             if(this.props.app_state.homepage_tags_position != this.props.app_state.loc['1593k']/* top */ && size == 's'){
                 height += 50
             }
             if(this.props.app_state.rounded_edges == this.props.app_state.loc['1593lj']/* 'rounded' */){
                 height += 10
+            }
+            const page = this.props.get_page_id()
+            if(page == '?ee' || page == 'eee'){
+                height += 70
             }
             const minimalist_mode_enabled = this.props.is_minimalist_mode_enabled() && this.props.app_state.minimalist_mode != 'e'
             if(minimalist_mode_enabled == true){

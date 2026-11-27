@@ -6198,7 +6198,8 @@ class home_page extends Component {
         }
         
         this.reset_post_detail_object()
-        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1218']/* 'ends' */, object['ipfs'].token_image)
+        const image = id == 3 ? object['img'] : object['ipfs'].token_image
+        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1218']/* 'ends' */, image)
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
@@ -6231,7 +6232,8 @@ class home_page extends Component {
         if(this.props.screensize == 's' && this.state.view_post_bottomsheet == false){
             this.open_view_object_bottomsheet()
         }
-        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1219']/* 'spends' */, object['ipfs'].token_image)
+        const image = id == 5 ? object['img'] : object['ipfs'].token_image
+        this.add_to_tab(id+e5, id, 'w', this.props.app_state.loc['1219']/* 'spends' */, image)
         this.reset_post_detail_object()
 
         // this.props.show_loader_for_object_events(id, e5, true)
@@ -6476,7 +6478,7 @@ class home_page extends Component {
         this.setState({selected_storefront_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data();
-        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1215']/* 'storefront' */, object['ipfs'].token_image)
+        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1215']/* 'storefront' */, object['ipfs'].storefront_item_art)
         this.reset_post_detail_object()
         var viewed_storefront_clone = this.state.viewed_stores.slice()
         var pos = viewed_storefront_clone.indexOf(id)
@@ -6590,7 +6592,7 @@ class home_page extends Component {
         this.setState({selected_audio_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
-        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264k']/* 'audioport' */, object['ipfs'].token_image)
+        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264k']/* 'audioport' */, object['ipfs'].album_art)
         this.reset_post_detail_object()
         var viewed_audios_clone = this.state.viewed_audios.slice()
         var pos = viewed_audios_clone.indexOf(id)
@@ -6731,7 +6733,7 @@ class home_page extends Component {
         this.setState({selected_video_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
-        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264p']/* 'videoport' */, object['ipfs'].token_image)
+        this.add_to_tab(id+e5, id, 'e', this.props.app_state.loc['1264p']/* 'videoport' */, object['ipfs'].album_art)
         this.reset_post_detail_object()
         var viewed_videos_clone = this.state.viewed_videos.slice()
         var pos = viewed_videos_clone.indexOf(id)
@@ -6825,7 +6827,7 @@ class home_page extends Component {
         this.setState({selected_nitro_item: id+e5})
         this.record_viewed_item(id+e5)
         if(ignore_set_details_data == null) this.set_detail_data()
-        this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1264s']/* 'nitro' */, object['ipfs'].token_image)
+        this.add_to_tab(id+e5, id, '?', this.props.app_state.loc['1264s']/* 'nitro' */, object['ipfs'].album_art)
         this.reset_post_detail_object()
         var viewed_nitros_clone = this.state.viewed_nitros.slice()
         var pos = viewed_nitros_clone.indexOf(id)
@@ -8339,13 +8341,13 @@ class home_page extends Component {
             return(
                 <div>
                     <div style={{height:'1px', 'background-color':this.props.app_state.theme['line_color'], 'margin': '0px 5px 3px 5px'}}/>
-                    {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px', 'title_image':item['image'], 'text_image_size':12})}
+                    {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px', 'title_image':item['image'], 'text_image_size':12, 'text_image_border_radius':'4px'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px', 'title_image':item['image'], 'text_image_size':12})}
+                    {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px', 'title_image':item['image'], 'text_image_size':12, 'text_image_border_radius':'4px'})}
                 </div>
             )
         }
@@ -8369,7 +8371,7 @@ class home_page extends Component {
         obj[this.props.app_state.loc['1219']/* spends */] = ''/* '🫰' */
         obj[this.props.app_state.loc['1264k']/* audioport */] = ''/* '🎧' */
         obj[this.props.app_state.loc['1264p']/* 'videoport' */] = ''/* '📺' */
-        obj[this.props.app_state.loc['1264s']/* 'nitro' */] = '🛰️'
+        obj[this.props.app_state.loc['1264s']/* 'nitro' */] = ''/* '🛰️' */
         obj[this.props.app_state.loc['1264ai']/* bills */] = '🧾'
         obj[this.props.app_state.loc['1264ao']/* 'polls' */] = '📊'
         obj[this.props.app_state.loc['1264bw']/* 'certificates' */] = '📜'
@@ -9051,9 +9053,11 @@ class home_page extends Component {
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
+        var uploaded_data = {}
+        if(item_id == '3' ||item_id == '8' || item_id == '7' || item_id == '8'|| item_id == '9' || item_id == '11' || item_id == '12' || item_id == '14') uploaded_data = this.props.app_state.uploaded_data
         return(
             <div>
-                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} transactions_text={this.props.app_state.loc['2867']/* 'transactions' */}/>
+                <ViewGroups token_name_thumbnail_directory={this.props.app_state?.token_name_thumbnail_directory} e5s={this.props.app_state?.e5s} uploaded_data={uploaded_data} graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} transactions_text={this.props.app_state.loc['2867']/* 'transactions' */}/>
             </div>
         )
 

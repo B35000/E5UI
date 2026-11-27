@@ -35490,40 +35490,91 @@ class App extends Component {
     await this.update_nitro_privacy_signature(false)
     console.log('load_e5_data', 'updated nitro privacy signature')
     await this.wait(500)
-    await this.load_root_config()
-    console.log('load_e5_data', 'loaded root config')
-    await this.wait(500)
-    // await this.check_and_set_default_rpc()
-    // await this.wait(1000)
-    await this.load_coin_and_externals_data()
-    console.log('load_e5_data', 'loaded coin and externals data')
-    await this.wait(500)
+
+    let loaded = 0;
+    const load_root_config_function = async () => {
+      await this.load_root_config()
+      console.log('load_e5_data2', 'loaded root config')
+      this.inc_synch_progress()
+      await this.wait(500)
+      loaded++;
+    }
+
+    const load_coin_and_externals_data_function = async () => {
+      await this.load_coin_and_externals_data()
+      console.log('load_e5_data2', 'loaded coin and externals data')
+      this.inc_synch_progress()
+      await this.wait(500)
+      loaded++;
+    }
+
+    const set_sunrise_sunset_times_function = async () => {
+      await this.set_sunrise_sunset_times()
+      console.log('load_e5_data2', 'set sunrise sunset times')
+      await this.wait(300)
+      this.inc_synch_progress()
+      await this.load_cities_data()
+      console.log('load_e5_data2', 'loaded cities')
+      this.inc_synch_progress()
+      await this.wait(500)
+      loaded++;
+    }
+
+    const check_if_beacon_node_is_online_function = async () => {
+      if(this.state.manual_beacon_node_disabled == 'e'){
+        await this.check_if_beacon_node_is_online()
+      }
+      console.log('load_e5_data2', 'manual beacon node loaded')
+      await this.wait(500)
+      loaded++;
+    }
+
+    const load_coin_prices = async () => {
+      await this.load_coin_and_ether_coin_prices()
+      console.log('load_e5_data2', 'loaded coin and ether coin prices')
+      this.inc_synch_progress()
+      await this.wait(500)
+      loaded++;
+    }
+    
+
+    load_root_config_function();
+    await this.wait(1000)
+    load_coin_and_externals_data_function();
+    await this.wait(70)
+    set_sunrise_sunset_times_function();
+    await this.wait(1000)
+    check_if_beacon_node_is_online_function();
+    await this.wait(70)
+    load_coin_prices();
+    
+
+    await new Promise(resolve => {
+      const checkReady = () => {
+        if (loaded == 5) {
+          resolve();
+        } else {
+          setTimeout(checkReady, 100);
+        }
+      };
+      checkReady();
+    });
+
+
+    // await this.load_root_config()
+    // console.log('load_e5_data', 'loaded root config')
+    // await this.wait(500)
+    // await this.load_coin_and_externals_data()
+    // console.log('load_e5_data', 'loaded coin and externals data')
+    // await this.wait(500)
     if(this.is_allowed_in_e5()){
       this.enableConsole()
-      // if(this.state.os == 'iOS'){
-      //   this.changeFavicon('/ios_app_icon.png')
-      // }else{
-      //   this.changeFavicon('/app_icon.png')
-      // }
       if(this.state.device_country == null || this.state.device_city == null){
         this.prompt_top_notification(this.getLocale()['2738al']/* 'e cant seem to access your general location info.' */, (35*60*1000))
         return;
       }
       this.set_document_title(this.state.document_title)
  
-      await this.set_sunrise_sunset_times()
-      console.log('load_e5_data', 'loaded sunrise sunset times')
-      await this.wait(300)
-      await this.load_cities_data()
-      console.log('load_e5_data', 'loaded cities data')
-      this.load_coin_and_ether_coin_prices()
-      console.log('load_e5_data', 'loaded coin and ether coin prices')
-      
-
-      if(this.state.manual_beacon_node_disabled == 'e'){
-        await this.check_if_beacon_node_is_online()
-        console.log('load_e5_data', 'checked if beacon node is online since manual beacon node is not disabled')
-      }
       this.set_coin_icons_in_data()
       console.log('load_e5_data', 'starting sync process')
       await this.start_synchronization_process()
@@ -35550,18 +35601,73 @@ class App extends Component {
     this.inc_synch_progress()
     await this.wait(500)
 
-    await this.load_root_config()
-    console.log('load_e5_data2', 'loaded root config')
-    this.inc_synch_progress()
+    let loaded = 0;
+    const load_root_config_function = async () => {
+      await this.load_root_config()
+      console.log('load_e5_data2', 'loaded root config')
+      this.inc_synch_progress()
+      await this.wait(500)
+      loaded++;
+    }
 
+    const load_coin_and_externals_data_function = async () => {
+      await this.load_coin_and_externals_data()
+      console.log('load_e5_data2', 'loaded coin and externals data')
+      this.inc_synch_progress()
+      await this.wait(500)
+      loaded++;
+    }
+
+    const set_sunrise_sunset_times_function = async () => {
+      await this.set_sunrise_sunset_times()
+      console.log('load_e5_data2', 'set sunrise sunset times')
+      await this.wait(300)
+      this.inc_synch_progress()
+      await this.load_cities_data()
+      console.log('load_e5_data2', 'loaded cities')
+      this.inc_synch_progress()
+      await this.wait(500)
+      loaded++;
+    }
+
+    const check_if_beacon_node_is_online_function = async () => {
+      if(this.state.manual_beacon_node_disabled == 'e'){
+        await this.check_if_beacon_node_is_online()
+      }
+      console.log('load_e5_data2', 'manual beacon node loaded')
+      await this.wait(500)
+      loaded++;
+    }
+
+    const load_coin_prices = async () => {
+      await this.load_coin_and_ether_coin_prices()
+      console.log('load_e5_data2', 'loaded coin and ether coin prices')
+      this.inc_synch_progress()
+      await this.wait(500)
+      loaded++;
+    }
+    
+
+    load_root_config_function();
     await this.wait(1000)
-    await this.load_coin_and_externals_data()
-    console.log('load_e5_data2', 'loaded coin and externals data')
-    this.inc_synch_progress()
-    await this.wait(500)
+    load_coin_and_externals_data_function();
+    await this.wait(70)
+    set_sunrise_sunset_times_function();
+    await this.wait(1000)
+    check_if_beacon_node_is_online_function();
+    await this.wait(70)
+    load_coin_prices();
 
-    // await this.check_and_set_default_rpc()
-    // this.inc_synch_progress()
+    await new Promise(resolve => {
+      const checkReady = () => {
+        if (loaded == 5) {
+          resolve();
+        } else {
+          setTimeout(checkReady, 100);
+        }
+      };
+      checkReady();
+    });
 
     if(this.is_allowed_in_e5()){
       this.enableConsole()
@@ -35573,23 +35679,8 @@ class App extends Component {
       }
       this.set_document_title(this.state.document_title)
       this.inc_synch_progress()
-      this.load_coin_and_ether_coin_prices()
-      console.log('load_e5_data2', 'loaded coin and ether coin prices')
-      this.inc_synch_progress()
+      
 
-      await this.set_sunrise_sunset_times()
-      console.log('load_e5_data2', 'set sunrise sunset times')
-      await this.wait(300)
-      this.inc_synch_progress()
-      await this.load_cities_data()
-      console.log('load_e5_data2', 'loaded cities')
-      this.inc_synch_progress()
-
-      if(this.state.manual_beacon_node_disabled == 'e'){
-        await this.check_if_beacon_node_is_online()
-        console.log('load_e5_data2', 'manual beacon node loaded')
-      }
-      this.inc_synch_progress()
       this.start_synchronization_process()
       console.log('load_e5_data2', 'started synchronization process')
       this.inc_synch_progress()
